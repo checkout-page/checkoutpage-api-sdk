@@ -1,6 +1,6 @@
-# CheckoutPage API SDK
+# Checkout Page API SDK
 
-Official SDKs for the CheckoutPage API, enabling developers to integrate CheckoutPage's payment and checkout functionality into their applications.
+Official SDKs for the Checkout Page API, enabling developers to integrate Checkout Page's payment and checkout functionality into their applications.
 
 ## Available SDKs
 
@@ -14,10 +14,10 @@ The official JavaScript SDK with full TypeScript support.
 - **Status**: Active development
 
 ```typescript
-import { CheckoutPage } from '@checkoutpage/sdk'
+import { CheckoutPage } from '@checkoutpage/sdk';
 
-const checkoutpage = new CheckoutPage({ apiKey: 'YOUR_API_KEY' })
-const customer = await checkoutpage.customers.get('customer_id')
+const checkoutpage = new CheckoutPage({ apiKey: 'YOUR_API_KEY' });
+const customer = await checkoutpage.customers.get('customer_id');
 ```
 
 ### Python (Coming Soon)
@@ -30,20 +30,22 @@ Go SDK planned for future release.
 
 ## Quick Start
 
-1. **Get your API key** from the [CheckoutPage Dashboard](https://app.checkoutpage.com)
+1. **Get your API key** from the [Checkout Page Dashboard](https://checkoutpage.com/)
 
 2. **Install the SDK** for your language:
+
    ```bash
    npm install @checkoutpage/sdk
    ```
 
 3. **Start using the SDK**:
+
    ```typescript
-   import { CheckoutPage } from '@checkoutpage/sdk'
+   import { CheckoutPage } from '@checkoutpage/sdk';
 
    const checkoutpage = new CheckoutPage({
-     apiKey: process.env.CHECKOUTPAGE_API_KEY
-   })
+     apiKey: process.env.CHECKOUTPAGE_API_KEY,
+   });
    ```
 
 ## Repository Structure

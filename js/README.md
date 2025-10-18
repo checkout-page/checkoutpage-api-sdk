@@ -1,6 +1,6 @@
-# CheckoutPage JavaScript SDK
+# Checkout Page JavaScript SDK
 
-Official JavaScript/TypeScript SDK for the CheckoutPage API.
+Official JavaScript/TypeScript SDK for the Checkout Page API.
 
 ## Installation
 
@@ -23,25 +23,25 @@ yarn add @checkoutpage/sdk
 ## Quick Start
 
 ```typescript
-import { CheckoutPage } from '@checkoutpage/sdk'
+import { CheckoutPage } from '@checkoutpage/sdk';
 
 const checkoutpage = new CheckoutPage({
   apiKey: 'YOUR_API_KEY',
-})
+});
 
 // Get a customer
-const customer = await checkoutpage.customers.get('customer_id')
-console.log(customer)
+const customer = await checkoutpage.customers.get('customer_id');
+console.log(customer);
 ```
 
 ## Authentication
 
-The SDK requires an API key for authentication. You can obtain your API key from the [CheckoutPage Dashboard](https://app.checkoutpage.com).
+The SDK requires an API key for authentication. You can obtain your API key from the [Checkout Page Dashboard](https://checkoutpage.com).
 
 ```typescript
 const checkoutpage = new CheckoutPage({
   apiKey: process.env.CHECKOUTPAGE_API_KEY,
-})
+});
 ```
 
 ### Custom Base URL
@@ -52,7 +52,7 @@ For testing or custom environments, you can override the base URL:
 const checkoutpage = new CheckoutPage({
   apiKey: 'YOUR_API_KEY',
   baseUrl: 'https://custom-api.example.com',
-})
+});
 ```
 
 ## Usage
@@ -62,7 +62,7 @@ const checkoutpage = new CheckoutPage({
 #### Get a customer
 
 ```typescript
-const customer = await checkoutpage.customers.get('6812fe6e9f39b6760576f01c')
+const customer = await checkoutpage.customers.get('6812fe6e9f39b6760576f01c');
 ```
 
 ## Error Handling
@@ -77,21 +77,21 @@ import {
   RateLimitError,
   ValidationError,
   APIError,
-} from '@checkoutpage/sdk'
+} from '@checkoutpage/sdk';
 
 try {
-  const customer = await checkoutpage.customers.get('customer_id')
+  const customer = await checkoutpage.customers.get('customer_id');
 } catch (error) {
   if (error instanceof AuthenticationError) {
-    console.error('Invalid API key')
+    console.error('Invalid API key');
   } else if (error instanceof NotFoundError) {
-    console.error('Customer not found')
+    console.error('Customer not found');
   } else if (error instanceof RateLimitError) {
-    console.error('Rate limit exceeded')
+    console.error('Rate limit exceeded');
   } else if (error instanceof ValidationError) {
-    console.error('Validation error')
+    console.error('Validation error');
   } else if (error instanceof APIError) {
-    console.error('API error:', error.statusCode, error.message)
+    console.error('API error:', error.statusCode, error.message);
   }
 }
 ```
@@ -110,9 +110,9 @@ try {
 The SDK is written in TypeScript and provides full type definitions auto-generated from the OpenAPI specification:
 
 ```typescript
-import type { Customer, Address, Shipping } from '@checkoutpage/sdk'
+import type { Customer, Address, Shipping } from '@checkoutpage/sdk';
 
-const customer: Customer = await checkoutpage.customers.get('customer_id')
+const customer: Customer = await checkoutpage.customers.get('customer_id');
 ```
 
 ### Advanced Type Usage
@@ -120,16 +120,18 @@ const customer: Customer = await checkoutpage.customers.get('customer_id')
 Access all generated types for advanced use cases:
 
 ```typescript
-import type { operations, components, paths } from '@checkoutpage/sdk'
+import type { operations, components, paths } from '@checkoutpage/sdk';
 
 // Get request type for an operation
-type CreateCouponRequest = operations['coupons/create']['requestBody']['content']['application/json']
+type CreateCouponRequest =
+  operations['coupons/create']['requestBody']['content']['application/json'];
 
 // Get response type
-type ListCustomersResponse = operations['customers/list']['responses'][200]['content']['application/json']
+type ListCustomersResponse =
+  operations['customers/list']['responses'][200]['content']['application/json'];
 
 // Access schema components
-type CustomerId = components['schemas']['CustomerId']
+type CustomerId = components['schemas']['CustomerId'];
 ```
 
 See [TYPE_GENERATION.md](../TYPE_GENERATION.md) for more details on working with generated types.

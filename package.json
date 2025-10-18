@@ -2,7 +2,7 @@
   "name": "@checkoutpage/sdk-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "Monorepo for CheckoutPage SDKs",
+  "description": "Monorepo for Checkout Page SDKs",
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",

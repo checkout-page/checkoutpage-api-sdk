@@ -1,6 +1,6 @@
-# Contributing to CheckoutPage API SDK
+# Contributing to Checkout Page API SDK
 
-Thank you for your interest in contributing to the CheckoutPage API SDK! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to the Checkout Page API SDK! This document provides guidelines and instructions for contributing.
 
 ## Development Setup
 
@@ -12,22 +12,26 @@ Thank you for your interest in contributing to the CheckoutPage API SDK! This do
 ### Getting Started
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/checkoutpage/checkoutpage-api-sdk.git
    cd checkoutpage-api-sdk
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Generate TypeScript types from OpenAPI spec**
+
    ```bash
    pnpm generate:types
    ```
 
 4. **Build the SDK**
+
    ```bash
    pnpm build
    ```
@@ -78,6 +82,7 @@ pnpm build
 ### Making Changes
 
 1. **Create a new branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -88,6 +93,7 @@ pnpm build
    - Update documentation as needed
 
 3. **Run tests and linting**
+
    ```bash
    pnpm test
    pnpm lint
@@ -95,6 +101,7 @@ pnpm build
    ```
 
 4. **Commit your changes**
+
    ```bash
    git add .
    git commit -m "Description of your changes"
@@ -123,7 +130,7 @@ pnpm build
 ### Test Structure
 
 ```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 describe('ResourceName', () => {
   describe('methodName', () => {
@@ -131,9 +138,9 @@ describe('ResourceName', () => {
       // Arrange
       // Act
       // Assert
-    })
-  })
-})
+    });
+  });
+});
 ```
 
 ## Adding New Resources
@@ -141,9 +148,10 @@ describe('ResourceName', () => {
 When adding a new API resource:
 
 1. **Create the resource file**
+
    ```typescript
    // js/src/resources/resource-name/resource-name.ts
-   import type { CheckoutPageClient } from '../../client'
+   import type { CheckoutPageClient } from '../../client';
 
    export class ResourceNameResource {
      constructor(private client: CheckoutPageClient) {}
@@ -152,35 +160,38 @@ When adding a new API resource:
        return this.client.request<ResourceType>({
          method: 'GET',
          path: `/v1/resource-name/${id}`,
-       })
+       });
      }
    }
    ```
 
 2. **Add types to types.ts**
+
    ```typescript
    export interface ResourceType {
-     id: string
+     id: string;
      // ... other fields
    }
    ```
 
 3. **Add the resource to the main SDK class**
+
    ```typescript
    // js/src/index.ts
-   import { ResourceNameResource } from './resources/resource-name/resource-name'
+   import { ResourceNameResource } from './resources/resource-name/resource-name';
 
    export class CheckoutPage {
-     public readonly resourceName: ResourceNameResource
+     public readonly resourceName: ResourceNameResource;
 
      constructor(options: CheckoutPageClientOptions) {
-       this.client = new CheckoutPageClient(options)
-       this.resourceName = new ResourceNameResource(this.client)
+       this.client = new CheckoutPageClient(options);
+       this.resourceName = new ResourceNameResource(this.client);
      }
    }
    ```
 
 4. **Write tests**
+
    ```typescript
    // js/src/resources/resource-name/resource-name.test.ts
    ```
@@ -196,32 +207,37 @@ The API structure is defined in `spec/openapi.json`. TypeScript types are automa
 ### When adding new endpoints:
 
 1. **Update the OpenAPI spec**
+
    ```bash
    # Edit spec/openapi.json
    ```
 
 2. **Generate TypeScript types**
+
    ```bash
    pnpm generate:types
    ```
 
 3. **Export convenience types** (optional)
+
    ```typescript
    // js/src/types.ts
-   export type NewResource = operations['resource/get']['responses'][200]['content']['application/json']
+   export type NewResource =
+     operations['resource/get']['responses'][200]['content']['application/json'];
    ```
 
 4. **Implement the resource class**
+
    ```typescript
    // js/src/resources/resource/resource.ts
-   import type { NewResource } from '../../types'
+   import type { NewResource } from '../../types';
 
    export class ResourceResource {
      async get(id: string): Promise<NewResource> {
        return this.client.request<NewResource>({
          method: 'GET',
          path: `/v1/resource/${id}`,
-       })
+       });
      }
    }
    ```

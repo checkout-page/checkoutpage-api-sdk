@@ -1,5 +1,5 @@
 /**
- * Type definitions for the CheckoutPage API
+ * Type definitions for the Checkout Page API
  *
  * This file exports commonly used types from the generated schema.
  * The full generated schema is available in ./generated/schema.ts
