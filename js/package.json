@@ -1,0 +1,55 @@
+{
+  "name": "@checkoutpage/sdk",
+  "version": "0.1.0",
+  "description": "Official JavaScript SDK for the CheckoutPage API",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "checkoutpage",
+    "checkout",
+    "payments",
+    "stripe",
+    "sdk",
+    "api"
+  ],
+  "author": "CheckoutPage",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/checkoutpage/checkoutpage-api-sdk.git",
+    "directory": "js"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "bugs": {
+    "url": "https://github.com/checkoutpage/checkoutpage-api-sdk/issues"
+  },
+  "homepage": "https://checkoutpage.com",
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "tsup": "^8.0.1",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

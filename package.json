@@ -1,0 +1,28 @@
+{
+  "name": "@checkoutpage/sdk-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo for CheckoutPage SDKs",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "generate:types": "tsx scripts/generate-types.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@typescript-eslint/eslint-plugin": "8.46.1",
+    "@typescript-eslint/parser": "8.46.1",
+    "eslint": "9.38.0",
+    "globals": "^16.4.0",
+    "openapi-typescript": "7.10.1",
+    "prettier": "3.2.5",
+    "tsx": "4.20.6",
+    "typescript": "5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

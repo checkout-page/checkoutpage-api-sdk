@@ -1,0 +1,53 @@
+name: Test JS SDK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'js/**'
+      - 'spec/**'
+      - '.github/workflows/test-js.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'js/**'
+      - 'spec/**'
+      - '.github/workflows/test-js.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm --filter @checkoutpage/sdk type-check
+
+      - name: Lint
+        run: pnpm --filter @checkoutpage/sdk lint
+
+      - name: Run tests
+        run: pnpm --filter @checkoutpage/sdk test
+
+      - name: Build
+        run: pnpm --filter @checkoutpage/sdk build

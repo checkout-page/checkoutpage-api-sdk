@@ -1,0 +1,92 @@
+name: Publish JS SDK
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.0)'
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate types from OpenAPI spec
+        run: pnpm generate:types
+
+      - name: Update version
+        run: |
+          cd js
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+      - name: Build package
+        run: pnpm --filter @checkoutpage/sdk build
+
+      - name: Run tests
+        run: pnpm --filter @checkoutpage/sdk test
+
+      - name: Type check
+        run: pnpm --filter @checkoutpage/sdk type-check
+
+      - name: Lint
+        run: pnpm --filter @checkoutpage/sdk lint
+
+      - name: Publish to npm
+        run: cd js && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add js/package.json
+          git commit -m "chore(js): release v${{ github.event.inputs.version }}"
+          git tag "js-v${{ github.event.inputs.version }}"
+          git push origin main
+          git push origin "js-v${{ github.event.inputs.version }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: js-v${{ github.event.inputs.version }}
+          release_name: JavaScript SDK v${{ github.event.inputs.version }}
+          body: |
+            ## JavaScript SDK v${{ github.event.inputs.version }}
+
+            ### Installation
+
+            ```bash
+            npm install @checkoutpage/sdk
+            ```
+
+            See [PUBLISHING.md](PUBLISHING.md) for authentication setup.
+
+            ### Changes
+
+            See the [changelog](js/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
