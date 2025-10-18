@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CustomerResource } from './customers'
-import { CheckoutPageClient } from '../../client'
-import type { Customer } from '../../types'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { CustomerResource } from './customers';
+import { CheckoutPageClient } from '../../client';
+import type { Customer } from '../../types';
 
 describe('CustomerResource', () => {
-  let client: CheckoutPageClient
-  let customerResource: CustomerResource
+  let client: CheckoutPageClient;
+  let customerResource: CustomerResource;
 
   beforeEach(() => {
-    client = new CheckoutPageClient({ apiKey: 'test_api_key' })
-    customerResource = new CustomerResource(client)
-  })
+    client = new CheckoutPageClient({ apiKey: 'test_api_key' });
+    customerResource = new CustomerResource(client);
+  });
 
   describe('get', () => {
     it('should fetch a customer by id', async () => {
@@ -21,22 +21,22 @@ describe('CustomerResource', () => {
         seller: 'seller123',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
-      }
+      };
 
-      vi.spyOn(client, 'request').mockResolvedValue(mockCustomer)
+      vi.spyOn(client, 'request').mockResolvedValue(mockCustomer);
 
-      const result = await customerResource.get('6812fe6e9f39b6760576f01c')
+      const result = await customerResource.get('6812fe6e9f39b6760576f01c');
 
-      expect(result).toEqual(mockCustomer)
+      expect(result).toEqual(mockCustomer);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v1/customers/6812fe6e9f39b6760576f01c',
-      })
-    })
+      });
+    });
 
     it('should throw error for missing customer id', async () => {
-      await expect(customerResource.get('')).rejects.toThrow('Customer ID is required')
-    })
+      await expect(customerResource.get('')).rejects.toThrow('Customer ID is required');
+    });
 
     it('should return customer with optional fields', async () => {
       const mockCustomer: Customer = {
@@ -70,16 +70,16 @@ describe('CustomerResource', () => {
         stripeCustomerId: 'cus_123',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-02T00:00:00.000Z',
-      }
+      };
 
-      vi.spyOn(client, 'request').mockResolvedValue(mockCustomer)
+      vi.spyOn(client, 'request').mockResolvedValue(mockCustomer);
 
-      const result = await customerResource.get('6812fe6e9f39b6760576f01c')
+      const result = await customerResource.get('6812fe6e9f39b6760576f01c');
 
-      expect(result).toEqual(mockCustomer)
-      expect(result.companyName).toBe('Test Company')
-      expect(result.address?.city).toBe('San Francisco')
-      expect(result.shipping?.name).toBe('Shipping Name')
-    })
-  })
-})
+      expect(result).toEqual(mockCustomer);
+      expect(result.companyName).toBe('Test Company');
+      expect(result.address?.city).toBe('San Francisco');
+      expect(result.shipping?.name).toBe('Shipping Name');
+    });
+  });
+});

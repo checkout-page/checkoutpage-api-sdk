@@ -1,6 +1,6 @@
 {
   "name": "@checkoutpage/sdk",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Official JavaScript SDK for the CheckoutPage API",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -38,7 +38,7 @@
     "directory": "js"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "bugs": {
     "url": "https://github.com/checkoutpage/checkoutpage-api-sdk/issues"

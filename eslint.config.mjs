@@ -1,7 +1,7 @@
-import js from '@eslint/js'
-import tseslint from '@typescript-eslint/eslint-plugin'
-import tsparser from '@typescript-eslint/parser'
-import globals from 'globals'
+import js from '@eslint/js';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsparser from '@typescript-eslint/parser';
+import globals from 'globals';
 
 export default [
   // Ignore patterns
@@ -38,6 +38,7 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
+      semi: ['error', 'always'],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -72,4 +73,4 @@ export default [
       },
     },
   },
-]
+];
