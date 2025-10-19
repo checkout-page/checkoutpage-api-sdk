@@ -65,6 +65,12 @@ const checkoutpage = new CheckoutPage({
 const customer = await checkoutpage.customers.get('6812fe6e9f39b6760576f01c');
 ```
 
+#### List customers
+
+```typescript
+const results = await checkoutpage.customers.list();
+```
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:
