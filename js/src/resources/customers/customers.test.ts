@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CustomerResource } from './customers';
 import { CheckoutPageClient } from '../../client';
-import type { Customer, CustomerList, CustomerListArgs } from '../../types';
+import type { Customer, CustomerList } from '../../types';
 
 describe('CustomerResource', () => {
   let client: CheckoutPageClient;
@@ -15,12 +15,14 @@ describe('CustomerResource', () => {
   describe('get', () => {
     it('should fetch a customer by id', async () => {
       const mockCustomer: Customer = {
-        id: '6812fe6e9f39b6760576f01c',
-        email: 'test@example.com',
-        name: 'Test Customer',
-        seller: 'seller123',
-        createdAt: '2024-01-01T00:00:00.000Z',
-        updatedAt: '2024-01-01T00:00:00.000Z',
+        data: {
+          id: '6812fe6e9f39b6760576f01c',
+          email: 'test@example.com',
+          name: 'Test Customer',
+          seller: 'seller123',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
       };
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomer);
@@ -28,6 +30,7 @@ describe('CustomerResource', () => {
       const result = await customerResource.get('6812fe6e9f39b6760576f01c');
 
       expect(result).toEqual(mockCustomer);
+      expect(result.data.id).toBe('6812fe6e9f39b6760576f01c');
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v1/customers/6812fe6e9f39b6760576f01c',
@@ -40,36 +43,38 @@ describe('CustomerResource', () => {
 
     it('should return customer with optional fields', async () => {
       const mockCustomer: Customer = {
-        id: '6812fe6e9f39b6760576f01c',
-        email: 'test@example.com',
-        name: 'Test Customer',
-        companyName: 'Test Company',
-        phone: '+1234567890',
-        billingEmail: 'billing@example.com',
-        address: {
-          line1: '123 Main St',
-          city: 'San Francisco',
-          state: 'CA',
-          postalCode: '94105',
-          country: 'US',
-        },
-        shipping: {
-          name: 'Shipping Name',
-          phone: '+0987654321',
+        data: {
+          id: '6812fe6e9f39b6760576f01c',
+          email: 'test@example.com',
+          name: 'Test Customer',
+          companyName: 'Test Company',
+          phone: '+1234567890',
+          billingEmail: 'billing@example.com',
           address: {
-            line1: '456 Shipping Ave',
-            city: 'Los Angeles',
+            line1: '123 Main St',
+            city: 'San Francisco',
             state: 'CA',
-            postalCode: '90001',
+            postalCode: '94105',
             country: 'US',
           },
+          shipping: {
+            name: 'Shipping Name',
+            phone: '+0987654321',
+            address: {
+              line1: '456 Shipping Ave',
+              city: 'Los Angeles',
+              state: 'CA',
+              postalCode: '90001',
+              country: 'US',
+            },
+          },
+          taxId: 'tax123',
+          taxIdType: 'us_ein',
+          seller: 'seller123',
+          stripeCustomerId: 'cus_123',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-02T00:00:00.000Z',
         },
-        taxId: 'tax123',
-        taxIdType: 'us_ein',
-        seller: 'seller123',
-        stripeCustomerId: 'cus_123',
-        createdAt: '2024-01-01T00:00:00.000Z',
-        updatedAt: '2024-01-02T00:00:00.000Z',
       };
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomer);
@@ -77,9 +82,9 @@ describe('CustomerResource', () => {
       const result = await customerResource.get('6812fe6e9f39b6760576f01c');
 
       expect(result).toEqual(mockCustomer);
-      expect(result.companyName).toBe('Test Company');
-      expect(result.address?.city).toBe('San Francisco');
-      expect(result.shipping?.name).toBe('Shipping Name');
+      expect(result.data.companyName).toBe('Test Company');
+      expect(result.data.address?.city).toBe('San Francisco');
+      expect(result.data.shipping?.name).toBe('Shipping Name');
     });
   });
 
@@ -109,14 +114,13 @@ describe('CustomerResource', () => {
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomerList);
 
-      const args: CustomerListArgs = {};
-      const result = await customerResource.list(args);
+      const result = await customerResource.list({});
 
       expect(result).toEqual(mockCustomerList);
       expect(result.data).toHaveLength(2);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
-        query: args,
+        query: {},
         path: '/v1/customers/',
       });
     });
@@ -139,18 +143,20 @@ describe('CustomerResource', () => {
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomerList);
 
-      const args: CustomerListArgs = {
-        limit: '10',
-        skip: '5',
-      };
-      const result = await customerResource.list(args);
+      const result = await customerResource.list({
+        limit: 10,
+        skip: 5,
+      });
 
       expect(result).toEqual(mockCustomerList);
       expect(result.has_more).toBe(true);
       expect(result.total).toBe(100);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
-        query: args,
+        query: {
+          limit: '10',
+          skip: '5',
+        },
         path: '/v1/customers/',
       });
     });
@@ -172,16 +178,18 @@ describe('CustomerResource', () => {
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomerList);
 
-      const args: CustomerListArgs = {
+      const result = await customerResource.list({
         search: 'search@example.com',
-        limit: '10',
-      };
-      const result = await customerResource.list(args);
+        limit: 10,
+      });
 
       expect(result).toEqual(mockCustomerList);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
-        query: args,
+        query: {
+          search: 'search@example.com',
+          limit: '10',
+        },
         path: '/v1/customers/',
       });
     });
@@ -194,8 +202,7 @@ describe('CustomerResource', () => {
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomerList);
 
-      const args: CustomerListArgs = {};
-      const result = await customerResource.list(args);
+      const result = await customerResource.list({});
 
       expect(result).toEqual(mockCustomerList);
       expect(result.data).toHaveLength(0);
@@ -244,8 +251,7 @@ describe('CustomerResource', () => {
 
       vi.spyOn(client, 'request').mockResolvedValue(mockCustomerList);
 
-      const args: CustomerListArgs = { limit: '1' };
-      const result = await customerResource.list(args);
+      const result = await customerResource.list({ limit: 1 });
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].companyName).toBe('Test Company');

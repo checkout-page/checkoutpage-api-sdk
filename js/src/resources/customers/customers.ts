@@ -1,5 +1,5 @@
 import type { CheckoutPageClient } from '../../client';
-import type { Customer, CustomerList, CustomerListArgs } from '../../types';
+import type { Customer, CustomerList, CustomerListParams } from '../../types';
 
 export class CustomerResource {
   constructor(private client: CheckoutPageClient) {}
@@ -15,10 +15,16 @@ export class CustomerResource {
     });
   }
 
-  async list(args: CustomerListArgs): Promise<CustomerList> {
+  async list(args: CustomerListParams = {}): Promise<CustomerList> {
+    const query: Record<string, string | undefined> = {
+      ...args,
+      limit: args.limit?.toString(),
+      skip: args.skip?.toString(),
+    };
+
     return this.client.request<CustomerList>({
       method: 'GET',
-      query: args,
+      query,
       path: '/v1/customers/',
     });
   }

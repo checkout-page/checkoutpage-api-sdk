@@ -17,9 +17,18 @@ export type Operations = operations;
 export type Customer = operations['customers/get']['responses'][200]['content']['application/json'];
 export type CustomerList =
   operations['customers/list']['responses'][200]['content']['application/json'];
+
 export type CustomerListArgs = operations['customers/list']['parameters']['query'];
-export type Address = NonNullable<Customer['address']>;
-export type Shipping = NonNullable<Customer['shipping']>;
+
+export type CustomerListParams =
+  | (Omit<NonNullable<CustomerListArgs>, 'limit' | 'skip'> & {
+      limit?: number;
+      skip?: number;
+    })
+  | undefined;
+
+export type Address = NonNullable<Customer['data']['address']>;
+export type Shipping = NonNullable<Customer['data']['shipping']>;
 
 export type Coupon =
   operations['coupons/list']['responses'][200]['content']['application/json']['data'][number];
