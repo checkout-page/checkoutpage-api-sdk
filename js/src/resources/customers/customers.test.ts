@@ -109,6 +109,7 @@ describe('CustomerResource', () => {
             updatedAt: '2024-01-02T00:00:00.000Z',
           },
         ],
+        total: 2,
         has_more: false,
       };
 
@@ -173,6 +174,7 @@ describe('CustomerResource', () => {
             updatedAt: '2023-12-31T00:00:00.000Z',
           },
         ],
+        total: 1,
         has_more: false,
       };
 
@@ -197,6 +199,7 @@ describe('CustomerResource', () => {
     it('should return empty list when no customers exist', async () => {
       const mockCustomerList: CustomerList = {
         data: [],
+        total: 0,
         has_more: false,
       };
 
@@ -246,6 +249,7 @@ describe('CustomerResource', () => {
             updatedAt: '2024-01-02T00:00:00.000Z',
           },
         ],
+        total: 1,
         has_more: false,
       };
 
