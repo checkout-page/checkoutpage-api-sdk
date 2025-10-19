@@ -122,12 +122,17 @@ pnpm build
 
 ## Testing Guidelines
 
+We have two types of tests in this project:
+
+### Unit Tests
+
 - Write unit tests for all new functionality
 - Tests should be co-located with source files (e.g., `customers.test.ts` next to `customers.ts`)
 - Use descriptive test names that explain what is being tested
 - Mock external dependencies (HTTP requests, etc.)
+- Run with: `pnpm test` or `pnpm test:unit`
 
-### Test Structure
+#### Unit Test Structure
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -142,6 +147,88 @@ describe('ResourceName', () => {
   });
 });
 ```
+
+### Integration Tests
+
+Integration tests make real API requests to validate the full request/response cycle. These tests are optional and require proper credentials.
+
+#### Setup for Checkout Page Developers (Local API)
+
+1. **Copy the environment template**
+
+   ```bash
+   cd js
+   cp .env.test.example .env.test
+   ```
+
+2. **Configure for local development**
+
+   Edit `.env.test`:
+
+   ```bash
+   CHECKOUTPAGE_API_KEY=your_local_api_key
+   CHECKOUTPAGE_BASE_URL=https://api.checkoutpage.dev
+   TEST_CUSTOMER_ID=6812fe6e9f39b6760576f01c
+   TEST_CUSTOMER_EMAIL=test@example.com
+   ```
+
+3. **Run integration tests**
+
+   ```bash
+   pnpm test:integration
+   ```
+
+#### Setup for External Contributors (Production API)
+
+1. **Copy the environment template**
+
+   ```bash
+   cd js
+   cp .env.test.example .env.test
+   ```
+
+2. **Configure for production**
+
+   Edit `.env.test`:
+
+   ```bash
+   CHECKOUTPAGE_API_KEY=your_production_api_key
+   CHECKOUTPAGE_BASE_URL=https://api.checkoutpage.com
+   TEST_CUSTOMER_ID=<your_customer_id>
+   TEST_CUSTOMER_EMAIL=<your_customer_email>
+   ```
+
+3. **Run integration tests**
+
+   ```bash
+   pnpm test:integration
+   ```
+
+#### Integration Test Guidelines
+
+- Integration tests are named with `.integration.test.ts` suffix
+- Tests automatically skip if no API key is configured
+- Use existing customer data (specified in `.env.test`)
+- Validate response structure matches TypeScript types
+- Test both success and error scenarios
+
+#### Test Commands
+
+```bash
+# Run only unit tests (default)
+pnpm test
+
+# Run only integration tests
+pnpm test:integration
+
+# Run all tests (unit + integration)
+pnpm test:all
+
+# Watch mode (unit tests only)
+pnpm test:watch
+```
+
+**Note**: Integration tests are not required for pull requests. Unit tests with mocked dependencies are sufficient for most contributions.
 
 ## Adding New Resources
 
