@@ -20,12 +20,10 @@ export type CustomerList =
 
 export type CustomerListArgs = operations['customers/list']['parameters']['query'];
 
-export type CustomerListParams =
-  | (Omit<NonNullable<CustomerListArgs>, 'limit' | 'skip'> & {
-      limit?: number;
-      skip?: number;
-    })
-  | undefined;
+export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit' | 'skip'> & {
+  limit?: number;
+  skip?: number;
+};
 
 export type Address = NonNullable<Customer['data']['address']>;
 export type Shipping = NonNullable<Customer['data']['shipping']>;
