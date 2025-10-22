@@ -28,8 +28,17 @@ export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit' | '
 export type Address = NonNullable<Customer['data']['address']>;
 export type Shipping = NonNullable<Customer['data']['shipping']>;
 
-export type Coupon =
-  operations['coupons/list']['responses'][200]['content']['application/json']['data'][number];
+export type CouponList =
+  operations['coupons/list']['responses'][200]['content']['application/json'];
+
+export type Coupon = CouponList['data'][number];
+
+export type CouponListArgs = operations['coupons/list']['parameters']['query'];
+
+export type CouponListParams = Omit<NonNullable<CouponListArgs>, 'limit' | 'skip'> & {
+  limit?: number;
+  skip?: number;
+};
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

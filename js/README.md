@@ -71,6 +71,24 @@ const customer = await checkoutpage.customers.get('6812fe6e9f39b6760576f01c');
 const results = await checkoutpage.customers.list();
 ```
 
+### Coupons
+
+#### List coupons
+
+```typescript
+const results = await checkoutpage.coupons.list();
+```
+
+With pagination and filtering:
+
+```typescript
+const results = await checkoutpage.coupons.list({
+  search: '10off',
+  limit: 50,
+  skip: 0,
+});
+```
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:
