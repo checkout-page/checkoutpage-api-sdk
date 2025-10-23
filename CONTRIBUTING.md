@@ -14,7 +14,7 @@ Thank you for your interest in contributing to the Checkout Page API SDK! This d
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/checkoutpage/checkoutpage-api-sdk.git
+   git clone https://github.com/checkout-page/checkoutpage-api-sdk.git
    cd checkoutpage-api-sdk
    ```
 
@@ -88,6 +88,7 @@ pnpm build
    ```
 
 2. **Make your changes**
+
    - Write code following the existing patterns
    - Add tests for new functionality
    - Update documentation as needed

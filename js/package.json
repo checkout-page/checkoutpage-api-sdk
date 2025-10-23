@@ -38,14 +38,14 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/checkoutpage/checkoutpage-api-sdk.git",
+    "url": "https://github.com/checkout-page/checkoutpage-api-sdk.git",
     "directory": "js"
   },
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/checkoutpage/checkoutpage-api-sdk/issues"
+    "url": "https://github.com/checkout-page/checkoutpage-api-sdk/issues"
   },
   "homepage": "https://checkoutpage.com",
   "devDependencies": {
