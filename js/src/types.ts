@@ -77,6 +77,19 @@ export type CreateCouponParams =
   | PercentNonRepeating
   | PercentRepeating;
 
+// Payments
+export type PaymentList =
+  operations['payments/list']['responses'][200]['content']['application/json'];
+
+export type Payment = PaymentList['data'][number];
+
+export type PaymentListArgs = operations['payments/list']['parameters']['query'];
+
+export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit' | 'skip'> & {
+  limit?: number;
+  skip?: number;
+};
+
 // Bookings
 
 // Re-export the generated types for advanced usage

@@ -20,7 +20,7 @@
     "test": "vitest run --exclude '**/*.integration.test.ts'",
     "test:unit": "vitest run --exclude '**/*.integration.test.ts'",
     "test:integration": "NODE_OPTIONS='--use-system-ca' vitest run src/resources/**/*.integration.test.ts",
-    "test:integration:coupons": "NODE_OPTIONS='--use-system-ca' vitest run src/resources/coupons/coupons.integration.test.ts",
+    "test:integration:payments": "NODE_OPTIONS='--use-system-ca' vitest run src/resources/payments/payments.integration.test.ts",
     "test:all": "NODE_OPTIONS='--use-system-ca' vitest run",
     "test:watch": "vitest --exclude '**/*.integration.test.ts'",
     "lint": "eslint src --ext .ts",
