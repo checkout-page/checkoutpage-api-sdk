@@ -102,6 +102,14 @@ const results = await checkoutpage.coupons.create({
 });
 ```
 
+### Payments
+
+#### List payments
+
+```typescript
+const results = await checkoutpage.payments.list();
+```
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:

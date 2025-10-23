@@ -37,6 +37,8 @@ npx ts-node get-customer.ts
 - `get-customer.ts` - Retrieve a customer by ID
 - `get-customers.ts` - List all customers
 - `get-coupons.ts` - List all coupons
+- `create-coupon.ts` - Create a coupon
+- `get-payments.ts` - List all payments
 
 ## Getting Your API Key
 
