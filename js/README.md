@@ -205,5 +205,5 @@ MIT
 ## Support
 
 - Documentation: https://docs.checkoutpage.com
-- GitHub Issues: https://github.com/checkoutpage/checkoutpage-api-sdk/issues
+- GitHub Issues: https://github.com/checkout-page/checkoutpage-api-sdk/issues
 - Email: support@checkoutpage.com
