@@ -13,7 +13,7 @@ export type Schemas = components['schemas'];
 // Export all operations
 export type Operations = operations;
 
-// Commonly used types exported for convenience
+// Customers
 export type Customer = operations['customers/get']['responses'][200]['content']['application/json'];
 export type CustomerList =
   operations['customers/list']['responses'][200]['content']['application/json'];
@@ -28,6 +28,7 @@ export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit' | '
 export type Address = NonNullable<Customer['data']['address']>;
 export type Shipping = NonNullable<Customer['data']['shipping']>;
 
+// Coupons
 export type CouponList =
   operations['coupons/list']['responses'][200]['content']['application/json'];
 
@@ -75,6 +76,8 @@ export type CreateCouponParams =
   | AmountRepeating
   | PercentNonRepeating
   | PercentRepeating;
+
+// Bookings
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';
