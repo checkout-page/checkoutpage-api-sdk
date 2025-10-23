@@ -332,8 +332,6 @@ The API structure is defined in `spec/openapi.json`. TypeScript types are automa
 
 5. **Add tests and documentation**
 
-See [TYPE_GENERATION.md](TYPE_GENERATION.md) for detailed information about working with generated types.
-
 ## Pull Request Process
 
 1. Ensure all tests pass
