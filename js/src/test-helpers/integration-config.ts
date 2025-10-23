@@ -6,6 +6,7 @@ export interface IntegrationConfig {
   baseUrl: string;
   testCustomerId: string;
   testCustomerEmail: string;
+  testSellerId: string;
 }
 
 export function loadIntegrationConfig(): IntegrationConfig {
@@ -16,6 +17,7 @@ export function loadIntegrationConfig(): IntegrationConfig {
   const baseUrl = process.env.CHECKOUTPAGE_BASE_URL || 'https://api.checkoutpage.com';
   const testCustomerId = process.env.TEST_CUSTOMER_ID || '';
   const testCustomerEmail = process.env.TEST_CUSTOMER_EMAIL || '';
+  const testSellerId = process.env.TEST_SELLER_ID || '';
 
   if (!apiKey) {
     throw new Error(
@@ -32,5 +34,6 @@ export function loadIntegrationConfig(): IntegrationConfig {
     baseUrl,
     testCustomerId,
     testCustomerEmail,
+    testSellerId,
   };
 }

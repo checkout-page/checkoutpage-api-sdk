@@ -32,6 +32,8 @@ export type CouponList =
   operations['coupons/list']['responses'][200]['content']['application/json'];
 
 export type Coupon = CouponList['data'][number];
+export type CreateCouponResponse =
+  operations['coupons/create']['responses']['201']['content']['application/json'];
 
 export type CouponListArgs = operations['coupons/list']['parameters']['query'];
 
@@ -39,6 +41,40 @@ export type CouponListParams = Omit<NonNullable<CouponListArgs>, 'limit' | 'skip
   limit?: number;
   skip?: number;
 };
+
+type CouponCreateArgs = NonNullable<
+  operations['coupons/create']['requestBody']
+>['content']['application/json'];
+
+type NonRepeatingParams = CouponCreateArgs & {
+  duration: 'once' | 'forever';
+  durationInMonths?: never;
+};
+
+type RepeatingParams = CouponCreateArgs & {
+  duration: 'repeating';
+  durationInMonths: number;
+};
+
+export type AmountNonRepeating = { type: 'amount' } & Omit<NonRepeatingParams, 'percentOff'>;
+
+export type AmountRepeating = { type: 'amount' } & Omit<RepeatingParams, 'percentOff'>;
+
+export type PercentNonRepeating = { type: 'percent' } & Omit<
+  NonRepeatingParams,
+  'amountOff' | 'currency'
+>;
+
+export type PercentRepeating = { type: 'percent' } & Omit<
+  RepeatingParams,
+  'amountOff' | 'currency'
+>;
+
+export type CreateCouponParams =
+  | AmountNonRepeating
+  | AmountRepeating
+  | PercentNonRepeating
+  | PercentRepeating;
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

@@ -1,6 +1,7 @@
 import {
   APIError,
   AuthenticationError,
+  ConflictError,
   NotFoundError,
   RateLimitError,
   ValidationError,
@@ -49,18 +50,8 @@ export class CheckoutPageClient {
       fetchOptions.body = JSON.stringify(options.body);
     }
 
-    try {
-      const response = await fetch(url, fetchOptions);
-      return await this.handleResponse<T>(response);
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw new APIError(
-        `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        0
-      );
-    }
+    const response = await fetch(url, fetchOptions);
+    return await this.handleResponse<T>(response);
   }
 
   private buildUrl(
@@ -100,6 +91,8 @@ export class CheckoutPageClient {
           throw new AuthenticationError(message);
         case 404:
           throw new NotFoundError(message);
+        case 409:
+          throw new ConflictError(message);
         case 400:
         case 422:
           throw new ValidationError(message);

@@ -22,6 +22,14 @@ export class NotFoundError extends CheckoutPageError {
   }
 }
 
+export class ConflictError extends CheckoutPageError {
+  constructor(message = 'Conflict - the created resource already exists.') {
+    super(message);
+    this.name = 'ConflictError';
+    Object.setPrototypeOf(this, ConflictError.prototype);
+  }
+}
+
 export class RateLimitError extends CheckoutPageError {
   constructor(message = 'Rate limit exceeded. Please try again later.') {
     super(message);
