@@ -89,6 +89,19 @@ const results = await checkoutpage.coupons.list({
 });
 ```
 
+#### Create coupon
+
+```typescript
+const results = await checkoutpage.coupons.create({
+  type: 'amount',
+  label: 'Spring Sale',
+  code: 'SPRING25',
+  amountOff: 2500,
+  currency: 'usd',
+  duration: 'once',
+});
+```
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:
@@ -98,6 +111,7 @@ import {
   CheckoutPageError,
   AuthenticationError,
   NotFoundError,
+  ConflictError,
   RateLimitError,
   ValidationError,
   APIError,
@@ -110,6 +124,8 @@ try {
     console.error('Invalid API key');
   } else if (error instanceof NotFoundError) {
     console.error('Customer not found');
+  } else if (error instanceof ConflictError) {
+    console.error('Resource already exists');
   } else if (error instanceof RateLimitError) {
     console.error('Rate limit exceeded');
   } else if (error instanceof ValidationError) {
@@ -125,6 +141,7 @@ try {
 - `CheckoutPageError` - Base error class
 - `AuthenticationError` - Invalid API key or authentication failure (401, 403)
 - `NotFoundError` - Resource not found (404)
+- `ConflictError` - Resource already exists (409)
 - `RateLimitError` - Rate limit exceeded (429)
 - `ValidationError` - Request validation failed (400, 422)
 - `APIError` - Generic API error with status code and response
