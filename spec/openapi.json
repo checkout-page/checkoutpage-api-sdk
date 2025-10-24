@@ -978,7 +978,7 @@
     },
     "/v1/bookings/": {
       "get": {
-        "summary": "List all event bookings",
+        "summary": "List all bookings",
         "description": "Returns a paginated list of your event bookings. The bookings are sorted in order, with the most recent bookings appearing first.",
         "operationId": "events/bookings",
         "security": [{ "api_key_auth": [] }],
