@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CouponResource } from './coupons';
-import { CheckoutPageClient } from '../../client';
+import { CheckoutPageApiClient } from '../../client';
 import { CouponList, CreateCouponResponse } from '../../types';
 
 describe('CouponResource', () => {
-  let client: CheckoutPageClient;
+  let client: CheckoutPageApiClient;
   let couponResource: CouponResource;
 
   beforeEach(() => {
-    client = new CheckoutPageClient({ apiKey: 'test_api_key' });
+    client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     couponResource = new CouponResource(client);
   });
 

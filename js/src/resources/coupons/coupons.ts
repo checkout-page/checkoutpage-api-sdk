@@ -1,4 +1,4 @@
-import type { CheckoutPageClient } from '../../client';
+import type { CheckoutPageApiClient } from '../../client';
 import {
   CouponList,
   CouponListParams,
@@ -7,7 +7,7 @@ import {
 } from '../../types';
 
 export class CouponResource {
-  constructor(private client: CheckoutPageClient) {}
+  constructor(private client: CheckoutPageApiClient) {}
 
   async list(args: CouponListParams = {}): Promise<CouponList> {
     const query: Record<string, string | undefined> = {

@@ -239,10 +239,10 @@ When adding a new API resource:
 
    ```typescript
    // js/src/resources/resource-name/resource-name.ts
-   import type { CheckoutPageClient } from '../../client';
+   import type { CheckoutPageApiClient } from '../../client';
 
    export class ResourceNameResource {
-     constructor(private client: CheckoutPageClient) {}
+     constructor(private client: CheckoutPageApiClient) {}
 
      async get(id: string): Promise<ResourceType> {
        return this.client.request<ResourceType>({
@@ -268,11 +268,11 @@ When adding a new API resource:
    // js/src/index.ts
    import { ResourceNameResource } from './resources/resource-name/resource-name';
 
-   export class CheckoutPage {
+   export class CheckoutPageClient {
      public readonly resourceName: ResourceNameResource;
 
-     constructor(options: CheckoutPageClientOptions) {
-       this.client = new CheckoutPageClient(options);
+     constructor(options: CheckoutPageApiClientOptions) {
+       this.client = new CheckoutPageApiClient(options);
        this.resourceName = new ResourceNameResource(this.client);
      }
    }

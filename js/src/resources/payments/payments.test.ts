@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PaymentResource } from './payments';
-import { CheckoutPageClient } from '../../client';
+import { CheckoutPageApiClient } from '../../client';
 import type { PaymentList } from '../../types';
 
 describe('PaymentResource', () => {
-  let client: CheckoutPageClient;
+  let client: CheckoutPageApiClient;
   let paymentResource: PaymentResource;
 
   beforeEach(() => {
-    client = new CheckoutPageClient({ apiKey: 'test_api_key' });
+    client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     paymentResource = new PaymentResource(client);
   });
 

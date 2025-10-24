@@ -1,8 +1,8 @@
-import type { CheckoutPageClient } from '../../client';
+import type { CheckoutPageApiClient } from '../../client';
 import type { PaymentList, PaymentListParams } from '../../types';
 
 export class PaymentResource {
-  constructor(private client: CheckoutPageClient) {}
+  constructor(private client: CheckoutPageApiClient) {}
 
   async list(args: PaymentListParams = {}): Promise<PaymentList> {
     const query: Record<string, string | undefined> = {

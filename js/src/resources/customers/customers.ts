@@ -1,8 +1,8 @@
-import type { CheckoutPageClient } from '../../client';
+import type { CheckoutPageApiClient } from '../../client';
 import type { Customer, CustomerList, CustomerListParams } from '../../types';
 
 export class CustomerResource {
-  constructor(private client: CheckoutPageClient) {}
+  constructor(private client: CheckoutPageApiClient) {}
 
   async get(customerId: string): Promise<Customer> {
     if (!customerId) {

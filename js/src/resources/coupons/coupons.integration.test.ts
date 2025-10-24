@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPage, ValidationError } from '../../index';
+import { CheckoutPageClient, ValidationError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import {
   AmountNonRepeating,
@@ -10,19 +10,19 @@ import {
 import { ConflictError } from '../../errors';
 
 describe('CouponResource Integration Tests', () => {
-  let client: CheckoutPage;
+  let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
 
   beforeAll(() => {
     config = loadIntegrationConfig();
 
-    client = new CheckoutPage({
+    client = new CheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
     });
   });
 
-  describe.skip('list', () => {
+  describe('list', () => {
     it('should fetch a list of coupons', async () => {
       const result = await client.coupons.list();
 

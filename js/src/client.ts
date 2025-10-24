@@ -7,7 +7,7 @@ import {
   ValidationError,
 } from './errors';
 
-export interface CheckoutPageClientOptions {
+export interface CheckoutPageApiClientOptions {
   apiKey: string;
   baseUrl?: string;
 }
@@ -19,11 +19,11 @@ export interface RequestOptions {
   query?: Record<string, string | number | boolean | undefined>;
 }
 
-export class CheckoutPageClient {
+export class CheckoutPageApiClient {
   private readonly apiKey: string;
   private readonly baseUrl: string;
 
-  constructor(options: CheckoutPageClientOptions) {
+  constructor(options: CheckoutPageApiClientOptions) {
     if (!options.apiKey) {
       throw new Error('API key is required');
     }

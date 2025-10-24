@@ -14,9 +14,9 @@ The official JavaScript SDK with full TypeScript support.
 - **Status**: Active development
 
 ```typescript
-import { CheckoutPage } from '@checkoutpage/sdk';
+import { CheckoutPageClient } from '@checkoutpage/sdk';
 
-const checkoutpage = new CheckoutPage({ apiKey: 'YOUR_API_KEY' });
+const checkoutpage = new CheckoutPageClient({ apiKey: 'YOUR_API_KEY' });
 const customer = await checkoutpage.customers.get('customer_id');
 ```
 
@@ -41,9 +41,9 @@ Go SDK planned for future release.
 3. **Start using the SDK**:
 
    ```typescript
-   import { CheckoutPage } from '@checkoutpage/sdk';
+   import { CheckoutPageClient } from '@checkoutpage/sdk';
 
-   const checkoutpage = new CheckoutPage({
+   const checkoutpage = new CheckoutPageClient({
      apiKey: process.env.CHECKOUTPAGE_API_KEY,
    });
    ```

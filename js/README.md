@@ -23,9 +23,9 @@ yarn add @checkoutpage/sdk
 ## Quick Start
 
 ```typescript
-import { CheckoutPage } from '@checkoutpage/sdk';
+import { CheckoutPageClient } from '@checkoutpage/sdk';
 
-const checkoutpage = new CheckoutPage({
+const checkoutpage = new CheckoutPageClient({
   apiKey: 'YOUR_API_KEY',
 });
 
@@ -39,7 +39,7 @@ console.log(customer);
 The SDK requires an API key for authentication. You can obtain your API key from the [Checkout Page Dashboard](https://checkoutpage.com).
 
 ```typescript
-const checkoutpage = new CheckoutPage({
+const checkoutpage = new CheckoutPageClient({
   apiKey: process.env.CHECKOUTPAGE_API_KEY,
 });
 ```
@@ -49,7 +49,7 @@ const checkoutpage = new CheckoutPage({
 For testing or custom environments, you can override the base URL:
 
 ```typescript
-const checkoutpage = new CheckoutPage({
+const checkoutpage = new CheckoutPageClient({
   apiKey: 'YOUR_API_KEY',
   baseUrl: 'https://custom-api.example.com',
 });
