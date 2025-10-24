@@ -1,6 +1,6 @@
 {
   "name": "@checkoutpage/sdk",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Official JavaScript SDK for the Checkout Page API",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
