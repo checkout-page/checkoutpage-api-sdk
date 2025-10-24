@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
-describe('PaymentResource Integration Tests', () => {
+describe('SubscriptionResource Integration Tests', () => {
   let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
 
@@ -16,8 +16,8 @@ describe('PaymentResource Integration Tests', () => {
   });
 
   describe('list', () => {
-    it('should fetch a list of payments', async () => {
-      const result = await client.payments.list();
+    it('should fetch a list of subscriptions', async () => {
+      const result = await client.subscriptions.list();
 
       expect(result).toHaveProperty('data');
       expect(result).toHaveProperty('has_more');
@@ -26,23 +26,19 @@ describe('PaymentResource Integration Tests', () => {
       expect(typeof result.has_more).toBe('boolean');
       expect(typeof result.total).toBe('number');
 
-      for (const payment of result.data) {
-        expect(payment).toHaveProperty('id');
-        expect(payment).toHaveProperty('amount');
-        expect(payment).toHaveProperty('status');
-        expect(payment).toHaveProperty('taxBreakdown');
-        expect(payment).toHaveProperty('createdAt');
-        expect(payment).toHaveProperty('updatedAt');
+      for (const subscription of result.data) {
+        expect(subscription).toHaveProperty('id');
+        expect(subscription).toHaveProperty('amount');
+        expect(subscription).toHaveProperty('createdAt');
+        expect(subscription).toHaveProperty('updatedAt');
 
-        expect(typeof payment.id).toBe('string');
-        expect(typeof payment.amount).toBe('number');
-        expect(typeof payment.status).toBe('string');
-        expect(Array.isArray(payment.taxBreakdown)).toBe(true);
+        expect(typeof subscription.id).toBe('string');
+        expect(typeof subscription.amount).toBe('number');
       }
     });
 
     it('should respect limit pagination parameter', async () => {
-      const result = await client.payments.list({
+      const result = await client.subscriptions.list({
         limit: 2,
       });
 
@@ -51,12 +47,12 @@ describe('PaymentResource Integration Tests', () => {
 
     it('should respect skip pagination parameter', async () => {
       // Get first page
-      const firstPage = await client.payments.list({
+      const firstPage = await client.subscriptions.list({
         limit: 1,
       });
 
       // Get second page
-      const secondPage = await client.payments.list({
+      const secondPage = await client.subscriptions.list({
         limit: 1,
         skip: 1,
       });
@@ -66,58 +62,58 @@ describe('PaymentResource Integration Tests', () => {
       }
     });
 
-    it('should filter payments by status', async () => {
-      const result = await client.payments.list({
-        status: 'paid',
+    it('should filter subscriptions by status', async () => {
+      const result = await client.subscriptions.list({
+        status: 'active',
       });
 
       expect(result).toHaveProperty('data');
       expect(Array.isArray(result.data)).toBe(true);
 
-      for (const payment of result.data) {
-        expect(payment.status).toBe('paid');
+      for (const subscription of result.data) {
+        expect(subscription.status).toBe('active');
       }
     });
 
-    it('should support searching payments', async () => {
-      const result = await client.payments.list({
+    it('should support searching subscriptions', async () => {
+      const result = await client.subscriptions.list({
         limit: 10,
       });
 
       if (result.data.length > 0 && result.data[0].customerEmail) {
-        const searchResult = await client.payments.list({
+        const searchResult = await client.subscriptions.list({
           search: result.data[0].customerEmail,
         });
 
         expect(Array.isArray(searchResult.data)).toBe(true);
       } else {
-        throw Error();
+        throw Error('No subscription with customerEmail found for search test');
       }
     });
 
-    it('should filter payments by pageId if available', async () => {
-      const result = await client.payments.list({
+    it('should filter subscriptions by pageId if available', async () => {
+      const result = await client.subscriptions.list({
         limit: 1,
       });
 
       if (result.data.length > 0 && result.data[0].pageId) {
-        const pageFilterResult = await client.payments.list({
+        const pageFilterResult = await client.subscriptions.list({
           pageId: result.data[0].pageId,
         });
 
         expect(Array.isArray(pageFilterResult.data)).toBe(true);
 
-        for (const payment of pageFilterResult.data) {
-          expect(payment.pageId).toBe(result.data[0].pageId);
+        for (const subscription of pageFilterResult.data) {
+          expect(subscription.pageId).toBe(result.data[0].pageId);
         }
       } else {
-        throw Error();
+        throw Error('No subscription with pageId found for filter test');
       }
     });
 
     it('should combine multiple filters', async () => {
-      const result = await client.payments.list({
-        status: 'paid',
+      const result = await client.subscriptions.list({
+        status: 'active',
         limit: 5,
         skip: 0,
       });
@@ -125,8 +121,8 @@ describe('PaymentResource Integration Tests', () => {
       expect(Array.isArray(result.data)).toBe(true);
       expect(result.data.length).toBeLessThanOrEqual(5);
 
-      for (const payment of result.data) {
-        expect(payment.status).toBe('paid');
+      for (const subscription of result.data) {
+        expect(subscription.status).toBe('active');
       }
     });
   });

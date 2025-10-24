@@ -100,6 +100,26 @@ const results = await checkoutpage.coupons.create({
 });
 ```
 
+### Subscriptions
+
+#### List subscriptions
+
+```typescript
+const results = await checkoutpage.subscriptions.list();
+```
+
+With pagination and filtering:
+
+```typescript
+const results = await checkoutpage.subscriptions.list({
+  search: 'customer@example.com',
+  status: 'active',
+  pageId: '67fcbdac6a91c25ef2d3534a',
+  limit: 50,
+  skip: 0,
+});
+```
+
 ### Payments
 
 #### List payments

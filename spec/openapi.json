@@ -869,12 +869,12 @@
                               "type": "string",
                               "enum": ["UNCHECKEDIN", "CHECKEDIN"]
                             },
-                            "originalPrice": { "type": "integer", "exclusiveMinimum": 0 },
-                            "discountAmount": { "type": "integer", "exclusiveMinimum": 0 },
-                            "feeAmount": { "type": "integer", "exclusiveMinimum": 0 },
-                            "taxAmount": { "type": "integer", "exclusiveMinimum": 0 },
-                            "couponAmount": { "type": "integer", "exclusiveMinimum": 0 },
-                            "revenue": { "type": "integer", "exclusiveMinimum": 0 },
+                            "originalPrice": { "type": "integer" },
+                            "discountAmount": { "type": "integer" },
+                            "feeAmount": { "type": "integer" },
+                            "taxAmount": { "type": "integer" },
+                            "couponAmount": { "type": "integer" },
+                            "revenue": { "type": "integer" },
                             "currency": { "type": "string" },
                             "livemode": { "type": "boolean" },
                             "metadata": {
@@ -884,15 +884,15 @@
                                 "properties": {
                                   "key": { "type": "string" },
                                   "value": { "type": "string" },
-                                  "addedAt": { "type": "string", "format": "date" }
+                                  "addedAt": { "type": "string", "format": "date-time" }
                                 },
                                 "required": ["key", "value", "addedAt"]
                               }
                             },
-                            "orderedAt": { "type": "string", "format": "date" },
-                            "canceledAt": { "type": "string", "format": "date" },
-                            "createdAt": { "type": "string", "format": "date" },
-                            "updatedAt": { "type": "string", "format": "date" }
+                            "orderedAt": { "type": "string", "format": "date-time" },
+                            "canceledAt": { "type": "string", "format": "date-time" },
+                            "createdAt": { "type": "string", "format": "date-time" },
+                            "updatedAt": { "type": "string", "format": "date-time" }
                           },
                           "required": [
                             "id",
@@ -1582,15 +1582,8 @@
                           "screenWidth": { "type": "number" },
                           "visitId": { "type": "string" },
                           "queryParameters": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "key": { "type": "string" },
-                                "value": { "type": "string" }
-                              },
-                              "required": ["key", "value"]
-                            }
+                            "type": "object",
+                            "additionalProperties": { "type": "string" }
                           },
                           "stripePaymentIntentId": { "type": "string" },
                           "stripePaymentIntentClientSecret": { "type": "string" },

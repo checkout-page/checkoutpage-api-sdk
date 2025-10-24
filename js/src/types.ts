@@ -90,6 +90,19 @@ export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit' | 'sk
   skip?: number;
 };
 
+// Subscriptions
+export type SubscriptionList =
+  operations['subscriptions/list']['responses'][200]['content']['application/json'];
+
+export type Subscription = SubscriptionList['data'][number];
+
+export type SubscriptionListArgs = operations['subscriptions/list']['parameters']['query'];
+
+export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'limit' | 'skip'> & {
+  limit?: number;
+  skip?: number;
+};
+
 // Bookings
 
 // Re-export the generated types for advanced usage
