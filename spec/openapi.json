@@ -44,7 +44,6 @@
           "id": { "type": "string" },
           "orderId": { "type": "string" },
           "orderStatus": { "type": "string" },
-          "stripePaymentId": { "type": "string" },
           "customerEmail": { "type": "string" },
           "customerId": { "type": "string" },
           "sellerId": { "type": "string" },
@@ -89,8 +88,6 @@
           "stripeTaxCalculationId": { "type": "string" },
           "stripeTaxTransactionId": { "type": "string" },
           "dynamicPrice": { "type": "number" },
-          "feeAmount": { "type": "number" },
-          "fee": { "type": "number" },
           "fees": {
             "type": "array",
             "items": {
@@ -242,18 +239,6 @@
             ]
           },
           "paymentError": { "type": "string" },
-          "statusReason": {
-            "type": "string",
-            "enum": [
-              "api_connection_error",
-              "api_error",
-              "authentication_error",
-              "card_error",
-              "idempotency_error",
-              "invalid_request_error",
-              "rate_limit_error"
-            ]
-          },
           "paymentMethod": {
             "type": "object",
             "properties": {
@@ -282,13 +267,13 @@
           },
           "locale": { "type": "string" },
           "sessionId": { "type": "string" },
-          "clientIp": { "type": "string" },
           "userAgent": { "type": "string" },
           "screenWidth": { "type": "number" },
           "visitId": { "type": "string" },
           "queryParameters": { "type": "object", "additionalProperties": { "type": "string" } },
           "stripePaymentIntentId": { "type": "string" },
           "stripePaymentIntentClientSecret": { "type": "string" },
+          "stripeChargeId": { "type": "string" },
           "upsell": { "type": "boolean" },
           "upsellPageId": { "type": "string" },
           "upsellChargeId": { "type": "string" },
@@ -300,12 +285,16 @@
             "type": "string",
             "description": "The userId that canceled this. If this is a booking, tickets were canceled in addition."
           },
-          "reason": { "type": "string", "description": "The reason for the cancellation" },
+          "canceledReason": { "type": "string", "description": "The reason for the cancellation" },
           "isAbandoned": { "type": "boolean" },
-          "recoveredAt": { "type": "string", "format": "date-time" },
+          "recoveredAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date at which the customer recovered their checkout through cart abandonment."
+          },
           "abandonedCartEmailStatus": {
             "type": "string",
-            "enum": ["pending", "first_sent", "second_sent", "third_sent", "converted", "skipped"]
+            "enum": ["pending", "first_sent", "second_sent", "third_sent", "skipped"]
           },
           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
           "createdAt": { "type": "string", "format": "date-time" },
@@ -384,12 +373,12 @@
           },
           "taxId": { "type": "string" },
           "taxIdType": { "type": "string" },
-          "seller": { "type": "string" },
+          "sellerId": { "type": "string" },
           "stripeCustomerId": { "type": "string" },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" }
         },
-        "required": ["id", "email", "seller", "createdAt", "updatedAt"],
+        "required": ["id", "email", "sellerId", "createdAt", "updatedAt"],
         "description": ""
       },
       "Coupon": {
@@ -407,10 +396,10 @@
           "maxRedemptions": { "type": "number" },
           "timesRedeemed": { "type": "number" },
           "currency": { "type": "string" },
-          "deleted": { "type": "boolean" },
+          "deleted": { "type": "boolean", "example": false },
           "sellerId": { "type": "string" },
           "pageIds": { "type": "array", "items": { "type": "string" } },
-          "stripeId": { "type": "string" },
+          "stripeCouponId": { "type": "string" },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" }
         },
@@ -433,7 +422,6 @@
           "id": { "type": "string" },
           "orderId": { "type": "string" },
           "orderStatus": { "type": "string" },
-          "stripePaymentId": { "type": "string" },
           "customerEmail": { "type": "string" },
           "customerId": { "type": "string" },
           "sellerId": { "type": "string" },
@@ -478,8 +466,6 @@
           "stripeTaxCalculationId": { "type": "string" },
           "stripeTaxTransactionId": { "type": "string" },
           "dynamicPrice": { "type": "number" },
-          "feeAmount": { "type": "number" },
-          "fee": { "type": "number" },
           "fees": {
             "type": "array",
             "items": {
@@ -631,18 +617,6 @@
             ]
           },
           "paymentError": { "type": "string" },
-          "statusReason": {
-            "type": "string",
-            "enum": [
-              "api_connection_error",
-              "api_error",
-              "authentication_error",
-              "card_error",
-              "idempotency_error",
-              "invalid_request_error",
-              "rate_limit_error"
-            ]
-          },
           "paymentMethod": {
             "type": "object",
             "properties": {
@@ -671,13 +645,13 @@
           },
           "locale": { "type": "string" },
           "sessionId": { "type": "string" },
-          "clientIp": { "type": "string" },
           "userAgent": { "type": "string" },
           "screenWidth": { "type": "number" },
           "visitId": { "type": "string" },
           "queryParameters": { "type": "object", "additionalProperties": { "type": "string" } },
           "stripePaymentIntentId": { "type": "string" },
           "stripePaymentIntentClientSecret": { "type": "string" },
+          "stripeChargeId": { "type": "string" },
           "upsell": { "type": "boolean" },
           "upsellPageId": { "type": "string" },
           "upsellChargeId": { "type": "string" },
@@ -689,12 +663,16 @@
             "type": "string",
             "description": "The userId that canceled this. If this is a booking, tickets were canceled in addition."
           },
-          "reason": { "type": "string", "description": "The reason for the cancellation" },
+          "canceledReason": { "type": "string", "description": "The reason for the cancellation" },
           "isAbandoned": { "type": "boolean" },
-          "recoveredAt": { "type": "string", "format": "date-time" },
+          "recoveredAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date at which the customer recovered their checkout through cart abandonment."
+          },
           "abandonedCartEmailStatus": {
             "type": "string",
-            "enum": ["pending", "first_sent", "second_sent", "third_sent", "converted", "skipped"]
+            "enum": ["pending", "first_sent", "second_sent", "third_sent", "skipped"]
           },
           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
           "createdAt": { "type": "string", "format": "date-time" },
@@ -715,7 +693,6 @@
                 "variantId": { "type": "string" },
                 "reference": { "type": "string" },
                 "selectionType": { "type": "string", "enum": ["single", "multiple", "quantity"] },
-                "sku": { "type": "string" },
                 "selectedOptions": {
                   "type": "array",
                   "items": {
@@ -738,21 +715,6 @@
                         }
                       }
                     }
-                  }
-                },
-                "additionalChargeAmount": { "type": "number" },
-                "originalAdditionalChargeAmount": { "type": "number" },
-                "selectedOptionName": { "type": "string" },
-                "selectedOptionId": { "type": "string" },
-                "selectedOptionQuantity": { "type": "number" },
-                "selectedOptionDiscount": {
-                  "type": "object",
-                  "properties": {
-                    "minQuantity": { "type": "number" },
-                    "maxQuantity": { "type": "number" },
-                    "percentOff": { "type": "number" },
-                    "amountOff": { "type": "number" },
-                    "amount": { "type": "number" }
                   }
                 }
               }
@@ -1045,74 +1007,6 @@
           "400": { "description": "Bad request - Invalid request parameters" },
           "401": { "description": "Unauthorized - Missing or invalid API key" },
           "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
-        }
-      }
-    },
-    "/v1/health/check": {
-      "get": {
-        "summary": "API key health check",
-        "description": "Returns comprehensive health information about the current API key including usage statistics, rate limits, expiration status, and health recommendations",
-        "operationId": "health/check",
-        "security": [{ "api_key_auth": [] }],
-        "tags": ["Health"],
-        "responses": {
-          "200": {
-            "description": "API key health information retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string", "enum": ["operational"] },
-                    "apiKey": {
-                      "type": "object",
-                      "properties": {
-                        "id": { "type": "string" },
-                        "name": { "type": "string" },
-                        "permissions": { "type": "array", "items": { "type": "string" } },
-                        "scopes": { "type": "array", "items": { "type": "string" } },
-                        "isDeleted": { "type": "boolean" },
-                        "usageCount": { "type": "number" },
-                        "lastUsedAt": { "type": ["string", "null"] },
-                        "createdAt": { "type": "string" },
-                        "expiresAt": { "type": ["string", "null"] },
-                        "keyPreview": { "type": "string" }
-                      },
-                      "required": [
-                        "id",
-                        "name",
-                        "permissions",
-                        "scopes",
-                        "isDeleted",
-                        "usageCount",
-                        "lastUsedAt",
-                        "createdAt",
-                        "expiresAt",
-                        "keyPreview"
-                      ]
-                    },
-                    "rateLimit": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "requests": { "type": "number" },
-                        "window": { "type": "number" }
-                      },
-                      "required": ["requests", "window"]
-                    },
-                    "healthScore": { "type": "number", "minimum": 0, "maximum": 100 },
-                    "warnings": { "type": "array", "items": { "type": "string" } }
-                  },
-                  "required": ["status", "apiKey", "rateLimit", "healthScore", "warnings"]
-                }
-              }
-            }
-          },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "404": { "description": "API key not found" },
           "429": { "description": "Rate Limit Exceeded - Please try again later." },
           "500": { "description": "Internal server error" }
         }
@@ -1418,7 +1312,8 @@
                         "properties": {
                           "id": { "type": "string" },
                           "orderId": { "type": "string" },
-                          "subscriptionId": { "type": "string" },
+                          "stripeSubscriptionId": { "type": "string" },
+                          "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
@@ -1460,7 +1355,6 @@
                           "productPrice": { "type": "number" },
                           "dynamicPrice": { "type": "number" },
                           "discountedFromPrice": { "type": "number" },
-                          "feePercentage": { "type": "number" },
                           "sku": { "type": "string" },
                           "billing": {
                             "type": "object",
@@ -1610,9 +1504,6 @@
                                     }
                                   }
                                 },
-                                "selectedOptionName": { "type": "string" },
-                                "additionalChargeAmount": { "type": "number" },
-                                "discountAmount": { "type": "number" },
                                 "fees": {
                                   "type": "array",
                                   "items": {
@@ -1624,20 +1515,7 @@
                                       "stripeInvoiceItemId": { "type": "string" }
                                     }
                                   }
-                                },
-                                "additionalChargeAmountTotal": { "type": "number" },
-                                "additionalChargeAmountUsd": { "type": "number" },
-                                "sku": { "type": "string" },
-                                "selectedOptionType": {
-                                  "type": "string",
-                                  "enum": ["one_time", "recurring"]
-                                },
-                                "selectedOptionId": { "type": "string" },
-                                "selectedOptionQuantity": { "type": "number" },
-                                "selectedOptionStripePriceId": { "type": "string" },
-                                "selectedOptionStripeProductId": { "type": "string" },
-                                "selectedOptionInvoiceItemId": { "type": "string" },
-                                "selectedOptionInvoiceItemPaid": { "type": "boolean" }
+                                }
                               }
                             }
                           },
@@ -1700,7 +1578,6 @@
                           },
                           "locale": { "type": "string" },
                           "sessionId": { "type": "string" },
-                          "clientIp": { "type": "string" },
                           "userAgent": { "type": "string" },
                           "screenWidth": { "type": "number" },
                           "visitId": { "type": "string" },
@@ -1729,8 +1606,6 @@
                           "upsellPageId": { "type": "string" },
                           "upsellChargeId": { "type": "string" },
                           "upsellSubscriptionId": { "type": "string" },
-                          "stripeSubscriptionId": { "type": "string" },
-                          "stripeCustomerId": { "type": "string" },
                           "sellerId": { "type": "string" },
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
@@ -2050,768 +1925,6 @@
                     "type": "object",
                     "properties": { "booking": { "$ref": "#/components/schemas/Payment" } },
                     "required": ["booking"]
-                  }
-                },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully."
-          }
-        }
-      }
-    },
-    "/webhook/subscription_created_webhook": {
-      "post": {
-        "operationId": "webhooks/subscription.created",
-        "description": "Triggered when a new subscription is created",
-        "summary": "subscription.created",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
-                    "type": "string",
-                    "description": "Unique identifier for idempotency"
-                  },
-                  "event": { "type": "string", "enum": ["subscription.created"] },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "subscription": {
-                        "type": "object",
-                        "properties": {
-                          "id": { "type": "string" },
-                          "orderId": { "type": "string" },
-                          "subscriptionId": { "type": "string" },
-                          "customerEmail": { "type": "string" },
-                          "currency": { "type": "string" },
-                          "amount": { "type": "number" },
-                          "amountUsd": { "type": "number" },
-                          "interval": { "type": "string" },
-                          "intervalCount": { "type": "number" },
-                          "planIterations": { "type": "number" },
-                          "fees": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "name": { "type": "string" },
-                                "amount": { "type": "number" },
-                                "percentage": { "type": "number" },
-                                "stripeProductId": { "type": "string" }
-                              }
-                            }
-                          },
-                          "setupFee": { "type": "number" },
-                          "setupFeeDiscountAmount": { "type": "number" },
-                          "setupFeeFees": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "name": { "type": "string" },
-                                "amount": { "type": "number" },
-                                "percentage": { "type": "number" },
-                                "stripeInvoiceItemId": { "type": "string" }
-                              }
-                            }
-                          },
-                          "setupFeeTotal": { "type": "number" },
-                          "setupFeeUsd": { "type": "number" },
-                          "setupFeeInvoiceItemId": { "type": "string" },
-                          "setupFeeInvoiceItemPaid": { "type": "boolean" },
-                          "quantity": { "type": "number" },
-                          "productPrice": { "type": "number" },
-                          "dynamicPrice": { "type": "number" },
-                          "discountedFromPrice": { "type": "number" },
-                          "feePercentage": { "type": "number" },
-                          "sku": { "type": "string" },
-                          "billing": {
-                            "type": "object",
-                            "properties": {
-                              "name": { "type": "string" },
-                              "companyName": { "type": "string" },
-                              "email": { "type": "string" },
-                              "billingEmail": { "type": "string" },
-                              "phone": { "type": "string" },
-                              "address": {
-                                "type": "object",
-                                "properties": {
-                                  "line1": { "type": "string" },
-                                  "line2": { "type": "string" },
-                                  "city": { "type": "string" },
-                                  "state": { "type": "string" },
-                                  "postalCode": { "type": "string" },
-                                  "country": { "type": "string" }
-                                }
-                              }
-                            }
-                          },
-                          "shipping": {
-                            "type": "object",
-                            "properties": {
-                              "name": { "type": "string" },
-                              "phone": { "type": "string" },
-                              "address": {
-                                "type": "object",
-                                "properties": {
-                                  "line1": { "type": "string" },
-                                  "line2": { "type": "string" },
-                                  "city": { "type": "string" },
-                                  "state": { "type": "string" },
-                                  "postalCode": { "type": "string" },
-                                  "country": { "type": "string" }
-                                }
-                              }
-                            }
-                          },
-                          "fields": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "fieldId": { "type": "string" },
-                                "label": { "type": "string" },
-                                "value": { "type": "string" },
-                                "element": {
-                                  "type": "string",
-                                  "enum": [
-                                    "checkbox",
-                                    "quantity",
-                                    "multiple-choice",
-                                    "select",
-                                    "po-number",
-                                    "text",
-                                    "textarea",
-                                    "number",
-                                    "date-time",
-                                    "date",
-                                    "time",
-                                    "email",
-                                    "tax-id",
-                                    "phone",
-                                    "country"
-                                  ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "enum": [
-                                    "",
-                                    "company-name",
-                                    "po-number",
-                                    "name",
-                                    "first-name",
-                                    "last-name",
-                                    "email",
-                                    "billing-email",
-                                    "phone",
-                                    "address-line1",
-                                    "address-city",
-                                    "address-country",
-                                    "address-line2",
-                                    "address-postal_code",
-                                    "address-state",
-                                    "shipping-name",
-                                    "shipping-phone",
-                                    "shipping-address-line1",
-                                    "shipping-address-city",
-                                    "shipping-address-country",
-                                    "shipping-address-line2",
-                                    "shipping-address-postal_code",
-                                    "shipping-address-state",
-                                    "tax-id"
-                                  ]
-                                },
-                                "reference": { "type": "string" }
-                              }
-                            }
-                          },
-                          "variants": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "name": { "type": "string" },
-                                "variantId": { "type": "string" },
-                                "reference": { "type": "string" },
-                                "selectionType": {
-                                  "type": "string",
-                                  "enum": ["single", "multiple", "quantity"]
-                                },
-                                "selectedOptions": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "optionId": { "type": "string" },
-                                      "optionType": {
-                                        "type": "string",
-                                        "enum": ["one_time", "recurring"]
-                                      },
-                                      "optionName": { "type": "string" },
-                                      "sku": { "type": "string" },
-                                      "quantity": { "type": "number" },
-                                      "additionalChargeAmount": { "type": "number" },
-                                      "discountAmount": { "type": "number" },
-                                      "fees": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object",
-                                          "properties": {
-                                            "name": { "type": "string" },
-                                            "amount": { "type": "number" },
-                                            "percentage": { "type": "number" },
-                                            "stripeInvoiceItemId": { "type": "string" }
-                                          }
-                                        }
-                                      },
-                                      "additionalChargeAmountTotal": { "type": "number" },
-                                      "additionalChargeAmountUsd": { "type": "number" },
-                                      "optionStripePriceId": { "type": "string" },
-                                      "optionStripeProductId": { "type": "string" },
-                                      "optionInvoiceItemId": { "type": "string" },
-                                      "optionInvoiceItemPaid": { "type": "boolean" }
-                                    }
-                                  }
-                                },
-                                "selectedOptionName": { "type": "string" },
-                                "additionalChargeAmount": { "type": "number" },
-                                "discountAmount": { "type": "number" },
-                                "fees": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "name": { "type": "string" },
-                                      "amount": { "type": "number" },
-                                      "percentage": { "type": "number" },
-                                      "stripeInvoiceItemId": { "type": "string" }
-                                    }
-                                  }
-                                },
-                                "additionalChargeAmountTotal": { "type": "number" },
-                                "additionalChargeAmountUsd": { "type": "number" },
-                                "sku": { "type": "string" },
-                                "selectedOptionType": {
-                                  "type": "string",
-                                  "enum": ["one_time", "recurring"]
-                                },
-                                "selectedOptionId": { "type": "string" },
-                                "selectedOptionQuantity": { "type": "number" },
-                                "selectedOptionStripePriceId": { "type": "string" },
-                                "selectedOptionStripeProductId": { "type": "string" },
-                                "selectedOptionInvoiceItemId": { "type": "string" },
-                                "selectedOptionInvoiceItemPaid": { "type": "boolean" }
-                              }
-                            }
-                          },
-                          "couponId": { "type": "string" },
-                          "licenseKeyId": { "type": "string" },
-                          "livemode": { "type": "boolean" },
-                          "status": {
-                            "type": "string",
-                            "enum": [
-                              "draft",
-                              "draft_expired",
-                              "incomplete",
-                              "incomplete_expired",
-                              "trialing",
-                              "scheduled",
-                              "active",
-                              "past_due",
-                              "canceled",
-                              "unpaid",
-                              "failed",
-                              "completed"
-                            ]
-                          },
-                          "paymentStatus": {
-                            "type": "string",
-                            "enum": [
-                              "draft",
-                              "deleted",
-                              "open",
-                              "paid",
-                              "uncollectible",
-                              "void",
-                              "requires_payment_method",
-                              "requires_confirmation",
-                              "requires_action",
-                              "processing",
-                              "requires_capture",
-                              "canceled",
-                              "succeeded"
-                            ]
-                          },
-                          "paymentError": { "type": "string" },
-                          "paymentMethod": {
-                            "type": "object",
-                            "properties": {
-                              "gateway": {
-                                "type": "string",
-                                "enum": ["stripe", "paypal", "manual"]
-                              },
-                              "method": { "type": "string" },
-                              "wallet": { "type": "string" },
-                              "mode": { "type": "string", "enum": ["default", "express"] },
-                              "brand": { "type": "string" },
-                              "last4": { "type": "string" },
-                              "country": { "type": "string" },
-                              "exp_month": { "type": "number" },
-                              "exp_year": { "type": "number" },
-                              "funding": { "type": "string" }
-                            }
-                          },
-                          "locale": { "type": "string" },
-                          "sessionId": { "type": "string" },
-                          "clientIp": { "type": "string" },
-                          "userAgent": { "type": "string" },
-                          "screenWidth": { "type": "number" },
-                          "visitId": { "type": "string" },
-                          "queryParameters": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "key": { "type": "string" },
-                                "value": { "type": "string" }
-                              },
-                              "required": ["key", "value"]
-                            }
-                          },
-                          "stripePaymentIntentId": { "type": "string" },
-                          "stripePaymentIntentClientSecret": { "type": "string" },
-                          "stripeSetupIntentId": { "type": "string" },
-                          "startDate": { "type": "string", "format": "date-time" },
-                          "trialEnd": { "type": "string", "format": "date-time" },
-                          "trialStart": { "type": "string", "format": "date-time" },
-                          "cancelAt": { "type": "string", "format": "date-time" },
-                          "cancelAtPeriodEnd": { "type": "boolean" },
-                          "currentPeriodStart": { "type": "string", "format": "date-time" },
-                          "currentPeriodEnd": { "type": "string", "format": "date-time" },
-                          "upsell": { "type": "boolean" },
-                          "upsellPageId": { "type": "string" },
-                          "upsellChargeId": { "type": "string" },
-                          "upsellSubscriptionId": { "type": "string" },
-                          "stripeSubscriptionId": { "type": "string" },
-                          "stripeCustomerId": { "type": "string" },
-                          "sellerId": { "type": "string" },
-                          "customerId": { "type": "string" },
-                          "pageId": { "type": "string" },
-                          "productId": { "type": "string" },
-                          "canceledAt": { "type": "string", "format": "date-time" },
-                          "canceledBy": { "type": "string" },
-                          "reason": { "type": "string" },
-                          "isAbandoned": { "type": "boolean" },
-                          "recoveredAt": { "type": "string", "format": "date-time" },
-                          "abandonedCartEmailStatus": {
-                            "type": "string",
-                            "enum": [
-                              "pending",
-                              "first_sent",
-                              "second_sent",
-                              "third_sent",
-                              "converted",
-                              "skipped"
-                            ]
-                          },
-                          "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "createdAt": { "type": "string", "format": "date-time" },
-                          "updatedAt": { "type": "string", "format": "date-time" }
-                        },
-                        "required": ["id", "amount", "createdAt", "updatedAt"]
-                      }
-                    },
-                    "required": ["subscription"]
-                  }
-                },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully."
-          }
-        }
-      }
-    },
-    "/webhook/subscription_active_webhook": {
-      "post": {
-        "operationId": "webhooks/subscription.active",
-        "description": "Triggered when a subscription becomes active",
-        "summary": "subscription.active",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
-                    "type": "string",
-                    "description": "Unique identifier for idempotency"
-                  },
-                  "event": { "type": "string", "enum": ["subscription.active"] },
-                  "data": {
-                    "type": "object",
-                    "properties": {
-                      "subscription": {
-                        "type": "object",
-                        "properties": {
-                          "id": { "type": "string" },
-                          "orderId": { "type": "string" },
-                          "subscriptionId": { "type": "string" },
-                          "customerEmail": { "type": "string" },
-                          "currency": { "type": "string" },
-                          "amount": { "type": "number" },
-                          "amountUsd": { "type": "number" },
-                          "interval": { "type": "string" },
-                          "intervalCount": { "type": "number" },
-                          "planIterations": { "type": "number" },
-                          "fees": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "name": { "type": "string" },
-                                "amount": { "type": "number" },
-                                "percentage": { "type": "number" },
-                                "stripeProductId": { "type": "string" }
-                              }
-                            }
-                          },
-                          "setupFee": { "type": "number" },
-                          "setupFeeDiscountAmount": { "type": "number" },
-                          "setupFeeFees": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "name": { "type": "string" },
-                                "amount": { "type": "number" },
-                                "percentage": { "type": "number" },
-                                "stripeInvoiceItemId": { "type": "string" }
-                              }
-                            }
-                          },
-                          "setupFeeTotal": { "type": "number" },
-                          "setupFeeUsd": { "type": "number" },
-                          "setupFeeInvoiceItemId": { "type": "string" },
-                          "setupFeeInvoiceItemPaid": { "type": "boolean" },
-                          "quantity": { "type": "number" },
-                          "productPrice": { "type": "number" },
-                          "dynamicPrice": { "type": "number" },
-                          "discountedFromPrice": { "type": "number" },
-                          "feePercentage": { "type": "number" },
-                          "sku": { "type": "string" },
-                          "billing": {
-                            "type": "object",
-                            "properties": {
-                              "name": { "type": "string" },
-                              "companyName": { "type": "string" },
-                              "email": { "type": "string" },
-                              "billingEmail": { "type": "string" },
-                              "phone": { "type": "string" },
-                              "address": {
-                                "type": "object",
-                                "properties": {
-                                  "line1": { "type": "string" },
-                                  "line2": { "type": "string" },
-                                  "city": { "type": "string" },
-                                  "state": { "type": "string" },
-                                  "postalCode": { "type": "string" },
-                                  "country": { "type": "string" }
-                                }
-                              }
-                            }
-                          },
-                          "shipping": {
-                            "type": "object",
-                            "properties": {
-                              "name": { "type": "string" },
-                              "phone": { "type": "string" },
-                              "address": {
-                                "type": "object",
-                                "properties": {
-                                  "line1": { "type": "string" },
-                                  "line2": { "type": "string" },
-                                  "city": { "type": "string" },
-                                  "state": { "type": "string" },
-                                  "postalCode": { "type": "string" },
-                                  "country": { "type": "string" }
-                                }
-                              }
-                            }
-                          },
-                          "fields": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "fieldId": { "type": "string" },
-                                "label": { "type": "string" },
-                                "value": { "type": "string" },
-                                "element": {
-                                  "type": "string",
-                                  "enum": [
-                                    "checkbox",
-                                    "quantity",
-                                    "multiple-choice",
-                                    "select",
-                                    "po-number",
-                                    "text",
-                                    "textarea",
-                                    "number",
-                                    "date-time",
-                                    "date",
-                                    "time",
-                                    "email",
-                                    "tax-id",
-                                    "phone",
-                                    "country"
-                                  ]
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "enum": [
-                                    "",
-                                    "company-name",
-                                    "po-number",
-                                    "name",
-                                    "first-name",
-                                    "last-name",
-                                    "email",
-                                    "billing-email",
-                                    "phone",
-                                    "address-line1",
-                                    "address-city",
-                                    "address-country",
-                                    "address-line2",
-                                    "address-postal_code",
-                                    "address-state",
-                                    "shipping-name",
-                                    "shipping-phone",
-                                    "shipping-address-line1",
-                                    "shipping-address-city",
-                                    "shipping-address-country",
-                                    "shipping-address-line2",
-                                    "shipping-address-postal_code",
-                                    "shipping-address-state",
-                                    "tax-id"
-                                  ]
-                                },
-                                "reference": { "type": "string" }
-                              }
-                            }
-                          },
-                          "variants": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "name": { "type": "string" },
-                                "variantId": { "type": "string" },
-                                "reference": { "type": "string" },
-                                "selectionType": {
-                                  "type": "string",
-                                  "enum": ["single", "multiple", "quantity"]
-                                },
-                                "selectedOptions": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "optionId": { "type": "string" },
-                                      "optionType": {
-                                        "type": "string",
-                                        "enum": ["one_time", "recurring"]
-                                      },
-                                      "optionName": { "type": "string" },
-                                      "sku": { "type": "string" },
-                                      "quantity": { "type": "number" },
-                                      "additionalChargeAmount": { "type": "number" },
-                                      "discountAmount": { "type": "number" },
-                                      "fees": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object",
-                                          "properties": {
-                                            "name": { "type": "string" },
-                                            "amount": { "type": "number" },
-                                            "percentage": { "type": "number" },
-                                            "stripeInvoiceItemId": { "type": "string" }
-                                          }
-                                        }
-                                      },
-                                      "additionalChargeAmountTotal": { "type": "number" },
-                                      "additionalChargeAmountUsd": { "type": "number" },
-                                      "optionStripePriceId": { "type": "string" },
-                                      "optionStripeProductId": { "type": "string" },
-                                      "optionInvoiceItemId": { "type": "string" },
-                                      "optionInvoiceItemPaid": { "type": "boolean" }
-                                    }
-                                  }
-                                },
-                                "selectedOptionName": { "type": "string" },
-                                "additionalChargeAmount": { "type": "number" },
-                                "discountAmount": { "type": "number" },
-                                "fees": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "name": { "type": "string" },
-                                      "amount": { "type": "number" },
-                                      "percentage": { "type": "number" },
-                                      "stripeInvoiceItemId": { "type": "string" }
-                                    }
-                                  }
-                                },
-                                "additionalChargeAmountTotal": { "type": "number" },
-                                "additionalChargeAmountUsd": { "type": "number" },
-                                "sku": { "type": "string" },
-                                "selectedOptionType": {
-                                  "type": "string",
-                                  "enum": ["one_time", "recurring"]
-                                },
-                                "selectedOptionId": { "type": "string" },
-                                "selectedOptionQuantity": { "type": "number" },
-                                "selectedOptionStripePriceId": { "type": "string" },
-                                "selectedOptionStripeProductId": { "type": "string" },
-                                "selectedOptionInvoiceItemId": { "type": "string" },
-                                "selectedOptionInvoiceItemPaid": { "type": "boolean" }
-                              }
-                            }
-                          },
-                          "couponId": { "type": "string" },
-                          "licenseKeyId": { "type": "string" },
-                          "livemode": { "type": "boolean" },
-                          "status": {
-                            "type": "string",
-                            "enum": [
-                              "draft",
-                              "draft_expired",
-                              "incomplete",
-                              "incomplete_expired",
-                              "trialing",
-                              "scheduled",
-                              "active",
-                              "past_due",
-                              "canceled",
-                              "unpaid",
-                              "failed",
-                              "completed"
-                            ]
-                          },
-                          "paymentStatus": {
-                            "type": "string",
-                            "enum": [
-                              "draft",
-                              "deleted",
-                              "open",
-                              "paid",
-                              "uncollectible",
-                              "void",
-                              "requires_payment_method",
-                              "requires_confirmation",
-                              "requires_action",
-                              "processing",
-                              "requires_capture",
-                              "canceled",
-                              "succeeded"
-                            ]
-                          },
-                          "paymentError": { "type": "string" },
-                          "paymentMethod": {
-                            "type": "object",
-                            "properties": {
-                              "gateway": {
-                                "type": "string",
-                                "enum": ["stripe", "paypal", "manual"]
-                              },
-                              "method": { "type": "string" },
-                              "wallet": { "type": "string" },
-                              "mode": { "type": "string", "enum": ["default", "express"] },
-                              "brand": { "type": "string" },
-                              "last4": { "type": "string" },
-                              "country": { "type": "string" },
-                              "exp_month": { "type": "number" },
-                              "exp_year": { "type": "number" },
-                              "funding": { "type": "string" }
-                            }
-                          },
-                          "locale": { "type": "string" },
-                          "sessionId": { "type": "string" },
-                          "clientIp": { "type": "string" },
-                          "userAgent": { "type": "string" },
-                          "screenWidth": { "type": "number" },
-                          "visitId": { "type": "string" },
-                          "queryParameters": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "key": { "type": "string" },
-                                "value": { "type": "string" }
-                              },
-                              "required": ["key", "value"]
-                            }
-                          },
-                          "stripePaymentIntentId": { "type": "string" },
-                          "stripePaymentIntentClientSecret": { "type": "string" },
-                          "stripeSetupIntentId": { "type": "string" },
-                          "startDate": { "type": "string", "format": "date-time" },
-                          "trialEnd": { "type": "string", "format": "date-time" },
-                          "trialStart": { "type": "string", "format": "date-time" },
-                          "cancelAt": { "type": "string", "format": "date-time" },
-                          "cancelAtPeriodEnd": { "type": "boolean" },
-                          "currentPeriodStart": { "type": "string", "format": "date-time" },
-                          "currentPeriodEnd": { "type": "string", "format": "date-time" },
-                          "upsell": { "type": "boolean" },
-                          "upsellPageId": { "type": "string" },
-                          "upsellChargeId": { "type": "string" },
-                          "upsellSubscriptionId": { "type": "string" },
-                          "stripeSubscriptionId": { "type": "string" },
-                          "stripeCustomerId": { "type": "string" },
-                          "sellerId": { "type": "string" },
-                          "customerId": { "type": "string" },
-                          "pageId": { "type": "string" },
-                          "productId": { "type": "string" },
-                          "canceledAt": { "type": "string", "format": "date-time" },
-                          "canceledBy": { "type": "string" },
-                          "reason": { "type": "string" },
-                          "isAbandoned": { "type": "boolean" },
-                          "recoveredAt": { "type": "string", "format": "date-time" },
-                          "abandonedCartEmailStatus": {
-                            "type": "string",
-                            "enum": [
-                              "pending",
-                              "first_sent",
-                              "second_sent",
-                              "third_sent",
-                              "converted",
-                              "skipped"
-                            ]
-                          },
-                          "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "createdAt": { "type": "string", "format": "date-time" },
-                          "updatedAt": { "type": "string", "format": "date-time" }
-                        },
-                        "required": ["id", "amount", "createdAt", "updatedAt"]
-                      }
-                    },
-                    "required": ["subscription"]
                   }
                 },
                 "required": ["seller_id", "timestamp", "event_id", "event", "data"]
