@@ -1,8 +1,8 @@
-import { CheckoutPageClient } from '@checkoutpage/sdk';
+import { createCheckoutPageClient } from '@checkoutpage/sdk';
 
 async function main() {
   // Initialize the SDK with your API key
-  const checkoutpage = new CheckoutPageClient({
+  const checkoutpage = createCheckoutPageClient({
     apiKey: process.env.CHECKOUTPAGE_API_KEY || 'YOUR_API_KEY',
   });
 

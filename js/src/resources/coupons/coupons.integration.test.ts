@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, ValidationError } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, ValidationError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import {
   AmountNonRepeating,
@@ -16,7 +16,7 @@ describe('CouponResource Integration Tests', () => {
   beforeAll(() => {
     config = loadIntegrationConfig();
 
-    client = new CheckoutPageClient({
+    client = createCheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
     });

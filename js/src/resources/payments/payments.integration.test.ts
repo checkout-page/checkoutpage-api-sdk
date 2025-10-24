@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('PaymentResource Integration Tests', () => {
@@ -9,7 +9,7 @@ describe('PaymentResource Integration Tests', () => {
   beforeAll(() => {
     config = loadIntegrationConfig();
 
-    client = new CheckoutPageClient({
+    client = createCheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
     });
