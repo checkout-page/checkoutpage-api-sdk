@@ -21,7 +21,7 @@ describe('CustomerResource Integration Tests', () => {
 
       expect(customer).toHaveProperty('id');
       expect(customer).toHaveProperty('email');
-      expect(customer).toHaveProperty('seller');
+      expect(customer).toHaveProperty('sellerId');
       expect(customer).toHaveProperty('createdAt');
       expect(customer).toHaveProperty('updatedAt');
       expect(customer.id).toBe(config.testCustomerId);
@@ -53,7 +53,7 @@ describe('CustomerResource Integration Tests', () => {
       for (const customer of result.data) {
         expect(customer).toHaveProperty('id');
         expect(customer).toHaveProperty('email');
-        expect(customer).toHaveProperty('seller');
+        expect(customer).toHaveProperty('sellerId');
         expect(typeof customer.id).toBe('string');
         expect(typeof customer.email).toBe('string');
       }

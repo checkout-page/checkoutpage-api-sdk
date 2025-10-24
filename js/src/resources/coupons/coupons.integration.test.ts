@@ -110,7 +110,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.timesRedeemed).toBe(0);
       expect(data.deleted).toBe(false);
       expect(data.sellerId).toBe(config.testSellerId);
-      expect(data.stripeId).toBeTypeOf('string');
+      expect(data.stripeCouponId).toBeTypeOf('string');
       const updatedAt = new Date(data.updatedAt);
       expect(updatedAt instanceof Date && !isNaN(updatedAt.getTime())).toBe(true);
       const createdAt = new Date(data.createdAt);
@@ -141,7 +141,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.timesRedeemed).toBe(0);
       expect(data.deleted).toBe(false);
       expect(data.sellerId).toBe(config.testSellerId);
-      expect(data.stripeId).toBeTypeOf('string');
+      expect(data.stripeCouponId).toBeTypeOf('string');
       const updatedAt = new Date(data.updatedAt);
       expect(updatedAt instanceof Date && !isNaN(updatedAt.getTime())).toBe(true);
       const createdAt = new Date(data.createdAt);
@@ -170,7 +170,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.timesRedeemed).toBe(0);
       expect(data.deleted).toBe(false);
       expect(data.sellerId).toBe(config.testSellerId);
-      expect(data.stripeId).toBeTypeOf('string');
+      expect(data.stripeCouponId).toBeTypeOf('string');
       const updatedAt = new Date(data.updatedAt);
       expect(updatedAt instanceof Date && !isNaN(updatedAt.getTime())).toBe(true);
       const createdAt = new Date(data.createdAt);
@@ -200,7 +200,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.timesRedeemed).toBe(0);
       expect(data.deleted).toBe(false);
       expect(data.sellerId).toBe(config.testSellerId);
-      expect(data.stripeId).toBeTypeOf('string');
+      expect(data.stripeCouponId).toBeTypeOf('string');
       const updatedAt = new Date(data.updatedAt);
       expect(updatedAt instanceof Date && !isNaN(updatedAt.getTime())).toBe(true);
       const createdAt = new Date(data.createdAt);
