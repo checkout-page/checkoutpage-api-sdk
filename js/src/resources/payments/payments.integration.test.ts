@@ -25,6 +25,7 @@ describe('PaymentResource Integration Tests', () => {
       expect(Array.isArray(result.data)).toBe(true);
       expect(typeof result.has_more).toBe('boolean');
       expect(typeof result.total).toBe('number');
+      expect(result.data.length).toBeGreaterThan(0);
 
       for (const payment of result.data) {
         expect(payment).toHaveProperty('id');
@@ -46,24 +47,43 @@ describe('PaymentResource Integration Tests', () => {
         limit: 2,
       });
 
-      expect(result.data.length).toBeLessThanOrEqual(2);
+      expect(result.data.length).toBe(2);
     });
 
-    it('should respect skip pagination parameter', async () => {
-      // Get first page
+    it('should use cursor-based pagination with starting_after', async () => {
       const firstPage = await client.payments.list({
         limit: 1,
       });
 
-      // Get second page
       const secondPage = await client.payments.list({
         limit: 1,
-        skip: 1,
+        starting_after: firstPage.data[0].id,
       });
 
-      if (firstPage.data.length > 0 && secondPage.data.length > 0) {
-        expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
-      }
+      expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
+      expect(firstPage.data[0].id.localeCompare(secondPage.data[0].id)).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should use cursor-based pagination with ending_before', async () => {
+      /**
+       * We can't be at the start of the list for this test to be affective. We'll be paging backwards.
+       */
+      const moveAwayFromStart = await client.payments.list({
+        limit: 5,
+      });
+
+      const firstPage = await client.payments.list({
+        limit: 1,
+        starting_after: moveAwayFromStart.data[moveAwayFromStart.data.length - 1].id,
+      });
+
+      const previousPage = await client.payments.list({
+        limit: 1,
+        ending_before: firstPage.data[0].id,
+      });
+
+      expect(firstPage.data[0].id).not.toBe(previousPage.data[0].id);
+      expect(previousPage.data[0].id.localeCompare(firstPage.data[0].id)).toBeGreaterThanOrEqual(0);
     });
 
     it('should filter payments by status', async () => {
@@ -73,6 +93,7 @@ describe('PaymentResource Integration Tests', () => {
 
       expect(result).toHaveProperty('data');
       expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data.length).toBeGreaterThan(1);
 
       for (const payment of result.data) {
         expect(payment.status).toBe('paid');
@@ -119,11 +140,10 @@ describe('PaymentResource Integration Tests', () => {
       const result = await client.payments.list({
         status: 'paid',
         limit: 5,
-        skip: 0,
       });
 
       expect(Array.isArray(result.data)).toBe(true);
-      expect(result.data.length).toBeLessThanOrEqual(5);
+      expect(result.data.length).toBe(5);
 
       for (const payment of result.data) {
         expect(payment.status).toBe('paid');

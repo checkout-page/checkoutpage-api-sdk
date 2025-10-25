@@ -10,7 +10,8 @@ export class PaymentResource {
       status: args.status,
       pageId: args.pageId,
       limit: args.limit?.toString(),
-      skip: args.skip?.toString(),
+      starting_after: args.starting_after,
+      ending_before: args.ending_before,
     };
 
     return this.client.request<PaymentList>({

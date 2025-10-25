@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import {
+  CheckoutPageClient,
+  createCheckoutPageClient,
+  NotFoundError,
+  ValidationError,
+} from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('CustomerResource Integration Tests', () => {
@@ -31,20 +36,23 @@ describe('CustomerResource Integration Tests', () => {
       expect(typeof customer.createdAt).toBe('string');
     });
 
-    it('should throw NotFoundError for invalid customer ID', async () => {
-      await expect(client.customers.get('000000000000000000000000')).rejects.toThrow();
+    it('should throw a NotFoundError for a missing customer ID', async () => {
+      await expect(client.customers.get('6812fe6e9f39b6760576f01c')).rejects.toThrow(NotFoundError);
+    });
+
+    it('should throw ValidationError for invalid customer ID', async () => {
+      await expect(client.customers.get('not-a-valid-id')).rejects.toThrow(ValidationError);
     });
   });
 
   describe('list', () => {
     it('should fetch a list of customers', async () => {
-      const result = await client.customers.list({});
+      const result = await client.customers.list();
 
       expect(result).toHaveProperty('data');
       expect(result).toHaveProperty('has_more');
       expect(Array.isArray(result.data)).toBe(true);
       expect(typeof result.has_more).toBe('boolean');
-
       expect(result.data.length).toBeGreaterThan(0);
 
       /**
@@ -64,24 +72,44 @@ describe('CustomerResource Integration Tests', () => {
         limit: 2,
       });
 
-      expect(result.data.length).toBeLessThanOrEqual(2);
+      expect(result.data.length).toBe(2);
     });
 
-    it('should respect skip pagination parameter', async () => {
-      // Get first page
+    it('should use cursor-based pagination with starting_after', async () => {
       const firstPage = await client.customers.list({
         limit: 1,
       });
 
-      // Get second page
       const secondPage = await client.customers.list({
         limit: 1,
-        skip: 1,
+        starting_after: firstPage.data[0].id,
       });
 
-      if (firstPage.data.length > 0 && secondPage.data.length > 0) {
-        expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
-      }
+      expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
+      expect(firstPage.data[0].id.localeCompare(secondPage.data[0].id)).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should use cursor-based pagination with ending_before', async () => {
+      /**
+       * We can't be at the start of the list for this test to be affective. We'll be paging backwards.
+       */
+      const moveAwayFromStart = await client.customers.list({
+        limit: 5,
+      });
+
+      const firstPage = await client.customers.list({
+        limit: 1,
+        starting_after: moveAwayFromStart.data[moveAwayFromStart.data.length - 1].id,
+      });
+
+      // Get previous page using cursor from first page
+      const previousPage = await client.customers.list({
+        limit: 1,
+        ending_before: firstPage.data[0].id,
+      });
+
+      expect(firstPage.data[0].id).not.toBe(previousPage.data[0].id);
+      expect(previousPage.data[0].id.localeCompare(firstPage.data[0].id)).toBeGreaterThanOrEqual(0);
     });
 
     it('should filter customers by search query', async () => {

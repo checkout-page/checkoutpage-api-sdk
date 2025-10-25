@@ -20,9 +20,8 @@ export type CustomerList =
 
 export type CustomerListArgs = operations['customers/list']['parameters']['query'];
 
-export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit' | 'skip'> & {
+export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit'> & {
   limit?: number;
-  skip?: number;
 };
 
 export type Address = NonNullable<Customer['data']['address']>;
@@ -84,9 +83,8 @@ export type Payment = PaymentList['data'][number];
 
 export type PaymentListArgs = operations['payments/list']['parameters']['query'];
 
-export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit' | 'skip'> & {
+export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit'> & {
   limit?: number;
-  skip?: number;
 };
 
 // Subscriptions
@@ -97,9 +95,8 @@ export type Subscription = SubscriptionList['data'][number];
 
 export type SubscriptionListArgs = operations['subscriptions/list']['parameters']['query'];
 
-export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'limit' | 'skip'> & {
+export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'limit'> & {
   limit?: number;
-  skip?: number;
 };
 
 // Bookings

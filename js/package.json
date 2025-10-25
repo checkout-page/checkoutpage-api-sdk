@@ -1,6 +1,6 @@
 {
   "name": "@checkoutpage/sdk",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Official JavaScript SDK for the Checkout Page API",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -20,7 +20,6 @@
     "test": "vitest run --exclude '**/*.integration.test.ts'",
     "test:unit": "vitest run --exclude '**/*.integration.test.ts'",
     "test:integration": "NODE_OPTIONS='--use-system-ca' vitest run src/resources/**/*.integration.test.ts",
-    "test:integration:payments": "NODE_OPTIONS='--use-system-ca' vitest run src/resources/payments/payments.integration.test.ts",
     "test:integration:custom": "NODE_OPTIONS='--use-system-ca' vitest run",
     "test:all": "NODE_OPTIONS='--use-system-ca' vitest run",
     "test:watch": "vitest --exclude '**/*.integration.test.ts'",

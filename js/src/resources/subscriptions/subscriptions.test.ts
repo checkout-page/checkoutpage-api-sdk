@@ -46,13 +46,14 @@ describe('SubscriptionResource', () => {
           pageId: undefined,
           status: undefined,
           limit: undefined,
-          skip: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
         },
         path: '/v1/subscriptions/',
       });
     });
 
-    it('should fetch subscriptions with pagination parameters', async () => {
+    it('should fetch subscriptions with cursor-based pagination using starting_after', async () => {
       const mockSubscriptionList: SubscriptionList = {
         data: [
           {
@@ -70,7 +71,7 @@ describe('SubscriptionResource', () => {
 
       const result = await subscriptionResource.list({
         limit: 10,
-        skip: 5,
+        starting_after: '507f1f77bcf86cd799439011',
       });
 
       expect(result).toEqual(mockSubscriptionList);
@@ -83,7 +84,8 @@ describe('SubscriptionResource', () => {
           pageId: undefined,
           status: undefined,
           limit: '10',
-          skip: '5',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
         },
         path: '/v1/subscriptions/',
       });
@@ -126,7 +128,46 @@ describe('SubscriptionResource', () => {
           pageId: undefined,
           status: 'active',
           limit: undefined,
-          skip: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
+        },
+        path: '/v1/subscriptions/',
+      });
+    });
+
+    it('should fetch subscriptions with cursor-based pagination using ending_before', async () => {
+      const mockSubscriptionList: SubscriptionList = {
+        data: [
+          {
+            id: '6812fe6e9f39b6760576f01c',
+            amount: 9999,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+        ],
+        total: 100,
+        has_more: false,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockSubscriptionList);
+
+      const result = await subscriptionResource.list({
+        limit: 10,
+        ending_before: '507f1f77bcf86cd799439012',
+      });
+
+      expect(result).toEqual(mockSubscriptionList);
+      expect(result.has_more).toBe(false);
+      expect(result.total).toBe(100);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: undefined,
+          pageId: undefined,
+          status: undefined,
+          limit: '10',
+          starting_after: undefined,
+          ending_before: '507f1f77bcf86cd799439012',
         },
         path: '/v1/subscriptions/',
       });
@@ -162,7 +203,8 @@ describe('SubscriptionResource', () => {
           pageId: undefined,
           status: undefined,
           limit: undefined,
-          skip: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
         },
         path: '/v1/subscriptions/',
       });
@@ -198,7 +240,8 @@ describe('SubscriptionResource', () => {
           pageId: '67fcbdac6a91c25ef2d3534a',
           status: undefined,
           limit: undefined,
-          skip: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
         },
         path: '/v1/subscriptions/',
       });
@@ -228,7 +271,7 @@ describe('SubscriptionResource', () => {
         pageId: '67fcbdac6a91c25ef2d3534a',
         search: 'test@example.com',
         limit: 20,
-        skip: 0,
+        starting_after: '507f1f77bcf86cd799439011',
       });
 
       expect(result).toEqual(mockSubscriptionList);
@@ -239,7 +282,8 @@ describe('SubscriptionResource', () => {
           pageId: '67fcbdac6a91c25ef2d3534a',
           status: 'active',
           limit: '20',
-          skip: '0',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
         },
         path: '/v1/subscriptions/',
       });

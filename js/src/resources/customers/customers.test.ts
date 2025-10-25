@@ -121,12 +121,17 @@ describe('CustomerResource', () => {
       expect(result.data).toHaveLength(2);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
-        query: {},
+        query: {
+          search: undefined,
+          limit: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
+        },
         path: '/v1/customers/',
       });
     });
 
-    it('should fetch customers with pagination parameters', async () => {
+    it('should fetch customers with cursor-based pagination using starting_after', async () => {
       const mockCustomerList: CustomerList = {
         data: [
           {
@@ -146,7 +151,7 @@ describe('CustomerResource', () => {
 
       const result = await customerResource.list({
         limit: 10,
-        skip: 5,
+        starting_after: '507f1f77bcf86cd799439011',
       });
 
       expect(result).toEqual(mockCustomerList);
@@ -155,8 +160,48 @@ describe('CustomerResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         query: {
+          search: undefined,
           limit: '10',
-          skip: '5',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
+        },
+        path: '/v1/customers/',
+      });
+    });
+
+    it('should fetch customers with cursor-based pagination using ending_before', async () => {
+      const mockCustomerList: CustomerList = {
+        data: [
+          {
+            id: '6812fe6e9f39b6760576f01c',
+            email: 'customer1@example.com',
+            name: 'Customer 1',
+            sellerId: 'seller123',
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+        ],
+        has_more: false,
+        total: 100,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockCustomerList);
+
+      const result = await customerResource.list({
+        limit: 10,
+        ending_before: '507f1f77bcf86cd799439012',
+      });
+
+      expect(result).toEqual(mockCustomerList);
+      expect(result.has_more).toBe(false);
+      expect(result.total).toBe(100);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: undefined,
+          limit: '10',
+          starting_after: undefined,
+          ending_before: '507f1f77bcf86cd799439012',
         },
         path: '/v1/customers/',
       });
@@ -191,6 +236,8 @@ describe('CustomerResource', () => {
         query: {
           search: 'search@example.com',
           limit: '10',
+          starting_after: undefined,
+          ending_before: undefined,
         },
         path: '/v1/customers/',
       });

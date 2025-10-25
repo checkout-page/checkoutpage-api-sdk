@@ -86,6 +86,22 @@ const results = await checkoutpage.coupons.list({
 });
 ```
 
+With cursor-based pagination:
+
+```typescript
+const firstPage = await checkoutpage.coupons.list({ limit: 50 });
+
+const nextPage = await checkoutpage.coupons.list({
+  limit: 50,
+  starting_after: firstPage.data[firstPage.data.length - 1].id,
+});
+
+const previousPage = await checkoutpage.coupons.list({
+  limit: 50,
+  ending_before: nextPage.data[0].id,
+});
+```
+
 #### Create coupon
 
 ```typescript
@@ -115,7 +131,22 @@ const results = await checkoutpage.subscriptions.list({
   status: 'active',
   pageId: '67fcbdac6a91c25ef2d3534a',
   limit: 50,
-  skip: 0,
+});
+```
+
+With cursor-based pagination:
+
+```typescript
+const firstPage = await checkoutpage.subscriptions.list({ limit: 50 });
+
+const nextPage = await checkoutpage.subscriptions.list({
+  limit: 50,
+  starting_after: firstPage.data[firstPage.data.length - 1].id,
+});
+
+const previousPage = await checkoutpage.subscriptions.list({
+  limit: 50,
+  ending_before: nextPage.data[0].id,
 });
 ```
 
@@ -125,6 +156,22 @@ const results = await checkoutpage.subscriptions.list({
 
 ```typescript
 const results = await checkoutpage.payments.list();
+```
+
+With cursor-based pagination:
+
+```typescript
+const firstPage = await checkoutpage.payments.list({ limit: 50 });
+
+const nextPage = await checkoutpage.payments.list({
+  limit: 50,
+  starting_after: firstPage.data[firstPage.data.length - 1].id,
+});
+
+const previousPage = await checkoutpage.payments.list({
+  limit: 50,
+  ending_before: firstPage.data[0].id,
+});
 ```
 
 ## Error Handling
