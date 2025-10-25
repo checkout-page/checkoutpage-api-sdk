@@ -38,9 +38,8 @@ export type CreateCouponResponse =
 
 export type CouponListArgs = operations['coupons/list']['parameters']['query'];
 
-export type CouponListParams = Omit<NonNullable<CouponListArgs>, 'limit' | 'skip'> & {
+export type CouponListParams = Omit<NonNullable<CouponListArgs>, 'limit'> & {
   limit?: number;
-  skip?: number;
 };
 
 type CouponCreateArgs = NonNullable<

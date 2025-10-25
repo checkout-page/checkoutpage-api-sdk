@@ -946,6 +946,29 @@
         "security": [{ "api_key_auth": [] }],
         "tags": ["Events"],
         "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
+            "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": 0,
+              "example": 0,
+              "description": "The number of results to skip. If paginating this value will be your page * limit."
+            },
+            "required": false,
+            "description": "The number of results to skip. If paginating this value will be your page * limit.",
+            "name": "skip",
+            "in": "query"
+          },
           { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
           {
             "schema": {
@@ -972,18 +995,6 @@
             "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
             "required": false,
             "name": "pageId",
-            "in": "query"
-          },
-          {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 20 },
-            "required": false,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 0 },
-            "required": false,
-            "name": "skip",
             "in": "query"
           }
         ],
@@ -1020,19 +1031,30 @@
         "security": [{ "api_key_auth": [] }],
         "tags": ["Customers"],
         "parameters": [
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
           {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 20 },
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
             "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "name": "limit",
             "in": "query"
           },
           {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 0 },
+            "schema": {
+              "type": "string",
+              "default": 0,
+              "example": 0,
+              "description": "The number of results to skip. If paginating this value will be your page * limit."
+            },
             "required": false,
+            "description": "The number of results to skip. If paginating this value will be your page * limit.",
             "name": "skip",
             "in": "query"
-          }
+          },
+          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" }
         ],
         "responses": {
           "200": {
@@ -1128,6 +1150,7 @@
                   "amountOff": {
                     "type": "number",
                     "exclusiveMinimum": 0,
+                    "maximum": 99999999,
                     "example": 100,
                     "description": "A positive integer representing the amount to subtract from an invoice total (required if `percent_off` is not passed)."
                   },
@@ -1232,19 +1255,42 @@
         "security": [{ "api_key_auth": [] }],
         "tags": ["Coupons"],
         "parameters": [
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
           {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 20 },
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
             "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "name": "limit",
             "in": "query"
           },
           {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 0 },
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "507f1f77bcf86cd799439011",
+              "description": "A cursor value specifying the ObjectId of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with ending_before."
+            },
             "required": false,
-            "name": "skip",
+            "description": "A cursor value specifying the ObjectId of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with ending_before.",
+            "name": "starting_after",
             "in": "query"
-          }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "507f1f77bcf86cd799439012",
+              "description": "A cursor value specifying the ObjectId of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with starting_after."
+            },
+            "required": false,
+            "description": "A cursor value specifying the ObjectId of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with starting_after.",
+            "name": "ending_before",
+            "in": "query"
+          },
+          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" }
         ],
         "responses": {
           "200": {
@@ -1279,21 +1325,32 @@
         "security": [{ "api_key_auth": [] }],
         "tags": ["Subscriptions"],
         "parameters": [
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
-          { "schema": { "type": "string" }, "required": false, "name": "pageId", "in": "query" },
-          { "schema": { "type": "string" }, "required": false, "name": "status", "in": "query" },
           {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 20 },
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
             "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "name": "limit",
             "in": "query"
           },
           {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 0 },
+            "schema": {
+              "type": "string",
+              "default": 0,
+              "example": 0,
+              "description": "The number of results to skip. If paginating this value will be your page * limit."
+            },
             "required": false,
+            "description": "The number of results to skip. If paginating this value will be your page * limit.",
             "name": "skip",
             "in": "query"
-          }
+          },
+          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
+          { "schema": { "type": "string" }, "required": false, "name": "pageId", "in": "query" },
+          { "schema": { "type": "string" }, "required": false, "name": "status", "in": "query" }
         ],
         "responses": {
           "200": {
@@ -1648,6 +1705,29 @@
         "security": [{ "api_key_auth": [] }],
         "tags": ["Payments"],
         "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
+            "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": 0,
+              "example": 0,
+              "description": "The number of results to skip. If paginating this value will be your page * limit."
+            },
+            "required": false,
+            "description": "The number of results to skip. If paginating this value will be your page * limit.",
+            "name": "skip",
+            "in": "query"
+          },
           { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
           {
             "schema": {
@@ -1674,18 +1754,6 @@
             "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
             "required": false,
             "name": "pageId",
-            "in": "query"
-          },
-          {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 20 },
-            "required": false,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "schema": { "type": "string", "pattern": "^\\d+$", "default": 0 },
-            "required": false,
-            "name": "skip",
             "in": "query"
           }
         ],

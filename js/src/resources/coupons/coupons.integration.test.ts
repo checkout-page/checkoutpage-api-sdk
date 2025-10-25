@@ -41,17 +41,31 @@ describe('CouponResource Integration Tests', () => {
       expect(result.data.length).toBeLessThanOrEqual(2);
     });
 
-    it('should respect skip pagination parameter', async () => {
+    it('should use cursor-based pagination with starting_after and then reverse with ending_before', async () => {
       const firstPage = await client.coupons.list({
         limit: 1,
       });
 
-      const secondPage = await client.coupons.list({
+      let firstPageId = firstPage.data[0].id;
+      let secondPageId;
+
+      if (firstPage.data.length > 0 && firstPage.has_more) {
+        const secondPage = await client.coupons.list({
+          limit: 1,
+          starting_after: firstPage.data[0].id,
+        });
+
+        secondPageId = secondPage.data[0].id;
+
+        expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
+      }
+
+      const firstPageReversed = await client.coupons.list({
         limit: 1,
-        skip: 1,
+        ending_before: secondPageId,
       });
 
-      expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
+      expect(firstPageReversed.data[0].id).toEqual(firstPageId);
     });
 
     it('should filter coupons by search query', async () => {
@@ -76,13 +90,30 @@ describe('CouponResource Integration Tests', () => {
     it('should handle multiple query parameters together', async () => {
       const result = await client.coupons.list({
         limit: 2,
-        skip: 0,
         search: 'test',
       });
 
       expect(Array.isArray(result.data)).toBe(true);
       expect(result.data.length).toBeLessThanOrEqual(2);
       expect(typeof result.has_more).toBe('boolean');
+    });
+
+    it('should support ending_before cursor parameter', async () => {
+      const firstPage = await client.coupons.list({
+        limit: 5,
+      });
+
+      if (firstPage.data.length > 2) {
+        const middleId = firstPage.data[Math.floor(firstPage.data.length / 2)].id;
+        const beforePage = await client.coupons.list({
+          limit: 5,
+          ending_before: middleId,
+        });
+
+        expect(Array.isArray(beforePage.data)).toBe(true);
+        // Verify that we got items before the cursor
+        expect(beforePage.data.every((item) => item.id !== middleId)).toBe(true);
+      }
     });
   });
 
@@ -254,21 +285,6 @@ describe('CouponResource Integration Tests', () => {
       const foundCoupon = list.data.find((c) => c.id === createdCoupon.id);
       expect(foundCoupon).toBeDefined();
       expect(foundCoupon?.code).toBe(code);
-    });
-
-    it('should handle very large amount values', async () => {
-      const params: AmountNonRepeating = {
-        type: 'amount',
-        label: 'Large Amount Test',
-        code: `TEST_LARGE_${Date.now()}`,
-        amountOff: 999999999,
-        currency: 'usd',
-        duration: 'once',
-      };
-
-      const { data } = await client.coupons.create(params);
-
-      expect(data.amountOff).toBe(params.amountOff);
     });
 
     it('should accept coupon with special characters in label', async () => {
@@ -451,6 +467,19 @@ describe('CouponResource Integration Tests', () => {
         currency: 'usd',
         duration: 'repeating',
         durationInMonths: 0,
+      };
+
+      await expect(client.coupons.create(params)).rejects.toThrow(ValidationError);
+    });
+
+    it('should fail with very large amount off', async () => {
+      const params: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Large Amount Test',
+        code: `TEST_LARGE_${Date.now()}`,
+        amountOff: 999999999,
+        currency: 'usd',
+        duration: 'once',
       };
 
       await expect(client.coupons.create(params)).rejects.toThrow(ValidationError);

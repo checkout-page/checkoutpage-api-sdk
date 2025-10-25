@@ -62,13 +62,14 @@ describe('CouponResource', () => {
         query: {
           search: undefined,
           limit: undefined,
-          skip: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
         },
         path: '/v1/coupons/',
       });
     });
 
-    it('should fetch coupons with pagination parameters', async () => {
+    it('should fetch coupons with limit parameter', async () => {
       const mockCouponList: CouponList = {
         data: [
           {
@@ -95,7 +96,6 @@ describe('CouponResource', () => {
 
       const result = await couponResource.list({
         limit: 10,
-        skip: 5,
       });
 
       expect(result).toEqual(mockCouponList);
@@ -106,7 +106,96 @@ describe('CouponResource', () => {
         query: {
           search: undefined,
           limit: '10',
-          skip: '5',
+          starting_after: undefined,
+          ending_before: undefined,
+        },
+        path: '/v1/coupons/',
+      });
+    });
+
+    it('should fetch coupons with starting_after cursor parameter', async () => {
+      const mockCouponList: CouponList = {
+        data: [
+          {
+            id: '67ee075004de439ab0b675b6',
+            label: 'Summer 20% Off',
+            code: 'SUMMER20',
+            amountOff: null,
+            percentOff: 20,
+            appliesToSetupFee: false,
+            duration: 'repeating',
+            durationInMonths: 3,
+            timesRedeemed: 5,
+            deleted: false,
+            sellerId: 'seller123',
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+        ],
+        has_more: true,
+        total: 100,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockCouponList);
+
+      const result = await couponResource.list({
+        limit: 10,
+        starting_after: '507f1f77bcf86cd799439011',
+      });
+
+      expect(result).toEqual(mockCouponList);
+      expect(result.has_more).toBe(true);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: undefined,
+          limit: '10',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
+        },
+        path: '/v1/coupons/',
+      });
+    });
+
+    it('should fetch coupons with ending_before cursor parameter', async () => {
+      const mockCouponList: CouponList = {
+        data: [
+          {
+            id: '67ee075004de439ab0b675b6',
+            label: 'Summer 20% Off',
+            code: 'SUMMER20',
+            amountOff: null,
+            percentOff: 20,
+            appliesToSetupFee: false,
+            duration: 'repeating',
+            durationInMonths: 3,
+            timesRedeemed: 5,
+            deleted: false,
+            sellerId: 'seller123',
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+          },
+        ],
+        has_more: false,
+        total: 100,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockCouponList);
+
+      const result = await couponResource.list({
+        limit: 10,
+        ending_before: '507f1f77bcf86cd799439012',
+      });
+
+      expect(result).toEqual(mockCouponList);
+      expect(result.has_more).toBe(false);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: undefined,
+          limit: '10',
+          starting_after: undefined,
+          ending_before: '507f1f77bcf86cd799439012',
         },
         path: '/v1/coupons/',
       });
@@ -149,7 +238,8 @@ describe('CouponResource', () => {
         query: {
           search: 'SUMMER',
           limit: '10',
-          skip: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
         },
         path: '/v1/coupons/',
       });

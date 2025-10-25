@@ -83,7 +83,6 @@ With pagination and filtering:
 const results = await checkoutpage.coupons.list({
   search: '10off',
   limit: 50,
-  skip: 0,
 });
 ```
 
