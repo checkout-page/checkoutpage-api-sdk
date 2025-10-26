@@ -174,6 +174,31 @@ const previousPage = await checkoutpage.payments.list({
 });
 ```
 
+### Bookings
+
+#### List bookings
+
+```typescript
+const results = await checkoutpage.bookings.list();
+```
+
+#### Filter by status
+
+```typescript
+const paidBookings = await checkoutpage.bookings.list({
+  status: 'paid',
+  limit: 25,
+});
+```
+
+#### Filter by page
+
+```typescript
+const pageBookings = await checkoutpage.bookings.list({
+  pageId: '67fcbdac6a91c25ef2d3534a',
+});
+```
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:

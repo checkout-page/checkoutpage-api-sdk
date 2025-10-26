@@ -100,6 +100,16 @@ export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'li
 };
 
 // Bookings
+export type BookingList =
+  operations['events/bookings/list']['responses'][200]['content']['application/json'];
+
+export type Booking = BookingList['data'][number];
+
+export type BookingListArgs = operations['events/bookings/list']['parameters']['query'];
+
+export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit'> & {
+  limit?: number;
+};
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';
