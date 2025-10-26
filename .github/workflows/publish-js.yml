@@ -30,6 +30,9 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -55,34 +58,6 @@ jobs:
 
       - name: Fix package.json
         run: cd js && npm pkg fix
-
-      - name: Setup npm Authentication with OIDC
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${NODE_AUTH_TOKEN}
-          npm config get registry
-
-      - name: Debug OIDC Token and npm Configuration
-        run: |
-          echo "=== GitHub Context ==="
-          echo "Repository: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Workflow: ${{ github.workflow }}"
-          echo ""
-          echo "=== npm Configuration ==="
-          npm config get registry
-          npm config get @checkoutpage:registry
-          npm whoami || echo "Not authenticated"
-          echo ""
-          echo "=== Environment Variables ==="
-          env | grep -i npm || echo "No npm env vars set"
-          env | grep -i auth || echo "No auth env vars set"
-          echo ""
-          echo "=== .npmrc File Content ==="
-          cat ~/.npmrc || echo "No .npmrc file found"
-          echo ""
-          echo "=== npm info about package ==="
-          npm info @checkoutpage/sdk versions --json || echo "Could not fetch package info"
 
       - name: Publish to npm
         run: cd js && npm publish
