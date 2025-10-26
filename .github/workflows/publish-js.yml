@@ -60,7 +60,6 @@ jobs:
         run: |
           npm config set //registry.npmjs.org/:_authToken ${NODE_AUTH_TOKEN}
           npm config get registry
-          npm config get //registry.npmjs.org/:_authToken
 
       - name: Debug OIDC Token and npm Configuration
         run: |
