@@ -56,6 +56,12 @@ jobs:
       - name: Fix package.json
         run: cd js && npm pkg fix
 
+      - name: Setup npm Authentication with OIDC
+        run: |
+          mkdir -p ~/.npm
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          npm config set registry https://registry.npmjs.org
+
       - name: Debug OIDC Token and npm Configuration
         run: |
           echo "=== GitHub Context ==="
@@ -81,8 +87,6 @@ jobs:
 
       - name: Publish to npm
         run: cd js && npm publish
-        env:
-          NPM_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
 
       - name: Create git tag
         run: |
