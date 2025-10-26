@@ -11,6 +11,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: publish-js
     permissions:
       contents: write
       id-token: write
@@ -52,6 +53,9 @@ jobs:
 
       - name: Lint
         run: pnpm --filter @checkoutpage/sdk lint
+
+      - name: Fix package.json
+        run: cd js && npm pkg fix
 
       - name: Publish to npm
         run: cd js && npm publish
