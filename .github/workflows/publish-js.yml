@@ -58,9 +58,9 @@ jobs:
 
       - name: Setup npm Authentication with OIDC
         run: |
-          mkdir -p ~/.npm
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-          npm config set registry https://registry.npmjs.org
+          npm config set //registry.npmjs.org/:_authToken ${NODE_AUTH_TOKEN}
+          npm config get registry
+          npm config get //registry.npmjs.org/:_authToken
 
       - name: Debug OIDC Token and npm Configuration
         run: |
