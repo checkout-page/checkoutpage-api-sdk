@@ -87,11 +87,5 @@ jobs:
             ```bash
             npm install @checkoutpage/sdk
             ```
-
-            See [PUBLISHING.md](PUBLISHING.md) for authentication setup.
-
-            ### Changes
-
-            See the [changelog](js/CHANGELOG.md) for details.
           draft: false
           prerelease: false
