@@ -1,6 +1,6 @@
 {
   "name": "@checkoutpage/sdk",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Official JavaScript SDK for the Checkout Page API",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -38,7 +38,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/checkout-page/checkoutpage-api-sdk.git",
+    "url": "git+https://github.com/checkout-page/checkoutpage-api-sdk.git",
     "directory": "js"
   },
   "publishConfig": {
