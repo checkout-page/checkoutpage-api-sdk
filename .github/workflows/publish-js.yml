@@ -79,8 +79,10 @@ jobs:
           echo "=== npm info about package ==="
           npm info @checkoutpage/sdk versions --json || echo "Could not fetch package info"
 
-      - name: Publish to npm (Verbose)
-        run: cd js && npm publish --verbose
+      - name: Publish to npm
+        run: cd js && npm publish
+        env:
+          NPM_TOKEN: ${{ env.NODE_AUTH_TOKEN }}
 
       - name: Create git tag
         run: |
