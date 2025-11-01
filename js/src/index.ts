@@ -4,6 +4,7 @@ import { CouponResource } from './resources/coupons/coupons';
 import { PaymentResource } from './resources/payments/payments';
 import { SubscriptionResource } from './resources/subscriptions/subscriptions';
 import { BookingResource } from './resources/bookings/bookings';
+import { TicketResource } from './resources/tickets/tickets';
 
 export class CheckoutPageClient {
   public readonly customers: CustomerResource;
@@ -11,6 +12,7 @@ export class CheckoutPageClient {
   public readonly payments: PaymentResource;
   public readonly subscriptions: SubscriptionResource;
   public readonly bookings: BookingResource;
+  public readonly tickets: TicketResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -20,6 +22,7 @@ export class CheckoutPageClient {
     this.payments = new PaymentResource(this.client);
     this.subscriptions = new SubscriptionResource(this.client);
     this.bookings = new BookingResource(this.client);
+    this.tickets = new TicketResource(this.client);
   }
 }
 
@@ -39,6 +42,8 @@ export type {
   PaymentList,
   Subscription,
   SubscriptionList,
+  ValidateTicketResponse,
+  ValidateTicketParams,
 } from './types';
 export {
   CheckoutPageError,

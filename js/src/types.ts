@@ -101,15 +101,25 @@ export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'li
 
 // Bookings
 export type BookingList =
-  operations['events/bookings/list']['responses'][200]['content']['application/json'];
+  operations['bookings/list']['responses'][200]['content']['application/json'];
 
 export type Booking = BookingList['data'][number];
 
-export type BookingListArgs = operations['events/bookings/list']['parameters']['query'];
+export type BookingListArgs = operations['bookings/list']['parameters']['query'];
 
 export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit'> & {
   limit?: number;
 };
+
+// Tickets
+export type ValidateTicketData =
+  operations['tickets/validate']['responses'][200]['content']['application/json'];
+
+export type ValidateTicketResponse = ValidateTicketData['data'];
+
+export type ValidateTicketParams = NonNullable<
+  operations['tickets/validate']['requestBody']
+>['content']['application/json'];
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

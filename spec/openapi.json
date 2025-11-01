@@ -38,6 +38,96 @@
       "SubscriptionId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
       "SubscriptionPaymentId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
       "ApiKeyId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
+      "TicketCheckIn[]": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
+            "checkedInAt": { "type": "string", "format": "date" },
+            "checkedInByUserId": { "type": "string" },
+            "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] }
+          },
+          "required": ["method", "checkedInAt", "checkedInByUserId", "status"]
+        },
+        "description": "List of all check-ins for the ticket"
+      },
+      "TicketLatestCheckIn": {
+        "type": "object",
+        "properties": {
+          "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
+          "checkedInAt": { "type": "string", "format": "date" },
+          "checkedInByUserId": { "type": "string" },
+          "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] }
+        },
+        "required": ["method", "checkedInAt", "checkedInByUserId", "status"],
+        "description": "The latest check-in information for the ticket"
+      },
+      "TicketModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "sellerId": { "type": "string" },
+          "chargeId": { "type": "string" },
+          "pageId": { "type": "string" },
+          "status": { "type": "string", "enum": ["PAID", "CANCELED"] },
+          "orderId": { "type": "string" },
+          "customerName": { "type": "string" },
+          "customerEmail": { "type": "string" },
+          "ticketTypeId": { "type": "string" },
+          "checkIns": { "$ref": "#/components/schemas/TicketCheckIn[]" },
+          "latestCheckIn": { "$ref": "#/components/schemas/TicketLatestCheckIn" },
+          "ticketShortId": { "type": "string" },
+          "checkInStatus": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] },
+          "originalPrice": { "type": "number" },
+          "discountAmount": { "type": "number" },
+          "feeAmount": { "type": "number" },
+          "taxAmount": { "type": "number" },
+          "couponAmount": { "type": "number" },
+          "revenue": { "type": "number" },
+          "currency": { "type": "string" },
+          "livemode": { "type": "boolean" },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": { "type": "string" },
+                "value": { "type": "string" },
+                "addedAt": { "type": "string", "format": "date-time" }
+              },
+              "required": ["key", "value", "addedAt"]
+            }
+          },
+          "orderedAt": { "type": "string", "format": "date-time" },
+          "canceledAt": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": [
+          "id",
+          "sellerId",
+          "chargeId",
+          "pageId",
+          "status",
+          "orderId",
+          "customerEmail",
+          "ticketTypeId",
+          "checkIns",
+          "ticketShortId",
+          "originalPrice",
+          "discountAmount",
+          "feeAmount",
+          "taxAmount",
+          "couponAmount",
+          "revenue",
+          "livemode",
+          "orderedAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "description": ""
+      },
       "Booking": {
         "type": "object",
         "properties": {
@@ -384,22 +474,66 @@
       "Coupon": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "label": { "type": "string" },
-          "code": { "type": "string" },
-          "amountOff": { "type": ["number", "null"] },
-          "percentOff": { "type": ["number", "null"] },
-          "appliesToSetupFee": { "type": "boolean" },
-          "duration": { "type": "string", "enum": ["once", "repeating", "forever"] },
-          "durationInMonths": { "type": "number" },
-          "redeemBy": { "type": "string", "format": "date-time" },
-          "maxRedemptions": { "type": "number" },
-          "timesRedeemed": { "type": "number" },
-          "currency": { "type": "string" },
-          "deleted": { "type": "boolean", "example": false },
+          "id": { "type": "string", "description": "Unique identifier for the object." },
+          "label": {
+            "type": "string",
+            "description": "Internal name for the coupon.",
+            "example": "Free shipping within US"
+          },
+          "code": {
+            "type": "string",
+            "description": "The coupon code a customer enters.",
+            "example": "10Off"
+          },
+          "amountOff": {
+            "type": ["number", "null"],
+            "description": "Flat discount amount in the specified `currency`. Only set if `percentOff` is not used."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Three-letter ISO code for the `currency` (required when `amountOff` is set). Examples: usd, eur, gbp."
+          },
+          "percentOff": {
+            "type": ["number", "null"],
+            "description": "Percentage discount (0-100) applied to payments using this coupon. Example: 50 applies 50% off ($100 payment becomes $50). Only set if `amountOff` is not used."
+          },
+          "appliesToSetupFee": {
+            "type": "boolean",
+            "description": "When enabled, applies this coupon discount to the setup fee."
+          },
+          "duration": {
+            "type": "string",
+            "enum": ["once", "repeating", "forever"],
+            "description": "How long the discount applies: once (single payment), repeating (specified months), or forever (all future payments)."
+          },
+          "durationInMonths": {
+            "type": "number",
+            "description": "If `duration` is `repeating`, the number of months the coupon applies. Null if coupon `duration` is forever or once."
+          },
+          "redeemBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The ISO datetime that this coupon must be used before."
+          },
+          "maxRedemptions": {
+            "type": "number",
+            "description": "Maximum number of times this coupon can be redeemed globally. A single customer may redeem it multiple times."
+          },
+          "timesRedeemed": {
+            "type": "number",
+            "description": "The number of times this coupon has been redeemed."
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "If true, the coupon will no longer be usable.",
+            "example": false
+          },
           "sellerId": { "type": "string" },
           "pageIds": { "type": "array", "items": { "type": "string" } },
-          "stripeCouponId": { "type": "string" },
+          "stripeCouponId": {
+            "type": "string",
+            "description": "The unique identifier of the stripe coupon that was created with this coupon."
+          },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" }
         },
@@ -782,7 +916,7 @@
       "post": {
         "summary": "Validate ticket",
         "description": "Validates a ticket using its QR code. Scan the QR code and pass the data and optionally manages metadata entries",
-        "operationId": "events/validate",
+        "operationId": "tickets/validate",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Events"],
         "parameters": [
@@ -823,106 +957,17 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean" },
-                    "ticket": {
-                      "allOf": [
-                        { "$ref": "#/components/schemas/Ticket" },
-                        {
-                          "properties": {
-                            "id": { "type": "string" },
-                            "sellerId": { "type": "string" },
-                            "chargeId": { "type": "string" },
-                            "pageId": { "type": "string" },
-                            "status": { "type": "string", "enum": ["PAID", "CANCELED"] },
-                            "orderId": { "type": "string" },
-                            "customerName": { "type": "string" },
-                            "customerEmail": { "type": "string" },
-                            "ticketTypeId": { "type": "string" },
-                            "checkIns": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-                                  "checkedInAt": { "type": "string", "format": "date" },
-                                  "checkedInByUserId": { "type": "string" },
-                                  "status": {
-                                    "type": "string",
-                                    "enum": ["UNCHECKEDIN", "CHECKEDIN"]
-                                  }
-                                },
-                                "required": ["method", "checkedInAt", "checkedInByUserId", "status"]
-                              }
-                            },
-                            "latestCheckIn": {
-                              "type": "object",
-                              "properties": {
-                                "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-                                "checkedInAt": { "type": "string", "format": "date" },
-                                "checkedInByUserId": { "type": "string" },
-                                "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] }
-                              },
-                              "required": ["method", "checkedInAt", "checkedInByUserId", "status"]
-                            },
-                            "ticketShortId": { "type": "string" },
-                            "checkInStatus": {
-                              "type": "string",
-                              "enum": ["UNCHECKEDIN", "CHECKEDIN"]
-                            },
-                            "originalPrice": { "type": "integer" },
-                            "discountAmount": { "type": "integer" },
-                            "feeAmount": { "type": "integer" },
-                            "taxAmount": { "type": "integer" },
-                            "couponAmount": { "type": "integer" },
-                            "revenue": { "type": "integer" },
-                            "currency": { "type": "string" },
-                            "livemode": { "type": "boolean" },
-                            "metadata": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "key": { "type": "string" },
-                                  "value": { "type": "string" },
-                                  "addedAt": { "type": "string", "format": "date-time" }
-                                },
-                                "required": ["key", "value", "addedAt"]
-                              }
-                            },
-                            "orderedAt": { "type": "string", "format": "date-time" },
-                            "canceledAt": { "type": "string", "format": "date-time" },
-                            "createdAt": { "type": "string", "format": "date-time" },
-                            "updatedAt": { "type": "string", "format": "date-time" }
-                          },
-                          "required": [
-                            "id",
-                            "sellerId",
-                            "chargeId",
-                            "pageId",
-                            "status",
-                            "orderId",
-                            "customerEmail",
-                            "ticketTypeId",
-                            "checkIns",
-                            "ticketShortId",
-                            "originalPrice",
-                            "discountAmount",
-                            "feeAmount",
-                            "taxAmount",
-                            "couponAmount",
-                            "revenue",
-                            "livemode",
-                            "orderedAt",
-                            "createdAt",
-                            "updatedAt"
-                          ],
-                          "description": ""
-                        }
-                      ]
-                    },
-                    "message": { "type": "string" }
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean" },
+                        "ticket": { "$ref": "#/components/schemas/TicketModel" },
+                        "message": { "type": "string" }
+                      },
+                      "required": ["success", "ticket"]
+                    }
                   },
-                  "required": ["success", "ticket"]
+                  "required": ["data"]
                 }
               }
             }
@@ -942,7 +987,7 @@
       "get": {
         "summary": "List all bookings",
         "description": "Returns a paginated list of your event bookings. The bookings are sorted in order, with the most recent bookings appearing first.",
-        "operationId": "events/bookings/list",
+        "operationId": "bookings/list",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Events"],
         "parameters": [
@@ -981,7 +1026,16 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term.",
+            "name": "search",
+            "in": "query"
+          },
           {
             "schema": {
               "type": "string",
@@ -1018,9 +1072,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": { "type": "boolean" },
-                    "total": { "type": "number" },
-                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/Booking" } }
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether there are more results available beyond this page",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of results matching the query (across all pages)",
+                      "example": 42
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Booking" },
+                      "description": "Array of results for this page"
+                    }
                   },
                   "required": ["has_more", "total", "data"]
                 }
@@ -1088,11 +1154,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": { "type": "boolean" },
-                    "total": { "type": "number" },
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether there are more results available beyond this page",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of results matching the query (across all pages)",
+                      "example": 42
+                    },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Customer" }
+                      "items": { "$ref": "#/components/schemas/Customer" },
+                      "description": "Array of results for this page"
                     }
                   },
                   "required": ["has_more", "total", "data"]
@@ -1333,9 +1408,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": { "type": "boolean" },
-                    "total": { "type": "number" },
-                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/Coupon" } }
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether there are more results available beyond this page",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of results matching the query (across all pages)",
+                      "example": 42
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Coupon" },
+                      "description": "Array of results for this page"
+                    }
                   },
                   "required": ["has_more", "total", "data"]
                 }
@@ -1410,8 +1497,16 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": { "type": "boolean" },
-                    "total": { "type": "number" },
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether there are more results available beyond this page",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of results matching the query (across all pages)",
+                      "example": 42
+                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -1731,7 +1826,8 @@
                           "updatedAt": { "type": "string", "format": "date-time" }
                         },
                         "required": ["id", "amount", "createdAt", "updatedAt"]
-                      }
+                      },
+                      "description": "Array of results for this page"
                     }
                   },
                   "required": ["has_more", "total", "data"]
@@ -1790,7 +1886,16 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term.",
+            "name": "search",
+            "in": "query"
+          },
           {
             "schema": {
               "type": "string",
@@ -1827,9 +1932,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": { "type": "boolean" },
-                    "total": { "type": "number" },
-                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/Payment" } }
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether there are more results available beyond this page",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of results matching the query (across all pages)",
+                      "example": 42
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Payment" },
+                      "description": "Array of results for this page"
+                    }
                   },
                   "required": ["has_more", "total", "data"]
                 }
