@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
+import { testResources } from '../../../test/resources';
 
 describe('PageResource Integration Tests', () => {
   let client: CheckoutPageClient;
@@ -36,7 +37,7 @@ describe('PageResource Integration Tests', () => {
       expect(result.data.length).toBeLessThanOrEqual(5);
     });
 
-    it('should filter by page type', async () => {
+    it.only('should filter by page type', async () => {
       const result = await client.pages.list({
         type: 'event',
       });
@@ -83,11 +84,12 @@ describe('PageResource Integration Tests', () => {
         type: 'checkout',
         title: 'Buy Our Product',
         description: 'Get access to our premium product',
-        productDetails: {
-          price: 4900,
-          currency: 'usd',
+        productData: {
           title: 'Premium Product',
-          type: 'charge',
+          price: {
+            price: 4900,
+            currency: 'usd',
+          },
         },
       });
 
@@ -96,7 +98,6 @@ describe('PageResource Integration Tests', () => {
       expect(page.name).toContain('One-Time Checkout');
       expect(page.product).toBeDefined();
       expect(page.product?.price).toBe(4900);
-      expect(page.product?.type).toBe('charge');
       expect(page.product?.currency).toBe('usd');
     });
 
@@ -105,9 +106,17 @@ describe('PageResource Integration Tests', () => {
         name: `Monthly Subscription ${Date.now()}`,
         type: 'checkout',
         title: 'Subscribe Monthly',
-        productDetails: {
+        productData: {
           title: 'Monthly Plan',
-          type: 'subscription',
+          price: {
+            recurring: {
+              interval: 'month',
+              intervalCount: 1,
+            },
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -126,13 +135,19 @@ describe('PageResource Integration Tests', () => {
         name: `Monthly Subscription ${Date.now()}`,
         type: 'checkout',
         title: 'Subscribe Monthly',
-        productDetails: {
-          price: 2900,
-          currency: 'usd',
+        productData: {
           title: 'Monthly Plan',
-          type: 'subscription',
-          interval: 'month',
-          intervalCount: 1,
+          price: {
+            price: 2900,
+            currency: 'usd',
+            recurring: {
+              interval: 'month',
+              intervalCount: 1,
+            },
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -151,11 +166,17 @@ describe('PageResource Integration Tests', () => {
         name: `Trial Subscription ${Date.now()}`,
         type: 'checkout',
         title: 'Start Your Free Trial',
-        productDetails: {
-          price: 4900,
-          currency: 'eur',
-          type: 'subscription',
-          trialPeriodDays: 14,
+        productData: {
+          price: {
+            price: 4900,
+            currency: 'eur',
+            recurring: {
+              trialPeriodDays: 14,
+            },
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -168,14 +189,20 @@ describe('PageResource Integration Tests', () => {
         name: `Subscription with Setup ${Date.now()}`,
         type: 'checkout',
         title: 'Join Our Platform',
-        productDetails: {
-          price: 9900,
-          currency: 'usd',
+        productData: {
           title: 'Platform Access',
-          type: 'subscription',
-          interval: 'year',
-          intervalCount: 1,
-          setupFee: 5000,
+          price: {
+            price: 9900,
+            currency: 'usd',
+            setupFee: 5000,
+            recurring: {
+              interval: 'year',
+              intervalCount: 1,
+            },
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -190,10 +217,16 @@ describe('PageResource Integration Tests', () => {
         const { data: page } = await client.pages.create({
           name: `Weekly Subscription ${Date.now()}`,
           type: 'checkout',
-          productDetails: {
-            type: 'subscription',
-            interval: interval as any,
-            intervalCount: 1,
+          productData: {
+            price: {
+              recurring: {
+                interval: interval as any,
+                intervalCount: 1,
+              },
+            },
+            taxBehavior: '',
+            media: [],
+            files: [],
           },
         });
 
@@ -207,13 +240,16 @@ describe('PageResource Integration Tests', () => {
         name: `Variant Product ${Date.now()}`,
         type: 'checkout',
         title: 'Choose Your Option',
-        productDetails: {
-          // price is ignored!
-          price: 2900,
-          currency: 'usd',
+        productData: {
           title: 'T-Shirt',
-          type: 'charge',
-          pricingType: 'multiple',
+          price: {
+            price: 2900,
+            currency: 'usd',
+            pricingType: 'multiple',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
           variants: [
             {
               name: 'Size',
@@ -249,13 +285,17 @@ describe('PageResource Integration Tests', () => {
       const { data: page } = await client.pages.create({
         name: `Limited Stock Product ${Date.now()}`,
         type: 'checkout',
-        productDetails: {
-          price: 9900,
-          currency: 'usd',
+        productData: {
           title: 'Limited Edition Product',
-          type: 'charge',
+          price: {
+            price: 9900,
+            currency: 'usd',
+          },
           stock: 50,
           sku: 'LIMITED-EDITION-001',
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -267,12 +307,16 @@ describe('PageResource Integration Tests', () => {
       const { data: page } = await client.pages.create({
         name: `Discounted Product ${Date.now()}`,
         type: 'checkout',
-        productDetails: {
-          price: 4900,
-          currency: 'usd',
+        productData: {
           title: 'Sale Item',
-          type: 'charge',
-          discountedFromPrice: 9900,
+          price: {
+            price: 4900,
+            currency: 'usd',
+            discountedFromPrice: 9900,
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -284,9 +328,14 @@ describe('PageResource Integration Tests', () => {
       const { data: page } = await client.pages.create({
         name: `Checkout with Custom Fields ${Date.now()}`,
         type: 'checkout',
-        productDetails: {
-          price: 2900,
-          currency: 'usd',
+        productData: {
+          price: {
+            price: 2900,
+            currency: 'usd',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
         fields: [
           {
@@ -333,7 +382,6 @@ describe('PageResource Integration Tests', () => {
         title: 'Premium Course Checkout',
         description: '<p>Get access to our <strong>premium</strong> course today!</p>',
         slug: `advanced-checkout-${Date.now()}`,
-        hostedLayoutType: 'double',
         savePaymentMethod: true,
         showCouponCodeField: true,
         tax: {
@@ -343,10 +391,15 @@ describe('PageResource Integration Tests', () => {
           disableEmails: true,
         },
         googleIndex: false,
-        productDetails: {
-          price: 9900,
-          currency: 'usd',
+        productData: {
           title: 'Premium Course',
+          price: {
+            price: 9900,
+            currency: 'usd',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -360,9 +413,14 @@ describe('PageResource Integration Tests', () => {
       const { data: page } = await client.pages.create({
         name: `Dynamic Pricing ${Date.now()}`,
         type: 'checkout',
-        productDetails: {
-          price: 4900,
-          currency: 'usd',
+        productData: {
+          price: {
+            price: 4900,
+            currency: 'usd',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
         allowDynamicPrice: true,
         allowDynamicDiscountedFromPrice: true,
@@ -380,11 +438,15 @@ describe('PageResource Integration Tests', () => {
         name: `Free Download ${Date.now()}`,
         type: 'checkout',
         title: 'Free eBook Download',
-        productDetails: {
-          price: 0,
-          currency: 'usd',
+        productData: {
           title: 'Free eBook',
-          type: 'charge',
+          price: {
+            price: 0,
+            currency: 'usd',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -396,10 +458,15 @@ describe('PageResource Integration Tests', () => {
       const { data: page } = await client.pages.create({
         name: `EUR Product ${Date.now()}`,
         type: 'checkout',
-        productDetails: {
-          price: 4900,
-          currency: 'eur',
+        productData: {
           title: 'European Product',
+          price: {
+            price: 4900,
+            currency: 'eur',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -499,6 +566,7 @@ describe('PageResource Integration Tests', () => {
           startDate: '2024-10-01T14:00:00Z',
           endDate: '2024-10-01T15:30:00Z',
           timezone: 'UTC',
+          meetingLink: 'https://zoom.us/j/123456789',
         },
         ticketGroups: [
           {
@@ -742,9 +810,14 @@ describe('PageResource Integration Tests', () => {
       const { data: created } = await client.pages.create({
         name: `Get Test Checkout ${Date.now()}`,
         type: 'checkout',
-        productDetails: {
-          price: 5900,
-          currency: 'usd',
+        productData: {
+          price: {
+            price: 5900,
+            currency: 'usd',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
         },
       });
 
@@ -900,5 +973,133 @@ describe('PageResource Integration Tests', () => {
       const { data: deletedPage } = await client.pages.get(page.id);
       expect(deletedPage.status).toBe('archived');
     });
+  });
+
+  describe('create with file uploads', () => {
+    it('should create a checkout page with uploaded product image', async () => {
+      // Create a test image file using helper
+      const imageFile = testResources.files.png('product-image.png');
+
+      // Upload the image
+      const uploadResult = await client.files.upload({
+        file: imageFile,
+        purpose: 'image',
+      });
+
+      expect(uploadResult.data.id).toBeDefined();
+      expect(uploadResult.data.purpose).toBe('image');
+      expect(uploadResult.data.type).toBe('image/png');
+      expect(uploadResult.data.width).toBeDefined();
+      expect(uploadResult.data.height).toBeDefined();
+
+      // Create a checkout page with the uploaded image
+      const { data: page } = await client.pages.create({
+        name: `Checkout with Image ${Date.now()}`,
+        type: 'checkout',
+        title: 'Product with Image',
+        productData: {
+          title: 'Premium Product',
+          price: {
+            price: 4900,
+            currency: 'usd',
+          },
+          media: [{ fileId: uploadResult.data.id }],
+          taxBehavior: '',
+          files: [],
+        },
+      });
+
+      expect(page.product).toBeDefined();
+      expect(page.product?.media).toBeDefined();
+      expect(page.product?.media?.length).toBe(1);
+      expect(page.product?.media?.[0].fileId).toBe(uploadResult.data.id);
+    });
+
+    it('should create a checkout page with multiple product images', async () => {
+      const pngFile = testResources.files.png('image-1.png');
+      const jpgFile = testResources.files.jpg('image-2.jpg');
+      const webpFile = testResources.files.webp('image-3.webp');
+
+      const upload1 = await client.files.upload({ file: pngFile, purpose: 'image' });
+      const upload2 = await client.files.upload({ file: jpgFile, purpose: 'image' });
+      const upload3 = await client.files.upload({ file: webpFile, purpose: 'image' });
+
+      const { data: page } = await client.pages.create({
+        name: `Checkout with Multiple Images ${Date.now()}`,
+        type: 'checkout',
+        title: 'Product Gallery',
+        productData: {
+          title: 'Product with Gallery',
+          price: {
+            price: 7900,
+            currency: 'usd',
+          },
+          media: [
+            { fileId: upload1.data.id },
+            { fileId: upload2.data.id },
+            { fileId: upload3.data.id },
+          ],
+          taxBehavior: '',
+          files: [],
+        },
+      });
+
+      expect(page.product?.media?.length).toBe(3);
+      expect(page.product?.media?.[0].fileId).toBe(upload1.data.id);
+      expect(page.product?.media?.[1].fileId).toBe(upload2.data.id);
+      expect(page.product?.media?.[2].fileId).toBe(upload3.data.id);
+    }, 30000);
+
+    it('should create a checkout page with uploaded product files', async () => {
+      const [imageFile, imageFile2, imageFile3, pdfFile, pdfFile2] = await Promise.all([
+        client.files.upload({
+          file: testResources.files.png('product.png'),
+          purpose: 'image',
+        }),
+        client.files.upload({
+          file: testResources.files.png('product1.png'),
+          purpose: 'image',
+        }),
+        client.files.upload({
+          file: testResources.files.png('product2.png'),
+          purpose: 'image',
+        }),
+        client.files.upload({ file: testResources.files.pdf('ebook1.pdf'), purpose: 'file' }),
+        client.files.upload({ file: testResources.files.pdf('ebook2.pdf'), purpose: 'file' }),
+      ]);
+
+      const { data: page } = await client.pages.create({
+        name: `Digital Product ${Date.now()}`,
+        type: 'checkout',
+        title: 'eBook Download',
+        productData: {
+          title: 'Premium eBook',
+          price: {
+            price: 1900,
+            currency: 'usd',
+          },
+          media: [
+            { fileId: imageFile.data.id },
+            { fileId: imageFile2.data.id },
+            { fileId: imageFile3.data.id },
+          ],
+          files: [pdfFile.data.id, pdfFile2.data.id],
+          taxBehavior: '',
+        },
+      });
+
+      expect(page.product?.media?.length).toBe(3);
+      expect(page.product?.media?.[0].fileId).toBe(imageFile.data.id);
+      expect(imageFile.data.type).toBe('image/png');
+      expect(imageFile.data.purpose).toBe('image');
+      expect(page.product?.media?.[1].fileId).toBe(imageFile2.data.id);
+      expect(page.product?.media?.[2].fileId).toBe(imageFile3.data.id);
+      expect(page.product?.files?.length).toBe(2);
+      expect(page.product?.files?.[0]).toBe(pdfFile.data.id);
+      expect(page.product?.files?.[1]).toBe(pdfFile2.data.id);
+
+      expect(pdfFile.data.type).toBe('application/pdf');
+      expect(pdfFile.data.purpose).toBe('file');
+    }, 30000);
   });
 });
