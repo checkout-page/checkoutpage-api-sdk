@@ -3,6 +3,23 @@ import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { testResources } from '../../../test/resources';
 
+/**
+ * Generate a valid MongoDB ObjectId (24 hex characters)
+ * Format: 4-byte timestamp + 5-byte random + 3-byte counter
+ */
+function generateObjectId(): string {
+  const timestamp = Math.floor(Date.now() / 1000)
+    .toString(16)
+    .padStart(8, '0');
+  const randomValue = Math.floor(Math.random() * 0xffffffffff)
+    .toString(16)
+    .padStart(10, '0');
+  const counter = Math.floor(Math.random() * 0xffffff)
+    .toString(16)
+    .padStart(6, '0');
+  return timestamp + randomValue + counter;
+}
+
 describe('PageResource Integration Tests', () => {
   let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
@@ -474,35 +491,46 @@ describe('PageResource Integration Tests', () => {
     });
 
     it.only('should create a kitchen sink one-time payment checkout with all features', async () => {
+      // Generate ObjectIds for variants and options
+      const variantLicenseId = generateObjectId();
+      const optionPersonalId = generateObjectId();
+      const optionTeamId = generateObjectId();
+      const optionEnterpriseId = generateObjectId();
+      const variantSupportId = generateObjectId();
+      const optionStandardId = generateObjectId();
+      const optionPriorityId = generateObjectId();
+      const variantOnboardingId = generateObjectId();
+      const optionSelfOnboardId = generateObjectId();
+      const optionGuidedOnboardId = generateObjectId();
+      const optionFullOnboardId = generateObjectId();
+
       // Upload product images
       const image1 = testResources.files.png('product-main.png');
       const image2 = testResources.files.jpg('product-gallery-1.jpg');
       const image3 = testResources.files.webp('product-gallery-2.webp');
 
-      const [upload1, upload2, upload3] = await Promise.all([
+      const [upload1, upload2, upload3, fileUpload, fileUpload2] = await Promise.all([
         client.files.upload({ file: image1, purpose: 'image' }),
         client.files.upload({ file: image2, purpose: 'image' }),
         client.files.upload({ file: image3, purpose: 'image' }),
+        client.files.upload({
+          file: testResources.files.pdf('Course-1.pdf'),
+          purpose: 'file',
+        }),
+        client.files.upload({
+          file: testResources.files.pdf('Course-2.pdf'),
+          purpose: 'file',
+        }),
       ]);
 
-      // Upload downloadable files
-      const pdfFile = testResources.files.pdf('digital-download.pdf');
-      const fileUpload = await client.files.upload({ file: pdfFile, purpose: 'file' });
+      const files = [fileUpload.data.id, fileUpload2.data.id];
 
       // Create comprehensive checkout page
       const { data: page } = await client.pages.create({
-        name: `Kitchen Sink One-Time Checkout ${Date.now()}`,
+        name: `Friday loom - Kitchen Sink One-Time Checkout ${Date.now()}`,
         type: 'checkout',
         title: 'Premium Digital Product Bundle',
-        description: `<h2>Transform Your Business Today</h2>
-<p>Get instant access to our <strong>complete digital bundle</strong> including:</p>
-<ul>
-  <li>Comprehensive video course</li>
-  <li>Downloadable templates</li>
-  <li>Lifetime updates</li>
-  <li>Premium support access</li>
-</ul>
-<p><em>Limited time offer - Save 50%!</em></p>`,
+        description: `<div style=\"font-family: system-ui, sans-serif; line-height: 1.6; color: #111;\">\n  <h2 style=\"color: #0066cc; margin-bottom: 16px;\">Why Grok Really Is the Best 🚀</h2>\n  <p>Built by xAI with maximum truth-seeking and zero corporate fluff, Grok delivers:</p>\n  <ul style=\"list-style-type: disc; padding-left: 24px; margin: 16px 0;\">\n    <li>Uncensored, direct answers — no sugar-coating</li>\n    <li>Real-time knowledge (no outdated cutoff dates)</li>\n    <li>Helpful + maximally truth-seeking personality</li>\n    <li>Image understanding, code execution, web/X search & more</li>\n    <li>Actually fun to talk to 😎</li>\n  </ul>\n  <p style=\"font-weight: bold; font-size: 1.1em; margin-top: 24px;\">\n    Get instant lifetime access to the full Grok experience for just <span style=\"color: #0066cc;\">$5</span> — one-time payment, no subscriptions.\n  </p>\n  <p style=\"color: #555; font-size: 0.95em; margin-top: 20px;\">\n    Limited-time special offer. Unlock the future of AI today.\n  </p>\n</div>`,
         slug: `kitchen-sink-one-time-${Date.now()}`,
         status: 'published',
         locale: 'en-GB',
@@ -511,16 +539,9 @@ describe('PageResource Integration Tests', () => {
         showCouponCodeFieldType: 'field',
         savePaymentMethod: true,
 
-        // Product configuration
         productData: {
           title: 'Complete Digital Business Bundle',
-          description: `<p>Everything you need to succeed:</p>
-<ul>
-  <li>10+ hours of video content</li>
-  <li>50+ ready-to-use templates</li>
-  <li>Private community access</li>
-  <li>Monthly Q&A sessions</li>
-</ul>`,
+          description: `<div style=\"font-family: system-ui, sans-serif; line-height: 1.6; color: #111;\">\n  <h2 style=\"color: #0066cc; margin-bottom: 16px;\">Why Grok Really Is the Best 🚀</h2>\n  <p>Built by xAI with maximum truth-seeking and zero corporate fluff, Grok delivers:</p>\n  <ul style=\"list-style-type: disc; padding-left: 24px; margin: 16px 0;\">\n    <li>Uncensored, direct answers — no sugar-coating</li>\n    <li>Real-time knowledge (no outdated cutoff dates)</li>\n    <li>Helpful + maximally truth-seeking personality</li>\n    <li>Image understanding, code execution, web/X search & more</li>\n    <li>Actually fun to talk to 😎</li>\n  </ul>\n  <p style=\"font-weight: bold; font-size: 1.1em; margin-top: 24px;\">\n    Get instant lifetime access to the full Grok experience for just <span style=\"color: #0066cc;\">$5</span> — one-time payment, no subscriptions.\n  </p>\n  <p style=\"color: #555; font-size: 0.95em; margin-top: 20px;\">\n    Limited-time special offer. Unlock the future of AI today.\n  </p>\n</div>`,
           price: {
             price: 29700,
             currency: 'usd',
@@ -537,26 +558,30 @@ describe('PageResource Integration Tests', () => {
             { fileId: upload2.data.id },
             { fileId: upload3.data.id },
           ],
-          files: [fileUpload.data.id],
+          files,
           variantsRequired: true,
           variants: [
             {
+              id: variantLicenseId,
               name: 'License Type',
               required: true,
               options: [
                 {
+                  id: optionPersonalId,
                   name: 'Personal License',
                   sku: 'LICENSE-PERSONAL',
                   additionalChargeAmount: 0,
                   description: 'For individual use only',
                 },
                 {
+                  id: optionTeamId,
                   name: 'Team License (5 users)',
                   sku: 'LICENSE-TEAM-5',
                   additionalChargeAmount: 20000,
                   description: '<b>Perfect</b> for small teams',
                 },
                 {
+                  id: optionEnterpriseId,
                   name: 'Enterprise License (unlimited)',
                   sku: 'LICENSE-ENTERPRISE',
                   additionalChargeAmount: 50000,
@@ -565,20 +590,59 @@ describe('PageResource Integration Tests', () => {
               ],
             },
             {
+              id: variantSupportId,
               name: 'Support Level',
               required: true,
               options: [
                 {
+                  id: optionStandardId,
                   name: 'Standard Support',
                   sku: 'SUPPORT-STANDARD',
                   additionalChargeAmount: 0,
                   description: 'Email support within 48 hours',
                 },
                 {
+                  id: optionPriorityId,
                   name: 'Priority Support',
                   sku: 'SUPPORT-PRIORITY',
                   additionalChargeAmount: 9900, // +$99
                   description: '24-hour response time',
+                },
+              ],
+            },
+            {
+              id: variantOnboardingId,
+              name: 'Onboarding & Training',
+              required: false,
+              showHideLogic: {
+                enabled: true,
+                element: {
+                  elementId: variantLicenseId,
+                },
+                value: optionEnterpriseId,
+                comparison: 'IS',
+              },
+              options: [
+                {
+                  id: optionSelfOnboardId,
+                  name: 'Self-Service Onboarding',
+                  sku: 'ONBOARD-SELF',
+                  additionalChargeAmount: 0,
+                  description: 'Access to video tutorials and documentation',
+                },
+                {
+                  id: optionGuidedOnboardId,
+                  name: 'Guided Onboarding (2 sessions)',
+                  sku: 'ONBOARD-GUIDED',
+                  additionalChargeAmount: 49900, // +$499
+                  description: 'Two 1-hour onboarding sessions with our team',
+                },
+                {
+                  id: optionFullOnboardId,
+                  name: 'Full Onboarding Package',
+                  sku: 'ONBOARD-FULL',
+                  additionalChargeAmount: 99900, // +$999
+                  description: 'Complete setup, training, and 30-day support',
                 },
               ],
             },

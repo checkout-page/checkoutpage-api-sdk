@@ -972,6 +972,12 @@
             },
             "description": "Product main image and gallery."
           },
+          "files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of file ids attached to this product.",
+            "example": ["507f1f77bcf86cd799439011"]
+          },
           "variants": {
             "type": "array",
             "items": {
@@ -5371,77 +5377,188 @@
       "UpdateProductRequest": {
         "type": "object",
         "properties": {
-          "title": {
-            "type": "string",
-            "maxLength": 200,
-            "description": "Product title.",
-            "example": "Premium Course"
-          },
+          "title": { "type": "string", "maxLength": 200 },
+          "description": { "type": "string" },
           "price": {
-            "type": "number",
-            "minimum": 0,
-            "description": "Price in smallest currency unit (cents).",
-            "example": 4900
+            "type": "object",
+            "properties": {
+              "price": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Price in smallest currency unit (cents). Defaults to `0`.",
+                "example": 4900
+              },
+              "payWhatYouWant": {
+                "type": "boolean",
+                "description": "If enabled `price` field becomes the minimum price and customers can choose to pay what they want. If `price` is empty or `0` customer can purchase the product for free. Pay What You Want does not apply to subscriptions or payment plans."
+              },
+              "currency": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 3,
+                "description": "Currency code (lowercase). Defaults to `usd`.",
+                "example": "usd"
+              },
+              "pricingType": {
+                "type": "string",
+                "enum": ["single", "multiple"],
+                "description": "Pricing type for this product - single price or multiple prices using variants. Defaults to `single`. If set to `multiple` product `price` becomes 0.",
+                "example": "single"
+              },
+              "discountedFromPrice": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The original price of the product in the smallest currency unit (cents).",
+                "example": 9900
+              },
+              "setupFee": {
+                "type": "number",
+                "minimum": 0,
+                "description": "One-time setup fee in cents."
+              },
+              "setupFeeMultipliesWithQuantity": {
+                "type": "boolean",
+                "description": "Whether or not the setup fee is multipled by the selected quantity. Applies to `one-time` and `pwyw` only. Defaults to `false`.",
+                "example": false
+              },
+              "recurring": {
+                "type": "object",
+                "properties": {
+                  "interval": {
+                    "type": "string",
+                    "enum": ["day", "week", "month", "year"],
+                    "description": "Billing interval for subscriptions.",
+                    "example": "month"
+                  },
+                  "intervalCount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Number of intervals between billings.",
+                    "example": 1
+                  },
+                  "trialPeriodDays": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Trial period in days for subscriptions."
+                  },
+                  "billingCycleAnchorConfig": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": { "type": "boolean" },
+                      "dayOfMonth": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 31,
+                        "description": "The first billing period will be prorated based on the remaining days in the month. Defaults to `1`.",
+                        "example": 1
+                      },
+                      "month": { "type": "number", "minimum": 1, "maximum": 12 }
+                    }
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The date on which the subscription begins.",
+                    "example": "2026-02-25T06:40:09.463Z"
+                  }
+                },
+                "description": "The recurring components of a price such as `interval` and `intervalCount`"
+              },
+              "paymentPlan": {
+                "type": "object",
+                "properties": {
+                  "interval": {
+                    "type": "string",
+                    "enum": ["day", "week", "month", "year"],
+                    "description": "Billing interval for subscriptions.",
+                    "example": "month"
+                  },
+                  "intervalCount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Number of intervals between billings.",
+                    "example": 1
+                  },
+                  "trialPeriodDays": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Trial period in days for subscriptions."
+                  },
+                  "billingCycleAnchorConfig": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": { "type": "boolean" },
+                      "dayOfMonth": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 31,
+                        "description": "The first billing period will be prorated based on the remaining days in the month. Defaults to `1`.",
+                        "example": 1
+                      },
+                      "month": { "type": "number", "minimum": 1, "maximum": 12 }
+                    }
+                  },
+                  "planIterations": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "The number of times a subscription renews. After set number of renewals the payment plan is complete.",
+                    "example": 3
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The date on which the subscription begins.",
+                    "example": "2026-02-25T06:40:09.463Z"
+                  }
+                },
+                "required": ["planIterations"],
+                "description": "The payment plan components of a price such as `interval` and `intervalCount`"
+              }
+            }
           },
-          "currency": {
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 3,
-            "description": "Currency code (lowercase).",
-            "example": "usd"
-          },
-          "description": {
-            "type": "string",
-            "description": "Product description. Accepts HTML or plain text.",
-            "example": "Join our premium course today learn more at <a href=\"https://checkoutpage.com\">Checkout Page</a>."
-          },
-          "sku": { "type": "string", "maxLength": 100, "description": "Stock keeping unit." },
-          "discountedFromPrice": {
-            "type": "string",
-            "description": "Original price before discount."
-          },
-          "interval": {
-            "type": "string",
-            "enum": ["day", "week", "month", "year", ""],
-            "description": "Billing interval for subscriptions.",
-            "example": "month"
-          },
-          "intervalCount": {
-            "type": "number",
-            "minimum": 1,
-            "description": "Number of intervals between billings.",
-            "example": 1
-          },
-          "trialPeriodDays": {
-            "type": "number",
-            "minimum": 0,
-            "description": "Trial period in days."
-          },
-          "planIterations": {
-            "type": "number",
-            "minimum": 1,
-            "description": "Number of billing cycles (for installment plans)."
-          },
-          "setupFee": {
-            "type": "number",
-            "minimum": 0,
-            "description": "One-time setup fee in cents."
-          },
-          "payWhatYouWant": {
-            "type": "boolean",
-            "description": "Whether pay-what-you-want pricing is enabled."
-          },
+          "sku": { "type": "string", "maxLength": 200 },
+          "hasUnlimitedStock": { "type": "boolean" },
+          "stock": { "type": "number", "minimum": 0 },
           "taxBehavior": {
             "type": "string",
             "enum": ["inclusive", "exclusive", "automatic", ""],
-            "description": "Tax calculation behavior."
+            "description": "If Stripe Tax is enabled, determines the behaviour of Stripe Tax. Defaults to your Stripe Tax settings.",
+            "example": ""
           },
-          "taxCode": { "type": "string", "description": "Stripe tax code." },
+          "taxCode": { "type": "string" },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fileId": {
+                  "type": "string",
+                  "description": "Unique identifier for the file.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              },
+              "required": ["fileId"]
+            },
+            "description": "Media for the product. Provide a list of fileIds. Use the `/files/upload` API to add images.",
+            "example": [{ "fileId": "507f1f77bcf86cd799439011" }]
+          },
+          "files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Files for the product. Available to the customer after purchase.",
+            "example": ["507f1f77bcf86cd799439011"]
+          },
+          "variantsRequired": { "type": "boolean" },
           "variants": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier for this variant. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in preselect or conditional show/hide logic.",
+                  "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                },
                 "name": {
                   "type": "string",
                   "description": "Name of the variant.",
@@ -5449,7 +5566,7 @@
                 },
                 "required": {
                   "type": "boolean",
-                  "description": "Whether selection is required.",
+                  "description": "Whether the customer must select at least one option in the variant.",
                   "example": true
                 },
                 "status": {
@@ -5463,6 +5580,11 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier for this variant option. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      },
                       "name": {
                         "type": "string",
                         "description": "Name of the option.",
@@ -5476,27 +5598,63 @@
                       },
                       "description": {
                         "type": "string",
-                        "description": "Description of the option."
+                        "description": "Description of the option. Supports HTML or plain text."
+                      },
+                      "image": {
+                        "type": "object",
+                        "properties": {
+                          "fileId": {
+                            "type": "string",
+                            "description": "Unique identifier for the file.",
+                            "example": "507f1f77bcf86cd799439011"
+                          }
+                        },
+                        "required": ["fileId"],
+                        "description": "Image for this variant option."
                       },
                       "additionalChargeAmount": {
                         "type": ["number", "null"],
-                        "description": "Additional charge in cents.",
+                        "description": "The additional charge for selecting this variant option in cents.",
                         "example": 1000
+                      },
+                      "discountedFromPrice": {
+                        "type": "number",
+                        "minimum": 0,
+                        "description": "The original price of this variant option in cents.",
+                        "example": 1500
                       },
                       "sku": { "type": ["string", "null"], "description": "SKU for this option." },
                       "stock": {
                         "type": ["number", "null"],
-                        "description": "Stock quantity for this option."
+                        "description": "Stock quantity for this option.",
+                        "example": 10
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["one_time", "recurring", "pay_what_you_want"],
+                        "description": "Type of variant option - one-time purchase, recurring subscription or pay what you want.",
+                        "example": "one_time"
+                      },
+                      "payWhatYouWant": {
+                        "type": "boolean",
+                        "description": "If enabled, customers can choose their own price for this variant option. The minimum price is based on the additionalChargeAmount. Defaults to `false`.",
+                        "example": false
+                      },
+                      "pwywSuggestedPrice": {
+                        "type": "number",
+                        "minimum": 0,
+                        "description": "Suggested price for Pay What You Want options in cents. This is a cosmetic field used to display a suggested amount to the customer. Defaults to `0`.",
+                        "example": 2500
+                      },
+                      "files": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "Files specific to this variant option. Available to the customer after purchase."
                       }
                     },
                     "required": ["name"]
                   },
                   "description": "Options within this variant."
-                },
-                "order": {
-                  "type": "number",
-                  "description": "Display order. Defaults to `0`.",
-                  "example": 0
                 },
                 "reference": {
                   "type": "string",
@@ -5507,20 +5665,225 @@
                 "selectionType": {
                   "type": "string",
                   "enum": ["single", "multiple", "quantity"],
-                  "description": "Type of selection. Defaults to `single`",
+                  "description": "Type of selection. If `single` the customer can choose one option in the variant group. If `multiple` the customer can choose multiple options in the variant group. If `quantity` the customer can select multiple options and set a quantity of each variant in the variant group. Defaults to `single`",
                   "example": "single"
+                },
+                "increasesWithQuantity": {
+                  "type": "boolean",
+                  "description": "Whether or not the variant quantity matches the checkout quantity. Defaults to `false`."
+                },
+                "useVariantOptionSkus": {
+                  "type": "boolean",
+                  "description": "If enabled, use SKUs from variant options instead of the product SKU. Defaults to `false`."
+                },
+                "manageVariantOptionStock": {
+                  "type": "boolean",
+                  "description": "If enabled stock is managed by the variant options. Defaults to `false`."
+                },
+                "hidden": {
+                  "type": "boolean",
+                  "description": "Whether this variant is hidden. Hidden variants can be shown or filled with data by query paramers. [Learn more](https://checkoutpage.com/docs/articles/preselect-checkout-variants). Defaults to `false`."
+                },
+                "preselect": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable preselecting a variant option. Defaults to `false`."
+                    },
+                    "optionId": {
+                      "type": "string",
+                      "description": "ID of the variant option to preselect."
+                    },
+                    "quantity": {
+                      "type": "number",
+                      "description": "Quantity to preselect for quantity selection type variants. Defaults to `1` for `single` and `multiple` selection types.",
+                      "example": 2
+                    }
+                  },
+                  "description": "Preselect configuration for this variant.",
+                  "example": {
+                    "enabled": true,
+                    "optionId": "65f4a1c2e4a9f3d2b1c0a9e8",
+                    "quantity": 1
+                  }
+                },
+                "showHideLogic": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Enable conditional show/hide logic. Defaults to `false`.",
+                      "example": true
+                    },
+                    "comparison": {
+                      "type": "string",
+                      "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY", "CONTAINS"],
+                      "description": "Comparison operator for the condition. Defaults to `IS`.",
+                      "example": "IS"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Unique identifier of the variant option being referenced. Must be a variant option within the same variant group"
+                    },
+                    "element": {
+                      "type": "object",
+                      "properties": {
+                        "elementId": {
+                          "type": "string",
+                          "description": "Unique identifier of the element (variant) being referenced."
+                        }
+                      },
+                      "description": "Element (variant) to compare against.",
+                      "example": {
+                        "enabled": true,
+                        "comparison": "IS",
+                        "value": "699d13f475562eedf939489d",
+                        "element": { "elementId": "699d13f475562eedf939489e" }
+                      }
+                    }
+                  },
+                  "description": "Conditional logic to show or hide this variant based on other form elements."
+                },
+                "layout": {
+                  "type": "object",
+                  "properties": {
+                    "variantOptionLayout": {
+                      "type": "string",
+                      "enum": ["list", "grid"],
+                      "description": "Layout style for variant options. Defaults to `list`.",
+                      "example": "list"
+                    },
+                    "collapseVariantOptions": {
+                      "type": "boolean",
+                      "description": "If enabled, variant options are collapsed by default. Defaults to `false`.",
+                      "example": false
+                    },
+                    "variantOptionColumns": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 4,
+                      "description": "Number of columns for grid layout. Defaults to `2`.",
+                      "example": 2
+                    },
+                    "showVariantName": {
+                      "type": "boolean",
+                      "description": "Show the variant name. Defaults to `true`.",
+                      "example": true
+                    },
+                    "showVariantOptionNames": {
+                      "type": "boolean",
+                      "description": "Show variant option names. Defaults to `true`.",
+                      "example": true
+                    },
+                    "showVariantOptionPrices": {
+                      "type": "boolean",
+                      "description": "Show variant option prices. Defaults to `true`.",
+                      "example": true
+                    },
+                    "showVariantOptionPriceSign": {
+                      "type": "boolean",
+                      "description": "Show price sign (+ or -) for variant option prices. Defaults to `false`.",
+                      "example": true
+                    },
+                    "showPwywPlaceholder": {
+                      "type": "boolean",
+                      "description": "Show placeholder text for Pay What You Want inputs. Defaults to `true`.",
+                      "example": true
+                    },
+                    "textAlign": {
+                      "type": "string",
+                      "enum": ["left", "center", "stack", ""],
+                      "description": "Text alignment for variant options. Defaults to `left`.",
+                      "example": "left"
+                    },
+                    "spacing": {
+                      "type": "string",
+                      "enum": ["comfortable", "compact", ""],
+                      "description": "Spacing between variant options. Defaults to `comfortable`.",
+                      "example": "comfortable"
+                    },
+                    "imageSize": {
+                      "type": "string",
+                      "enum": ["small", "medium", "large", ""],
+                      "description": "Size of variant option images. Defaults to `small`.",
+                      "example": "small"
+                    }
+                  },
+                  "description": "Layout configuration for this variant."
                 }
               },
               "required": ["name"]
             },
             "description": "Product variants and options."
           },
-          "variantsRequired": {
-            "type": "boolean",
-            "description": "Whether variant selection is required."
+          "discounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quantityCondition": {
+                  "type": "string",
+                  "enum": ["checkoutQuantity", "variantOptionQuantity"],
+                  "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkoutQuantity`.",
+                  "example": "checkoutQuantity"
+                },
+                "variantOptions": {
+                  "type": "array",
+                  "items": { "type": "number" },
+                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variantOptionQuantity`."
+                },
+                "minQuantity": {
+                  "type": "number",
+                  "minimum": 1,
+                  "description": "Minimum quantity required for this discount to apply.",
+                  "example": 5
+                },
+                "maxQuantity": {
+                  "type": "number",
+                  "minimum": 1,
+                  "description": "Maximum quantity for this discount tier. Leave empty for no upper limit.",
+                  "example": 10
+                },
+                "percentOff": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Percentage discount to apply. Cannot be used with `amountOff`.",
+                  "example": 10
+                },
+                "amountOff": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Fixed amount discount in cents. Cannot be used with `percentOff`.",
+                  "example": 500
+                }
+              },
+              "required": ["quantityCondition"]
+            },
+            "description": "Offer discounts based on the number of items purchased. [Learn more](https://checkoutpage.com/docs/articles/bulk-discounts)"
           },
-          "stock": { "type": "number", "minimum": 0, "description": "Available stock quantity." },
-          "hasUnlimitedStock": { "type": "boolean", "description": "Whether stock is unlimited." }
+          "limitSubscriptions": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Enable subscription limits. Defaults to `false`."
+              },
+              "limitSubscriptionsStripe": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Enable Stripe-level subscription limits (checks active subscriptions in Stripe). Defaults to `false`."
+                  }
+                },
+                "description": "Stripe-specific subscription limit configuration."
+              }
+            },
+            "description": "Configuration to limit the number of active subscriptions for this product. Used to cap subscriptions to a specific number."
+          },
+          "generateLicenseKeys": { "type": "boolean" }
         }
       },
       "UploadFileResponse": {
