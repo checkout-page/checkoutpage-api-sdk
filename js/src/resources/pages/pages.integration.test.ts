@@ -37,7 +37,7 @@ describe('PageResource Integration Tests', () => {
       expect(result.data.length).toBeLessThanOrEqual(5);
     });
 
-    it.only('should filter by page type', async () => {
+    it('should filter by page type', async () => {
       const result = await client.pages.list({
         type: 'event',
       });
@@ -472,6 +472,247 @@ describe('PageResource Integration Tests', () => {
 
       expect(page.product?.currency).toBe('eur');
     });
+
+    it.only('should create a kitchen sink one-time payment checkout with all features', async () => {
+      // Upload product images
+      const image1 = testResources.files.png('product-main.png');
+      const image2 = testResources.files.jpg('product-gallery-1.jpg');
+      const image3 = testResources.files.webp('product-gallery-2.webp');
+
+      const [upload1, upload2, upload3] = await Promise.all([
+        client.files.upload({ file: image1, purpose: 'image' }),
+        client.files.upload({ file: image2, purpose: 'image' }),
+        client.files.upload({ file: image3, purpose: 'image' }),
+      ]);
+
+      // Upload downloadable files
+      const pdfFile = testResources.files.pdf('digital-download.pdf');
+      const fileUpload = await client.files.upload({ file: pdfFile, purpose: 'file' });
+
+      // Create comprehensive checkout page
+      const { data: page } = await client.pages.create({
+        name: `Kitchen Sink One-Time Checkout ${Date.now()}`,
+        type: 'checkout',
+        title: 'Premium Digital Product Bundle',
+        description: `<h2>Transform Your Business Today</h2>
+<p>Get instant access to our <strong>complete digital bundle</strong> including:</p>
+<ul>
+  <li>Comprehensive video course</li>
+  <li>Downloadable templates</li>
+  <li>Lifetime updates</li>
+  <li>Premium support access</li>
+</ul>
+<p><em>Limited time offer - Save 50%!</em></p>`,
+        slug: `kitchen-sink-one-time-${Date.now()}`,
+        status: 'published',
+        locale: 'en-GB',
+        googleIndex: false,
+        showCouponCodeField: true,
+        showCouponCodeFieldType: 'field',
+        savePaymentMethod: true,
+
+        // Product configuration
+        productData: {
+          title: 'Complete Digital Business Bundle',
+          description: `<p>Everything you need to succeed:</p>
+<ul>
+  <li>10+ hours of video content</li>
+  <li>50+ ready-to-use templates</li>
+  <li>Private community access</li>
+  <li>Monthly Q&A sessions</li>
+</ul>`,
+          price: {
+            price: 29700,
+            currency: 'usd',
+            discountedFromPrice: 59700,
+            pricingType: 'single',
+          },
+          sku: 'BUNDLE-DIGITAL-2024',
+          stock: 100,
+          hasUnlimitedStock: false,
+          taxBehavior: 'exclusive',
+          taxCode: 'txcd_10000000',
+          media: [
+            { fileId: upload1.data.id },
+            { fileId: upload2.data.id },
+            { fileId: upload3.data.id },
+          ],
+          files: [fileUpload.data.id],
+          variantsRequired: true,
+          variants: [
+            {
+              name: 'License Type',
+              required: true,
+              options: [
+                {
+                  name: 'Personal License',
+                  sku: 'LICENSE-PERSONAL',
+                  additionalChargeAmount: 0,
+                  description: 'For individual use only',
+                },
+                {
+                  name: 'Team License (5 users)',
+                  sku: 'LICENSE-TEAM-5',
+                  additionalChargeAmount: 20000,
+                  description: '<b>Perfect</b> for small teams',
+                },
+                {
+                  name: 'Enterprise License (unlimited)',
+                  sku: 'LICENSE-ENTERPRISE',
+                  additionalChargeAmount: 50000,
+                  description: 'Unlimited team members',
+                },
+              ],
+            },
+            {
+              name: 'Support Level',
+              required: true,
+              options: [
+                {
+                  name: 'Standard Support',
+                  sku: 'SUPPORT-STANDARD',
+                  additionalChargeAmount: 0,
+                  description: 'Email support within 48 hours',
+                },
+                {
+                  name: 'Priority Support',
+                  sku: 'SUPPORT-PRIORITY',
+                  additionalChargeAmount: 9900, // +$99
+                  description: '24-hour response time',
+                },
+              ],
+            },
+          ],
+          discounts: [
+            {
+              quantityCondition: 'checkoutQuantity',
+              minQuantity: 2,
+              maxQuantity: 4,
+              percentOff: 10,
+            },
+            {
+              quantityCondition: 'checkoutQuantity',
+              minQuantity: 5,
+              percentOff: 20,
+            },
+          ],
+        },
+
+        fields: [
+          {
+            label: 'Company Name',
+            element: 'text',
+            required: true,
+            placeholder: 'Enter your company name',
+            reference: 'company_name',
+          },
+          {
+            label: 'How will you use this?',
+            element: 'select',
+            required: true,
+            options: [
+              { label: 'Personal projects', value: 'personal' },
+              { label: 'Client work', value: 'client' },
+              { label: 'Internal company use', value: 'internal' },
+              { label: 'Resale', value: 'resale' },
+            ],
+          },
+          {
+            label: 'Additional requirements',
+            element: 'textarea',
+            required: false,
+            placeholder: 'Tell us about any specific needs...',
+            helpText: 'This helps us provide better support',
+          },
+        ],
+
+        // Post-purchase settings
+        afterPaymentAction: 'redirect',
+        redirectUrl: 'https://example.com/thank-you',
+
+        // Confirmation page
+        confirmationCheckoutTitle: 'Welcome to Your Digital Bundle! 🎉',
+        confirmationCheckoutMessage: `<h2>You're All Set!</h2>
+<p>Thank you for your purchase. Here's what happens next:</p>
+<ol>
+  <li>Check your email for instant access</li>
+  <li>Download all your files from the customer portal</li>
+  <li>Join our private community</li>
+</ol>
+<p><strong>Need help?</strong> Reply to your confirmation email anytime.</p>`,
+
+        // Email notifications
+        sendPaymentNotification: true,
+        notifyEmail: 'sales@example.com',
+        sendEmailConfirmation: true,
+        customizeEmailConfirmation: true,
+        confirmationEmailSubject: 'Your Digital Bundle is Ready! 📦',
+        confirmationEmailMessage: `<h2>Thanks for your purchase!</h2>
+<p>Your complete digital bundle is ready to download.</p>
+<p>Access everything from your customer portal using the button below.</p>`,
+        confirmationEmailShowLogo: true,
+        confirmationEmailShowStoreName: true,
+
+        // Checkout abandonment
+        checkoutAbandonment: {
+          disableEmails: false,
+        },
+
+        // Dynamic overrides enabled
+        allowDynamicPrice: true,
+        allowDynamicDiscountedFromPrice: true,
+        allowDynamicTitle: true,
+        allowDynamicDescription: true,
+      });
+
+      // Verify all features were created correctly
+      expect(page.id).toBeDefined();
+      expect(page.type).toBe('checkout');
+      expect(page.title).toBe('Premium Digital Product Bundle');
+      expect(page.description).toContain('Transform Your Business');
+      expect(page.status).toBe('draft');
+      expect(page.showCouponCodeField).toBe(true);
+      expect(page.savePaymentMethod).toBe(true);
+
+      // Verify product
+      expect(page.product).toBeDefined();
+      expect(page.product?.title).toBe('Complete Digital Business Bundle');
+      expect(page.product?.price).toBe(0); // Base price is 0 with multiple pricing
+      expect(page.product?.discountedFromPrice).toBe(59700);
+      expect(page.product?.currency).toBe('usd');
+      expect(page.product?.sku).toBe('BUNDLE-DIGITAL-2024');
+      expect(page.product?.stock).toBe(100);
+      expect(page.product?.taxBehavior).toBe('exclusive');
+
+      // Verify media (in correct order)
+      expect(page.product?.media).toBeDefined();
+      expect(page.product?.media?.length).toBe(3);
+      expect(page.product?.media?.[0].fileId).toBe(upload1.data.id);
+      expect(page.product?.media?.[1].fileId).toBe(upload2.data.id);
+      expect(page.product?.media?.[2].fileId).toBe(upload3.data.id);
+
+      // Verify variants
+      expect(page.product?.variants).toBeDefined();
+      expect(page.product?.variants?.length).toBe(2);
+      expect(page.product?.variants?.[0].name).toBe('License Type');
+      expect(page.product?.variants?.[0].options?.length).toBe(3);
+      expect(page.product?.variants?.[1].name).toBe('Support Level');
+      expect(page.product?.variants?.[1].options?.length).toBe(2);
+
+      // Verify custom fields
+      expect(page.fields).toBeDefined();
+      expect(page.fields?.length).toBeGreaterThanOrEqual(3);
+      const companyField = page.fields?.find((f) => f.reference === 'company_name');
+      expect(companyField).toBeDefined();
+      expect(companyField?.required).toBe(true);
+
+      // Verify dynamic overrides
+      expect(page.allowDynamicPrice).toBe(true);
+      expect(page.allowDynamicTitle).toBe(true);
+
+      // Verify post-purchase settings
+      console.log(page.id);
+    }, 30000);
   });
 
   describe('create - event pages', () => {
