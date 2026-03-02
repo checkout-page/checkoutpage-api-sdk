@@ -1244,6 +1244,72 @@
               "properties": {
                 "id": { "type": "string" },
                 "name": { "type": "string" },
+                "description": { "type": "string" },
+                "status": { "type": "string", "enum": ["enabled", "disabled", "archived"] },
+                "availabilityStatus": {
+                  "type": "string",
+                  "enum": ["available", "sold_out", "unavailable"]
+                },
+                "reference": { "type": "string" },
+                "layout": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string", "enum": ["list", "grid", "accordion"] },
+                    "columns": { "type": "number" },
+                    "collapse": { "type": "boolean" },
+                    "alignment": { "type": "string", "enum": ["default", "center", "stack"] },
+                    "spacing": { "type": "string", "enum": ["comfortable", "compact"] },
+                    "imageSize": { "type": "string", "enum": ["small", "medium", "large", ""] },
+                    "showTicketGroupName": { "type": "boolean" },
+                    "showTicketTypeName": { "type": "boolean" },
+                    "showTicketPrice": { "type": "boolean" },
+                    "showTicketTotalPrice": { "type": "boolean" },
+                    "showTicketSaleDateTimezone": { "type": "boolean" }
+                  }
+                },
+                "ticketSelectionType": {
+                  "type": "string",
+                  "enum": ["single", "multiple", "quantity"]
+                },
+                "preselect": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": { "type": "boolean" },
+                    "ticketType": { "type": "string" },
+                    "quantity": { "type": ["number", "null"] }
+                  }
+                },
+                "capacity": { "type": ["number", "null"] },
+                "hidden": { "type": "boolean" },
+                "hideWhenSoldOut": { "type": "boolean" },
+                "hideWhenNotOnSale": { "type": "boolean" },
+                "hideWhenScheduled": { "type": "boolean" },
+                "hideWhenUnavailable": { "type": "boolean" },
+                "bulkDiscounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "minQuantity": { "type": "number" },
+                      "maxQuantity": { "type": "number" },
+                      "percentOff": { "type": "number" }
+                    },
+                    "required": ["minQuantity", "maxQuantity", "percentOff"]
+                  }
+                },
+                "availabilityBehavior": {
+                  "type": "string",
+                  "enum": [
+                    "always_available",
+                    "date_time_based",
+                    "after_ticket_sale_ends",
+                    "after_ticket_sold_out",
+                    "after_ticket_ends_or_sold_out",
+                    "until_event_starts"
+                  ]
+                },
+                "saleStartOn": { "type": ["string", "null"] },
+                "saleEndOn": { "type": ["string", "null"] },
                 "ticketTypes": {
                   "type": "array",
                   "items": {
@@ -1254,11 +1320,56 @@
                       "description": { "type": "string" },
                       "reference": { "type": "string" },
                       "hidden": { "type": "boolean" },
+                      "hideWhenSoldOut": { "type": "boolean" },
+                      "hideWhenNotOnSale": { "type": "boolean" },
+                      "hideWhenScheduled": { "type": "boolean" },
+                      "hideWhenUnavailable": { "type": "boolean" },
                       "pricing": { "type": "string", "enum": ["paid", "pwyw", "free"] },
                       "price": { "type": "number" },
+                      "discountedFromPrice": { "type": ["number", "null"] },
                       "capacity": { "type": ["number", "null"] },
                       "quantitySold": { "type": "number" },
+                      "minQuantity": { "type": "number" },
                       "maxQuantity": { "type": "number" },
+                      "showAvailableQuantity": { "type": "boolean" },
+                      "showTicketSaleDates": { "type": "boolean" },
+                      "bookingFee": {
+                        "type": "object",
+                        "properties": {
+                          "enabled": { "type": "boolean" },
+                          "type": { "type": "string", "enum": ["fixed", "percentage"] },
+                          "percentageFee": { "type": "number" },
+                          "fixedFee": { "type": "number" }
+                        }
+                      },
+                      "image": {
+                        "type": "object",
+                        "properties": {
+                          "file": { "type": "string" },
+                          "url": { "type": "string" },
+                          "name": { "type": "string" },
+                          "size": { "type": "number" },
+                          "width": { "type": "number" },
+                          "height": { "type": "number" }
+                        }
+                      },
+                      "availabilityBehavior": {
+                        "type": "string",
+                        "enum": [
+                          "always_available",
+                          "date_time_based",
+                          "after_ticket_sale_ends",
+                          "after_ticket_sold_out",
+                          "after_ticket_ends_or_sold_out",
+                          "until_event_starts"
+                        ]
+                      },
+                      "availabilityStatus": {
+                        "type": "string",
+                        "enum": ["available", "sold_out", "unavailable"]
+                      },
+                      "saleStartOn": { "type": ["string", "null"] },
+                      "saleEndOn": { "type": ["string", "null"] },
                       "status": { "type": "string", "enum": ["enabled", "disabled", "archived"] }
                     },
                     "required": ["id", "name"]
@@ -1539,7 +1650,7 @@
                         "type": "string",
                         "description": "Description of the option. Supports HTML or plain text."
                       },
-                      "image": {
+                      "imageFileId": {
                         "type": "object",
                         "properties": {
                           "fileId": {
@@ -2488,6 +2599,145 @@
         },
         "required": ["name", "type"]
       },
+      "TicketGroupLayoutInput": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["list", "grid", "accordion"],
+            "description": "Layout type for displaying ticket types.",
+            "example": "list"
+          },
+          "columns": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "Number of columns (for grid layout).",
+            "example": 2
+          },
+          "collapse": {
+            "type": "boolean",
+            "description": "Whether the group is collapsed by default (for accordion layout).",
+            "example": false
+          },
+          "alignment": {
+            "type": "string",
+            "enum": ["default", "center", "stack"],
+            "description": "Content alignment within the layout.",
+            "example": "default"
+          },
+          "spacing": {
+            "type": "string",
+            "enum": ["comfortable", "compact"],
+            "description": "Spacing between ticket types.",
+            "example": "comfortable"
+          },
+          "imageSize": {
+            "type": "string",
+            "enum": ["small", "medium", "large", ""],
+            "description": "Size of ticket type images.",
+            "example": "small"
+          },
+          "showTicketGroupName": {
+            "type": "boolean",
+            "description": "Show the ticket group name.",
+            "example": true
+          },
+          "showTicketTypeName": {
+            "type": "boolean",
+            "description": "Show ticket type names.",
+            "example": true
+          },
+          "showTicketPrice": {
+            "type": "boolean",
+            "description": "Show ticket prices.",
+            "example": true
+          },
+          "showTicketTotalPrice": {
+            "type": "boolean",
+            "description": "Show total price for selected quantity.",
+            "example": true
+          },
+          "showTicketSaleDateTimezone": {
+            "type": "boolean",
+            "description": "Show sale date timezone.",
+            "example": true
+          }
+        },
+        "description": "Layout configuration for displaying ticket types."
+      },
+      "TicketGroupPreselectInput": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether preselection is enabled.",
+            "example": false
+          },
+          "ticketType": { "type": "string", "description": "ID of the ticket type to preselect." },
+          "quantity": {
+            "type": ["number", "null"],
+            "minimum": 1,
+            "description": "Quantity to preselect.",
+            "example": 1
+          }
+        },
+        "description": "Preselection configuration."
+      },
+      "BulkDiscountInput": {
+        "type": "object",
+        "properties": {
+          "minQuantity": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Minimum quantity to qualify for this discount tier.",
+            "example": 5
+          },
+          "maxQuantity": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Maximum quantity for this discount tier.",
+            "example": 10
+          },
+          "percentOff": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Percentage discount for this tier.",
+            "example": 10
+          }
+        },
+        "required": ["minQuantity", "maxQuantity", "percentOff"]
+      },
+      "BookingFeeInput": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether booking fee is enabled.",
+            "example": false
+          },
+          "type": {
+            "type": "string",
+            "enum": ["fixed", "percentage"],
+            "description": "Type of booking fee.",
+            "example": "fixed"
+          },
+          "percentageFee": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Percentage fee amount (when type is percentage).",
+            "example": 5
+          },
+          "fixedFee": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Fixed fee amount in smallest currency unit (when type is fixed).",
+            "example": 100
+          }
+        },
+        "description": "Booking fee configuration for this ticket type."
+      },
       "CreateEventPageRequest": {
         "type": "object",
         "properties": {
@@ -3131,6 +3381,86 @@
                   "description": "Name of the ticket group.",
                   "example": "General Admission"
                 },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the ticket group."
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["enabled", "disabled", "archived"],
+                  "description": "Status of the ticket group. Defaults to `enabled`.",
+                  "example": "enabled"
+                },
+                "reference": {
+                  "type": "string",
+                  "description": "External reference ID for the ticket group."
+                },
+                "layout": { "$ref": "#/components/schemas/TicketGroupLayoutInput" },
+                "ticketSelectionType": {
+                  "type": "string",
+                  "enum": ["single", "multiple", "quantity"],
+                  "description": "How customers can select tickets. Defaults to `quantity`.",
+                  "example": "quantity"
+                },
+                "preselect": { "$ref": "#/components/schemas/TicketGroupPreselectInput" },
+                "capacity": {
+                  "type": ["number", "null"],
+                  "minimum": 1,
+                  "description": "Maximum tickets that can be sold across all ticket types in this group. Omit or null for unlimited."
+                },
+                "hidden": {
+                  "type": "boolean",
+                  "description": "Whether the ticket group is hidden from customers.",
+                  "example": false
+                },
+                "hideWhenSoldOut": {
+                  "type": "boolean",
+                  "description": "Hide the ticket group when all tickets are sold out.",
+                  "example": false
+                },
+                "hideWhenNotOnSale": {
+                  "type": "boolean",
+                  "description": "Hide the ticket group when not on sale.",
+                  "example": false
+                },
+                "hideWhenScheduled": {
+                  "type": "boolean",
+                  "description": "Hide the ticket group when scheduled for future sale.",
+                  "example": false
+                },
+                "hideWhenUnavailable": {
+                  "type": "boolean",
+                  "description": "Hide the ticket group when unavailable.",
+                  "example": false
+                },
+                "bulkDiscounts": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BulkDiscountInput" },
+                  "description": "Bulk discount tiers for quantity-based discounts."
+                },
+                "availabilityBehavior": {
+                  "type": "string",
+                  "enum": [
+                    "always_available",
+                    "date_time_based",
+                    "after_ticket_sale_ends",
+                    "after_ticket_sold_out",
+                    "after_ticket_ends_or_sold_out",
+                    "until_event_starts"
+                  ],
+                  "description": "Controls when the ticket becomes available for purchase.",
+                  "example": "always_available"
+                },
+                "saleStartOn": {
+                  "type": "string",
+                  "description": "Sale start date in ISO 8601 format.",
+                  "example": "2025-06-01T09:00:00Z"
+                },
+                "saleEndOn": {
+                  "type": "string",
+                  "description": "Sale end date in ISO 8601 format.",
+                  "example": "2025-06-14T23:59:59Z"
+                },
                 "ticketTypes": {
                   "type": "array",
                   "items": {
@@ -3147,6 +3477,41 @@
                         "type": "string",
                         "description": "Description of the ticket type."
                       },
+                      "status": {
+                        "type": "string",
+                        "enum": ["enabled", "disabled", "archived"],
+                        "description": "Status of the ticket type. Defaults to `enabled`.",
+                        "example": "enabled"
+                      },
+                      "reference": {
+                        "type": "string",
+                        "description": "External reference ID for the ticket type."
+                      },
+                      "hidden": {
+                        "type": "boolean",
+                        "description": "Whether the ticket type is hidden from customers.",
+                        "example": false
+                      },
+                      "hideWhenSoldOut": {
+                        "type": "boolean",
+                        "description": "Hide the ticket type when sold out.",
+                        "example": false
+                      },
+                      "hideWhenNotOnSale": {
+                        "type": "boolean",
+                        "description": "Hide the ticket type when not on sale.",
+                        "example": false
+                      },
+                      "hideWhenScheduled": {
+                        "type": "boolean",
+                        "description": "Hide the ticket type when scheduled for future sale.",
+                        "example": false
+                      },
+                      "hideWhenUnavailable": {
+                        "type": "boolean",
+                        "description": "Hide the ticket type when unavailable.",
+                        "example": false
+                      },
                       "pricing": {
                         "type": "string",
                         "enum": ["paid", "free"],
@@ -3159,16 +3524,71 @@
                         "description": "Price in smallest currency unit (cents). Defaults to `0`.",
                         "example": 2500
                       },
+                      "discountedFromPrice": {
+                        "type": ["number", "null"],
+                        "minimum": 0,
+                        "description": "Original price to show as discounted from (strike-through price).",
+                        "example": 3500
+                      },
                       "capacity": {
-                        "type": "number",
+                        "type": ["number", "null"],
                         "minimum": 1,
-                        "description": "Maximum number of tickets available. Omit for unlimited."
+                        "description": "Maximum number of tickets available. Omit or null for unlimited."
+                      },
+                      "minQuantity": {
+                        "type": "number",
+                        "minimum": 0,
+                        "description": "Minimum tickets required per order.",
+                        "example": 1
                       },
                       "maxQuantity": {
                         "type": "number",
                         "minimum": 1,
                         "description": "Maximum tickets per order.",
                         "example": 10
+                      },
+                      "showAvailableQuantity": {
+                        "type": "boolean",
+                        "description": "Show the number of available tickets to customers.",
+                        "example": true
+                      },
+                      "showTicketSaleDates": {
+                        "type": "boolean",
+                        "description": "Show sale start/end dates to customers.",
+                        "example": true
+                      },
+                      "bookingFee": { "$ref": "#/components/schemas/BookingFeeInput" },
+                      "imageFileId": {
+                        "type": "string",
+                        "description": "File ID for the ticket type image. Must be an uploaded file ID.",
+                        "example": "507f1f77bcf86cd799439011"
+                      },
+                      "availabilityBehavior": {
+                        "type": "string",
+                        "enum": [
+                          "always_available",
+                          "date_time_based",
+                          "after_ticket_sale_ends",
+                          "after_ticket_sold_out",
+                          "after_ticket_ends_or_sold_out",
+                          "until_event_starts"
+                        ],
+                        "description": "Controls when the ticket becomes available for purchase.",
+                        "example": "always_available"
+                      },
+                      "saleStartOn": {
+                        "type": "string",
+                        "description": "Sale start date in ISO 8601 format.",
+                        "example": "2025-06-01T09:00:00Z"
+                      },
+                      "saleEndOn": {
+                        "type": "string",
+                        "description": "Sale end date in ISO 8601 format.",
+                        "example": "2025-06-14T23:59:59Z"
+                      },
+                      "triggerTicketType": {
+                        "type": "string",
+                        "description": "ID of the ticket type that triggers this ticket type to become available."
                       }
                     },
                     "required": ["name"]
@@ -5600,7 +6020,7 @@
                         "type": "string",
                         "description": "Description of the option. Supports HTML or plain text."
                       },
-                      "image": {
+                      "imageFileId": {
                         "type": "object",
                         "properties": {
                           "fileId": {

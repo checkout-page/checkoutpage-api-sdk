@@ -275,7 +275,7 @@ describe('PageTicketGroupResource Integration Tests', () => {
       });
 
       expect(createdGroup).toBeDefined();
-      expect(createdGroup.availabilityBehavior).toBe('scheduled');
+      expect(createdGroup.availabilityBehavior).toBe('date_time_based');
       expect(createdGroup.saleStartOn).toBeDefined();
       expect(createdGroup.saleEndOn).toBeDefined();
     });
@@ -541,7 +541,7 @@ describe('PageTicketGroupResource Integration Tests', () => {
       );
 
       expect(updatedGroup).toBeDefined();
-      expect(updatedGroup.availabilityBehavior).toBe('scheduled');
+      expect(updatedGroup.availabilityBehavior).toBe('date_time_based');
     });
 
     it('should update sale dates', async () => {

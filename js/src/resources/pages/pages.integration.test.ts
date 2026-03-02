@@ -298,6 +298,79 @@ describe('PageResource Integration Tests', () => {
       expect(page.product?.variants?.[1].name).toBe('Color');
     });
 
+    it.only('should create a checkout page with variant option images', async () => {
+      // Upload images for variant options
+      const [optionImage1, optionImage2, optionImage3] = await Promise.all([
+        client.files.upload({
+          file: testResources.files.png('option-small.png'),
+          purpose: 'image',
+        }),
+        client.files.upload({
+          file: testResources.files.jpg('option-medium.jpg'),
+          purpose: 'image',
+        }),
+        client.files.upload({
+          file: testResources.files.webp('option-large.webp'),
+          purpose: 'image',
+        }),
+      ]);
+
+      const { data: page } = await client.pages.create({
+        name: `Variant with Images ${Date.now()}`,
+        type: 'checkout',
+        title: 'Product with Variant Images',
+        productData: {
+          title: 'T-Shirt with Size Images',
+          price: {
+            price: 2900,
+            currency: 'usd',
+            pricingType: 'multiple',
+          },
+          taxBehavior: '',
+          media: [],
+          files: [],
+          variants: [
+            {
+              name: 'Size',
+              required: true,
+              options: [
+                {
+                  name: 'Small',
+                  sku: 'tshirt-s',
+                  imageFileId: { fileId: optionImage1.data.id },
+                },
+                {
+                  name: 'Medium',
+                  sku: 'tshirt-m',
+                  additionalChargeAmount: 500,
+                  imageFileId: { fileId: optionImage2.data.id },
+                },
+                {
+                  name: 'Large',
+                  sku: 'tshirt-l',
+                  additionalChargeAmount: 1000,
+                  imageFileId: { fileId: optionImage3.data.id },
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(page.product?.variants).toBeDefined();
+      expect(page.product?.variants?.length).toBe(1);
+      expect(page.product?.variants?.[0].options?.length).toBe(3);
+
+      // Verify images were attached to variant options (cast to any until SDK types regenerated)
+      const options = page.product?.variants?.[0].options as any[];
+      expect(options?.[0].image).toBeDefined();
+      expect(options?.[0].image?.file).toBe(optionImage1.data.id);
+      expect(options?.[1].image).toBeDefined();
+      expect(options?.[1].image?.file).toBe(optionImage2.data.id);
+      expect(options?.[2].image).toBeDefined();
+      expect(options?.[2].image?.file).toBe(optionImage3.data.id);
+    }, 30000);
+
     it('should create a checkout page with stock tracking', async () => {
       const { data: page } = await client.pages.create({
         name: `Limited Stock Product ${Date.now()}`,
@@ -490,7 +563,7 @@ describe('PageResource Integration Tests', () => {
       expect(page.product?.currency).toBe('eur');
     });
 
-    it.only('should create a kitchen sink one-time payment checkout with all features', async () => {
+    it('should create a kitchen sink one-time payment checkout with all features', async () => {
       // Generate ObjectIds for variants and options
       const variantLicenseId = generateObjectId();
       const optionPersonalId = generateObjectId();
@@ -1037,6 +1110,333 @@ describe('PageResource Integration Tests', () => {
 
       expect(page.eventDetails?.currency).toBe('eur');
     });
+
+    it.only('should create a comprehensive event with all ticket group and type options', async () => {
+      // Upload images for ticket types
+      const ticketImage1 = testResources.files.png('ticket-vip.png');
+      const ticketImage2 = testResources.files.jpg('ticket-general.jpg');
+
+      const [upload1, upload2] = await Promise.all([
+        client.files.upload({ file: ticketImage1, purpose: 'image' }),
+        client.files.upload({ file: ticketImage2, purpose: 'image' }),
+      ]);
+
+      const futureStartDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      const futureEndDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+      const { data: page } = await client.pages.create({
+        name: `Comprehensive Event ${Date.now()}`,
+        type: 'event',
+        title: 'Ultimate Tech Summit 2025',
+        description:
+          '<h2>Join the biggest tech event of the year!</h2><p>Network with industry leaders.</p>',
+        status: 'published',
+        eventDetails: {
+          type: 'hybrid',
+          currency: 'usd',
+          startDate: '2025-09-15T09:00:00Z',
+          endDate: '2025-09-17T18:00:00Z',
+          timezone: 'America/New_York',
+          location: '123 Tech Center, San Francisco, CA',
+          capacity: 1000,
+        },
+        ticketGroups: [
+          {
+            name: 'Early Bird Tickets',
+            description: 'Limited time early bird pricing - save up to 40%!',
+            status: 'enabled',
+            reference: 'early-bird-2025',
+            layout: {
+              type: 'grid',
+              columns: 2,
+              alignment: 'center',
+              spacing: 'comfortable',
+              imageSize: 'medium',
+              showTicketGroupName: true,
+              showTicketTypeName: true,
+              showTicketPrice: true,
+              showTicketTotalPrice: true,
+            },
+            ticketSelectionType: 'quantity',
+            preselect: {
+              enabled: false,
+            },
+            capacity: 200,
+            hidden: false,
+            hideWhenSoldOut: true,
+            hideWhenNotOnSale: false,
+            hideWhenScheduled: false,
+            hideWhenUnavailable: true,
+            bulkDiscounts: [
+              {
+                minQuantity: 3,
+                maxQuantity: 5,
+                percentOff: 10,
+              },
+              {
+                minQuantity: 6,
+                maxQuantity: 10,
+                percentOff: 15,
+              },
+              {
+                minQuantity: 11,
+                maxQuantity: 999,
+                percentOff: 20,
+              },
+            ],
+            availabilityBehavior: 'date_time_based',
+            saleStartOn: futureStartDate,
+            saleEndOn: futureEndDate,
+            ticketTypes: [
+              {
+                name: 'Early Bird VIP',
+                description: 'Full VIP access with exclusive perks',
+                status: 'enabled',
+                reference: 'eb-vip-2025',
+                pricing: 'paid',
+                price: 29900,
+                discountedFromPrice: 49900,
+                capacity: 50,
+                minQuantity: 1,
+                maxQuantity: 5,
+                showAvailableQuantity: true,
+                showTicketSaleDates: true,
+                hidden: false,
+                hideWhenSoldOut: true,
+                hideWhenNotOnSale: false,
+                hideWhenScheduled: false,
+                hideWhenUnavailable: true,
+                imageFileId: upload1.data.id,
+                bookingFee: {
+                  enabled: true,
+                  type: 'fixed',
+                  fixedFee: 500,
+                },
+                availabilityBehavior: 'always_available',
+              },
+              {
+                name: 'Early Bird General',
+                description: 'Standard conference access',
+                status: 'enabled',
+                reference: 'eb-general-2025',
+                pricing: 'paid',
+                price: 9900,
+                discountedFromPrice: 14900,
+                capacity: 150,
+                minQuantity: 1,
+                maxQuantity: 10,
+                showAvailableQuantity: true,
+                showTicketSaleDates: true,
+                imageFileId: upload2.data.id,
+                bookingFee: {
+                  enabled: true,
+                  type: 'percentage',
+                  percentageFee: 3,
+                },
+              },
+            ],
+          },
+          {
+            name: 'Regular Tickets',
+            description: 'Standard pricing tickets',
+            status: 'enabled',
+            layout: {
+              type: 'list',
+              spacing: 'compact',
+              showTicketGroupName: true,
+              showTicketPrice: true,
+            },
+            ticketSelectionType: 'multiple',
+            capacity: 500,
+            hidden: false,
+            availabilityBehavior: 'always_available',
+            ticketTypes: [
+              {
+                name: 'General Admission',
+                pricing: 'paid',
+                price: 14900,
+                capacity: 400,
+                maxQuantity: 10,
+              },
+              {
+                name: 'VIP Pass',
+                pricing: 'paid',
+                price: 49900,
+                capacity: 100,
+                maxQuantity: 5,
+              },
+            ],
+          },
+          {
+            name: 'Virtual Attendance',
+            description: 'Join us online from anywhere',
+            status: 'enabled',
+            layout: {
+              type: 'accordion',
+              collapse: true,
+            },
+            ticketSelectionType: 'single',
+            hidden: false,
+            ticketTypes: [
+              {
+                name: 'Virtual Pass',
+                description: 'Full livestream access to all sessions',
+                pricing: 'paid',
+                price: 4900,
+              },
+              {
+                name: 'Free Community Pass',
+                description: 'Access to keynote sessions only',
+                pricing: 'free',
+                price: 0,
+              },
+            ],
+          },
+        ],
+        fields: [
+          {
+            label: 'Company Name',
+            element: 'text',
+            required: true,
+            placeholder: 'Your company',
+            reference: 'company',
+          },
+          {
+            label: 'Dietary Requirements',
+            element: 'select',
+            required: false,
+            options: [
+              { label: 'None', value: 'none' },
+              { label: 'Vegetarian', value: 'vegetarian' },
+              { label: 'Vegan', value: 'vegan' },
+              { label: 'Gluten-free', value: 'gluten-free' },
+            ],
+          },
+        ],
+        showConfirmationEventName: true,
+        showConfirmationEventDateTime: true,
+        showConfirmationEventLocation: true,
+        showConfirmationEventTickets: true,
+      });
+
+      // Cast to any for assertions until SDK types are regenerated
+      const pageData = page;
+      console.log(page);
+
+      // Verify basic page properties
+      expect(pageData.id).toBeDefined();
+      expect(pageData.type).toBe('event');
+      expect(pageData.title).toBe('Ultimate Tech Summit 2025');
+
+      // Verify event details
+      expect(pageData.eventDetails).toBeDefined();
+      expect(pageData.eventDetails?.type).toBe('hybrid');
+      expect(pageData.eventDetails?.currency).toBe('usd');
+      expect(pageData.eventDetails?.capacity).toBe(1000);
+      expect(pageData.eventDetails?.location).toBe('123 Tech Center, San Francisco, CA');
+
+      // Verify ticket groups
+      expect(pageData.ticketGroups).toBeDefined();
+      expect(pageData.ticketGroups?.length).toBe(3);
+
+      // Verify first ticket group (Early Bird) - find by name since order may vary
+      const earlyBirdGroup = pageData.ticketGroups?.find(
+        (g: any) => g.name === 'Early Bird Tickets'
+      );
+      expect(earlyBirdGroup).toBeDefined();
+      expect(earlyBirdGroup?.description).toBe('Limited time early bird pricing - save up to 40%!');
+      expect(earlyBirdGroup?.reference).toBe('early-bird-2025');
+      expect(earlyBirdGroup?.status).toBe('enabled');
+      expect(earlyBirdGroup?.capacity).toBe(200);
+      expect(earlyBirdGroup?.ticketSelectionType).toBe('quantity');
+      expect(earlyBirdGroup?.hideWhenSoldOut).toBe(true);
+      expect(earlyBirdGroup?.hideWhenUnavailable).toBe(true);
+
+      // Verify layout
+      expect(earlyBirdGroup?.layout).toBeDefined();
+      expect(earlyBirdGroup?.layout?.type).toBe('grid');
+      expect(earlyBirdGroup?.layout?.columns).toBe(2);
+      expect(earlyBirdGroup?.layout?.alignment).toBe('center');
+      expect(earlyBirdGroup?.layout?.spacing).toBe('comfortable');
+      expect(earlyBirdGroup?.layout?.imageSize).toBe('medium');
+      expect(earlyBirdGroup?.layout?.showTicketGroupName).toBe(true);
+      expect(earlyBirdGroup?.layout?.showTicketPrice).toBe(true);
+
+      // Verify bulk discounts
+      expect(earlyBirdGroup?.bulkDiscounts).toBeDefined();
+      expect(earlyBirdGroup?.bulkDiscounts?.length).toBe(3);
+      expect(earlyBirdGroup?.bulkDiscounts?.[0].minQuantity).toBe(3);
+      expect(earlyBirdGroup?.bulkDiscounts?.[0].percentOff).toBe(10);
+      expect(earlyBirdGroup?.bulkDiscounts?.[2].percentOff).toBe(20);
+
+      // Verify availability behavior
+      expect(earlyBirdGroup?.availabilityBehavior).toBe('date_time_based');
+      expect(earlyBirdGroup?.saleStartOn).toBeDefined();
+      expect(earlyBirdGroup?.saleEndOn).toBeDefined();
+
+      // Verify ticket types in first group
+      expect(earlyBirdGroup?.ticketTypes?.length).toBe(2);
+
+      // Find ticket types by name since order may vary
+      const vipTicket = earlyBirdGroup?.ticketTypes?.find((t: any) => t.name === 'Early Bird VIP');
+      expect(vipTicket).toBeDefined();
+      expect(vipTicket?.reference).toBe('eb-vip-2025');
+      expect(vipTicket?.price).toBe(29900);
+      expect(vipTicket?.discountedFromPrice).toBe(49900);
+      expect(vipTicket?.capacity).toBe(50);
+      expect(vipTicket?.minQuantity).toBe(1);
+      expect(vipTicket?.maxQuantity).toBe(5);
+      expect(vipTicket?.showAvailableQuantity).toBe(true);
+      expect(vipTicket?.showTicketSaleDates).toBe(true);
+      expect(vipTicket?.hideWhenSoldOut).toBe(true);
+
+      // Verify ticket type image
+      expect(vipTicket?.image).toBeDefined();
+      expect(vipTicket?.image?.file).toBe(upload1.data.id);
+
+      // Verify booking fee
+      expect(vipTicket?.bookingFee).toBeDefined();
+      expect(vipTicket?.bookingFee?.enabled).toBe(true);
+      expect(vipTicket?.bookingFee?.type).toBe('fixed');
+      expect(vipTicket?.bookingFee?.fixedFee).toBe(500);
+
+      const generalTicket = earlyBirdGroup?.ticketTypes?.find(
+        (t: any) => t.name === 'Early Bird General'
+      );
+      expect(generalTicket).toBeDefined();
+      expect(generalTicket?.bookingFee?.type).toBe('percentage');
+      expect(generalTicket?.bookingFee?.percentageFee).toBe(3);
+
+      // Verify second ticket group (Regular) - find by name since order may vary
+      const regularGroup = pageData.ticketGroups?.find((g: any) => g.name === 'Regular Tickets');
+      expect(regularGroup).toBeDefined();
+      expect(regularGroup?.ticketSelectionType).toBe('multiple');
+      expect(regularGroup?.layout?.type).toBe('list');
+      expect(regularGroup?.ticketTypes?.length).toBe(2);
+
+      // Verify third ticket group (Virtual) - find by name since order may vary
+      const virtualGroup = pageData.ticketGroups?.find((g: any) => g.name === 'Virtual Attendance');
+      expect(virtualGroup).toBeDefined();
+      expect(virtualGroup?.ticketSelectionType).toBe('single');
+      expect(virtualGroup?.layout?.type).toBe('accordion');
+      expect(virtualGroup?.layout?.collapse).toBe(true);
+      expect(virtualGroup?.ticketTypes?.length).toBe(2);
+
+      // Verify free ticket (find by name since order may vary)
+      const freeTicket = virtualGroup?.ticketTypes?.find(
+        (t: any) => t.name === 'Free Community Pass'
+      );
+      expect(freeTicket).toBeDefined();
+      expect(freeTicket?.pricing).toBe('free');
+      expect(freeTicket?.price).toBe(0);
+
+      // Verify custom fields
+      expect(pageData.fields).toBeDefined();
+      expect(pageData.fields?.length).toBeGreaterThanOrEqual(2);
+      const companyField = pageData.fields?.find((f: any) => f.reference === 'company');
+      expect(companyField).toBeDefined();
+      expect(companyField?.required).toBe(true);
+    }, 30000);
   });
 
   describe('create - form pages', () => {
