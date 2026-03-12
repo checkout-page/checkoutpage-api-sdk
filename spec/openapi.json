@@ -8123,7 +8123,7 @@
       "post": {
         "summary": "Create a ticket group",
         "description": "Creates a new ticket group on the specified event page.",
-        "operationId": "pages/ticket-groups/create",
+        "operationId": "pages/events/ticket-groups/create",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Pages"],
         "parameters": [
@@ -8172,7 +8172,7 @@
       "patch": {
         "summary": "Update a ticket group",
         "description": "Updates an existing ticket group on the specified event page.",
-        "operationId": "pages/ticket-groups/update",
+        "operationId": "pages/events/ticket-groups/update",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Pages"],
         "parameters": [
@@ -8225,7 +8225,7 @@
       "delete": {
         "summary": "Archive a ticket group",
         "description": "Archives a ticket group by setting its status to \"archived\". The ticket group will no longer be visible but data is preserved.",
-        "operationId": "pages/ticket-groups/delete",
+        "operationId": "pages/events/ticket-groups/delete",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Pages"],
         "parameters": [
@@ -8273,7 +8273,7 @@
       "post": {
         "summary": "Create a ticket type",
         "description": "Creates a new ticket type within the specified ticket group.",
-        "operationId": "pages/ticket-types/create",
+        "operationId": "pages/events/ticket-groups/ticket-types/create",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Pages"],
         "parameters": [
@@ -8334,7 +8334,7 @@
       "patch": {
         "summary": "Update a ticket type",
         "description": "Updates an existing ticket type within the specified ticket group.",
-        "operationId": "pages/ticket-types/update",
+        "operationId": "pages/events/ticket-groups/ticket-types/update",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Pages"],
         "parameters": [
@@ -8399,7 +8399,7 @@
       "delete": {
         "summary": "Archive a ticket type",
         "description": "Archives a ticket type by setting its status to \"archived\". The ticket type will no longer be visible but data is preserved.",
-        "operationId": "pages/ticket-types/delete",
+        "operationId": "pages/events/ticket-groups/ticket-types/delete",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Pages"],
         "parameters": [
