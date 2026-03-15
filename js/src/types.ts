@@ -171,6 +171,31 @@ export type UpdateEventResponse =
 export type DeleteEventResponse =
   operations['events/delete']['responses'][200]['content']['application/json'];
 
+export type EventTicketGroupList =
+  operations['events/ticket-groups/list']['responses'][200]['content']['application/json'];
+
+export type EventTicketGroup = EventTicketGroupList['data'][number];
+
+export type EventTicketGroupResponse =
+  operations['events/ticket-groups/get']['responses'][200]['content']['application/json'];
+
+export type CreateEventTicketGroupParams = NonNullable<
+  operations['events/ticket-groups/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateEventTicketGroupResponse =
+  operations['events/ticket-groups/create']['responses'][201]['content']['application/json'];
+
+export type UpdateEventTicketGroupParams = NonNullable<
+  operations['events/ticket-groups/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventTicketGroupResponse =
+  operations['events/ticket-groups/update']['responses'][200]['content']['application/json'];
+
+export type DeleteEventTicketGroupResponse =
+  operations['events/ticket-groups/delete']['responses'][200]['content']['application/json'];
+
 // Checkout pages
 export type CheckoutPageList =
   operations['checkout-pages/list']['responses'][200]['content']['application/json'];
