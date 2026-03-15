@@ -240,7 +240,7 @@ describe('EventsResource ticketGroups integration tests', () => {
       });
 
       expect(result.data.availabilityBehavior).toBe('after_ticket_sale_ends');
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
     });
 
     it('creates a ticket group with after_ticket_sold_out availability', async () => {
@@ -252,7 +252,7 @@ describe('EventsResource ticketGroups integration tests', () => {
       });
 
       expect(result.data.availabilityBehavior).toBe('after_ticket_sold_out');
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
     });
 
     it('creates a ticket group with after_ticket_ends_or_sold_out availability', async () => {
@@ -264,7 +264,7 @@ describe('EventsResource ticketGroups integration tests', () => {
       });
 
       expect(result.data.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
     });
 
     it('creates a ticket group with until_event_starts availability', async () => {
@@ -279,14 +279,15 @@ describe('EventsResource ticketGroups integration tests', () => {
 
     it('accepts triggerTicketGroupId that references a missing ticket group', async () => {
       const event = await createEvent();
+      const missingTriggerTicketGroupId = fakeObjectId('missinggroup');
 
       const result = await createTicketGroup(event.data.id, {
         availabilityBehavior: 'after_ticket_sold_out',
-        triggerTicketGroupId: fakeObjectId('missinggroup'),
+        triggerTicketGroupId: missingTriggerTicketGroupId,
       });
 
       expect(result.data.availabilityBehavior).toBe('after_ticket_sold_out');
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(missingTriggerTicketGroupId);
     });
 
     it('fails for a malformed event id', async () => {
@@ -324,7 +325,7 @@ describe('EventsResource ticketGroups integration tests', () => {
       expect(result.data.layout?.collapse).toBe(true);
       expect(result.data.layout?.alignment).toBe('stack');
       expect(result.data.availabilityBehavior).toBe('after_ticket_sale_ends');
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
     });
 
     it('fails for an unknown ticket group id', async () => {
@@ -426,7 +427,7 @@ describe('EventsResource ticketGroups integration tests', () => {
       });
 
       expect(result.data.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
     });
 
     it('clears nullable settings when null is provided', async () => {
@@ -467,7 +468,7 @@ describe('EventsResource ticketGroups integration tests', () => {
       expect(result.data.capacity).toBeNull();
       expect(result.data.saleStartOn).toBeNull();
       expect(result.data.saleEndOn).toBeNull();
-      expect(result.data.triggerTicketGroupId ?? null).toBeNull();
+      expect(result.data.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
       expect(result.data.availabilityBehavior).toBe('always_available');
     });
 
