@@ -15,10 +15,131 @@ import type {
   UpdateEventTicketGroupParams,
   UpdateEventTicketGroupResponse,
   DeleteEventTicketGroupResponse,
+  EventTicketTypeList,
+  EventTicketTypeResponse,
+  CreateEventTicketTypeParams,
+  CreateEventTicketTypeResponse,
+  UpdateEventTicketTypeParams,
+  UpdateEventTicketTypeResponse,
+  DeleteEventTicketTypeResponse,
 } from '../../types';
 
-export class EventTicketGroupsResource {
+export class EventTicketTypesResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  async list(pageId: string, ticketGroupId: string): Promise<EventTicketTypeList> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!ticketGroupId) {
+      throw new Error('Ticket group ID is required');
+    }
+
+    return this.client.request<EventTicketTypeList>({
+      method: 'GET',
+      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}/ticket-types`,
+    });
+  }
+
+  async create(
+    pageId: string,
+    ticketGroupId: string,
+    params: CreateEventTicketTypeParams
+  ): Promise<CreateEventTicketTypeResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!ticketGroupId) {
+      throw new Error('Ticket group ID is required');
+    }
+
+    return this.client.request<CreateEventTicketTypeResponse>({
+      method: 'POST',
+      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}/ticket-types`,
+      body: params,
+    });
+  }
+
+  async get(
+    pageId: string,
+    ticketGroupId: string,
+    ticketTypeId: string
+  ): Promise<EventTicketTypeResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!ticketGroupId) {
+      throw new Error('Ticket group ID is required');
+    }
+
+    if (!ticketTypeId) {
+      throw new Error('Ticket type ID is required');
+    }
+
+    return this.client.request<EventTicketTypeResponse>({
+      method: 'GET',
+      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}/ticket-types/${ticketTypeId}`,
+    });
+  }
+
+  async update(
+    pageId: string,
+    ticketGroupId: string,
+    ticketTypeId: string,
+    params: UpdateEventTicketTypeParams
+  ): Promise<UpdateEventTicketTypeResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!ticketGroupId) {
+      throw new Error('Ticket group ID is required');
+    }
+
+    if (!ticketTypeId) {
+      throw new Error('Ticket type ID is required');
+    }
+
+    return this.client.request<UpdateEventTicketTypeResponse>({
+      method: 'PATCH',
+      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}/ticket-types/${ticketTypeId}`,
+      body: params,
+    });
+  }
+
+  async delete(
+    pageId: string,
+    ticketGroupId: string,
+    ticketTypeId: string
+  ): Promise<DeleteEventTicketTypeResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!ticketGroupId) {
+      throw new Error('Ticket group ID is required');
+    }
+
+    if (!ticketTypeId) {
+      throw new Error('Ticket type ID is required');
+    }
+
+    return this.client.request<DeleteEventTicketTypeResponse>({
+      method: 'DELETE',
+      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}/ticket-types/${ticketTypeId}`,
+    });
+  }
+}
+
+export class EventTicketGroupsResource {
+  public readonly ticketTypes: EventTicketTypesResource;
+
+  constructor(private client: CheckoutPageApiClient) {
+    this.ticketTypes = new EventTicketTypesResource(client);
+  }
 
   async list(pageId: string): Promise<EventTicketGroupList> {
     if (!pageId) {
