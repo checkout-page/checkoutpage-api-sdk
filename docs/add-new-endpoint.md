@@ -160,6 +160,15 @@ export class PageResource {
 
 Types are defined in `api-sdk/js/src/types.ts` to provide clean, usable interfaces derived from the generated OpenAPI types.
 
+### Response Shape Rule
+
+Every SDK resource method must return the wrapped API response shape from the OpenAPI spec.
+
+- If the API returns `{ data: ... }`, the SDK method must return `{ data: ... }`.
+- If the API returns a list envelope like `{ has_more, total, data: [...] }`, the SDK method must return that full envelope.
+- Do not unwrap `data` inside resource methods.
+- Name exported types to reflect the wrapped payload shape so method signatures stay aligned with the API contract.
+
 ### Type Definition Patterns
 
 #### Pattern 1: Simple Response Type
@@ -168,6 +177,13 @@ For single-item responses:
 
 ```ts
 export type Customer = operations['customers/get']['responses'][200]['content']['application/json'];
+```
+
+If the API response shape is `{ data: Entity }`, keep that wrapper in the exported type:
+
+```ts
+export type EventResponse = operations['events/get']['responses'][200]['content']['application/json'];
+export type Event = EventResponse['data'];
 ```
 
 #### Pattern 2: List Response Type
@@ -184,6 +200,8 @@ Extract individual item from list:
 ```ts
 export type Customer = CustomerList['data'][number];
 ```
+
+The resource method should still return `CustomerList`, not `Customer[]`.
 
 #### Pattern 3: Request Body Type
 
@@ -856,11 +874,6 @@ describe('CustomerResource Integration Tests', () => {
   });
 
   it('should create and retrieve a customer', async () => {
-    if (!client) {
-      console.log('Skipping: No API key');
-      return;
-    }
-
     // Create customer
     const createParams = {
       email: `test-${Date.now()}@example.com`,
@@ -881,8 +894,6 @@ describe('CustomerResource Integration Tests', () => {
   });
 
   it('should list customers with pagination', async () => {
-    if (!client) return;
-
     const result = await client.customers.list({ limit: 5 });
 
     expect(result.data).toBeDefined();
@@ -893,8 +904,6 @@ describe('CustomerResource Integration Tests', () => {
   });
 
   it('should handle search queries', async () => {
-    if (!client) return;
-
     const result = await client.customers.list({
       search: 'test@example.com',
       limit: 10,
