@@ -140,6 +140,37 @@ export type UpdateProductParams = {
   sku?: string | null;
 };
 
+// Events
+export type EventList = operations['events/list']['responses'][200]['content']['application/json'];
+
+export type Event = EventList['data'][number];
+
+export type EventListArgs = operations['events/list']['parameters']['query'];
+
+export type EventListParams = Omit<NonNullable<EventListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateEventParams = NonNullable<
+  operations['events/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateEventResponse =
+  operations['events/create']['responses'][201]['content']['application/json'];
+
+export type EventResponse =
+  operations['events/get']['responses'][200]['content']['application/json'];
+
+export type UpdateEventParams = NonNullable<
+  operations['events/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventResponse =
+  operations['events/update']['responses'][200]['content']['application/json'];
+
+export type DeleteEventResponse =
+  operations['events/delete']['responses'][200]['content']['application/json'];
+
 // Checkout pages
 export type CheckoutPageList =
   operations['checkout-pages/list']['responses'][200]['content']['application/json'];
