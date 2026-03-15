@@ -333,6 +333,18 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
       expect(eventReadAfterDeletes.data.id).toBe(event.data.id);
     });
 
+    it('fails when triggerTicketTypeId references a missing ticket type', async () => {
+      const event = await createEvent();
+      const group = await createTicketGroup(event.data.id);
+
+      await expect(
+        createTicketType(event.data.id, group.data.id, {
+          availabilityBehavior: 'after_ticket_sold_out',
+          triggerTicketTypeId: fakeObjectId('missingticket'),
+        })
+      ).rejects.toThrow(NotFoundError);
+    });
+
     it('fails when imageId references a missing file', async () => {
       const event = await createEvent();
       const group = await createTicketGroup(event.data.id);
@@ -631,7 +643,7 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
       expect(result.data.description).toBeNull();
       expect(result.data.discountedFromPrice).toBeNull();
       expect(result.data.capacity).toBeNull();
-      expect(result.data.image?.fileId).toBe(imageId);
+      expect(result.data.image).toBeNull();
       expect(result.data.saleStartOn).toBeNull();
       expect(result.data.saleEndOn).toBeNull();
       expect(result.data.availabilityBehavior).toBe('always_available');

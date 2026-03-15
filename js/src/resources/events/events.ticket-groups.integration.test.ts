@@ -277,17 +277,16 @@ describe('EventsResource ticketGroups integration tests', () => {
       expect(result.data.triggerTicketGroupId ?? null).toBeNull();
     });
 
-    it('accepts triggerTicketGroupId that references a missing ticket group', async () => {
+    it('fails when triggerTicketGroupId references a missing ticket group', async () => {
       const event = await createEvent();
       const missingTriggerTicketGroupId = fakeObjectId('missinggroup');
 
-      const result = await createTicketGroup(event.data.id, {
-        availabilityBehavior: 'after_ticket_sold_out',
-        triggerTicketGroupId: missingTriggerTicketGroupId,
-      });
-
-      expect(result.data.availabilityBehavior).toBe('after_ticket_sold_out');
-      expect(result.data.triggerTicketGroupId ?? null).toBe(missingTriggerTicketGroupId);
+      await expect(
+        createTicketGroup(event.data.id, {
+          availabilityBehavior: 'after_ticket_sold_out',
+          triggerTicketGroupId: missingTriggerTicketGroupId,
+        })
+      ).rejects.toThrow(NotFoundError);
     });
 
     it('fails for a malformed event id', async () => {
