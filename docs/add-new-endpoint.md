@@ -817,6 +817,9 @@ expect(client.request).toHaveBeenCalledWith({
 
 ## Step 8: Add Integration Tests
 
+Shared integration-test helpers live in `api-sdk/js/src/test-helpers/test-lib.ts`.
+Use `fakeObjectId` for deterministic invalid Mongo-style IDs and `uniqueSuffix` for unique labels or references instead of redefining those helpers in each test file.
+
 Integration tests make real API calls to verify end-to-end functionality.
 
 ### Test File Location
