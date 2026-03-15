@@ -45,7 +45,6 @@ describe('FileResource Integration Tests', () => {
     expect(result.data.type).toBe('image/png');
     expect(result.data.size).toBeGreaterThan(0);
 
-    // Images should have width and height
     expect(result.data.width).toBeDefined();
     expect(result.data.height).toBeDefined();
 

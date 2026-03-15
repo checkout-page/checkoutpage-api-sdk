@@ -13,7 +13,6 @@ export class FileResource {
       throw new Error('Purpose is required');
     }
 
-    // Create FormData for multipart/form-data upload
     const formData = new FormData();
     formData.append('file', params.file);
     formData.append('purpose', params.purpose);
