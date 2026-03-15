@@ -196,6 +196,61 @@ export type UpdateEventTicketGroupResponse =
 export type DeleteEventTicketGroupResponse =
   operations['events/ticket-groups/delete']['responses'][200]['content']['application/json'];
 
+export type EventTicketTypeList =
+  operations['events/ticket-groups/ticket-types/list']['responses'][200]['content']['application/json'];
+
+export type EventTicketType = EventTicketTypeList['data'][number];
+
+export type EventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/get']['responses'][200]['content']['application/json'];
+
+export type CreateEventTicketTypeParams = NonNullable<
+  operations['events/ticket-groups/ticket-types/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateEventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/create']['responses'][201]['content']['application/json'];
+
+export type UpdateEventTicketTypeParams = NonNullable<
+  operations['events/ticket-groups/ticket-types/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/update']['responses'][200]['content']['application/json'];
+
+export type DeleteEventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/delete']['responses'][200]['content']['application/json'];
+
+// Forms
+export type FormList = operations['forms/list']['responses'][200]['content']['application/json'];
+
+export type Form = FormList['data'][number];
+
+export type FormListArgs = operations['forms/list']['parameters']['query'];
+
+export type FormListParams = Omit<NonNullable<FormListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateFormParams = NonNullable<
+  operations['forms/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateFormResponse =
+  operations['forms/create']['responses'][201]['content']['application/json'];
+
+export type FormResponse = operations['forms/get']['responses'][200]['content']['application/json'];
+
+export type UpdateFormParams = NonNullable<
+  operations['forms/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateFormResponse =
+  operations['forms/update']['responses'][200]['content']['application/json'];
+
+export type DeleteFormResponse =
+  operations['forms/delete']['responses'][200]['content']['application/json'];
+
 // Checkout pages
 export type CheckoutPageList =
   operations['checkout-pages/list']['responses'][200]['content']['application/json'];
