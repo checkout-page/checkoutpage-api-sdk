@@ -140,6 +140,38 @@ export type UpdateProductParams = {
   sku?: string | null;
 };
 
+// Checkout pages
+export type CheckoutPageList =
+  operations['checkout-pages/list']['responses'][200]['content']['application/json'];
+
+export type CheckoutPage = CheckoutPageList['data'][number];
+
+export type CheckoutPageListArgs = operations['checkout-pages/list']['parameters']['query'];
+
+export type CheckoutPageListParams = Omit<NonNullable<CheckoutPageListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateCheckoutPageParams = NonNullable<
+  operations['checkout-pages/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateCheckoutPageResponse =
+  operations['checkout-pages/create']['responses'][201]['content']['application/json'];
+
+export type CheckoutPageResponse =
+  operations['checkout-pages/get']['responses'][200]['content']['application/json'];
+
+export type UpdateCheckoutPageParams = NonNullable<
+  operations['checkout-pages/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateCheckoutPageResponse =
+  operations['checkout-pages/update']['responses'][200]['content']['application/json'];
+
+export type DeleteCheckoutPageResponse =
+  operations['checkout-pages/delete']['responses'][200]['content']['application/json'];
+
 // Checkout page fields
 export type CheckoutPageFieldList =
   operations['checkout-pages/fields/list']['responses'][200]['content']['application/json'];
