@@ -8,6 +8,7 @@ export interface IntegrationConfig {
   testCustomerEmail: string;
   testSellerId: string;
   testTicketId: string;
+  testCheckoutPageId: string;
 }
 
 export function loadIntegrationConfig(): IntegrationConfig {
@@ -20,6 +21,7 @@ export function loadIntegrationConfig(): IntegrationConfig {
   const testCustomerEmail = process.env.TEST_CUSTOMER_EMAIL || '';
   const testSellerId = process.env.TEST_SELLER_ID || '';
   const testTicketId = process.env.TEST_TICKET_ID || '';
+  const testCheckoutPageId = process.env.TEST_CHECKOUT_PAGE_ID || '';
 
   if (!apiKey) {
     throw new Error(
@@ -38,5 +40,6 @@ export function loadIntegrationConfig(): IntegrationConfig {
     testCustomerEmail,
     testSellerId,
     testTicketId,
+    testCheckoutPageId,
   };
 }

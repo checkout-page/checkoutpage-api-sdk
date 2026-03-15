@@ -7,6 +7,7 @@ import { BookingResource } from './resources/bookings/bookings';
 import { TicketResource } from './resources/tickets/tickets';
 import { ProductResource } from './resources/products/products';
 import { FileResource } from './resources/files/files';
+import { CheckoutPagesResource } from './resources/checkout-pages/checkout-pages';
 
 export class CheckoutPageClient {
   public readonly customers: CustomerResource;
@@ -17,6 +18,7 @@ export class CheckoutPageClient {
   public readonly tickets: TicketResource;
   public readonly products: ProductResource;
   public readonly files: FileResource;
+  public readonly checkoutPages: CheckoutPagesResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -29,6 +31,7 @@ export class CheckoutPageClient {
     this.tickets = new TicketResource(this.client);
     this.products = new ProductResource(this.client);
     this.files = new FileResource(this.client);
+    this.checkoutPages = new CheckoutPagesResource(this.client);
   }
 }
 
@@ -52,6 +55,11 @@ export type {
   ValidateTicketParams,
   Product,
   UpdateProductParams,
+  CheckoutPageField,
+  CheckoutPageFieldList,
+  CreateCheckoutPageFieldParams,
+  UpdateCheckoutPageFieldParams,
+  CheckoutPageFieldDeleteResponse,
   UploadFileResponse,
   UploadFileParams,
 } from './types';

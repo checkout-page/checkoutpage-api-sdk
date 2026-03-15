@@ -124,9 +124,41 @@ export type ValidateTicketParams = NonNullable<
 // Products
 export type Product = operations['products/get']['responses'][200]['content']['application/json'];
 
-export type UpdateProductParams = NonNullable<
-  operations['products/update']['requestBody']
+export type UpdateProductParams = {
+  title?: string | null;
+  description?: string | null;
+  price?: number | null;
+  currency?: string | null;
+  interval?: string | null;
+  intervalCount?: number | null;
+  trialPeriodDays?: number | null;
+  setupFee?: number | null;
+  planIterations?: number | null;
+  payWhatYouWant?: boolean | null;
+  stock?: number | null;
+  hasUnlimitedStock?: boolean | null;
+  sku?: string | null;
+};
+
+// Checkout page fields
+export type CheckoutPageFieldList =
+  operations['checkout-pages/fields/list']['responses'][200]['content']['application/json'];
+
+export type CheckoutPageField = CheckoutPageFieldList['data'][number];
+
+export type CheckoutPageFieldResponse =
+  operations['checkout-pages/fields/get']['responses'][200]['content']['application/json'];
+
+export type CreateCheckoutPageFieldParams = NonNullable<
+  operations['checkout-pages/fields/create']['requestBody']
 >['content']['application/json'];
+
+export type UpdateCheckoutPageFieldParams = NonNullable<
+  operations['checkout-pages/fields/update']['requestBody']
+>['content']['application/json'];
+
+export type CheckoutPageFieldDeleteResponse =
+  operations['checkout-pages/fields/delete']['responses'][200]['content']['application/json'];
 
 // Files
 export type UploadFileResponse =
