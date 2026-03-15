@@ -9323,7 +9323,7 @@
     "/v1/checkout-pages/:pageId/fields": {
       "get": {
         "summary": "List fields for checkout page",
-        "description": "Retrieves all custom fields configured on the specified checkout page, ordered by display order.",
+        "description": "Retrieves all fields configured on the specified checkout page, ordered by display order.",
         "operationId": "checkout-pages/fields/list",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Checkout Pages"],
@@ -9461,11 +9461,6 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "key": {
-                          "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
-                          "example": "physical-delivery"
-                        },
                         "label": {
                           "type": "string",
                           "description": "Display label shown to customers for this option.",
@@ -9534,8 +9529,8 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
-                        "example": "physical-delivery"
+                        "description": "The persisted identifier of the source option used by conditional visibility. For checkbox source fields, use `TRUE` or `FALSE`.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                       },
                       "element": {
                         "type": ["object", "null"],
@@ -9553,8 +9548,8 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
-                            "example": "shipping-method"
+                            "description": "The persisted identifier of the source field used in the condition. It must belong to the same page.",
+                            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           }
                         }
                       }
@@ -9647,7 +9642,7 @@
     "/v1/checkout-pages/:pageId/fields/:fieldId": {
       "get": {
         "summary": "Get field for checkout page",
-        "description": "Retrieves a single custom field configured on the specified checkout page.",
+        "description": "Retrieves a single field configured on the specified checkout page.",
         "operationId": "checkout-pages/fields/get",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Checkout Pages"],
@@ -9815,11 +9810,6 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "key": {
-                          "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
-                          "example": "physical-delivery"
-                        },
                         "label": {
                           "type": "string",
                           "description": "Display label shown to customers for this option.",
@@ -9888,8 +9878,8 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
-                        "example": "physical-delivery"
+                        "description": "The persisted identifier of the source option used by conditional visibility. For checkbox source fields, use `TRUE` or `FALSE`.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                       },
                       "element": {
                         "type": ["object", "null"],
@@ -9907,8 +9897,8 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
-                            "example": "shipping-method"
+                            "description": "The persisted identifier of the source field used in the condition. It must belong to the same page.",
+                            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           }
                         }
                       }
