@@ -574,7 +574,7 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
       );
 
       expect(result.data.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
-      expect(result.data.triggerTicketTypeId ?? null).toBeNull();
+      expect(result.data.triggerTicketTypeId ?? null).toBe(trigger.id);
     });
 
     it('round-trips ticket type changes through event and ticket-group fetches', async () => {
