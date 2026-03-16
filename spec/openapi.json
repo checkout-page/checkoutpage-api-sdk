@@ -2029,11 +2029,28 @@
                     "additionalProperties": {
                       "type": "object",
                       "properties": {
-                        "customizeEmail": { "type": "boolean" },
-                        "subject": { "type": "string" },
-                        "body": { "type": "string" },
-                        "buttonText": { "type": "string" }
-                      }
+                        "customizeEmail": {
+                          "type": "boolean",
+                          "description": "Enable a custom email for this reminder.",
+                          "example": true
+                        },
+                        "subject": {
+                          "type": "string",
+                          "description": "Email subject line.",
+                          "example": "Complete your purchase"
+                        },
+                        "body": {
+                          "type": "string",
+                          "description": "Email body. Accepts HTML or plain text.",
+                          "example": "<p>You left something behind!</p>"
+                        },
+                        "buttonText": {
+                          "type": "string",
+                          "description": "Email call-to-action button label.",
+                          "example": "Complete order"
+                        }
+                      },
+                      "required": ["customizeEmail"]
                     }
                   }
                 },
@@ -2527,28 +2544,6 @@
           "dueDays": { "enabled": true, "days": 30 }
         }
       },
-      "PageCheckoutAbandonmentSettingsInput": {
-        "type": ["object", "null"],
-        "properties": {
-          "disableEmails": {
-            "type": ["boolean", "null"],
-            "description": "Disable automatic abandoned checkout follow-up emails for this page. Store-level settings may override this. [Learn more](https://checkoutpage.com/docs/articles/cart-abandonment)",
-            "example": false
-          },
-          "showStoreLogo": {
-            "type": ["boolean", "null"],
-            "description": "Show store logo in cart abandonment email.",
-            "example": true
-          },
-          "showStoreName": {
-            "type": ["boolean", "null"],
-            "description": "Show store name in cart abandonment email.",
-            "example": true
-          }
-        },
-        "description": "Cart abandonment configuration.",
-        "example": { "disableEmails": false, "showStoreLogo": true, "showStoreName": true }
-      },
       "PagePaymentMethodsInput": {
         "type": ["object", "null"],
         "properties": {
@@ -2589,6 +2584,124 @@
             }
           }
         ]
+      },
+      "PageCheckoutAbandonmentSettingsInput": {
+        "type": ["object", "null"],
+        "properties": {
+          "disableEmails": {
+            "type": ["boolean", "null"],
+            "description": "Disable automatic abandoned checkout follow-up emails for this page. Store-level settings may override this. [Learn more](https://checkoutpage.com/docs/articles/cart-abandonment)",
+            "example": false
+          },
+          "showStoreLogo": {
+            "type": ["boolean", "null"],
+            "description": "Show store logo in cart abandonment email.",
+            "example": true
+          },
+          "showStoreName": {
+            "type": ["boolean", "null"],
+            "description": "Show store name in cart abandonment email.",
+            "example": true
+          },
+          "emailReminders": {
+            "type": ["object", "null"],
+            "properties": {
+              "reminder1": {
+                "type": ["object", "null"],
+                "properties": {
+                  "customizeEmail": {
+                    "type": "boolean",
+                    "description": "Enable a custom email for this reminder.",
+                    "example": true
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Email subject line.",
+                    "example": "Complete your purchase"
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Email body. Accepts HTML or plain text.",
+                    "example": "<p>You left something behind!</p>"
+                  },
+                  "buttonText": {
+                    "type": "string",
+                    "description": "Email call-to-action button label.",
+                    "example": "Complete order"
+                  }
+                },
+                "required": ["customizeEmail"]
+              },
+              "reminder2": {
+                "type": ["object", "null"],
+                "properties": {
+                  "customizeEmail": {
+                    "type": "boolean",
+                    "description": "Enable a custom email for this reminder.",
+                    "example": true
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Email subject line.",
+                    "example": "Complete your purchase"
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Email body. Accepts HTML or plain text.",
+                    "example": "<p>You left something behind!</p>"
+                  },
+                  "buttonText": {
+                    "type": "string",
+                    "description": "Email call-to-action button label.",
+                    "example": "Complete order"
+                  }
+                },
+                "required": ["customizeEmail"]
+              },
+              "reminder3": {
+                "type": ["object", "null"],
+                "properties": {
+                  "customizeEmail": {
+                    "type": "boolean",
+                    "description": "Enable a custom email for this reminder.",
+                    "example": true
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Email subject line.",
+                    "example": "Complete your purchase"
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Email body. Accepts HTML or plain text.",
+                    "example": "<p>You left something behind!</p>"
+                  },
+                  "buttonText": {
+                    "type": "string",
+                    "description": "Email call-to-action button label.",
+                    "example": "Complete order"
+                  }
+                },
+                "required": ["customizeEmail"]
+              }
+            },
+            "description": "Customize the subject, body, and button text for each of the three abandonment reminder emails."
+          }
+        },
+        "description": "Cart abandonment configuration.",
+        "example": {
+          "disableEmails": false,
+          "showStoreLogo": true,
+          "showStoreName": true,
+          "emailReminders": {
+            "reminder1": {
+              "customizeEmail": true,
+              "subject": "You left something behind",
+              "body": "<p>Come back and complete your order.</p>",
+              "buttonText": "Complete order"
+            }
+          }
+        }
       },
       "PagePaymentOptionInput": {
         "type": "object",
@@ -3490,7 +3603,7 @@
           "fields": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FieldInput" },
-            "description": "Custom checkout fields to create. Default name and email fields are always included automatically."
+            "description": "Custom checkout fields to create. Defaults to a name and email field if none are set."
           },
           "allowDynamicTitle": {
             "type": ["boolean", "null"],
@@ -3628,9 +3741,6 @@
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n"
           },
           "invoiceSettings": { "$ref": "#/components/schemas/PageInvoiceSettingsInput" },
-          "checkoutAbandonment": {
-            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
-          },
           "funnelSteps": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FunnelStepInput" },
@@ -3663,6 +3773,9 @@
             "example": false
           },
           "paymentMethods": { "$ref": "#/components/schemas/PagePaymentMethodsInput" },
+          "checkoutAbandonment": {
+            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
+          },
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
@@ -4029,9 +4142,6 @@
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n"
           },
           "invoiceSettings": { "$ref": "#/components/schemas/PageInvoiceSettingsInput" },
-          "checkoutAbandonment": {
-            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
-          },
           "funnelSteps": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FunnelStepInput" },
@@ -4064,6 +4174,9 @@
             "example": false
           },
           "paymentMethods": { "$ref": "#/components/schemas/PagePaymentMethodsInput" },
+          "checkoutAbandonment": {
+            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
+          },
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
@@ -4307,27 +4420,6 @@
                   "dueDays": { "enabled": true, "days": 30 }
                 }
               },
-              "checkoutAbandonment": {
-                "type": ["object", "null"],
-                "properties": {
-                  "disableEmails": { "type": "boolean" },
-                  "showStoreLogo": { "type": "boolean" },
-                  "showStoreName": { "type": "boolean" },
-                  "emailReminders": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "properties": {
-                        "customizeEmail": { "type": "boolean" },
-                        "subject": { "type": "string" },
-                        "body": { "type": "string" },
-                        "buttonText": { "type": "string" }
-                      }
-                    }
-                  }
-                },
-                "description": "Checkout abandonment email reminder settings."
-              },
               "files": {
                 "type": ["array", "null"],
                 "items": { "$ref": "#/components/schemas/FileResponse" },
@@ -4431,7 +4523,7 @@
           "fields": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FieldInput" },
-            "description": "Custom checkout fields to create. Default name and email fields are always included automatically."
+            "description": "Custom checkout fields to create. Defaults to a name and email field if none are set."
           },
           "allowDynamicTitle": {
             "type": ["boolean", "null"],
@@ -4569,9 +4661,6 @@
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n"
           },
           "invoiceSettings": { "$ref": "#/components/schemas/PageInvoiceSettingsInput" },
-          "checkoutAbandonment": {
-            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
-          },
           "funnelSteps": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FunnelStepInput" },
@@ -5204,11 +5293,28 @@
                     "additionalProperties": {
                       "type": "object",
                       "properties": {
-                        "customizeEmail": { "type": "boolean" },
-                        "subject": { "type": "string" },
-                        "body": { "type": "string" },
-                        "buttonText": { "type": "string" }
-                      }
+                        "customizeEmail": {
+                          "type": "boolean",
+                          "description": "Enable a custom email for this reminder.",
+                          "example": true
+                        },
+                        "subject": {
+                          "type": "string",
+                          "description": "Email subject line.",
+                          "example": "Complete your purchase"
+                        },
+                        "body": {
+                          "type": "string",
+                          "description": "Email body. Accepts HTML or plain text.",
+                          "example": "<p>You left something behind!</p>"
+                        },
+                        "buttonText": {
+                          "type": "string",
+                          "description": "Email call-to-action button label.",
+                          "example": "Complete order"
+                        }
+                      },
+                      "required": ["customizeEmail"]
                     }
                   }
                 },
@@ -5664,7 +5770,7 @@
           "fields": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FieldInput" },
-            "description": "Custom checkout fields to create. Default name and email fields are always included automatically."
+            "description": "Custom checkout fields to create. Defaults to a name and email field if none are set."
           },
           "allowDynamicTitle": {
             "type": ["boolean", "null"],
@@ -5802,9 +5908,6 @@
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n"
           },
           "invoiceSettings": { "$ref": "#/components/schemas/PageInvoiceSettingsInput" },
-          "checkoutAbandonment": {
-            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
-          },
           "funnelSteps": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FunnelStepInput" },
@@ -5837,6 +5940,9 @@
             "example": false
           },
           "paymentMethods": { "$ref": "#/components/schemas/PagePaymentMethodsInput" },
+          "checkoutAbandonment": {
+            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
+          },
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
@@ -6292,9 +6398,6 @@
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n"
           },
           "invoiceSettings": { "$ref": "#/components/schemas/PageInvoiceSettingsInput" },
-          "checkoutAbandonment": {
-            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
-          },
           "funnelSteps": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FunnelStepInput" },
@@ -6327,6 +6430,9 @@
             "example": false
           },
           "paymentMethods": { "$ref": "#/components/schemas/PagePaymentMethodsInput" },
+          "checkoutAbandonment": {
+            "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
+          },
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
@@ -10566,9 +10672,6 @@
                     "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n"
                   },
                   "invoiceSettings": { "$ref": "#/components/schemas/PageInvoiceSettingsInput" },
-                  "checkoutAbandonment": {
-                    "$ref": "#/components/schemas/PageCheckoutAbandonmentSettingsInput"
-                  },
                   "funnelSteps": {
                     "type": ["array", "null"],
                     "items": { "$ref": "#/components/schemas/FunnelStepInput" },
