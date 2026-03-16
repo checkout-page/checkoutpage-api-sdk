@@ -5,7 +5,7 @@ import {
   ValidationError,
   createCheckoutPageClient,
 } from '../../index';
-import type { CreateEventParams, Event } from '../../types';
+import type { CreateEventParams, Event, Schemas } from '../../types';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { createImageFile, fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
 
@@ -49,7 +49,7 @@ describe('EventsResource integration tests', () => {
     expect(event.id).toBeTypeOf('string');
     expect(event.sellerId).toBe(config.testSellerId);
     expect(event.type).toBe('event');
-    expect(event.status).toMatch(/published|draft|archived/);
+    expect(event.status).toMatch(/^(published|draft|archived)$/);
     expect(event.name).toBeTypeOf('string');
     if (expectedName) {
       expect(event.name).toBe(expectedName);
@@ -77,6 +77,7 @@ describe('EventsResource integration tests', () => {
 
   const createEvent = async (overrides: Partial<CreateEventParams> = {}) => {
     const suffix = uniqueSuffix();
+    const { eventDetails: overrideEventDetails, ...restOverrides } = overrides;
     const params: CreateEventParams = {
       name: `SDK Event ${suffix}`,
       title: `SDK Event Title ${suffix}`,
@@ -87,8 +88,9 @@ describe('EventsResource integration tests', () => {
         endDate: '2026-09-01T17:00:00Z',
         timezone: 'UTC',
         location: 'SDK Event Venue',
+        ...overrideEventDetails,
       },
-      ...overrides,
+      ...restOverrides,
     };
 
     const response = await client.events.create(params);
@@ -132,29 +134,25 @@ describe('EventsResource integration tests', () => {
     });
 
     it('supports starting_after pagination', async () => {
-      const firstPage = await client.events.list({ limit: 1 });
+      const seed = await client.events.list({ limit: 2 });
 
-      if (firstPage.data.length === 1 && firstPage.has_more) {
-        const secondPage = await client.events.list({
-          limit: 1,
-          starting_after: firstPage.data[0].id,
-        });
+      const nextPage = await client.events.list({
+        limit: 1,
+        starting_after: seed.data[0].id,
+      });
 
-        expect(secondPage.data[0]?.id).not.toBe(firstPage.data[0].id);
-      }
+      expect(nextPage.data[0]?.id).toBe(seed.data[1].id);
     });
 
     it('supports ending_before pagination', async () => {
-      const seedPage = await client.events.list({ limit: 3 });
+      const seed = await client.events.list({ limit: 3 });
 
-      if (seedPage.data.length > 1) {
-        const result = await client.events.list({
-          limit: 1,
-          ending_before: seedPage.data[1].id,
-        });
+      const prevPage = await client.events.list({
+        limit: 1,
+        ending_before: seed.data[1].id,
+      });
 
-        expect(result.data[0]?.id).not.toBe(seedPage.data[1].id);
-      }
+      expect(prevPage.data[0]?.id).toBe(seed.data[0].id);
     });
 
     it('filters events by status', async () => {
@@ -618,6 +616,14 @@ describe('EventsResource integration tests', () => {
         client.events.create({
           name: `Missing image event ${uniqueSuffix()}`,
           title: `Missing image title ${uniqueSuffix()}`,
+          eventDetails: {
+            type: 'in_person',
+            currency: 'usd',
+            startDate: '2026-09-01T09:00:00Z',
+            endDate: '2026-09-01T17:00:00Z',
+            timezone: 'UTC',
+            location: 'SDK Event Venue',
+          },
           imageIds: [fakeObjectId('missingimage')],
         })
       ).rejects.toThrow(ValidationError);
@@ -852,8 +858,10 @@ describe('EventsResource integration tests', () => {
       expect(result.data.checkoutAbandonment?.showStoreLogo).toBe(true);
       expect(result.data.checkoutAbandonment?.showStoreName).toBe(false);
       expect(result.data.funnelSteps?.length).toBe(1);
-      // @ts-ignore
-      expect(result.data.funnelSteps?.[0]?.config?.action).toBe('redirect');
+      const confirmationStep = result.data.funnelSteps?.[0] as
+        | Schemas['FunnelStepConfirmationInput']
+        | undefined;
+      expect(confirmationStep?.config?.action).toBe('redirect');
       expect(result.data.savePaymentMethod).toBe(true);
       expect(result.data.paymentMethods?.stripe?.agpay?.mode).toBe('express');
       expect(result.data.paymentOptions?.[0]?.type).toBe('manual');
@@ -929,6 +937,12 @@ describe('EventsResource integration tests', () => {
         client.events.update(fakeObjectId('missingevent'), { name: 'Missing event' })
       ).rejects.toThrow(NotFoundError);
     });
+
+    it('fails for a malformed event id', async () => {
+      await expect(
+        client.events.update('not-a-valid-id', { name: 'Malformed update' })
+      ).rejects.toThrow(ValidationError);
+    });
   });
 
   describe('delete', () => {
@@ -939,17 +953,9 @@ describe('EventsResource integration tests', () => {
 
       expect(result.data.id).toBe(created.data.id);
       expect(result.data.status).toBe('archived');
-      expectBaseEventResponse(result.data);
-    });
-
-    it('marks the event as archived in the response', async () => {
-      const created = await createEvent();
-      const result = await client.events.delete(created.data.id);
-      forgetPage(created.data.id);
-
-      expect(result.data.status).toBe('archived');
       expect(result.data.type).toBe('event');
       expect(result.data.eventDetails).toBeDefined();
+      expectBaseEventResponse(result.data);
     });
 
     it('fails for an unknown event id', async () => {
