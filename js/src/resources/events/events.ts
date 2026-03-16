@@ -22,7 +22,89 @@ import type {
   UpdateEventTicketTypeParams,
   UpdateEventTicketTypeResponse,
   DeleteEventTicketTypeResponse,
+  EventFieldList,
+  EventFieldResponse,
+  CreateEventFieldParams,
+  UpdateEventFieldParams,
+  EventFieldDeleteResponse,
 } from '../../types';
+
+export class EventFieldsResource {
+  constructor(private client: CheckoutPageApiClient) {}
+
+  async list(pageId: string): Promise<EventFieldList> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    return this.client.request<EventFieldList>({
+      method: 'GET',
+      path: `/v1/events/${pageId}/fields`,
+    });
+  }
+
+  async create(pageId: string, params: CreateEventFieldParams): Promise<EventFieldResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    return this.client.request<EventFieldResponse>({
+      method: 'POST',
+      path: `/v1/events/${pageId}/fields`,
+      body: params,
+    });
+  }
+
+  async get(pageId: string, fieldId: string): Promise<EventFieldResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!fieldId) {
+      throw new Error('Field ID is required');
+    }
+
+    return this.client.request<EventFieldResponse>({
+      method: 'GET',
+      path: `/v1/events/${pageId}/fields/${fieldId}`,
+    });
+  }
+
+  async update(
+    pageId: string,
+    fieldId: string,
+    params: UpdateEventFieldParams
+  ): Promise<EventFieldResponse> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!fieldId) {
+      throw new Error('Field ID is required');
+    }
+
+    return this.client.request<EventFieldResponse>({
+      method: 'PATCH',
+      path: `/v1/events/${pageId}/fields/${fieldId}`,
+      body: params,
+    });
+  }
+
+  async delete(pageId: string, fieldId: string): Promise<{ data: EventFieldDeleteResponse }> {
+    if (!pageId) {
+      throw new Error('Page ID is required');
+    }
+
+    if (!fieldId) {
+      throw new Error('Field ID is required');
+    }
+
+    return this.client.request<{ data: EventFieldDeleteResponse }>({
+      method: 'DELETE',
+      path: `/v1/events/${pageId}/fields/${fieldId}`,
+    });
+  }
+}
 
 export class EventTicketTypesResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -220,9 +302,11 @@ export class EventTicketGroupsResource {
 
 export class EventsResource {
   public readonly ticketGroups: EventTicketGroupsResource;
+  public readonly fields: EventFieldsResource;
 
   constructor(private client: CheckoutPageApiClient) {
     this.ticketGroups = new EventTicketGroupsResource(client);
+    this.fields = new EventFieldsResource(client);
   }
 
   async list(args: EventListParams = {}): Promise<EventList> {

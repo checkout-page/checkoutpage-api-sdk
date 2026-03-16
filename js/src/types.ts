@@ -323,6 +323,26 @@ export type UpdateCheckoutPageFieldParams = NonNullable<
 export type CheckoutPageFieldDeleteResponse =
   operations['checkout-pages/fields/delete']['responses'][200]['content']['application/json'];
 
+// Event fields
+export type EventFieldList =
+  operations['events/fields/list']['responses'][200]['content']['application/json'];
+
+export type EventField = EventFieldList['data'][number];
+
+export type EventFieldResponse =
+  operations['events/fields/get']['responses'][200]['content']['application/json'];
+
+export type CreateEventFieldParams = NonNullable<
+  operations['events/fields/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventFieldParams = NonNullable<
+  operations['events/fields/update']['requestBody']
+>['content']['application/json'];
+
+export type EventFieldDeleteResponse =
+  operations['events/fields/delete']['responses'][200]['content']['application/json'];
+
 // Files
 export type UploadFileResponse =
   operations['files/upload']['responses']['201']['content']['application/json'];
