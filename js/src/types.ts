@@ -251,6 +251,26 @@ export type UpdateFormResponse =
 export type DeleteFormResponse =
   operations['forms/delete']['responses'][200]['content']['application/json'];
 
+// Form fields
+export type FormFieldList =
+  operations['forms/fields/list']['responses'][200]['content']['application/json'];
+
+export type FormField = FormFieldList['data'][number];
+
+export type FormFieldResponse =
+  operations['forms/fields/get']['responses'][200]['content']['application/json'];
+
+export type CreateFormFieldParams = NonNullable<
+  operations['forms/fields/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateFormFieldParams = NonNullable<
+  operations['forms/fields/update']['requestBody']
+>['content']['application/json'];
+
+export type FormFieldDeleteResponse =
+  operations['forms/fields/delete']['responses'][200]['content']['application/json'];
+
 // Checkout pages
 export type CheckoutPageList =
   operations['checkout-pages/list']['responses'][200]['content']['application/json'];
