@@ -116,6 +116,8 @@ export type {
   CheckoutPageFieldDeleteResponse,
   UploadFileResponse,
   UploadFileParams,
+  DeleteFileResponse,
+  DownloadFileResponse,
 } from './types';
 export {
   CheckoutPageError,

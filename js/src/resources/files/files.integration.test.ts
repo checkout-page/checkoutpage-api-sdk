@@ -1,107 +1,176 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient } from '../../index';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { CheckoutPageApiClient } from '../../client';
+import { NotFoundError, ValidationError } from '../../errors';
+import { loadIntegrationConfig } from '../../test-helpers/integration-config';
+import { createImageFile, fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
+import { FileResource } from './files';
 
-describe('FileResource Integration Tests', () => {
-  let client: CheckoutPageClient;
+describe('FileResource integration tests', () => {
+  let apiClient: CheckoutPageApiClient;
+  let files: FileResource;
 
-  beforeAll(() => {
-    const apiKey = process.env.CHECKOUTPAGE_API_KEY;
+  const createDocumentFile = (name = `document-${uniqueSuffix()}.txt`) => {
+    const content = `File integration test ${uniqueSuffix()}`;
+    return new File([new Blob([content], { type: 'text/plain' })], name, {
+      type: 'text/plain',
+    });
+  };
 
-    if (!apiKey) {
-      console.warn('Skipping integration tests: CHECKOUTPAGE_API_KEY not set');
-      return;
-    }
-
-    client = new CheckoutPageClient({ apiKey });
-  });
-
-  it('should upload an image file', async () => {
-    if (!client) {
-      console.log('Skipping: No API key');
-      return;
-    }
-
-    // Create a test image file (1x1 red pixel PNG)
-    const base64Image =
-      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==';
-    const binaryString = atob(base64Image);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    const blob = new Blob([bytes], { type: 'image/png' });
-    const file = new File([blob], 'test-image.png', { type: 'image/png' });
-
-    const result = await client.files.upload({
-      file,
+  const uploadImage = async () => {
+    return files.upload({
+      file: createImageFile(`image-${uniqueSuffix()}.png`),
       purpose: 'image',
     });
+  };
 
-    expect(result.data).toBeDefined();
-    expect(result.data.id).toBeDefined();
-    expect(result.data.location).toBeDefined();
-    expect(result.data.name).toBeDefined();
-    expect(result.data.purpose).toBe('image');
-    expect(result.data.type).toBe('image/png');
-    expect(result.data.size).toBeGreaterThan(0);
+  const uploadDocument = async () => {
+    return files.upload({
+      file: createDocumentFile(),
+      purpose: 'file',
+    });
+  };
 
-    expect(result.data.width).toBeDefined();
-    expect(result.data.height).toBeDefined();
+  beforeAll(() => {
+    const config = loadIntegrationConfig();
+    apiClient = new CheckoutPageApiClient({
+      apiKey: config.apiKey,
+      baseUrl: config.baseUrl,
+    });
+    files = new FileResource(apiClient);
+  });
 
-    console.log('Uploaded image:', {
-      id: result.data.id,
-      location: result.data.location,
-      size: result.data.size,
-      dimensions: `${result.data.width}x${result.data.height}`,
+  describe('upload', () => {
+    it('uploads an image file', async () => {
+      const result = await uploadImage();
+
+      expect(result.data.id).toBeTypeOf('string');
+      expect(result.data.location).toContain('http');
+      expect(result.data.name).toContain('.png');
+      expect(result.data.purpose).toBe('image');
+      expect(result.data.type).toBe('image/png');
+      expect(result.data.size).toBeGreaterThan(0);
+      expect(result.data.width).toBeDefined();
+      expect(result.data.height).toBeDefined();
+    });
+
+    it('uploads a document file', async () => {
+      const result = await uploadDocument();
+
+      expect(result.data.id).toBeTypeOf('string');
+      expect(result.data.location).toContain('http');
+      expect(result.data.name).toContain('.txt');
+      expect(result.data.purpose).toBe('file');
+      expect(result.data.type).toBe('text/plain');
+      expect(result.data.size).toBeGreaterThan(0);
+      expect(result.data.width).toBeUndefined();
+      expect(result.data.height).toBeUndefined();
     });
   });
 
-  it('should upload a file (non-image)', async () => {
-    if (!client) return;
+  describe('download', () => {
+    it('downloads an uploaded document file and returns a presigned url', async () => {
+      const uploaded = await uploadDocument();
+      const result = await files.download(uploaded.data.id);
 
-    // Create a test text file
-    const textContent = 'This is a test document for integration testing.';
-    const blob = new Blob([textContent], { type: 'text/plain' });
-    const file = new File([blob], 'test-document.txt', { type: 'text/plain' });
-
-    const result = await client.files.upload({
-      file,
-      purpose: 'file',
+      expect(result.data.url).toContain('http');
+      expect(result.data.expiresIn).toBeGreaterThan(0);
     });
 
-    expect(result.data).toBeDefined();
-    expect(result.data.id).toBeDefined();
-    expect(result.data.location).toBeDefined();
-    expect(result.data.name).toBeDefined();
-    expect(result.data.purpose).toBe('file');
-    expect(result.data.size).toBe(textContent.length);
+    it('returns a positive expiresIn value', async () => {
+      const uploaded = await uploadDocument();
+      const result = await files.download(uploaded.data.id);
 
-    console.log('Uploaded file:', {
-      id: result.data.id,
-      location: result.data.location,
-      size: result.data.size,
+      expect(typeof result.data.expiresIn).toBe('number');
+      expect(result.data.expiresIn).toBeGreaterThan(0);
+    });
+
+    it('returns a usable presigned url for a newly uploaded file', async () => {
+      const uploaded = await uploadDocument();
+      const result = await files.download(uploaded.data.id);
+
+      expect(result.data.url).toContain(uploaded.data.name);
+      expect(result.data.url).toContain('http');
+    });
+
+    it('uploads downloads and deletes a document file', async () => {
+      const uploaded = await uploadDocument();
+      const downloaded = await files.download(uploaded.data.id);
+      const deleted = await files.delete(uploaded.data.id);
+
+      expect(downloaded.data.url).toContain('http');
+      expect(downloaded.data.expiresIn).toBeGreaterThan(0);
+      expect(deleted.data.success).toBe(true);
+      expect(deleted.data.message).toBeTypeOf('string');
+    }, 15000);
+
+    it('fails when downloading an uploaded image file', async () => {
+      const uploaded = await uploadImage();
+
+      await expect(files.download(uploaded.data.id)).rejects.toThrow(ValidationError);
+    });
+
+    it('fails for a deleted file', async () => {
+      const uploaded = await uploadDocument();
+      await files.delete(uploaded.data.id);
+
+      await expect(files.download(uploaded.data.id)).rejects.toThrow(NotFoundError);
+    }, 15000);
+
+    it('fails for an unknown file id', async () => {
+      await expect(files.download(fakeObjectId('missingfile'))).rejects.toThrow(NotFoundError);
+    });
+
+    it('fails for a malformed file id', async () => {
+      await expect(files.download('not-a-valid-id')).rejects.toThrow(ValidationError);
     });
   });
 
-  it('should upload using Blob', async () => {
-    if (!client) return;
+  describe('delete', () => {
+    it('deletes an uploaded image file', async () => {
+      const uploaded = await uploadImage();
+      const result = await files.delete(uploaded.data.id);
 
-    // Create a blob without File wrapper
-    const content = 'Blob content test';
-    const blob = new Blob([content], { type: 'text/plain' });
+      expect(result.data.success).toBe(true);
+      expect(result.data.message).toBeTypeOf('string');
+    }, 15000);
 
-    const result = await client.files.upload({
-      file: blob,
-      purpose: 'file',
+    it('deletes an uploaded document file', async () => {
+      const uploaded = await uploadDocument();
+      const result = await files.delete(uploaded.data.id);
+
+      expect(result.data.success).toBe(true);
+      expect(result.data.message).toBeTypeOf('string');
+    }, 15000);
+
+    it('returns a success payload with success and message', async () => {
+      const uploaded = await uploadDocument();
+      const result = await files.delete(uploaded.data.id);
+
+      expect(result.data.success).toBe(true);
+      expect(result.data.message.length).toBeGreaterThan(0);
+    }, 15000);
+
+    it('uploads a file and then deletes it', async () => {
+      const uploaded = await uploadDocument();
+      const result = await files.delete(uploaded.data.id);
+
+      expect(uploaded.data.id).toBeTypeOf('string');
+      expect(result.data.success).toBe(true);
+    }, 15000);
+
+    it('fails when deleting the same file twice', async () => {
+      const uploaded = await uploadDocument();
+      await files.delete(uploaded.data.id);
+
+      await expect(files.delete(uploaded.data.id)).rejects.toThrow(NotFoundError);
+    }, 20000);
+
+    it('fails for an unknown file id', async () => {
+      await expect(files.delete(fakeObjectId('missingfile'))).rejects.toThrow(NotFoundError);
     });
 
-    expect(result.data).toBeDefined();
-    expect(result.data.id).toBeDefined();
-    expect(result.data.size).toBe(content.length);
-
-    console.log('Uploaded blob:', {
-      id: result.data.id,
-      size: result.data.size,
+    it('fails for a malformed file id', async () => {
+      await expect(files.delete('not-a-valid-id')).rejects.toThrow(ValidationError);
     });
   });
 });

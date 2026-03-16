@@ -332,5 +332,11 @@ export type UploadFileParams = {
   purpose: 'image' | 'file';
 };
 
+export type DeleteFileResponse =
+  operations['files/delete']['responses'][200]['content']['application/json'];
+
+export type DownloadFileResponse =
+  operations['files/download']['responses'][200]['content']['application/json'];
+
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

@@ -1,5 +1,10 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { UploadFileResponse, UploadFileParams } from '../../types';
+import type {
+  DeleteFileResponse,
+  DownloadFileResponse,
+  UploadFileResponse,
+  UploadFileParams,
+} from '../../types';
 
 export class FileResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -21,6 +26,28 @@ export class FileResource {
       method: 'POST',
       path: '/v1/files/upload',
       formData,
+    });
+  }
+
+  async delete(fileId: string): Promise<DeleteFileResponse> {
+    if (!fileId) {
+      throw new Error('File ID is required');
+    }
+
+    return this.client.request<DeleteFileResponse>({
+      method: 'DELETE',
+      path: `/v1/files/${fileId}`,
+    });
+  }
+
+  async download(fileId: string): Promise<DownloadFileResponse> {
+    if (!fileId) {
+      throw new Error('File ID is required');
+    }
+
+    return this.client.request<DownloadFileResponse>({
+      method: 'GET',
+      path: `/v1/files/${fileId}/download`,
     });
   }
 }

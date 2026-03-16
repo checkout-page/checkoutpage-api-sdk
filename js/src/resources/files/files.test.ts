@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FileResource } from './files';
 import { CheckoutPageApiClient } from '../../client';
-import type { UploadFileResponse, UploadFileParams } from '../../types';
+import type { DeleteFileResponse, DownloadFileResponse, UploadFileParams } from '../../types';
 
 describe('FileResource', () => {
   let client: CheckoutPageApiClient;
@@ -21,7 +21,7 @@ describe('FileResource', () => {
         purpose: 'image',
       };
 
-      const mockResponse: UploadFileResponse = {
+      const mockResponse: any = {
         data: {
           id: '507f1f77bcf86cd799439011',
           location: 'https://checkoutpage-images.s3.amazonaws.com/test-image.jpg',
@@ -66,7 +66,7 @@ describe('FileResource', () => {
         purpose: 'file',
       };
 
-      const mockResponse: UploadFileResponse = {
+      const mockResponse: any = {
         data: {
           id: '507f1f77bcf86cd799439012',
           location: 'https://checkoutpage-files.s3.amazonaws.com/document.pdf',
@@ -100,7 +100,7 @@ describe('FileResource', () => {
         purpose: 'image',
       };
 
-      const mockResponse: UploadFileResponse = {
+      const mockResponse: any = {
         data: {
           id: '507f1f77bcf86cd799439013',
           location: 'https://checkoutpage-images.s3.amazonaws.com/blob.png',
@@ -153,7 +153,7 @@ describe('FileResource', () => {
         purpose: 'image',
       };
 
-      const mockResponse: UploadFileResponse = {
+      const mockResponse: any = {
         data: {
           id: '507f1f77bcf86cd799439014',
           location: 'https://checkoutpage-images.s3.amazonaws.com/photo.jpg',
@@ -182,7 +182,7 @@ describe('FileResource', () => {
         purpose: 'file',
       };
 
-      const mockResponse: UploadFileResponse = {
+      const mockResponse: any = {
         data: {
           id: '507f1f77bcf86cd799439015',
           location: 'https://checkoutpage-files.s3.amazonaws.com/doc.pdf',
@@ -199,6 +199,58 @@ describe('FileResource', () => {
 
       expect(result.data.width).toBeUndefined();
       expect(result.data.height).toBeUndefined();
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a file by id', async () => {
+      const mockResponse: DeleteFileResponse = {
+        data: {
+          success: true,
+          message: 'File deleted successfully',
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await fileResource.delete('507f1f77bcf86cd799439016');
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'DELETE',
+        path: '/v1/files/507f1f77bcf86cd799439016',
+      });
+    });
+
+    it('should throw error for missing file id on delete', async () => {
+      await expect(fileResource.delete('')).rejects.toThrow('File ID is required');
+    });
+  });
+
+  describe('download', () => {
+    it('should download a file by id and preserve wrapped response fields', async () => {
+      const mockResponse: DownloadFileResponse = {
+        data: {
+          url: 'https://s3.amazonaws.com/bucket/document.pdf?signature=test',
+          expiresIn: 300,
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await fileResource.download('507f1f77bcf86cd799439017');
+
+      expect(result).toEqual(mockResponse);
+      expect(result.data.url).toBe(mockResponse.data.url);
+      expect(result.data.expiresIn).toBe(300);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/files/507f1f77bcf86cd799439017/download',
+      });
+    });
+
+    it('should throw error for missing file id on download', async () => {
+      await expect(fileResource.download('')).rejects.toThrow('File ID is required');
     });
   });
 });
