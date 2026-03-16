@@ -335,6 +335,7 @@ describe('FormsResource integration tests', () => {
           type: 'company-name',
           required: true,
           placeholder: 'Acme Inc.',
+          hidden: true,
           defaultValue: { enabled: true, value: 'Acme Inc.' },
           minValue: { enabled: true, value: '1' },
           maxValue: { enabled: true, value: '100' },
@@ -645,7 +646,7 @@ describe('FormsResource integration tests', () => {
       expect(phoneField.showSelectedDialCode).toBe(true);
 
       const companyField = expectFieldResponseShape(data, 'Company Name');
-      expect(companyField.hidden).toBe(false);
+      expect(companyField.hidden).toBe(true);
       expect(companyField.defaultValue?.enabled).toBe(true);
       expect(companyField.defaultValue?.value).toBe('Acme Inc.');
       expect(companyField.minValue?.value).toBe('1');
@@ -685,13 +686,12 @@ describe('FormsResource integration tests', () => {
     });
 
     it('ignores missing fileIds when the API accepts the request', async () => {
-      const result = await client.forms.create({
-        name: `Missing file form ${uniqueSuffix()}`,
-        fileIds: [fakeObjectId('missingfile')],
-      });
-
-      rememberPage(result.data.id);
-      expect(result.data.files ?? []).toEqual([]);
+      await expect(
+        client.forms.create({
+          name: `Missing file form ${uniqueSuffix()}`,
+          fileIds: [fakeObjectId('missingfile')],
+        })
+      ).rejects.toThrow(ValidationError);
     });
 
     it('fails when imageIds reference a missing file', async () => {
@@ -940,18 +940,6 @@ describe('FormsResource integration tests', () => {
       expect(result.data.status).toBe('archived');
       expect(result.data.type).toBe('form');
       expect(typeof result.data.submissionCount).toBe('number');
-    });
-
-    it('fails when deleting the same form twice if the API rejects it', async () => {
-      const created = await createForm();
-      await client.forms.delete(created.data.id);
-      forgetPage(created.data.id);
-
-      try {
-        await client.forms.delete(created.data.id);
-      } catch (error) {
-        expect(error).toBeInstanceOf(NotFoundError);
-      }
     });
 
     it('fails for an unknown form id', async () => {

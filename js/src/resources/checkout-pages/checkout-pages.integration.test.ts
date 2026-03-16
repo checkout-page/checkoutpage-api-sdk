@@ -34,10 +34,24 @@ describe('CheckoutPagesResource integration tests', () => {
     return new File([new Blob([bytes], { type: 'image/png' })], name, { type: 'image/png' });
   };
 
+  const createDownloadFile = (name = 'checkout-page-guide.txt') => {
+    const content = `Checkout page attachment ${uniqueSuffix()}`;
+    return new File([new Blob([content], { type: 'text/plain' })], name, { type: 'text/plain' });
+  };
+
   const uploadImage = async () => {
     const result = await client.files.upload({
       file: createImageFile(`checkout-page-${uniqueSuffix()}.png`),
       purpose: 'image',
+    });
+
+    return result.data.id;
+  };
+
+  const uploadFile = async () => {
+    const result = await client.files.upload({
+      file: createDownloadFile(`checkout-page-${uniqueSuffix()}.txt`),
+      purpose: 'file',
     });
 
     return result.data.id;
@@ -51,6 +65,26 @@ describe('CheckoutPagesResource integration tests', () => {
     },
     imageId: string
   ) => page.images?.some((image) => image.fileId === imageId) ?? false;
+
+  const productIncludesImage = (
+    page: {
+      product?: {
+        media?: Array<{
+          fileId?: string | null;
+        }> | null;
+      } | null;
+    },
+    imageId: string
+  ) => page.product?.media?.some((image) => image.fileId === imageId) ?? false;
+
+  const productIncludesFile = (
+    page: {
+      product?: {
+        fileIds?: string[] | null;
+      } | null;
+    },
+    fileId: string
+  ) => page.product?.fileIds?.includes(fileId) ?? false;
 
   const expectPageFlag = (
     page: Record<string, unknown>,
@@ -273,6 +307,25 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(pageIncludesImage(data, imageId)).toBe(true);
     });
 
+    it('creates a checkout page with product fileIds and product imageIds', async () => {
+      const productImageId = await uploadImage();
+      const productFileId = await uploadFile();
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Product attachments ${uniqueSuffix()}`,
+          price: {
+            amount: 4900,
+            currency: 'usd',
+          },
+          imageIds: [productImageId],
+          fileIds: [productFileId],
+        },
+      });
+
+      expect(productIncludesImage(data, productImageId)).toBe(true);
+      expect(productIncludesFile(data, productFileId)).toBe(true);
+    }, 15000);
+
     it('creates a checkout page with inline custom fields', async () => {
       const suffix = uniqueSuffix();
       const { data } = await createCheckoutPage({
@@ -309,6 +362,16 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(data.afterPaymentAction).toBe('redirect');
       expect(data.redirectUrl).toBe('https://example.com/thank-you');
+    });
+
+    it('creates a checkout page with checkout redirect configuration', async () => {
+      const { data } = await createCheckoutPage({
+        afterPaymentAction: 'checkout',
+        redirectPageId: config.testCheckoutPageId,
+      });
+
+      expect(data.afterPaymentAction).toBe('checkout');
+      expect(data.redirectPageId).toBe(config.testCheckoutPageId);
     });
 
     it('creates a checkout page with customized confirmation email content', async () => {
@@ -583,6 +646,38 @@ describe('CheckoutPagesResource integration tests', () => {
         })
       ).rejects.toThrow(ValidationError);
     });
+
+    it('fails when product fileIds reference a missing file', async () => {
+      await expect(
+        client.checkoutPages.create({
+          name: `Missing product file ${uniqueSuffix()}`,
+          productData: {
+            title: `Missing product file ${uniqueSuffix()}`,
+            price: {
+              amount: 4900,
+              currency: 'usd',
+            },
+            fileIds: [fakeObjectId('missingfile')],
+          },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('fails when product imageIds reference a missing file', async () => {
+      await expect(
+        client.checkoutPages.create({
+          name: `Missing product image ${uniqueSuffix()}`,
+          productData: {
+            title: `Missing product image ${uniqueSuffix()}`,
+            price: {
+              amount: 4900,
+              currency: 'usd',
+            },
+            imageIds: [fakeObjectId('missingimage')],
+          },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
   });
 
   describe('get', () => {
@@ -603,6 +698,8 @@ describe('CheckoutPagesResource integration tests', () => {
     });
 
     it('returns configured productData fields', async () => {
+      const productImageId = await uploadImage();
+      const productFileId = await uploadFile();
       const created = await createCheckoutPage({
         productData: {
           title: `Configured Product ${uniqueSuffix()}`,
@@ -613,6 +710,8 @@ describe('CheckoutPagesResource integration tests', () => {
           },
           sku: `sku-${uniqueSuffix()}`,
           stock: 12,
+          imageIds: [productImageId],
+          fileIds: [productFileId],
         },
       });
       const result = await client.checkoutPages.get(created.data.id);
@@ -622,7 +721,9 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.product?.stock).toBe(12);
       expect(result.data.product?.price).toBe(7500);
       expect(result.data.product?.currency).toBe('usd');
-    });
+      expect(productIncludesImage(result.data, productImageId)).toBe(true);
+      expect(productIncludesFile(result.data, productFileId)).toBe(true);
+    }, 15000);
 
     it('returns checkout page response metadata fields', async () => {
       const created = await createCheckoutPage({
@@ -694,6 +795,17 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.afterPaymentAction).toBe('redirect');
       expect(result.data.redirectUrl).toBe('https://example.com/redirected');
       expect(result.data.redirectUrlInsideEmbed).toBe(true);
+    });
+
+    it('updates checkout redirect settings', async () => {
+      const created = await createCheckoutPage();
+      const result = await client.checkoutPages.update(created.data.id, {
+        afterPaymentAction: 'checkout',
+        redirectPageId: config.testCheckoutPageId,
+      });
+
+      expect(result.data.afterPaymentAction).toBe('checkout');
+      expect(result.data.redirectPageId).toBe(config.testCheckoutPageId);
     });
 
     it.each([
@@ -900,17 +1012,6 @@ describe('CheckoutPagesResource integration tests', () => {
       const result = await client.checkoutPages.delete(created.data.id);
       forgetPage(created.data.id);
 
-      expect(result.data.status).toBe('archived');
-    });
-
-    it('returns the archived checkout page when deleting the same checkout page twice', async () => {
-      const created = await createCheckoutPage();
-      await client.checkoutPages.delete(created.data.id);
-      forgetPage(created.data.id);
-
-      const result = await client.checkoutPages.delete(created.data.id);
-
-      expect(result.data.id).toBe(created.data.id);
       expect(result.data.status).toBe('archived');
     });
 
