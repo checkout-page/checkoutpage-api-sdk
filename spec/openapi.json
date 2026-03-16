@@ -879,7 +879,7 @@
             "example": "Company Name"
           },
           "placeholder": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Placeholder hint shown inside the input before a value is entered.",
             "example": "Enter your company name"
           },
@@ -889,12 +889,12 @@
             "example": "text"
           },
           "type": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
             "example": "company-name"
           },
           "options": {
-            "type": "array",
+            "type": ["array", "null"],
             "items": {
               "type": "object",
               "properties": {
@@ -904,7 +904,7 @@
                   "example": "Label"
                 },
                 "value": {
-                  "type": "string",
+                  "type": ["string", "null"],
                   "description": "Optional internal value for this option. Defaults to the label when omitted.",
                   "example": "value"
                 }
@@ -924,60 +924,69 @@
             "example": 0
           },
           "reference": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "External reference ID for mapping this field in downstream systems.",
             "example": "custom_field_1"
           },
           "hidden": {
-            "type": "boolean",
+            "type": ["boolean", "null"],
             "description": "Whether this field is hidden from customers at checkout.",
             "example": false
           },
           "defaultValue": {
-            "type": "object",
-            "properties": { "enabled": { "type": "boolean" }, "value": { "type": "string" } },
+            "type": ["object", "null"],
+            "properties": {
+              "enabled": { "type": ["boolean", "null"] },
+              "value": { "type": ["string", "null"] }
+            },
             "description": "Default value settings for the field."
           },
           "showHideLogic": {
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
-              "enabled": { "type": "boolean" },
+              "enabled": { "type": ["boolean", "null"] },
               "comparison": {
-                "type": "string",
+                "type": ["string", "null"],
                 "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"]
               },
-              "value": { "type": "string" },
+              "value": { "type": ["string", "null"] },
               "element": {
-                "type": "object",
+                "type": ["object", "null"],
                 "properties": {
-                  "elementTitle": { "type": "string" },
-                  "elementType": { "type": "string", "enum": ["field"] },
-                  "elementId": { "type": "string" }
+                  "elementTitle": { "type": ["string", "null"] },
+                  "elementType": { "type": ["string", "null"], "enum": ["field"] },
+                  "elementId": { "type": ["string", "null"] }
                 }
               }
             },
             "description": "Conditional visibility rules for this field."
           },
           "minValue": {
-            "type": "object",
-            "properties": { "enabled": { "type": "boolean" }, "value": { "type": "string" } },
+            "type": ["object", "null"],
+            "properties": {
+              "enabled": { "type": ["boolean", "null"] },
+              "value": { "type": ["string", "null"] }
+            },
             "description": "Minimum allowed value rules for this field."
           },
           "maxValue": {
-            "type": "object",
-            "properties": { "enabled": { "type": "boolean" }, "value": { "type": "string" } },
+            "type": ["object", "null"],
+            "properties": {
+              "enabled": { "type": ["boolean", "null"] },
+              "value": { "type": ["string", "null"] }
+            },
             "description": "Maximum allowed value rules for this field."
           },
           "limitAllowedCountries": {
-            "type": "object",
+            "type": ["object", "null"],
             "properties": {
-              "enabled": { "type": "boolean" },
-              "countries": { "type": "array", "items": { "type": "string" } }
+              "enabled": { "type": ["boolean", "null"] },
+              "countries": { "type": ["array", "null"], "items": { "type": "string" } }
             },
             "description": "Country restriction settings for fields that collect country data."
           },
           "showSelectedDialCode": {
-            "type": "boolean",
+            "type": ["boolean", "null"],
             "description": "Whether to display the selected international dial code in phone inputs."
           },
           "createdAt": {
@@ -2250,7 +2259,6 @@
           },
           "required": {
             "type": ["boolean", "null"],
-            "default": false,
             "description": "Whether this field must be completed before checkout can continue.",
             "example": true
           },
@@ -2297,7 +2305,7 @@
               },
               "value": {
                 "type": ["string", "null"],
-                "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
+                "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
                 "example": "physical-delivery"
               },
               "element": {
@@ -2316,7 +2324,7 @@
                   },
                   "elementId": {
                     "type": ["string", "null"],
-                    "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
+                    "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
                     "example": "shipping-method"
                   }
                 }
@@ -7006,13 +7014,10 @@
             "example": "2025-06-14T23:59:59Z"
           },
           "triggerTicketGroupId": {
-            "allOf": [
-              { "$ref": "#/components/schemas/UniqueIdentifier" },
-              {
-                "description": "Ticket group ID that triggers this group's availability.",
-                "example": "507f1f77bcf86cd799439012"
-              }
-            ]
+            "type": ["string", "null"],
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "description": "Ticket group ID that triggers this group's availability.",
+            "example": "507f1f77bcf86cd799439012"
           }
         }
       },
@@ -7289,13 +7294,10 @@
             "example": "2025-06-14T23:59:59Z"
           },
           "triggerTicketTypeId": {
-            "allOf": [
-              { "$ref": "#/components/schemas/UniqueIdentifier" },
-              {
-                "description": "Ticket type ID that triggers this type's availability.",
-                "example": "507f1f77bcf86cd799439014"
-              }
-            ]
+            "type": ["string", "null"],
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "description": "Ticket type ID that triggers this type's availability.",
+            "example": "507f1f77bcf86cd799439014"
           }
         }
       },
@@ -9461,6 +9463,11 @@
                     "items": {
                       "type": "object",
                       "properties": {
+                        "key": {
+                          "type": ["string", "null"],
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "example": "physical-delivery"
+                        },
                         "label": {
                           "type": "string",
                           "description": "Display label shown to customers for this option.",
@@ -9482,7 +9489,6 @@
                   },
                   "required": {
                     "type": ["boolean", "null"],
-                    "default": false,
                     "description": "Whether this field must be completed before checkout can continue.",
                     "example": true
                   },
@@ -9529,8 +9535,8 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The persisted identifier of the source option used by conditional visibility. For checkbox source fields, use `TRUE` or `FALSE`.",
-                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "example": "physical-delivery"
                       },
                       "element": {
                         "type": ["object", "null"],
@@ -9548,8 +9554,8 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The persisted identifier of the source field used in the condition. It must belong to the same page.",
-                            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "example": "shipping-method"
                           }
                         }
                       }
@@ -9810,6 +9816,11 @@
                     "items": {
                       "type": "object",
                       "properties": {
+                        "key": {
+                          "type": ["string", "null"],
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "example": "physical-delivery"
+                        },
                         "label": {
                           "type": "string",
                           "description": "Display label shown to customers for this option.",
@@ -9831,7 +9842,6 @@
                   },
                   "required": {
                     "type": ["boolean", "null"],
-                    "default": false,
                     "description": "Whether this field must be completed before checkout can continue.",
                     "example": true
                   },
@@ -9878,8 +9888,8 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The persisted identifier of the source option used by conditional visibility. For checkbox source fields, use `TRUE` or `FALSE`.",
-                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "example": "physical-delivery"
                       },
                       "element": {
                         "type": ["object", "null"],
@@ -9897,8 +9907,8 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The persisted identifier of the source field used in the condition. It must belong to the same page.",
-                            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "example": "shipping-method"
                           }
                         }
                       }
@@ -10612,7 +10622,7 @@
     "/v1/forms/:pageId/fields": {
       "get": {
         "summary": "List fields for form",
-        "description": "Retrieves all custom fields configured on the specified form, ordered by display order.",
+        "description": "Retrieves all fields configured on the specified form, ordered by display order.",
         "operationId": "forms/fields/list",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Forms"],
@@ -10776,7 +10786,6 @@
                   },
                   "required": {
                     "type": ["boolean", "null"],
-                    "default": false,
                     "description": "Whether this field must be completed before checkout can continue.",
                     "example": true
                   },
@@ -10823,7 +10832,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -10842,7 +10851,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
                             "example": "shipping-method"
                           }
                         }
@@ -10936,7 +10945,7 @@
     "/v1/forms/:pageId/fields/:fieldId": {
       "get": {
         "summary": "Get field for form",
-        "description": "Retrieves a single custom field configured on the specified form.",
+        "description": "Retrieves a single field configured on the specified form.",
         "operationId": "forms/fields/get",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Forms"],
@@ -11130,7 +11139,6 @@
                   },
                   "required": {
                     "type": ["boolean", "null"],
-                    "default": false,
                     "description": "Whether this field must be completed before checkout can continue.",
                     "example": true
                   },
@@ -11177,7 +11185,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -11196,7 +11204,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
                             "example": "shipping-method"
                           }
                         }
@@ -11621,7 +11629,7 @@
     "/v1/events/:pageId/fields": {
       "get": {
         "summary": "List fields for event",
-        "description": "Retrieves all custom fields configured on the specified event, ordered by display order.",
+        "description": "Retrieves all fields configured on the specified event, ordered by display order.",
         "operationId": "events/fields/list",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Events"],
@@ -11785,7 +11793,6 @@
                   },
                   "required": {
                     "type": ["boolean", "null"],
-                    "default": false,
                     "description": "Whether this field must be completed before checkout can continue.",
                     "example": true
                   },
@@ -11832,7 +11839,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -11851,7 +11858,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
                             "example": "shipping-method"
                           }
                         }
@@ -11945,7 +11952,7 @@
     "/v1/events/:pageId/fields/:fieldId": {
       "get": {
         "summary": "Get field for event",
-        "description": "Retrieves a single custom field configured on the specified event.",
+        "description": "Retrieves a single field configured on the specified event.",
         "operationId": "events/fields/get",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Events"],
@@ -12139,7 +12146,6 @@
                   },
                   "required": {
                     "type": ["boolean", "null"],
-                    "default": false,
                     "description": "Whether this field must be completed before checkout can continue.",
                     "example": true
                   },
@@ -12186,7 +12192,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` of the source option used by conditional visibility. Must match the `key` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -12205,7 +12211,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` of the source field used in the condition. Must match the `key` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
                             "example": "shipping-method"
                           }
                         }
