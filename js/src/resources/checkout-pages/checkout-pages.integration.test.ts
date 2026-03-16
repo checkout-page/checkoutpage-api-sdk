@@ -260,27 +260,26 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.product?.planIterations).toBeFalsy();
     });
 
-    it('creates a recurring subscription checkout page', async () => {
-      const { data } = await createCheckoutPage({
-        productData: {
-          title: `Recurring ${uniqueSuffix()}`,
-          price: {
-            amount: 2900,
-            currency: 'usd',
-            recurring: {
-              interval: 'month',
-              intervalCount: 1,
-              trialPeriodDays: 7,
+    it('fails to create a recurring subscription with trialPeriodDays and startDate set at the same time.', async () => {
+      await expect(
+        createCheckoutPage({
+          productData: {
+            title: `Recurring ${uniqueSuffix()}`,
+            price: {
+              amount: 4999,
+              currency: 'usd',
+              setupFee: 2999,
+              recurring: {
+                interval: 'month',
+                intervalCount: 1,
+                trialPeriodDays: 7,
+                startDate: new Date(Date.now() + 86400000).toISOString(),
+              },
+              discountedFromPrice: 9999,
             },
           },
-        },
-      });
-
-      expect(data.product?.type).toBe('subscription');
-      expect(data.product?.interval).toBe('month');
-      expect(data.product?.intervalCount).toBe(1);
-      expect(data.product?.trialPeriodDays).toBe(7);
-      expect(data.product?.planIterations).toBeFalsy();
+        })
+      ).rejects.toThrow(ValidationError);
     });
 
     it('creates a payment plan checkout page', async () => {
@@ -477,6 +476,45 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.checkoutAbandonment?.disableEmails).toBe(true);
       expect(data.checkoutAbandonment?.showStoreLogo).toBe(false);
       expect(data.tax?.enabled).toBe(true);
+    });
+
+    it('creates a checkout page with checkout abandonment email reminders', async () => {
+      const { data } = await createCheckoutPage({
+        checkoutAbandonment: {
+          disableEmails: false,
+          emailReminders: {
+            reminder1: {
+              customizeEmail: true,
+              subject: 'Did you forget something?',
+              body: '<p>You left items in your cart.</p>',
+              buttonText: 'Complete your purchase',
+            },
+            reminder2: {
+              customizeEmail: true,
+              subject: 'Your cart is waiting',
+              body: '<p>Come back and finish your order.</p>',
+              buttonText: 'Return to cart',
+            },
+            reminder3: {
+              customizeEmail: false,
+            },
+          },
+        },
+      });
+
+      expect(data.checkoutAbandonment?.disableEmails).toBe(false);
+      expect(data.checkoutAbandonment?.emailReminders?.reminder1?.customizeEmail).toBe(true);
+      expect(data.checkoutAbandonment?.emailReminders?.reminder1?.subject).toBe(
+        'Did you forget something?'
+      );
+      expect(data.checkoutAbandonment?.emailReminders?.reminder1?.buttonText).toBe(
+        'Complete your purchase'
+      );
+      expect(data.checkoutAbandonment?.emailReminders?.reminder2?.customizeEmail).toBe(true);
+      expect(data.checkoutAbandonment?.emailReminders?.reminder2?.subject).toBe(
+        'Your cart is waiting'
+      );
+      expect(data.checkoutAbandonment?.emailReminders?.reminder3?.customizeEmail).toBe(false);
     });
 
     it('creates a checkout page with payment methods payment options and fees', async () => {
@@ -682,6 +720,165 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         })
       ).rejects.toThrow(ValidationError);
+    });
+
+    it('returns product.type as charge for a one-time payment page', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `One Time Type ${uniqueSuffix()}`,
+          price: {
+            amount: 4900,
+            currency: 'usd',
+          },
+        },
+      });
+
+      expect(data.product?.type).toBe('charge');
+    });
+
+    it('returns discountedFromPrice in the product response for one-time pages', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Discounted ${uniqueSuffix()}`,
+          price: {
+            amount: 6500,
+            currency: 'usd',
+            discountedFromPrice: 8000,
+          },
+        },
+      });
+
+      expect(data.product?.discountedFromPrice).toBe(8000);
+    });
+
+    it('creates a checkout page with cash on delivery manual payment option', async () => {
+      const { data } = await createCheckoutPage({
+        paymentOptions: [
+          {
+            type: 'manual',
+            enabled: true,
+            name: 'Cash on delivery',
+            description: 'Pay when delivered',
+            instructions: 'Pay the driver on arrival.',
+            showPaymentButton: true,
+            manualType: 'cash_on_delivery',
+          },
+          {
+            type: 'full',
+            enabled: true,
+            name: 'Pay now',
+            description: 'Pay now description',
+            instructions: 'Pay via card etc',
+            showPaymentButton: true,
+          },
+          {
+            type: 'partial',
+            name: 'Partial',
+            description: 'Partial payment',
+            enabled: true,
+            instructions: 'Partially pay things',
+            manualType: 'invoice',
+            partialAmount: 300,
+            showPaymentButton: true,
+          },
+        ],
+      });
+
+      expect(
+        data.paymentOptions?.some(
+          (option) => option.type === 'manual' && option.manualType === 'cash_on_delivery'
+        )
+      ).toBe(true);
+    });
+
+    it('creates a payment plan checkout page with trialPeriodDays', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Plan Trial ${uniqueSuffix()}`,
+          price: {
+            amount: 9900,
+            currency: 'usd',
+            paymentPlan: {
+              interval: 'month',
+              intervalCount: 1,
+              planIterations: 3,
+              trialPeriodDays: 7,
+            },
+          },
+        },
+      });
+
+      expect(data.product?.type).toBe('subscription');
+      expect(data.product?.planIterations).toBe(3);
+      expect(data.product?.trialPeriodDays).toBe(7);
+    });
+
+    it('creates a subscription checkout page with a future startDate', async () => {
+      const startDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Start Date Sub ${uniqueSuffix()}`,
+          price: {
+            amount: 2900,
+            currency: 'usd',
+            recurring: {
+              interval: 'month',
+              intervalCount: 1,
+              startDate,
+            },
+          },
+        },
+      });
+
+      expect(data.product?.type).toBe('subscription');
+      expect(data.product?.interval).toBe('month');
+    });
+
+    it('creates a subscription checkout page with billingCycleAnchorConfig', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Anchor Config ${uniqueSuffix()}`,
+          price: {
+            amount: 2900,
+            currency: 'usd',
+            recurring: {
+              interval: 'month',
+              intervalCount: 1,
+              billingCycleAnchorConfig: {
+                enabled: true,
+                dayOfMonth: 1,
+              },
+            },
+          },
+        },
+      });
+
+      expect(data.product?.type).toBe('subscription');
+      expect(data.product?.interval).toBe('month');
+    });
+
+    it('creates a checkout page with custom email confirmation', async () => {
+      const { data } = await createCheckoutPage({
+        sendEmailConfirmation: true,
+        confirmationEmailShowLogo: true,
+        confirmationEmailShowStoreName: true,
+        customizeEmailConfirmation: true,
+        customizeCheckoutConfirmation: true,
+        confirmationEmailMessage: '<p>My email message</p>',
+        confirmationEmailSubject: 'My test',
+        confirmationCheckoutMessage: '<p>My confirmation page message</p>',
+        confirmationCheckoutTitle: 'My confirmation page title',
+        productData: {
+          title: `Anchor Config ${uniqueSuffix()}`,
+          price: {
+            amount: 2900,
+            currency: 'usd',
+          },
+        },
+      });
+
+      expect(data.product?.type).toBe('charge');
     });
   });
 
@@ -951,6 +1148,38 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.invoiceSettings?.dueDays?.days).toBe(14);
       expect(result.data.checkoutAbandonment?.showStoreName).toBe(false);
       expect(result.data.tax?.enabled).toBe(true);
+    });
+
+    it('updates checkout abandonment email reminders', async () => {
+      const created = await createCheckoutPage({
+        checkoutAbandonment: {
+          disableEmails: false,
+        },
+      });
+      const result = await client.checkoutPages.update(created.data.id, {
+        checkoutAbandonment: {
+          emailReminders: {
+            reminder1: {
+              customizeEmail: true,
+              subject: 'Updated reminder subject',
+              body: '<p>Updated reminder body.</p>',
+              buttonText: 'Updated button',
+            },
+            reminder2: null,
+            reminder3: null,
+          },
+        },
+      });
+
+      expect(result.data.checkoutAbandonment?.emailReminders?.reminder1?.customizeEmail).toBe(true);
+      expect(result.data.checkoutAbandonment?.emailReminders?.reminder1?.subject).toBe(
+        'Updated reminder subject'
+      );
+      expect(result.data.checkoutAbandonment?.emailReminders?.reminder1?.buttonText).toBe(
+        'Updated button'
+      );
+      expect(result.data.checkoutAbandonment?.emailReminders?.reminder2).toBeUndefined();
+      expect(result.data.checkoutAbandonment?.emailReminders?.reminder3).toBeUndefined();
     });
 
     it('clears nullable settings when null is provided', async () => {
