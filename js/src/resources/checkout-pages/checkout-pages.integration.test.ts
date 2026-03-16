@@ -149,29 +149,34 @@ describe('CheckoutPagesResource integration tests', () => {
     });
 
     it('supports starting_after pagination', async () => {
+      await createCheckoutPage();
+      await createCheckoutPage();
+
       const firstPage = await client.checkoutPages.list({ limit: 1 });
+      expect(firstPage.data.length).toBe(1);
+      expect(firstPage.has_more).toBe(true);
 
-      if (firstPage.data.length === 1 && firstPage.has_more) {
-        const secondPage = await client.checkoutPages.list({
-          limit: 1,
-          starting_after: firstPage.data[0].id,
-        });
+      const secondPage = await client.checkoutPages.list({
+        limit: 1,
+        starting_after: firstPage.data[0].id,
+      });
 
-        expect(secondPage.data[0]?.id).not.toBe(firstPage.data[0].id);
-      }
+      expect(secondPage.data[0]?.id).not.toBe(firstPage.data[0].id);
     });
 
     it('supports ending_before pagination', async () => {
-      const seedPage = await client.checkoutPages.list({ limit: 3 });
+      await createCheckoutPage();
+      await createCheckoutPage();
 
-      if (seedPage.data.length > 1) {
-        const result = await client.checkoutPages.list({
-          limit: 1,
-          ending_before: seedPage.data[1].id,
-        });
+      const seedPage = await client.checkoutPages.list({ limit: 2 });
+      expect(seedPage.data.length).toBe(2);
 
-        expect(result.data[0]?.id).not.toBe(seedPage.data[1].id);
-      }
+      const result = await client.checkoutPages.list({
+        limit: 1,
+        ending_before: seedPage.data[1].id,
+      });
+
+      expect(result.data[0]?.id).not.toBe(seedPage.data[1].id);
     });
 
     it('filters checkout pages by status', async () => {
@@ -818,7 +823,15 @@ describe('CheckoutPagesResource integration tests', () => {
       ['allowDynamicPrice', { allowDynamicPrice: true }, true],
       ['allowDynamicDiscountedFromPrice', { allowDynamicDiscountedFromPrice: true }, true],
       ['allowDynamicRedirectUrl', { allowDynamicRedirectUrl: true }, true],
+      ['allowDynamicPlanIterations', { allowDynamicPlanIterations: true }, true],
       ['savePaymentMethod', { savePaymentMethod: true }, true],
+      ['closePopupOnClickOutside', { closePopupOnClickOutside: true }, true],
+      ['sendPaymentNotification', { sendPaymentNotification: false }, false],
+      [
+        'enableFileAccessForInactiveSubscriptions',
+        { enableFileAccessForInactiveSubscriptions: true },
+        true,
+      ],
       [
         'sendCanceledSubscriptionNotifications',
         { sendCanceledSubscriptionNotifications: false },
@@ -995,6 +1008,12 @@ describe('CheckoutPagesResource integration tests', () => {
         client.checkoutPages.update(fakeObjectId('missingpage'), { name: 'Missing page' })
       ).rejects.toThrow(NotFoundError);
     });
+
+    it('fails for a malformed checkout page id', async () => {
+      await expect(
+        client.checkoutPages.update('not-a-valid-id', { name: 'Missing page' })
+      ).rejects.toThrow(ValidationError);
+    });
   });
 
   describe('delete', () => {
@@ -1004,14 +1023,6 @@ describe('CheckoutPagesResource integration tests', () => {
       forgetPage(created.data.id);
 
       expect(result.data.id).toBe(created.data.id);
-      expect(result.data.status).toBe('archived');
-    });
-
-    it('marks the checkout page as archived in the response', async () => {
-      const created = await createCheckoutPage();
-      const result = await client.checkoutPages.delete(created.data.id);
-      forgetPage(created.data.id);
-
       expect(result.data.status).toBe('archived');
     });
 
