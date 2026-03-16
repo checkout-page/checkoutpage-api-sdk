@@ -1829,6 +1829,10 @@
             "description": "Custom form fields on the page."
           },
           "url": { "type": ["string", "null"], "description": "Full URL to the hosted page." },
+          "customizeCheckoutConfirmation": {
+            "type": ["boolean", "null"],
+            "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
+          },
           "closePopupOnClickOutside": {
             "type": ["boolean", "null"],
             "description": "Whether a popup embed closes when clicking outside the container."
@@ -2193,7 +2197,6 @@
               "phone",
               "country"
             ],
-            "default": "text",
             "description": "Input control used to render this field in checkout. Defaults to `text`.",
             "example": "text"
           },
@@ -3330,7 +3333,7 @@
           }
         },
         "required": ["price"],
-        "description": "Product configuration for checkout pages.\n\nUse this object to define pricing mode, subscription/payment plan behavior, inventory, variants, and conditional variant visibility.\n\nCommon setup patterns:\n- Standard one-time checkout: set `price.amount`, `price.currency`, and keep `price.pricingType` as `single`.\n- Variant-driven pricing: set `price.pricingType` to `multiple`, then define `variants` and per-option `additionalChargeAmount`.\n- Subscriptions (recurring): configure `price.recurring`.\n- Payment plans (fixed installments): configure `price.paymentPlan` with `planIterations`.\n\nImportant rules:\n- You cannot set both `price.recurring` and `price.paymentPlan`.\n- `price.payWhatYouWant` cannot be used with subscriptions or payment plans.\n- For conditional variant logic (`showHideLogic`) or `preselect`, set a `key` on variants/options to enable cross-references. Keys are not persisted.",
+        "description": "Product configuration for checkout pages.\n\nUse this object to define pricing mode, subscription/payment plan behavior, inventory, variants, and conditional variant visibility.\n\nCommon setup patterns:\n- Standard one-time checkout: set `price.amount`, `price.currency`, and keep `price.pricingType` as `single`.\n- Variant-driven pricing: set `price.pricingType` to `multiple`, then define `variants` and per-option `additionalChargeAmount`.\n- Subscriptions (recurring): configure `price.recurring`.\n- Payment plans (fixed installments): configure `price.paymentPlan` with `planIterations`.\n\nImportant rules:\n- You cannot set both `price.recurring` and `price.paymentPlan`.\n- `price.payWhatYouWant` cannot be used with subscriptions or payment plans.\n- `trialPeriodDays` and `startDate` are mutually exclusive within `recurring` and `paymentPlan`.\n- For conditional variant logic (`showHideLogic`) or `preselect`, set a `key` on variants/options to enable cross-references. Keys are not persisted.",
         "examples": [
           {
             "title": "Standard - one time payment",
@@ -3473,6 +3476,10 @@
             ],
             "description": "Locale code.",
             "example": "en-US"
+          },
+          "customizeCheckoutConfirmation": {
+            "type": ["boolean", "null"],
+            "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
           },
           "status": {
             "type": ["string", "null"],
@@ -3720,7 +3727,7 @@
             "example": false
           },
           "showCouponCodeFieldType": {
-            "type": ["string", "null"],
+            "type": "string",
             "enum": ["link", "field"],
             "description": "Display type for coupon code field.",
             "example": "link"
@@ -3743,7 +3750,8 @@
           "productData": { "$ref": "#/components/schemas/ProductDetailsInput" },
           "tax": {
             "type": ["object", "null"],
-            "properties": { "enabled": { "type": "boolean", "default": true } },
+            "properties": { "enabled": { "type": "boolean" } },
+            "required": ["enabled"],
             "description": "Enable automatic tax calculation via Stripe Tax. This requires your store to have [Stripe Tax](https://checkoutpage.com/dashboard/settings/stripe-tax) enabled.",
             "example": { "enabled": true }
           },
@@ -3874,6 +3882,10 @@
             ],
             "description": "Locale code.",
             "example": "en-US"
+          },
+          "customizeCheckoutConfirmation": {
+            "type": ["boolean", "null"],
+            "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
           },
           "status": {
             "type": ["string", "null"],
@@ -4116,7 +4128,7 @@
             "example": false
           },
           "showCouponCodeFieldType": {
-            "type": ["string", "null"],
+            "type": "string",
             "enum": ["link", "field"],
             "description": "Display type for coupon code field.",
             "example": "link"
@@ -4405,6 +4417,10 @@
             ],
             "description": "Locale code.",
             "example": "en-US"
+          },
+          "customizeCheckoutConfirmation": {
+            "type": ["boolean", "null"],
+            "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
           },
           "status": {
             "type": ["string", "null"],
@@ -5635,6 +5651,10 @@
             "description": "Locale code.",
             "example": "en-US"
           },
+          "customizeCheckoutConfirmation": {
+            "type": ["boolean", "null"],
+            "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
+          },
           "status": {
             "type": ["string", "null"],
             "enum": ["published", "draft", "archived"],
@@ -5881,7 +5901,7 @@
             "example": false
           },
           "showCouponCodeFieldType": {
-            "type": ["string", "null"],
+            "type": "string",
             "enum": ["link", "field"],
             "description": "Display type for coupon code field.",
             "example": "link"
@@ -6126,6 +6146,10 @@
             "description": "Locale code.",
             "example": "en-US"
           },
+          "customizeCheckoutConfirmation": {
+            "type": ["boolean", "null"],
+            "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
+          },
           "status": {
             "type": ["string", "null"],
             "enum": ["published", "draft", "archived"],
@@ -6367,7 +6391,7 @@
             "example": false
           },
           "showCouponCodeFieldType": {
-            "type": ["string", "null"],
+            "type": "string",
             "enum": ["link", "field"],
             "description": "Display type for coupon code field.",
             "example": "link"
@@ -9483,7 +9507,6 @@
                       "phone",
                       "country"
                     ],
-                    "default": "text",
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "example": "text"
                   },
@@ -9836,7 +9859,6 @@
                       "phone",
                       "country"
                     ],
-                    "default": "text",
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "example": "text"
                   },
@@ -10394,6 +10416,10 @@
                     "description": "Locale code.",
                     "example": "en-US"
                   },
+                  "customizeCheckoutConfirmation": {
+                    "type": ["boolean", "null"],
+                    "description": "If set to true `confirmationCheckoutMessage` and `confirmationCheckoutTitle` will be displayed on the confirmation page. Defaults to `false`."
+                  },
                   "status": {
                     "type": ["string", "null"],
                     "enum": ["published", "draft", "archived"],
@@ -10780,7 +10806,6 @@
                       "phone",
                       "country"
                     ],
-                    "default": "text",
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "example": "text"
                   },
@@ -11133,7 +11158,6 @@
                       "phone",
                       "country"
                     ],
-                    "default": "text",
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "example": "text"
                   },
@@ -11787,7 +11811,6 @@
                       "phone",
                       "country"
                     ],
-                    "default": "text",
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "example": "text"
                   },
@@ -12140,7 +12163,6 @@
                       "phone",
                       "country"
                     ],
-                    "default": "text",
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "example": "text"
                   },
