@@ -169,29 +169,35 @@ describe('FormsResource integration tests', () => {
     });
 
     it('supports starting_after pagination', async () => {
+      await createForm();
+      await createForm();
+
       const firstPage = await client.forms.list({ limit: 1 });
+      expect(firstPage.data).toHaveLength(1);
+      expect(firstPage.has_more).toBe(true);
 
-      if (firstPage.data.length === 1 && firstPage.has_more) {
-        const secondPage = await client.forms.list({
-          limit: 1,
-          starting_after: firstPage.data[0].id,
-        });
+      const secondPage = await client.forms.list({
+        limit: 1,
+        starting_after: firstPage.data[0].id,
+      });
 
-        expect(secondPage.data[0]?.id).not.toBe(firstPage.data[0].id);
-      }
+      expect(secondPage.data[0]?.id).not.toBe(firstPage.data[0].id);
     });
 
     it('supports ending_before pagination', async () => {
+      await createForm();
+      await createForm();
+      await createForm();
+
       const seedPage = await client.forms.list({ limit: 3 });
+      expect(seedPage.data.length).toBeGreaterThanOrEqual(2);
 
-      if (seedPage.data.length > 1) {
-        const result = await client.forms.list({
-          limit: 1,
-          ending_before: seedPage.data[1].id,
-        });
+      const result = await client.forms.list({
+        limit: 1,
+        ending_before: seedPage.data[1].id,
+      });
 
-        expect(result.data[0]?.id).not.toBe(seedPage.data[1].id);
-      }
+      expect(result.data[0]?.id).not.toBe(seedPage.data[1].id);
     });
 
     it('filters forms by status', async () => {
@@ -553,9 +559,36 @@ describe('FormsResource integration tests', () => {
       expect(data.confirmationEmailShowStoreName).toBe(false);
       expect(data.googleIndex).toBe(false);
       expect(data.trackingCodes).toContain('sdkFormTest');
+      expect(data.allowDynamicTitle).toBe(true);
+      expect(data.allowDynamicDescription).toBe(true);
+      expect(data.invoiceSettings?.bankDetails).toBe('Account 123456');
+      expect(data.invoiceSettings?.additionalInformation?.enabled).toBe(true);
+      expect(data.invoiceSettings?.additionalInformation?.title).toBe('Payment terms');
+      expect(data.invoiceSettings?.additionalInformation?.message).toBe(
+        'Payment is due in 30 days.'
+      );
+      expect(data.invoiceSettings?.dueDays?.enabled).toBe(true);
+      expect(data.invoiceSettings?.dueDays?.days).toBe(30);
+      expect(data.checkoutAbandonment?.disableEmails).toBe(true);
+      expect(data.checkoutAbandonment?.showStoreLogo).toBe(false);
+      expect(data.checkoutAbandonment?.showStoreName).toBe(true);
       expect(data.funnelSteps?.length).toBe(2);
-      expect(data.funnelSteps?.[0]?.type).toBe('checkout');
-      expect(data.funnelSteps?.[1]?.type).toBe('confirmation');
+      const checkoutStep = data.funnelSteps?.[0];
+      expect(checkoutStep?.type).toBe('checkout');
+      expect(checkoutStep?.order).toBe(0);
+      expect(checkoutStep?.enabled).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((checkoutStep?.config as any)?.pageId).toBe(config.testCheckoutPageId);
+      const confirmationStep = data.funnelSteps?.[1];
+      expect(confirmationStep?.type).toBe('confirmation');
+      expect(confirmationStep?.order).toBe(1);
+      expect(confirmationStep?.enabled).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((confirmationStep?.config as any)?.action).toBe('confirmation');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((confirmationStep?.config as any)?.customizeCheckoutConfirmation).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((confirmationStep?.config as any)?.confirmationCheckoutTitle).toBe('Done');
       expect(pageIncludesImage(data, imageId)).toBe(true);
       expect(pageIncludesFile(data, fileId)).toBe(true);
       expectImageMetadata(data, imageId);
@@ -635,8 +668,9 @@ describe('FormsResource integration tests', () => {
       expect(shippingAddress.showHideLogic?.enabled).toBe(true);
       expect(shippingAddress.showHideLogic?.comparison).toBe('IS');
       expect(shippingAddress.showHideLogic?.element?.elementType).toBe('field');
-      expect(typeof shippingAddress.showHideLogic?.element?.elementId).toBe('string');
-      expect(typeof shippingAddress.showHideLogic?.value).toBe('string');
+      expect(shippingAddress.showHideLogic?.element?.elementId).toBe(deliveryMethod.id);
+      // The API resolves the option key/value reference to its persisted option ID in the response
+      expect(shippingAddress.showHideLogic?.value).toMatch(/^[0-9a-f]{24}$/);
 
       const countryField = expectFieldResponseShape(data, 'Country');
       expect(countryField.limitAllowedCountries?.enabled).toBe(true);
@@ -845,6 +879,26 @@ describe('FormsResource integration tests', () => {
       expect(result.data.confirmationEmailShowStoreName).toBe(false);
       expect(result.data.googleIndex).toBe(false);
       expect(result.data.trackingCodes).toContain('sdkFormUpdated');
+      expect(result.data.allowDynamicTitle).toBe(true);
+      expect(result.data.allowDynamicDescription).toBe(true);
+      expect(result.data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(result.data.invoiceSettings?.bankDetails).toBe('Updated account');
+      expect(result.data.invoiceSettings?.dueDays?.enabled).toBe(true);
+      expect(result.data.invoiceSettings?.dueDays?.days).toBe(14);
+      expect(result.data.checkoutAbandonment?.disableEmails).toBe(false);
+      expect(result.data.checkoutAbandonment?.showStoreLogo).toBe(true);
+      expect(result.data.checkoutAbandonment?.showStoreName).toBe(false);
+      expect(result.data.funnelSteps?.length).toBe(1);
+      const updatedConfirmationStep = result.data.funnelSteps?.[0];
+      expect(updatedConfirmationStep?.type).toBe('confirmation');
+      expect(updatedConfirmationStep?.order).toBe(1);
+      expect(updatedConfirmationStep?.enabled).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((updatedConfirmationStep?.config as any)?.action).toBe('redirect');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((updatedConfirmationStep?.config as any)?.redirectUrl).toBe(
+        'https://example.com/post-submit'
+      );
       expect(result.data.title).toContain('Updated Form Title');
       expect(result.data.description).toBeDefined();
       expect(result.data.descriptionHtml).toContain('Updated form description');
