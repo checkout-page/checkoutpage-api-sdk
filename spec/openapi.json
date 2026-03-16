@@ -2158,7 +2158,7 @@
         "properties": {
           "key": {
             "type": ["string", "null"],
-            "description": "Optional caller-defined key for this field. Not persisted to the database. Required when other fields reference this field in `showHideLogic.element.elementId`.",
+            "description": "Optional caller-defined key for this field. Not persisted to the database. Required when other fields reference this field in `showHideLogic.element.elementId`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
             "example": "shipping-method"
           },
           "label": {
@@ -2235,7 +2235,7 @@
               "properties": {
                 "key": {
                   "type": ["string", "null"],
-                  "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                  "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                   "example": "physical-delivery"
                 },
                 "label": {
@@ -2305,7 +2305,7 @@
               },
               "value": {
                 "type": ["string", "null"],
-                "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                 "example": "physical-delivery"
               },
               "element": {
@@ -2324,7 +2324,7 @@
                   },
                   "elementId": {
                     "type": ["string", "null"],
-                    "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                    "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                     "example": "shipping-method"
                   }
                 }
@@ -4255,6 +4255,66 @@
               "descriptionHtml": {
                 "type": ["string", "null"],
                 "description": "HTML description of the page."
+              },
+              "allowDynamicTitle": {
+                "type": ["boolean", "null"],
+                "description": "Whether the title can be set dynamically via URL parameters."
+              },
+              "allowDynamicDescription": {
+                "type": ["boolean", "null"],
+                "description": "Whether the description can be set dynamically via URL parameters."
+              },
+              "invoiceSettings": {
+                "type": ["object", "null"],
+                "properties": {
+                  "bankDetails": { "type": ["string", "null"] },
+                  "additionalInformation": {
+                    "type": ["object", "null"],
+                    "properties": {
+                      "enabled": { "type": ["boolean", "null"] },
+                      "title": { "type": ["string", "null"] },
+                      "message": { "type": ["string", "null"] }
+                    }
+                  },
+                  "dueDays": {
+                    "type": ["object", "null"],
+                    "properties": {
+                      "enabled": { "type": ["boolean", "null"] },
+                      "days": { "type": ["number", "null"] }
+                    }
+                  }
+                },
+                "description": "Invoice configuration for manual payment flows.",
+                "example": {
+                  "bankDetails": "Account: 12345678, Sort code: 00-00-00",
+                  "additionalInformation": {
+                    "enabled": true,
+                    "title": "Payment terms",
+                    "message": "Payment is due within 30 days of invoice date."
+                  },
+                  "dueDays": { "enabled": true, "days": 30 }
+                }
+              },
+              "checkoutAbandonment": {
+                "type": ["object", "null"],
+                "properties": {
+                  "disableEmails": { "type": "boolean" },
+                  "showStoreLogo": { "type": "boolean" },
+                  "showStoreName": { "type": "boolean" },
+                  "emailReminders": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "customizeEmail": { "type": "boolean" },
+                        "subject": { "type": "string" },
+                        "body": { "type": "string" },
+                        "buttonText": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "description": "Checkout abandonment email reminder settings."
               },
               "files": {
                 "type": ["array", "null"],
@@ -9465,7 +9525,7 @@
                       "properties": {
                         "key": {
                           "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                           "example": "physical-delivery"
                         },
                         "label": {
@@ -9535,7 +9595,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -9554,7 +9614,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -9818,7 +9878,7 @@
                       "properties": {
                         "key": {
                           "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                           "example": "physical-delivery"
                         },
                         "label": {
@@ -9888,7 +9948,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -9907,7 +9967,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -10762,7 +10822,7 @@
                       "properties": {
                         "key": {
                           "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                           "example": "physical-delivery"
                         },
                         "label": {
@@ -10832,7 +10892,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -10851,7 +10911,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -11115,7 +11175,7 @@
                       "properties": {
                         "key": {
                           "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                           "example": "physical-delivery"
                         },
                         "label": {
@@ -11185,7 +11245,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -11204,7 +11264,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -11769,7 +11829,7 @@
                       "properties": {
                         "key": {
                           "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                           "example": "physical-delivery"
                         },
                         "label": {
@@ -11839,7 +11899,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -11858,7 +11918,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -12122,7 +12182,7 @@
                       "properties": {
                         "key": {
                           "type": ["string", "null"],
-                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`.",
+                          "description": "Optional caller-defined key for this option. Not persisted to the database. Required when `showHideLogic` on another field needs to reference this option via `showHideLogic.value`. Creation endpoints may use this key in place of a Mongo ObjectId; persisted responses return the resolved database ID.",
                           "example": "physical-delivery"
                         },
                         "label": {
@@ -12192,7 +12252,7 @@
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field.",
+                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                         "example": "physical-delivery"
                       },
                       "element": {
@@ -12211,7 +12271,7 @@
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch.",
+                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
