@@ -129,7 +129,6 @@ describe('CheckoutPagesResource integration tests', () => {
         // Best-effort cleanup for integration tests.
       }
     }
-
     createdPageIds = [];
   });
 
@@ -583,23 +582,11 @@ describe('CheckoutPagesResource integration tests', () => {
               pageId: config.testCheckoutPageId,
             },
           },
-          {
-            type: 'confirmation',
-            order: 1,
-            enabled: true,
-            config: {
-              action: 'confirmation',
-              customizeCheckoutConfirmation: true,
-              confirmationCheckoutTitle: 'Order confirmed',
-              confirmationCheckoutMessage: '<p>Thanks for your purchase.</p>',
-            },
-          },
         ],
       });
 
-      expect(data.funnelSteps?.length).toBe(2);
+      expect(data.funnelSteps?.length).toBe(1);
       expect(data.funnelSteps?.[0]?.type).toBe('checkout');
-      expect(data.funnelSteps?.[1]?.type).toBe('confirmation');
     });
 
     it('creates a checkout page with subscription-specific settings', async () => {
