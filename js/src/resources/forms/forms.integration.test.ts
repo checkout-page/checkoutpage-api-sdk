@@ -149,7 +149,6 @@ describe('FormsResource integration tests', () => {
         // Best-effort cleanup for integration tests.
       }
     }
-
     createdPageIds = [];
   });
 

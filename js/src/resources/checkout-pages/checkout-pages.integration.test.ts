@@ -122,14 +122,14 @@ describe('CheckoutPagesResource integration tests', () => {
   });
 
   afterEach(async () => {
-    // for (const pageId of [...createdPageIds].reverse()) {
-    //   try {
-    //     await client.checkoutPages.delete(pageId);
-    //   } catch {
-    //     // Best-effort cleanup for integration tests.
-    //   }
-    // }
-    // createdPageIds = [];
+    for (const pageId of [...createdPageIds].reverse()) {
+      try {
+        await client.checkoutPages.delete(pageId);
+      } catch {
+        // Best-effort cleanup for integration tests.
+      }
+    }
+    createdPageIds = [];
   });
 
   describe('list', () => {
@@ -560,6 +560,12 @@ describe('CheckoutPagesResource integration tests', () => {
             applyToSpecificPaymentMethods: true,
             paymentMethods: ['card'],
           },
+          {
+            name: 'Percentage processing fee',
+            percentage: 1,
+            multiplyByQuantity: false,
+            applyToSpecificPaymentMethods: false,
+          },
         ],
       });
 
@@ -569,6 +575,9 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.paymentOptions?.some((option) => option.type === 'partial')).toBe(true);
       expect(data.fees?.[0]?.name).toBe('Processing fee');
       expect(data.fees?.[0]?.amount).toBe(125);
+
+      expect(data.fees?.[1]?.name).toBe('Percentage processing fee');
+      expect(data.fees?.[1]?.percentage).toBe(1);
     });
 
     it('creates a checkout page with funnel steps', async () => {
@@ -1131,7 +1140,7 @@ describe('CheckoutPagesResource integration tests', () => {
                 name: 'Onboarding call',
                 showHideLogic: {
                   enabled: true,
-                  comparison: 'IS',
+                  comparison: 'is',
                   value: 'pro',
                   element: { elementId: 'tier' },
                 },
@@ -1167,7 +1176,7 @@ describe('CheckoutPagesResource integration tests', () => {
         const proOptionId = tierVariant?.options?.find((o) => o.name === 'Pro')?.id;
         expect(proOptionId).toMatch(/^[0-9a-f]{24}$/);
         expect(callVariant?.showHideLogic?.enabled).toBe(true);
-        expect(callVariant?.showHideLogic?.comparison).toBe('IS');
+        expect(callVariant?.showHideLogic?.comparison).toBe('is');
         expect(callVariant?.showHideLogic?.value).toBe(proOptionId);
         expect(callVariant?.showHideLogic?.element?.elementId).toBe(tierVariant?.id);
       });
@@ -1248,7 +1257,7 @@ describe('CheckoutPagesResource integration tests', () => {
                   name: 'Addon',
                   showHideLogic: {
                     enabled: true,
-                    comparison: 'IS',
+                    comparison: 'is',
                     value: 'pro',
                     element: { elementId: 'nonexistent-key' },
                   },
@@ -1318,7 +1327,7 @@ describe('CheckoutPagesResource integration tests', () => {
             description: 'Pay when delivered',
             instructions: 'Pay the driver on arrival.',
             showPaymentButton: true,
-            manualType: 'cash_on_delivery',
+            manualType: 'cashOnDelivery',
           },
           {
             type: 'full',
@@ -1343,7 +1352,7 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(
         data.paymentOptions?.some(
-          (option) => option.type === 'manual' && option.manualType === 'cash_on_delivery'
+          (option) => option.type === 'manual' && option.manualType === 'cashOnDelivery'
         )
       ).toBe(true);
     });
@@ -1390,9 +1399,11 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(data.product?.type).toBe('subscription');
       expect(data.product?.interval).toBe('month');
+      expect(data.product?.startDate).toBeTypeOf('string');
     });
 
     it('creates a subscription checkout page with billingCycleAnchorConfig', async () => {
+      const startDate = new Date().toISOString();
       const { data } = await createCheckoutPage({
         productData: {
           title: `Anchor Config ${uniqueSuffix()}`,
@@ -1402,6 +1413,7 @@ describe('CheckoutPagesResource integration tests', () => {
             recurring: {
               interval: 'month',
               intervalCount: 1,
+              startDate,
               billingCycleAnchorConfig: {
                 enabled: true,
                 dayOfMonth: 1,
@@ -1413,6 +1425,9 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(data.product?.type).toBe('subscription');
       expect(data.product?.interval).toBe('month');
+      expect(data.product?.startDate).toEqual(startDate);
+      expect(data.product?.billingCycleAnchorConfig?.enabled).toBe(true);
+      expect(data.product?.billingCycleAnchorConfig?.dayOfMonth).toBe(1);
     });
 
     it('creates a checkout page with custom email confirmation', async () => {

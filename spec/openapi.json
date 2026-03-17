@@ -1333,8 +1333,8 @@
           },
           "manualType": {
             "type": ["string", "null"],
-            "enum": ["invoice", "cash_on_delivery"],
-            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cash_on_delivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
+            "enum": ["invoice", "cashOnDelivery"],
+            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cashOnDelivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
             "example": "invoice"
           }
         }
@@ -1483,7 +1483,37 @@
             "type": ["number", "null"],
             "description": "Number of billing cycles (for installment plans)."
           },
+          "billingCycleAnchorConfig": {
+            "type": ["object", "null"],
+            "properties": {
+              "enabled": {
+                "type": ["boolean", "null"],
+                "description": "Whether billing cycle anchoring is enabled.",
+                "example": true
+              },
+              "dayOfMonth": {
+                "type": ["number", "null"],
+                "description": "Day of month to anchor the billing cycle to.",
+                "example": 1
+              },
+              "month": {
+                "type": ["number", "null"],
+                "description": "Month to anchor the billing cycle to (for yearly subscriptions).",
+                "example": 1
+              }
+            },
+            "description": "Configuration for anchoring the billing cycle to a specific day."
+          },
+          "startDate": {
+            "type": ["string", "null"],
+            "description": "The date on which the subscription begins.",
+            "example": "2026-02-25T06:40:09.463Z"
+          },
           "setupFee": { "type": ["number", "null"], "description": "One-time setup fee in cents." },
+          "setupFeeMultipliesWithQuantity": {
+            "type": ["boolean", "null"],
+            "description": "Whether the setup fee is multiplied by the selected quantity."
+          },
           "payWhatYouWant": {
             "type": ["boolean", "null"],
             "description": "Whether pay-what-you-want pricing is enabled."
@@ -1744,9 +1774,9 @@
                     },
                     "comparison": {
                       "type": ["string", "null"],
-                      "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY", "CONTAINS"],
-                      "description": "Comparison operator for the condition. Defaults to `IS`.",
-                      "example": "IS"
+                      "enum": ["is", "isNot", "isEmpty", "isNotEmpty", "contains"],
+                      "description": "Comparison operator for the condition. Defaults to `is`.",
+                      "example": "is"
                     },
                     "value": {
                       "type": ["string", "null"],
@@ -2904,13 +2934,13 @@
           },
           "manualType": {
             "type": ["string", "null"],
-            "enum": ["invoice", "cash_on_delivery"],
-            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cash_on_delivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
+            "enum": ["invoice", "cashOnDelivery"],
+            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cashOnDelivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
             "example": "invoice"
           }
         },
         "required": ["type", "name"],
-        "description": "Configures a single payment option shown at checkout. Multiple options can be combined (e.g. pay in full + pay via invoice) or a single option can be offered alone.\n\n**Option types:**\n- `full` — customer pays the entire amount immediately.\n- `manual` — no payment is collected at checkout. A confirmation with an invoice is sent and the order is marked unpaid. Set `manualType` to `invoice` or `cash_on_delivery`.\n- `partial` — customer pays `partialAmount` now; the remaining balance is due later and the order is marked as partially paid.\n\nDigital files and event tickets are always issued immediately after checkout regardless of which option the customer selects. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+        "description": "Configures a single payment option shown at checkout. Multiple options can be combined (e.g. pay in full + pay via invoice) or a single option can be offered alone.\n\n**Option types:**\n- `full` — customer pays the entire amount immediately.\n- `manual` — no payment is collected at checkout. A confirmation with an invoice is sent and the order is marked unpaid. Set `manualType` to `invoice` or `cashOnDelivery`.\n- `partial` — customer pays `partialAmount` now; the remaining balance is due later and the order is marked as partially paid.\n\nDigital files and event tickets are always issued immediately after checkout regardless of which option the customer selects. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
         "example": [
           {
             "type": "full",
@@ -2948,7 +2978,7 @@
             "instructions": "Pay the full amount when your order is delivered.",
             "partialAmount": null,
             "showPaymentButton": true,
-            "manualType": "cash_on_delivery"
+            "manualType": "cashOnDelivery"
           }
         ]
       },
@@ -3436,9 +3466,9 @@
                     },
                     "comparison": {
                       "type": ["string", "null"],
-                      "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY", "CONTAINS"],
-                      "description": "Comparison operator for the condition. Defaults to `IS`.",
-                      "example": "IS"
+                      "enum": ["is", "isNot", "isEmpty", "isNotEmpty", "contains"],
+                      "description": "Comparison operator for the condition. Defaults to `is`.",
+                      "example": "is"
                     },
                     "value": {
                       "type": ["string", "null"],
@@ -3649,7 +3679,7 @@
                 "selectionType": "single",
                 "showHideLogic": {
                   "enabled": true,
-                  "comparison": "IS",
+                  "comparison": "is",
                   "value": "pro",
                   "element": { "elementId": "select-package-tier" }
                 },
@@ -3983,7 +4013,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cash_on_delivery"
+                "manualType": "cashOnDelivery"
               }
             ]
           },
@@ -4384,7 +4414,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cash_on_delivery"
+                "manualType": "cashOnDelivery"
               }
             ]
           },
@@ -6150,7 +6180,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cash_on_delivery"
+                "manualType": "cashOnDelivery"
               }
             ]
           },
@@ -6640,7 +6670,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cash_on_delivery"
+                "manualType": "cashOnDelivery"
               }
             ]
           },
@@ -8031,9 +8061,9 @@
                     },
                     "comparison": {
                       "type": ["string", "null"],
-                      "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY", "CONTAINS"],
-                      "description": "Comparison operator for the condition. Defaults to `IS`.",
-                      "example": "IS"
+                      "enum": ["is", "isNot", "isEmpty", "isNotEmpty", "contains"],
+                      "description": "Comparison operator for the condition. Defaults to `is`.",
+                      "example": "is"
                     },
                     "value": {
                       "type": ["string", "null"],
