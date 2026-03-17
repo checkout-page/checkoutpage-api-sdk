@@ -352,6 +352,39 @@ describe('CouponResource Integration Tests', () => {
 
       expect(data.appliesToSetupFee).toBe(true);
     });
+
+    it('should fail to create a coupon because the ticketTypeId does not exist in a page', async () => {
+      const params = {
+        type: 'amount' as const,
+        label: 'Ticket Type Coupon',
+        code: `TEST_TICKET_TYPE_${Date.now()}`,
+        amountOff: 500,
+        currency: 'usd',
+        duration: 'once' as const,
+        ticketTypeIds: [config.testTicketTypeId],
+      } as AmountNonRepeating & { ticketTypeIds: string[] };
+      await expect(client.coupons.create(params as any)).rejects.toThrowError(
+        /One or more ticketTypeIds do not belong to the specified pages/
+      );
+    });
+
+    it('should create coupon with multiple ticketTypeIds', async () => {
+      const params = {
+        type: 'amount' as const,
+        label: 'Multi Ticket Type Coupon',
+        code: `TEST_MULTI_TICKET_${Date.now()}`,
+        amountOff: 500,
+        currency: 'usd',
+        duration: 'once' as const,
+        pageIds: [config.testTicketTypePageId],
+        ticketTypeIds: [config.testTicketTypeId],
+      } as AmountNonRepeating & { ticketTypeIds: string[] };
+
+      const { data } = await client.coupons.create(params as any);
+
+      expect((data as any).ticketTypeIds).toHaveLength(1);
+      expect((data as any).ticketTypeIds[0]).toBe(config.testTicketTypeId);
+    });
   });
 
   describe('create - validation errors', () => {
@@ -406,6 +439,19 @@ describe('CouponResource Integration Tests', () => {
       };
 
       await expect(client.coupons.create(params)).rejects.toThrow(ValidationError);
+    });
+
+    it('should fail when creating a coupon with $0 off', async () => {
+      const params: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Integration Test Amount Coupon',
+        code: `TEST_AMOUNT_${Date.now()}`,
+        amountOff: 0,
+        currency: 'usd',
+        duration: 'once',
+      };
+
+      await expect(client.coupons.create(params)).rejects.toThrowError(/must be at least 1/);
     });
 
     it('should fail with percentage over 100', async () => {

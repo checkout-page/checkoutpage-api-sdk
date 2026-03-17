@@ -537,6 +537,20 @@
           },
           "sellerId": { "type": "string" },
           "pageIds": { "type": "array", "items": { "type": "string" } },
+          "ticketTypeIds": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                }
+              ]
+            },
+            "description": "List of ticket type IDs that this coupon can be used with.",
+            "example": ["67ee075004de439ab0b675b6", "67fcbdac6a91c25ef2d3534a"]
+          },
           "stripeCouponId": {
             "type": "string",
             "description": "The unique identifier of the stripe coupon that was created with this coupon."
@@ -8484,10 +8498,10 @@
           {
             "schema": {
               "type": "string",
-              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term."
+              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term."
             },
             "required": false,
-            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term.",
+            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term.",
             "name": "search",
             "in": "query"
           },
@@ -8710,7 +8724,7 @@
                   },
                   "amountOff": {
                     "type": "number",
-                    "exclusiveMinimum": 0,
+                    "minimum": 1,
                     "maximum": 99999999,
                     "example": 100,
                     "description": "A positive integer representing the amount to subtract from an invoice total (required if `percentOff` is not passed)."
@@ -8768,6 +8782,20 @@
                     "type": "array",
                     "items": { "type": "string" },
                     "description": "A list of pageIds that this coupon can be used within.",
+                    "example": ["67ee075004de439ab0b675b6", "67fcbdac6a91c25ef2d3534a"]
+                  },
+                  "ticketTypeIds": {
+                    "type": "array",
+                    "items": {
+                      "allOf": [
+                        { "$ref": "#/components/schemas/UniqueIdentifier" },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                          "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                        }
+                      ]
+                    },
+                    "description": "List of ticket type IDs that this coupon can be used with. Ticket ticket ids must belong to a page specified in the `pageIds` array.",
                     "example": ["67ee075004de439ab0b675b6", "67fcbdac6a91c25ef2d3534a"]
                   },
                   "maxRedemptions": {
@@ -9354,10 +9382,10 @@
           {
             "schema": {
               "type": "string",
-              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term."
+              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term."
             },
             "required": false,
-            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns coupons where either field contains the search term.",
+            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term.",
             "name": "search",
             "in": "query"
           },

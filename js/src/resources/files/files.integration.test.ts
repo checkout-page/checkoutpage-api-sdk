@@ -40,6 +40,17 @@ describe('FileResource integration tests', () => {
   });
 
   describe('upload', () => {
+    it('rejects a zero-byte file with a validation error', async () => {
+      const emptyFile = new File([], 'empty.txt', { type: 'text/plain' });
+
+      await expect(
+        files.upload({
+          file: emptyFile,
+          purpose: 'file',
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
     it('uploads an image file', async () => {
       const result = await uploadImage();
 
