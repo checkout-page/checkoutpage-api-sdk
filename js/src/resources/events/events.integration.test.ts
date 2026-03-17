@@ -225,11 +225,13 @@ describe('EventsResource integration tests', () => {
             element: 'email',
             type: 'email',
             required: true,
+            key: 'customer_email',
           },
           {
             label: `Company ${uniqueSuffix()}`,
             element: 'text',
             required: true,
+            key: 'orderId',
           },
         ],
         allowDynamicTitle: true,
@@ -609,6 +611,50 @@ describe('EventsResource integration tests', () => {
 
       expect(data.afterPaymentAction).toBe('checkout');
       expect(data.redirectPageId).toBe(config.testCheckoutPageId);
+    });
+
+    it('creates an event with a custom redirectUrl resolving field keys to field IDs', async () => {
+      const { data } = await createEvent({
+        afterPaymentAction: 'redirect',
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+          {
+            element: 'text',
+            required: true,
+            label: 'URL path variable',
+            reference: 'url_path',
+            key: 'url_path_key',
+          },
+        ],
+        redirectUrl: 'https://not-a-url',
+        redirectUrlPath: [
+          {
+            identifier: 'url_path_key',
+            key: 'fields',
+          },
+        ],
+        redirectUrlQuery: [
+          { key: 'fields', identifier: 'url_path_key', parameter: 'URLPathParam' },
+        ],
+      });
+
+      const urlPathField = data.fields?.find((f) => f.reference === 'url_path');
+      expect(urlPathField).toBeDefined();
+      expect(data.redirectUrl).toEqual('https://not-a-url');
+      expect(data.redirectUrlPath).toEqual([{ key: 'fields', identifier: urlPathField?.id }]);
+      expect(data.redirectUrlQuery).toEqual([
+        {
+          parameter: 'URLPathParam',
+          key: 'fields',
+          identifier: urlPathField?.id,
+        },
+      ]);
     });
 
     it('fails when imageIds reference a missing file', async () => {

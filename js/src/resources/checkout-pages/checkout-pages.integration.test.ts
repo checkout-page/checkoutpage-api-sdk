@@ -650,6 +650,109 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.limitSubscriptionsStripe?.enabled).toBe(true);
     });
 
+    it('creates a checkout page with a custom redirectUrl resolving field keys to field IDs', async () => {
+      const { data } = await createCheckoutPage({
+        afterPaymentAction: 'redirect',
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+          {
+            element: 'text',
+            required: true,
+            label: 'URL path variable',
+            reference: 'url_path',
+            key: 'url_path_key',
+          },
+        ],
+        redirectUrl: 'https://not-a-url',
+        redirectUrlPath: [
+          {
+            identifier: 'url_path_key',
+            key: 'fields',
+          },
+        ],
+        redirectUrlQuery: [
+          { key: 'fields', identifier: 'url_path_key', parameter: 'URLPathParam' },
+        ],
+      });
+
+      const urlPathField = data.fields?.find((f) => f.reference === 'url_path');
+      expect(urlPathField).toBeDefined();
+
+      expect(data.product?.type).toBe('charge');
+      expect(data.redirectUrl).toEqual('https://not-a-url');
+      expect(data.redirectUrlPath).toEqual([{ key: 'fields', identifier: urlPathField?.id }]);
+      expect(data.redirectUrlQuery).toEqual([
+        {
+          parameter: 'URLPathParam',
+          key: 'fields',
+          identifier: urlPathField?.id,
+        },
+      ]);
+    });
+
+    it('fails to create a checkout page when redirectUrlPath has an identifier that is not within fields', async () => {
+      await expect(
+        createCheckoutPage({
+          afterPaymentAction: 'redirect',
+          fields: [
+            {
+              element: 'email',
+              type: 'email',
+              required: true,
+              label: 'Email',
+              reference: 'email',
+            },
+            {
+              element: 'text',
+              required: true,
+              label: 'URL path variable',
+              reference: 'url_path',
+              key: 'url_path_key',
+            },
+          ],
+          redirectUrl: 'https://not-a-url',
+          redirectUrlPath: [
+            {
+              identifier: 'missing',
+              key: 'fields',
+            },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('fails to create a checkout page when redirectUrlQuery has an identifier that is not within fields', async () => {
+      await expect(
+        createCheckoutPage({
+          afterPaymentAction: 'redirect',
+          fields: [
+            {
+              element: 'email',
+              type: 'email',
+              required: true,
+              label: 'Email',
+              reference: 'email',
+            },
+            {
+              element: 'text',
+              required: true,
+              label: 'URL path variable',
+              reference: 'url_path',
+              key: 'url_path_key',
+            },
+          ],
+          redirectUrl: 'https://not-a-url',
+          redirectUrlQuery: [{ key: 'fields', identifier: 'missing', parameter: 'URLPathParam' }],
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
     it('fails when recurring and payment plan price modes are combined', async () => {
       await expect(
         client.checkoutPages.create({

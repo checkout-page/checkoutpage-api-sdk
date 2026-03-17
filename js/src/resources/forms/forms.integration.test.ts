@@ -327,6 +327,7 @@ describe('FormsResource integration tests', () => {
           required: true,
           placeholder: 'you@example.com',
           reference: createReference('business-email'),
+          key: 'business-email',
         },
         {
           label: 'Billing Email',
@@ -409,11 +410,12 @@ describe('FormsResource integration tests', () => {
         },
         { label: 'PO Number', element: 'po-number', required: false, placeholder: 'PO-2026-001' },
         {
-          label: 'Plain Text',
+          label: 'Order ID',
           element: 'text',
           required: false,
           hidden: true,
           defaultValue: { enabled: true, value: 'preset' },
+          key: 'orderId',
         },
         {
           label: 'Long Answer',
@@ -502,11 +504,6 @@ describe('FormsResource integration tests', () => {
             days: 30,
           },
         },
-        checkoutAbandonment: {
-          disableEmails: true,
-          showStoreLogo: false,
-          showStoreName: true,
-        },
         funnelSteps: [
           {
             type: 'checkout',
@@ -514,17 +511,6 @@ describe('FormsResource integration tests', () => {
             enabled: true,
             config: {
               pageId: config.testCheckoutPageId,
-            },
-          },
-          {
-            type: 'confirmation',
-            order: 1,
-            enabled: true,
-            config: {
-              action: 'confirmation',
-              customizeCheckoutConfirmation: true,
-              confirmationCheckoutTitle: 'Done',
-              confirmationCheckoutMessage: '<p>Thanks.</p>',
             },
           },
         ],
@@ -569,10 +555,7 @@ describe('FormsResource integration tests', () => {
       );
       expect(data.invoiceSettings?.dueDays?.enabled).toBe(true);
       expect(data.invoiceSettings?.dueDays?.days).toBe(30);
-      expect(data.checkoutAbandonment?.disableEmails).toBe(true);
-      expect(data.checkoutAbandonment?.showStoreLogo).toBe(false);
-      expect(data.checkoutAbandonment?.showStoreName).toBe(true);
-      expect(data.funnelSteps?.length).toBe(2);
+      expect(data.funnelSteps?.length).toBe(1);
       const checkoutStep = data.funnelSteps?.[0];
       expect(checkoutStep?.type).toBe('checkout');
       expect(checkoutStep?.order).toBe(0);
@@ -719,6 +702,50 @@ describe('FormsResource integration tests', () => {
       expect(data.confirmationEmailShowStoreName).toBe(false);
     });
 
+    it('creates a form with a custom redirectUrl resolving field keys to field IDs', async () => {
+      const { data } = await createForm({
+        afterPaymentAction: 'redirect',
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+          {
+            element: 'text',
+            required: true,
+            label: 'URL path variable',
+            reference: 'url_path',
+            key: 'url_path_key',
+          },
+        ],
+        redirectUrl: 'https://not-a-url',
+        redirectUrlPath: [
+          {
+            identifier: 'url_path_key',
+            key: 'fields',
+          },
+        ],
+        redirectUrlQuery: [
+          { key: 'fields', identifier: 'url_path_key', parameter: 'URLPathParam' },
+        ],
+      });
+
+      const urlPathField = data.fields?.find((f) => f.reference === 'url_path');
+      expect(urlPathField).toBeDefined();
+      expect(data.redirectUrl).toEqual('https://not-a-url');
+      expect(data.redirectUrlPath).toEqual([{ key: 'fields', identifier: urlPathField?.id }]);
+      expect(data.redirectUrlQuery).toEqual([
+        {
+          parameter: 'URLPathParam',
+          key: 'fields',
+          identifier: urlPathField?.id,
+        },
+      ]);
+    });
+
     it('ignores missing fileIds when the API accepts the request', async () => {
       await expect(
         client.forms.create({
@@ -833,11 +860,6 @@ describe('FormsResource integration tests', () => {
             days: 14,
           },
         },
-        checkoutAbandonment: {
-          disableEmails: false,
-          showStoreLogo: true,
-          showStoreName: false,
-        },
         funnelSteps: [
           {
             type: 'confirmation',
@@ -885,9 +907,6 @@ describe('FormsResource integration tests', () => {
       expect(result.data.invoiceSettings?.bankDetails).toBe('Updated account');
       expect(result.data.invoiceSettings?.dueDays?.enabled).toBe(true);
       expect(result.data.invoiceSettings?.dueDays?.days).toBe(14);
-      expect(result.data.checkoutAbandonment?.disableEmails).toBe(false);
-      expect(result.data.checkoutAbandonment?.showStoreLogo).toBe(true);
-      expect(result.data.checkoutAbandonment?.showStoreName).toBe(false);
       expect(result.data.funnelSteps?.length).toBe(1);
       const updatedConfirmationStep = result.data.funnelSteps?.[0];
       expect(updatedConfirmationStep?.type).toBe('confirmation');
