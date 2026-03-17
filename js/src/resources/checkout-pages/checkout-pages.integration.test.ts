@@ -122,14 +122,14 @@ describe('CheckoutPagesResource integration tests', () => {
   });
 
   afterEach(async () => {
-    for (const pageId of [...createdPageIds].reverse()) {
-      try {
-        await client.checkoutPages.delete(pageId);
-      } catch {
-        // Best-effort cleanup for integration tests.
-      }
-    }
-    createdPageIds = [];
+    // for (const pageId of [...createdPageIds].reverse()) {
+    //   try {
+    //     await client.checkoutPages.delete(pageId);
+    //   } catch {
+    //     // Best-effort cleanup for integration tests.
+    //   }
+    // }
+    // createdPageIds = [];
   });
 
   describe('list', () => {
@@ -247,7 +247,7 @@ describe('CheckoutPagesResource integration tests', () => {
         productData: {
           title: `PWYW ${uniqueSuffix()}`,
           price: {
-            amount: 0,
+            amount: 100,
             currency: 'usd',
             payWhatYouWant: true,
           },
@@ -810,6 +810,473 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         })
       ).rejects.toThrow(ValidationError);
+    });
+
+    describe('variants', () => {
+      it('creates a checkout page with a simple variant group and options', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Variant Product ${uniqueSuffix()}`,
+            price: { amount: 1000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Plan',
+                required: true,
+                options: [
+                  {
+                    name: 'Basic',
+                    additionalChargeAmount: 100,
+                    payWhatYouWant: true,
+                    pwywSuggestedPrice: 500,
+                  },
+                  { name: 'Pro', additionalChargeAmount: 5000 },
+                ],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.variants).toHaveLength(1);
+        const variant = data.product?.variants?.[0];
+        expect(variant?.name).toBe('Plan');
+        expect(variant?.required).toBe(true);
+        expect(variant?.status).toBe('enabled');
+        expect(variant?.id).toMatch(/^[0-9a-f]{24}$/);
+        expect(variant?.selectionType).toBe('single');
+        expect(variant?.hidden).toBe(false);
+        expect(variant?.increasesWithQuantity).toBe(false);
+        expect(variant?.manageVariantOptionStock).toBe(false);
+        expect(variant?.useVariantOptionSkus).toBe(false);
+        expect(variant?.reference).toBeTypeOf('string');
+        expect(variant?.options).toHaveLength(2);
+
+        const basic = variant?.options?.find((o) => o.name === 'Basic');
+        expect(basic?.id).toMatch(/^[0-9a-f]{24}$/);
+        expect(basic?.status).toBe('enabled');
+        expect(basic?.additionalChargeAmount).toBe(100);
+        expect(basic?.payWhatYouWant).toBe(true);
+        expect(basic?.pwywSuggestedPrice).toBe(500);
+        expect(basic?.type).toBe('pay_what_you_want');
+
+        const pro = variant?.options?.find((o) => o.name === 'Pro');
+        expect(pro?.additionalChargeAmount).toBe(5000);
+        expect(pro?.type).toBe('one_time');
+      });
+
+      it('persists variantsRequired on the product', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Required Variant ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variantsRequired: true,
+            variants: [
+              {
+                name: 'Size',
+                options: [{ name: 'Small' }, { name: 'Large' }],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.variantsRequired).toBe(true);
+      });
+
+      it('creates a checkout page with multiple variant groups preserving order', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Multi-Variant ${uniqueSuffix()}`,
+            price: { amount: 3000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Color',
+                order: 0,
+                options: [{ name: 'Blue' }, { name: 'Red' }],
+              },
+              {
+                name: 'Size',
+                order: 1,
+                options: [{ name: 'Small' }, { name: 'Medium' }, { name: 'Large' }],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.variants).toHaveLength(2);
+        const colorVariant = data.product?.variants?.find((v) => v.name === 'Color');
+        const sizeVariant = data.product?.variants?.find((v) => v.name === 'Size');
+        expect(colorVariant?.options).toHaveLength(2);
+        expect(colorVariant?.order).toBe(0);
+        expect(colorVariant?.reference).toMatch(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+        );
+        expect(sizeVariant?.options).toHaveLength(3);
+        expect(sizeVariant?.order).toBe(1);
+      });
+
+      it('creates variants with multiple selection type and increasesWithQuantity', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Multiple Selection ${uniqueSuffix()}`,
+            price: { amount: 500, currency: 'usd' },
+            variants: [
+              {
+                name: 'Add-ons',
+                selectionType: 'multiple',
+                increasesWithQuantity: true,
+                options: [
+                  { name: 'Extra support', additionalChargeAmount: 2000 },
+                  { name: 'Priority access', additionalChargeAmount: 3000 },
+                ],
+              },
+            ],
+          },
+        });
+
+        const variant = data.product?.variants?.[0];
+        expect(variant?.selectionType).toBe('multiple');
+        expect(variant?.increasesWithQuantity).toBe(true);
+        expect(variant?.options).toHaveLength(2);
+      });
+
+      it('creates variants with quantity selection type', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Quantity Selection ${uniqueSuffix()}`,
+            price: { amount: 1000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Tickets',
+                selectionType: 'quantity',
+                options: [
+                  { name: 'Adult', additionalChargeAmount: 0 },
+                  { name: 'Child', additionalChargeAmount: 0 },
+                ],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.variants?.[0]?.selectionType).toBe('quantity');
+      });
+
+      it('creates a variant option with a description, sku, and type', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Option Details ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Package',
+                useVariantOptionSkus: true,
+                options: [
+                  {
+                    name: 'Starter',
+                    type: 'one_time',
+                    description: '<p>The starter package</p>',
+                    sku: 'PKG-STARTER',
+                    additionalChargeAmount: 0,
+                  },
+                ],
+              },
+            ],
+          },
+        });
+
+        const variant = data.product?.variants?.[0];
+        expect(variant?.useVariantOptionSkus).toBe(true);
+
+        const option = variant?.options?.[0];
+        expect(option?.name).toBe('Starter');
+        expect(option?.type).toBe('one_time');
+        expect(option?.description).toContain('starter package');
+        expect(option?.sku).toBe('PKG-STARTER');
+        expect(option?.status).toBe('enabled');
+      });
+
+      it('creates a variant option with stock management', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Stock Variant ${uniqueSuffix()}`,
+            price: { amount: 5000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Edition',
+                manageVariantOptionStock: true,
+                options: [
+                  { name: 'Limited Edition', additionalChargeAmount: 0, stock: 50 },
+                  { name: 'Standard', additionalChargeAmount: 0, stock: 500 },
+                ],
+              },
+            ],
+          },
+        });
+
+        const variant = data.product?.variants?.[0];
+        expect(variant?.manageVariantOptionStock).toBe(true);
+
+        const options = variant?.options;
+        expect(options?.find((o) => o.name === 'Limited Edition')?.stock).toBe(50);
+        expect(options?.find((o) => o.name === 'Standard')?.stock).toBe(500);
+      });
+
+      it('creates a variant option with an image', async () => {
+        const imageId = await uploadImage();
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Image Variant ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Style',
+                options: [{ name: 'Classic', imageId, additionalChargeAmount: 0 }],
+              },
+            ],
+          },
+        });
+
+        const image = data.product?.variants?.[0]?.options?.[0]?.image;
+        expect(image?.fileId).toBe(imageId);
+        expect(image?.url).toBeTypeOf('string');
+        expect(image?.name).toBeTypeOf('string');
+        expect(image?.width).toBeTypeOf('number');
+        expect(image?.height).toBeTypeOf('number');
+        expect(image?.size).toBeTypeOf('number');
+      });
+
+      it('creates a variant option with attached files', async () => {
+        const fileId = await uploadFile();
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `File Variant ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Edition',
+                options: [{ name: 'Digital', additionalChargeAmount: 0, fileIds: [fileId] }],
+              },
+            ],
+          },
+        });
+
+        const option = data.product?.variants?.[0]?.options?.[0];
+        expect(option?.fileIds).toContain(fileId);
+      });
+
+      it('creates a hidden variant', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Hidden Variant ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Source',
+                hidden: true,
+                options: [{ name: 'Option A', additionalChargeAmount: 0 }],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.variants?.[0]?.hidden).toBe(true);
+      });
+
+      it('creates a checkout page with multiple pricing type variants', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Multiple Pricing ${uniqueSuffix()}`,
+            price: { amount: 0, currency: 'usd', pricingType: 'multiple' },
+            variantsRequired: true,
+            variants: [
+              {
+                name: 'Tier',
+                required: true,
+                options: [
+                  { name: 'Basic', additionalChargeAmount: 2900, type: 'one_time' },
+                  { name: 'Pro', additionalChargeAmount: 7900, type: 'one_time' },
+                  { name: 'Enterprise', additionalChargeAmount: 19900, type: 'one_time' },
+                ],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.price).toBe(0);
+        expect(data.product?.variantsRequired).toBe(true);
+        expect(data.product?.variants).toHaveLength(1);
+        const variant = data.product?.variants?.[0];
+        expect(variant?.required).toBe(true);
+        expect(variant?.options).toHaveLength(3);
+
+        const pro = variant?.options?.find((o) => o.name === 'Pro');
+        expect(pro?.additionalChargeAmount).toBe(7900);
+        expect(pro?.type).toBe('one_time');
+      });
+
+      it('creates variants with conditional show/hide logic and resolves keys to ObjectIds in the response', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Conditional Variant ${uniqueSuffix()}`,
+            price: { amount: 5000, currency: 'usd' },
+            variants: [
+              {
+                key: 'tier',
+                name: 'Select tier',
+                required: true,
+                options: [
+                  { key: 'standard', name: 'Standard' },
+                  { key: 'pro', name: 'Pro' },
+                ],
+              },
+              {
+                name: 'Onboarding call',
+                showHideLogic: {
+                  enabled: true,
+                  comparison: 'IS',
+                  value: 'pro',
+                  element: { elementId: 'tier' },
+                },
+                options: [
+                  { name: 'No call', additionalChargeAmount: 0 },
+                  { name: 'Include call', additionalChargeAmount: 15000 },
+                ],
+              },
+              {
+                name: 'Donation',
+                options: [
+                  {
+                    name: 'Donation',
+                    description: '<b>Please donate!</b>',
+                    payWhatYouWant: true,
+                    additionalChargeAmount: 100,
+                  },
+                ],
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.variants).toHaveLength(3);
+        const tierVariant = data.product?.variants?.find((v) => v.name === 'Select tier');
+        const callVariant = data.product?.variants?.find((v) => v.name === 'Onboarding call');
+        const donationVariant = data.product?.variants?.find((v) => v.name === 'Donation');
+        expect(tierVariant?.options).toHaveLength(2);
+        expect(callVariant?.options).toHaveLength(2);
+        expect(donationVariant?.options).toHaveLength(1);
+
+        // Keys are not persisted — the response resolves them to ObjectIds
+        const proOptionId = tierVariant?.options?.find((o) => o.name === 'Pro')?.id;
+        expect(proOptionId).toMatch(/^[0-9a-f]{24}$/);
+        expect(callVariant?.showHideLogic?.enabled).toBe(true);
+        expect(callVariant?.showHideLogic?.comparison).toBe('IS');
+        expect(callVariant?.showHideLogic?.value).toBe(proOptionId);
+        expect(callVariant?.showHideLogic?.element?.elementId).toBe(tierVariant?.id);
+      });
+
+      it('creates a variant with a preselected option and resolves the key to an ObjectId in the response', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Preselect Variant ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Plan',
+                options: [
+                  { key: 'basic', name: 'Basic', additionalChargeAmount: 0 },
+                  { key: 'pro', name: 'Pro', additionalChargeAmount: 5000 },
+                ],
+                preselect: { enabled: true, optionId: 'pro' },
+              },
+            ],
+          },
+        });
+
+        const variant = data.product?.variants?.[0];
+        expect(variant?.options).toHaveLength(2);
+
+        // preselect.optionId is resolved from the key to the persisted option ObjectId
+        const proOptionId = variant?.options?.find((o) => o.name === 'Pro')?.id;
+        expect(proOptionId).toMatch(/^[0-9a-f]{24}$/);
+        expect(variant?.preselect?.enabled).toBe(true);
+        expect(variant?.preselect?.optionId).toBe(proOptionId);
+      });
+
+      it('creates a variant with grid layout configuration', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Grid Variant ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Color',
+                layout: {
+                  variantOptionLayout: 'grid',
+                  variantOptionColumns: 3,
+                  collapseVariantOptions: false,
+                  showVariantName: true,
+                  showVariantOptionNames: true,
+                  showVariantOptionPrices: false,
+                  showVariantOptionPriceSign: false,
+                  spacing: 'compact',
+                  imageSize: 'medium',
+                },
+                options: [{ name: 'Red' }, { name: 'Blue' }, { name: 'Green' }],
+              },
+            ],
+          },
+        });
+
+        const layout = data.product?.variants?.[0]?.layout;
+        expect(layout?.variantOptionLayout).toBe('grid');
+        expect(layout?.variantOptionColumns).toBe(3);
+        expect(layout?.collapseVariantOptions).toBe(false);
+        expect(layout?.showVariantName).toBe(true);
+        expect(layout?.showVariantOptionNames).toBe(true);
+        expect(layout?.showVariantOptionPrices).toBe(false);
+        expect(layout?.showVariantOptionPriceSign).toBe(false);
+        expect(layout?.spacing).toBe('compact');
+        expect(layout?.imageSize).toBe('medium');
+      });
+
+      it('fails when a variant showHideLogic references a non-existent variant key', async () => {
+        await expect(
+          createCheckoutPage({
+            productData: {
+              title: `Invalid Logic ${uniqueSuffix()}`,
+              price: { amount: 5000, currency: 'usd' },
+              variants: [
+                {
+                  name: 'Addon',
+                  showHideLogic: {
+                    enabled: true,
+                    comparison: 'IS',
+                    value: 'pro',
+                    element: { elementId: 'nonexistent-key' },
+                  },
+                  options: [{ name: 'Option A' }],
+                },
+              ],
+            },
+          })
+        ).rejects.toThrow(ValidationError);
+      });
+
+      it('fails when a variant preselect references a non-existent option key', async () => {
+        await expect(
+          createCheckoutPage({
+            productData: {
+              title: `Invalid Preselect ${uniqueSuffix()}`,
+              price: { amount: 2000, currency: 'usd' },
+              variants: [
+                {
+                  name: 'Plan',
+                  options: [{ key: 'basic', name: 'Basic' }],
+                  preselect: { enabled: true, optionId: 'nonexistent-option-key' },
+                },
+              ],
+            },
+          })
+        ).rejects.toThrow(ValidationError);
+      });
     });
 
     it('returns product.type as charge for a one-time payment page', async () => {

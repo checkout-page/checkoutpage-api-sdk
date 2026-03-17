@@ -1644,6 +1644,36 @@
                       "stock": {
                         "type": ["number", "null"],
                         "description": "Stock quantity for this option."
+                      },
+                      "type": {
+                        "type": ["string", "null"],
+                        "enum": ["one_time", "recurring", "pay_what_you_want"],
+                        "description": "Type of variant option - one-time purchase, recurring subscription or pay what you want.",
+                        "example": "one_time"
+                      },
+                      "payWhatYouWant": {
+                        "type": ["boolean", "null"],
+                        "description": "If enabled, customers can choose their own price for this variant option. The minimum price is based on the additionalChargeAmount. Defaults to `false`.",
+                        "example": false
+                      },
+                      "pwywSuggestedPrice": {
+                        "type": ["number", "null"],
+                        "minimum": 0,
+                        "description": "Suggested price for Pay What You Want options in cents. This is a cosmetic field used to display a suggested amount to the customer. Defaults to `0`.",
+                        "example": 2500
+                      },
+                      "fileIds": {
+                        "type": ["array", "null"],
+                        "items": {
+                          "allOf": [
+                            { "$ref": "#/components/schemas/UniqueIdentifier" },
+                            {
+                              "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                              "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                            }
+                          ]
+                        },
+                        "description": "Files specific to this variant option. Available to the customer after purchase."
                       }
                     },
                     "required": ["name"]
@@ -1666,6 +1696,143 @@
                   "enum": ["single", "multiple", "quantity"],
                   "description": "Type of selection. Defaults to `single`",
                   "example": "single"
+                },
+                "increasesWithQuantity": {
+                  "type": ["boolean", "null"],
+                  "description": "Whether or not the variant quantity matches the checkout quantity. Defaults to `false`."
+                },
+                "useVariantOptionSkus": {
+                  "type": ["boolean", "null"],
+                  "description": "If enabled, use SKUs from variant options instead of the product SKU. Defaults to `false`."
+                },
+                "manageVariantOptionStock": {
+                  "type": ["boolean", "null"],
+                  "description": "If enabled stock is managed by the variant options. Defaults to `false`."
+                },
+                "hidden": {
+                  "type": ["boolean", "null"],
+                  "description": "Whether this variant is hidden. Hidden variants can be shown or filled with data by query paramers. [Learn more](https://checkoutpage.com/docs/articles/preselect-checkout-variants). Defaults to `false`."
+                },
+                "preselect": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "enabled": {
+                      "type": ["boolean", "null"],
+                      "description": "Enable preselecting a variant option. Defaults to `false`."
+                    },
+                    "optionId": {
+                      "type": ["string", "null"],
+                      "description": "The `key` of the variant option to preselect. Must match the `key` of an option on this variant.",
+                      "example": "pro-option"
+                    },
+                    "quantity": {
+                      "type": ["number", "null"],
+                      "description": "Quantity to preselect for quantity selection type variants. Defaults to `1` for `single` and `multiple` selection types.",
+                      "example": 2
+                    }
+                  },
+                  "description": "Preselect configuration for this variant.",
+                  "example": { "enabled": true, "optionId": "pro-option", "quantity": 1 }
+                },
+                "showHideLogic": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "enabled": {
+                      "type": ["boolean", "null"],
+                      "description": "Enable conditional show/hide logic. Defaults to `false`.",
+                      "example": true
+                    },
+                    "comparison": {
+                      "type": ["string", "null"],
+                      "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY", "CONTAINS"],
+                      "description": "Comparison operator for the condition. Defaults to `IS`.",
+                      "example": "IS"
+                    },
+                    "value": {
+                      "type": ["string", "null"],
+                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`.",
+                      "example": "pro-option"
+                    },
+                    "element": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "elementId": {
+                          "type": ["string", "null"],
+                          "description": "The `key` of the source variant used in the condition. Must match the `key` of another variant in the same batch.",
+                          "example": "select-package-tier"
+                        }
+                      },
+                      "description": "Element (variant) to compare against."
+                    }
+                  },
+                  "description": "Conditional logic to show or hide this variant based on other form elements."
+                },
+                "layout": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "variantOptionLayout": {
+                      "type": ["string", "null"],
+                      "enum": ["list", "grid"],
+                      "description": "Layout style for variant options. Defaults to `list`.",
+                      "example": "list"
+                    },
+                    "collapseVariantOptions": {
+                      "type": ["boolean", "null"],
+                      "description": "If enabled, variant options are collapsed by default. Defaults to `false`.",
+                      "example": false
+                    },
+                    "variantOptionColumns": {
+                      "type": ["number", "null"],
+                      "minimum": 1,
+                      "maximum": 4,
+                      "description": "Number of columns for grid layout. Defaults to `2`.",
+                      "example": 2
+                    },
+                    "showVariantName": {
+                      "type": ["boolean", "null"],
+                      "description": "Show the variant name. Defaults to `true`.",
+                      "example": true
+                    },
+                    "showVariantOptionNames": {
+                      "type": ["boolean", "null"],
+                      "description": "Show variant option names. Defaults to `true`.",
+                      "example": true
+                    },
+                    "showVariantOptionPrices": {
+                      "type": ["boolean", "null"],
+                      "description": "Show variant option prices. Defaults to `true`.",
+                      "example": true
+                    },
+                    "showVariantOptionPriceSign": {
+                      "type": ["boolean", "null"],
+                      "description": "Show price sign (+ or -) for variant option prices. Defaults to `false`.",
+                      "example": true
+                    },
+                    "showPwywPlaceholder": {
+                      "type": ["boolean", "null"],
+                      "description": "Show placeholder text for Pay What You Want inputs. Defaults to `true`.",
+                      "example": true
+                    },
+                    "textAlign": {
+                      "type": ["string", "null"],
+                      "enum": ["left", "center", "stack", ""],
+                      "description": "Text alignment for variant options. Defaults to `left`.",
+                      "example": "left"
+                    },
+                    "spacing": {
+                      "type": ["string", "null"],
+                      "enum": ["comfortable", "compact", ""],
+                      "description": "Spacing between variant options. Defaults to `comfortable`.",
+                      "example": "comfortable"
+                    },
+                    "imageSize": {
+                      "type": ["string", "null"],
+                      "enum": ["small", "medium", "large", ""],
+                      "description": "Size of variant option images. Defaults to `small`.",
+                      "example": "small"
+                    }
+                  },
+                  "description": "Layout configuration for this variant."
                 }
               },
               "required": ["name"]
