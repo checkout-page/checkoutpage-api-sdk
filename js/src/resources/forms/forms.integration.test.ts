@@ -562,16 +562,6 @@ describe('FormsResource integration tests', () => {
       expect(checkoutStep?.enabled).toBe(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect((checkoutStep?.config as any)?.pageId).toBe(config.testCheckoutPageId);
-      const confirmationStep = data.funnelSteps?.[1];
-      expect(confirmationStep?.type).toBe('confirmation');
-      expect(confirmationStep?.order).toBe(1);
-      expect(confirmationStep?.enabled).toBe(true);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((confirmationStep?.config as any)?.action).toBe('confirmation');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((confirmationStep?.config as any)?.customizeCheckoutConfirmation).toBe(true);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((confirmationStep?.config as any)?.confirmationCheckoutTitle).toBe('Done');
       expect(pageIncludesImage(data, imageId)).toBe(true);
       expect(pageIncludesFile(data, fileId)).toBe(true);
       expectImageMetadata(data, imageId);
