@@ -622,7 +622,7 @@ describe('FormsResource integration tests', () => {
       expect(poNumberField.element).toBe('po-number');
       expect(poNumberField.placeholder).toBe('PO-2026-001');
 
-      expect(expectFieldResponseShape(data, 'Plain Text').element).toBe('text');
+      expect(expectFieldResponseShape(data, 'Order ID').element).toBe('text');
       expect(expectFieldResponseShape(data, 'Long Answer').element).toBe('textarea');
       expect(expectFieldResponseShape(data, 'Seats').element).toBe('number');
       expect(expectFieldResponseShape(data, 'Quantity').element).toBe('quantity');
@@ -659,7 +659,7 @@ describe('FormsResource integration tests', () => {
       expect(companyField.minValue?.value).toBe('1');
       expect(companyField.maxValue?.value).toBe('100');
 
-      const plainTextField = expectFieldResponseShape(data, 'Plain Text');
+      const plainTextField = expectFieldResponseShape(data, 'Order ID');
       expect(plainTextField.hidden).toBe(true);
       expect(plainTextField.defaultValue?.value).toBe('preset');
     }, 15000);
