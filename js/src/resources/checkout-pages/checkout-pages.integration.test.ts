@@ -1327,7 +1327,7 @@ describe('CheckoutPagesResource integration tests', () => {
             description: 'Pay when delivered',
             instructions: 'Pay the driver on arrival.',
             showPaymentButton: true,
-            manualType: 'cashOnDelivery',
+            manualType: 'cash_on_delivery',
           },
           {
             type: 'full',

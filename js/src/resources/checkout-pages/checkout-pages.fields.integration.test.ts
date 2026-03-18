@@ -169,7 +169,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
       showHideLogic: {
         enabled: true,
-        comparison: 'IS',
+        comparison: 'is',
         value: 'TRUE',
         element: {
           elementId: sourceField.id,
@@ -302,7 +302,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       ],
       showHideLogic: {
         enabled: true,
-        comparison: 'IS',
+        comparison: 'is',
         value: 'TRUE',
         element: {
           elementId: sourceField.id,
@@ -373,7 +373,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       {
         showHideLogic: {
           enabled: true,
-          comparison: 'IS',
+          comparison: 'is',
           value: 'TRUE',
           element: {
             elementId: sourceField.id,

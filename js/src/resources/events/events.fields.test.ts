@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { EventsResource } from './events';
-import type {
-  EventFieldDeleteResponse,
-  EventFieldList,
-  EventFieldResponse,
-} from '../../types';
+import type { EventFieldDeleteResponse, EventFieldList, EventFieldResponse } from '../../types';
 
 describe('EventsResource fields', () => {
   let client: CheckoutPageApiClient;
@@ -65,7 +61,7 @@ describe('EventsResource fields', () => {
         placeholder: 'Acme Inc.',
         showHideLogic: {
           enabled: true,
-          comparison: 'IS',
+          comparison: 'is',
           value: 'option_123',
           element: {
             elementId: 'field_source',
@@ -85,7 +81,7 @@ describe('EventsResource fields', () => {
       placeholder: 'Acme Inc.',
       showHideLogic: {
         enabled: true,
-        comparison: 'IS' as const,
+        comparison: 'is' as const,
         value: 'option_123',
         element: {
           elementId: 'field_source',
@@ -194,9 +190,9 @@ describe('EventsResource fields', () => {
       'Page ID is required'
     );
     await expect(eventsResource.fields.get('page_123', '')).rejects.toThrow('Field ID is required');
-    await expect(
-      eventsResource.fields.update('page_123', '', { label: 'Field' })
-    ).rejects.toThrow('Field ID is required');
+    await expect(eventsResource.fields.update('page_123', '', { label: 'Field' })).rejects.toThrow(
+      'Field ID is required'
+    );
     await expect(eventsResource.fields.delete('page_123', '')).rejects.toThrow(
       'Field ID is required'
     );

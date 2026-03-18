@@ -451,7 +451,7 @@ describe('FormsResource integration tests', () => {
           reference: createReference('shipping-address'),
           showHideLogic: {
             enabled: true,
-            comparison: 'IS',
+            comparison: 'is',
             value: 'physical',
             element: {
               elementType: 'field',
@@ -638,7 +638,7 @@ describe('FormsResource integration tests', () => {
       expect(shippingAddress.type).toBe('shipping-address-line1');
       expect(shippingAddress.reference).toContain('shipping-address');
       expect(shippingAddress.showHideLogic?.enabled).toBe(true);
-      expect(shippingAddress.showHideLogic?.comparison).toBe('IS');
+      expect(shippingAddress.showHideLogic?.comparison).toBe('is');
       expect(shippingAddress.showHideLogic?.element?.elementType).toBe('field');
       expect(shippingAddress.showHideLogic?.element?.elementId).toBe(deliveryMethod.id);
       // The API resolves the option key/value reference to its persisted option ID in the response

@@ -57,7 +57,7 @@ describe('FormsResource fields', () => {
         order: 2,
         showHideLogic: {
           enabled: true,
-          comparison: 'IS',
+          comparison: 'is',
           value: 'option_123',
           element: {
             elementId: 'field_source',
@@ -75,7 +75,7 @@ describe('FormsResource fields', () => {
       element: 'text' as const,
       showHideLogic: {
         enabled: true,
-        comparison: 'IS' as const,
+        comparison: 'is' as const,
         value: 'option_123',
         element: {
           elementId: 'field_source',

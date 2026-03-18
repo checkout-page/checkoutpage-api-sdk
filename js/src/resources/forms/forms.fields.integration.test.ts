@@ -239,7 +239,7 @@ describe('FormsResource fields integration tests', () => {
       element: 'text',
       showHideLogic: {
         enabled: true,
-        comparison: 'IS',
+        comparison: 'is',
         value: 'TRUE',
         element: {
           elementId: sourceField.id,
@@ -313,7 +313,7 @@ describe('FormsResource fields integration tests', () => {
         element: 'text',
         showHideLogic: {
           enabled: true,
-          comparison: 'IS',
+          comparison: 'is',
           value: 'missing-option',
           element: {
             elementType: 'field',
@@ -366,7 +366,7 @@ describe('FormsResource fields integration tests', () => {
       ],
       showHideLogic: {
         enabled: true,
-        comparison: 'IS',
+        comparison: 'is',
         value: 'TRUE',
         element: {
           elementId: sourceField.id,
@@ -471,7 +471,7 @@ describe('FormsResource fields integration tests', () => {
     const result = await client.forms.fields.update(form.id, targetField.id, {
       showHideLogic: {
         enabled: true,
-        comparison: 'IS',
+        comparison: 'is',
         value: 'TRUE',
         element: {
           elementId: sourceField.id,

@@ -114,7 +114,6 @@ describe('EventsResource integration tests', () => {
         // Best-effort cleanup for integration tests.
       }
     }
-
     createdPageIds = [];
   });
 
@@ -1012,6 +1011,746 @@ describe('EventsResource integration tests', () => {
 
     it('fails for a malformed event id', async () => {
       await expect(client.events.delete('not-a-valid-id')).rejects.toThrow(ValidationError);
+    });
+  });
+
+  describe('availabilityBehavior', () => {
+    describe('ticket group via event create', () => {
+      it('always_available returns null dates and null triggerTicketGroupId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Always Available Group',
+              availabilityBehavior: 'always_available',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 1000 }],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Always Available Group');
+        expect(group.availabilityBehavior).toBe('always_available');
+        expect(group.saleStartOn ?? null).toBeNull();
+        expect(group.saleEndOn ?? null).toBeNull();
+        expect(group.triggerTicketGroupId ?? null).toBeNull();
+      });
+
+      it('date_time_based with both saleStartOn and saleEndOn returns ISO strings', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Date Ranged Group',
+              availabilityBehavior: 'date_time_based',
+              saleStartOn: '2026-08-01T09:00:00Z',
+              saleEndOn: '2026-09-30T23:59:59Z',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 1000 }],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Date Ranged Group');
+        expect(group.availabilityBehavior).toBe('date_time_based');
+        expect(group.saleStartOn).toBe('2026-08-01T09:00:00.000Z');
+        expect(group.saleEndOn).toBe('2026-09-30T23:59:59.000Z');
+        expect(group.triggerTicketGroupId ?? null).toBeNull();
+      });
+
+      it('date_time_based with only saleStartOn has null saleEndOn', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Start Only Group',
+              availabilityBehavior: 'date_time_based',
+              saleStartOn: '2026-08-01T09:00:00Z',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 1000 }],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Start Only Group');
+        expect(group.availabilityBehavior).toBe('date_time_based');
+        expect(group.saleStartOn).toBe('2026-08-01T09:00:00.000Z');
+        expect(group.saleEndOn ?? null).toBeNull();
+      });
+
+      it('date_time_based with only saleEndOn has null saleStartOn', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'End Only Group',
+              availabilityBehavior: 'date_time_based',
+              saleEndOn: '2026-09-30T23:59:59Z',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 1000 }],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'End Only Group');
+        expect(group.availabilityBehavior).toBe('date_time_based');
+        expect(group.saleStartOn ?? null).toBeNull();
+        expect(group.saleEndOn).toBe('2026-09-30T23:59:59.000Z');
+      });
+
+      it('until_event_starts returns null dates and null triggerTicketGroupId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Until Event Starts Group',
+              availabilityBehavior: 'until_event_starts',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 1000 }],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Until Event Starts Group');
+        expect(group.availabilityBehavior).toBe('until_event_starts');
+        expect(group.saleStartOn ?? null).toBeNull();
+        expect(group.saleEndOn ?? null).toBeNull();
+        expect(group.triggerTicketGroupId ?? null).toBeNull();
+      });
+
+      it('after_ticket_sale_ends using inline key reference resolves triggerTicketGroupId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              key: 'early-bird',
+              name: 'Early Bird Group',
+              availabilityBehavior: 'date_time_based',
+              saleStartOn: '2026-08-01T09:00:00Z',
+              saleEndOn: '2026-08-31T23:59:59Z',
+              ticketTypes: [{ name: 'Early Bird', pricing: 'paid', price: 2000 }],
+            },
+            {
+              name: 'Standard Group',
+              availabilityBehavior: 'after_ticket_sale_ends',
+              triggerTicketGroupId: 'early-bird',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 1500 }],
+            },
+          ],
+        });
+
+        const triggerGroup = getTicketGroupByName(data, 'Early Bird Group');
+        const dependentGroup = getTicketGroupByName(data, 'Standard Group');
+        expect(dependentGroup.availabilityBehavior).toBe('after_ticket_sale_ends');
+        expect(dependentGroup.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
+      });
+
+      it('after_ticket_sold_out using inline key reference resolves triggerTicketGroupId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              key: 'vip',
+              name: 'VIP Group',
+              availabilityBehavior: 'always_available',
+              capacity: 10,
+              ticketTypes: [{ name: 'VIP', pricing: 'paid', price: 5000 }],
+            },
+            {
+              name: 'Waitlist Group',
+              availabilityBehavior: 'after_ticket_sold_out',
+              triggerTicketGroupId: 'vip',
+              ticketTypes: [{ name: 'Waitlist', pricing: 'free', price: 0 }],
+            },
+          ],
+        });
+
+        const triggerGroup = getTicketGroupByName(data, 'VIP Group');
+        const dependentGroup = getTicketGroupByName(data, 'Waitlist Group');
+        expect(dependentGroup.availabilityBehavior).toBe('after_ticket_sold_out');
+        expect(dependentGroup.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
+      });
+
+      it('after_ticket_ends_or_sold_out using inline key reference resolves triggerTicketGroupId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              key: 'phase-one',
+              name: 'Phase One Group',
+              availabilityBehavior: 'date_time_based',
+              saleStartOn: '2026-08-01T09:00:00Z',
+              saleEndOn: '2026-08-31T23:59:59Z',
+              ticketTypes: [{ name: 'Phase One', pricing: 'paid', price: 3000 }],
+            },
+            {
+              name: 'Phase Two Group',
+              availabilityBehavior: 'after_ticket_ends_or_sold_out',
+              triggerTicketGroupId: 'phase-one',
+              ticketTypes: [{ name: 'Phase Two', pricing: 'paid', price: 3500 }],
+            },
+          ],
+        });
+
+        const triggerGroup = getTicketGroupByName(data, 'Phase One Group');
+        const dependentGroup = getTicketGroupByName(data, 'Phase Two Group');
+        expect(dependentGroup.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
+        expect(dependentGroup.triggerTicketGroupId ?? null).toBe(triggerGroup.id);
+      });
+    });
+
+    describe('ticket type via event create', () => {
+      it('always_available returns null dates and null triggerTicketTypeId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  name: 'Always Available Ticket',
+                  pricing: 'paid',
+                  price: 1000,
+                  availabilityBehavior: 'always_available',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const ticket = getTicketTypeByName(group, 'Always Available Ticket');
+        expect(ticket.availabilityBehavior).toBe('always_available');
+        expect(ticket.saleStartOn ?? null).toBeNull();
+        expect(ticket.saleEndOn ?? null).toBeNull();
+        expect(ticket.triggerTicketTypeId ?? null).toBeNull();
+      });
+
+      it('date_time_based with both saleStartOn and saleEndOn returns ISO strings', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  name: 'Date Ranged Ticket',
+                  pricing: 'paid',
+                  price: 2000,
+                  availabilityBehavior: 'date_time_based',
+                  saleStartOn: '2026-08-01T09:00:00Z',
+                  saleEndOn: '2026-09-15T23:59:59Z',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const ticket = getTicketTypeByName(group, 'Date Ranged Ticket');
+        expect(ticket.availabilityBehavior).toBe('date_time_based');
+        expect(ticket.saleStartOn).toBe('2026-08-01T09:00:00.000Z');
+        expect(ticket.saleEndOn).toBe('2026-09-15T23:59:59.000Z');
+        expect(ticket.triggerTicketTypeId ?? null).toBeNull();
+      });
+
+      it('date_time_based with only saleStartOn has null saleEndOn', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  name: 'Start Only Ticket',
+                  pricing: 'paid',
+                  price: 1500,
+                  availabilityBehavior: 'date_time_based',
+                  saleStartOn: '2026-08-01T09:00:00Z',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const ticket = getTicketTypeByName(group, 'Start Only Ticket');
+        expect(ticket.availabilityBehavior).toBe('date_time_based');
+        expect(ticket.saleStartOn).toBe('2026-08-01T09:00:00.000Z');
+        expect(ticket.saleEndOn ?? null).toBeNull();
+      });
+
+      it('date_time_based with only saleEndOn has null saleStartOn', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  name: 'End Only Ticket',
+                  pricing: 'paid',
+                  price: 1500,
+                  availabilityBehavior: 'date_time_based',
+                  saleEndOn: '2026-09-30T23:59:59Z',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const ticket = getTicketTypeByName(group, 'End Only Ticket');
+        expect(ticket.availabilityBehavior).toBe('date_time_based');
+        expect(ticket.saleStartOn ?? null).toBeNull();
+        expect(ticket.saleEndOn).toBe('2026-09-30T23:59:59.000Z');
+      });
+
+      it('until_event_starts returns null dates and null triggerTicketTypeId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  name: 'Until Event Ticket',
+                  pricing: 'paid',
+                  price: 1000,
+                  availabilityBehavior: 'until_event_starts',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const ticket = getTicketTypeByName(group, 'Until Event Ticket');
+        expect(ticket.availabilityBehavior).toBe('until_event_starts');
+        expect(ticket.saleStartOn ?? null).toBeNull();
+        expect(ticket.saleEndOn ?? null).toBeNull();
+        expect(ticket.triggerTicketTypeId ?? null).toBeNull();
+      });
+
+      it('after_ticket_sale_ends using inline key reference resolves triggerTicketTypeId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  key: 'early-bird-ticket',
+                  name: 'Early Bird',
+                  pricing: 'paid',
+                  price: 2000,
+                  availabilityBehavior: 'date_time_based',
+                  saleStartOn: '2026-08-01T09:00:00Z',
+                  saleEndOn: '2026-08-31T23:59:59Z',
+                },
+                {
+                  name: 'Standard Ticket',
+                  pricing: 'paid',
+                  price: 1500,
+                  availabilityBehavior: 'after_ticket_sale_ends',
+                  triggerTicketTypeId: 'early-bird-ticket',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const triggerTicket = getTicketTypeByName(group, 'Early Bird');
+        const dependentTicket = getTicketTypeByName(group, 'Standard Ticket');
+        expect(dependentTicket.availabilityBehavior).toBe('after_ticket_sale_ends');
+        expect(dependentTicket.triggerTicketTypeId ?? null).toBe(triggerTicket.id);
+      });
+
+      it('after_ticket_sold_out using inline key reference resolves triggerTicketTypeId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  key: 'vip-ticket',
+                  name: 'VIP Ticket',
+                  pricing: 'paid',
+                  price: 5000,
+                  availabilityBehavior: 'always_available',
+                  capacity: 5,
+                },
+                {
+                  name: 'Waitlist Ticket',
+                  pricing: 'free',
+                  price: 0,
+                  availabilityBehavior: 'after_ticket_sold_out',
+                  triggerTicketTypeId: 'vip-ticket',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const triggerTicket = getTicketTypeByName(group, 'VIP Ticket');
+        const dependentTicket = getTicketTypeByName(group, 'Waitlist Ticket');
+        expect(dependentTicket.availabilityBehavior).toBe('after_ticket_sold_out');
+        expect(dependentTicket.triggerTicketTypeId ?? null).toBe(triggerTicket.id);
+      });
+
+      it('after_ticket_ends_or_sold_out using inline key reference resolves triggerTicketTypeId', async () => {
+        const { data } = await createEvent({
+          ticketGroups: [
+            {
+              name: 'Group',
+              ticketTypes: [
+                {
+                  key: 'phase-one-ticket',
+                  name: 'Phase One Ticket',
+                  pricing: 'paid',
+                  price: 3000,
+                  availabilityBehavior: 'date_time_based',
+                  saleStartOn: '2026-08-01T09:00:00Z',
+                  saleEndOn: '2026-08-31T23:59:59Z',
+                },
+                {
+                  name: 'Phase Two Ticket',
+                  pricing: 'paid',
+                  price: 3500,
+                  availabilityBehavior: 'after_ticket_ends_or_sold_out',
+                  triggerTicketTypeId: 'phase-one-ticket',
+                },
+              ],
+            },
+          ],
+        });
+
+        const group = getTicketGroupByName(data, 'Group');
+        const triggerTicket = getTicketTypeByName(group, 'Phase One Ticket');
+        const dependentTicket = getTicketTypeByName(group, 'Phase Two Ticket');
+        expect(dependentTicket.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
+        expect(dependentTicket.triggerTicketTypeId ?? null).toBe(triggerTicket.id);
+      });
+    });
+
+    describe('trigger-based behaviors via sub-resources with real IDs', () => {
+      it('sets after_ticket_sale_ends on a ticket group and persists through event get', async () => {
+        const event = await createEvent();
+        const triggerGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `Trigger Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'date_time_based',
+          saleStartOn: '2026-08-01T09:00:00Z',
+          saleEndOn: '2026-08-31T23:59:59Z',
+        });
+        const dependentGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `After Sale Ends Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'after_ticket_sale_ends',
+          triggerTicketGroupId: triggerGroup.data.id,
+        });
+
+        expect(dependentGroup.data.availabilityBehavior).toBe('after_ticket_sale_ends');
+        expect(dependentGroup.data.triggerTicketGroupId ?? null).toBe(triggerGroup.data.id);
+
+        const result = await client.events.get(event.data.id);
+        const saved = result.data.ticketGroups?.find((g) => g.id === dependentGroup.data.id);
+        expect(saved?.availabilityBehavior).toBe('after_ticket_sale_ends');
+        expect(saved?.triggerTicketGroupId ?? null).toBe(triggerGroup.data.id);
+      });
+
+      it('sets after_ticket_sold_out on a ticket group with a trigger group', async () => {
+        const event = await createEvent();
+        const triggerGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `Trigger Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'always_available',
+          capacity: 10,
+        });
+        const dependentGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `After Sold Out Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'after_ticket_sold_out',
+          triggerTicketGroupId: triggerGroup.data.id,
+        });
+
+        expect(dependentGroup.data.availabilityBehavior).toBe('after_ticket_sold_out');
+        expect(dependentGroup.data.triggerTicketGroupId ?? null).toBe(triggerGroup.data.id);
+      });
+
+      it('sets after_ticket_ends_or_sold_out on a ticket group with a trigger group', async () => {
+        const event = await createEvent();
+        const triggerGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `Trigger Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'date_time_based',
+          saleStartOn: '2026-08-01T09:00:00Z',
+          saleEndOn: '2026-08-31T23:59:59Z',
+        });
+        const dependentGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `After Ends Or Sold Out Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'after_ticket_ends_or_sold_out',
+          triggerTicketGroupId: triggerGroup.data.id,
+        });
+
+        expect(dependentGroup.data.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
+        expect(dependentGroup.data.triggerTicketGroupId ?? null).toBe(triggerGroup.data.id);
+      });
+
+      it('sets after_ticket_sale_ends on a ticket type and persists through event get', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Group ${uniqueSuffix()}`,
+        });
+        const triggerTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Trigger Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 2000,
+            availabilityBehavior: 'date_time_based',
+            saleStartOn: '2026-08-01T09:00:00Z',
+            saleEndOn: '2026-08-31T23:59:59Z',
+          }
+        );
+        const dependentTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `After Sale Ends Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+            availabilityBehavior: 'after_ticket_sale_ends',
+            triggerTicketTypeId: triggerTicket.data.id,
+          }
+        );
+
+        expect(dependentTicket.data.availabilityBehavior).toBe('after_ticket_sale_ends');
+        expect(dependentTicket.data.triggerTicketTypeId ?? null).toBe(triggerTicket.data.id);
+
+        const result = await client.events.get(event.data.id);
+        const savedGroup = result.data.ticketGroups?.find((g) => g.id === group.data.id);
+        const savedTicket = savedGroup?.ticketTypes?.find((t) => t.id === dependentTicket.data.id);
+        expect(savedTicket?.availabilityBehavior).toBe('after_ticket_sale_ends');
+        expect(savedTicket?.triggerTicketTypeId ?? null).toBe(triggerTicket.data.id);
+      });
+
+      it('sets after_ticket_sold_out on a ticket type with a trigger ticket type', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Group ${uniqueSuffix()}`,
+        });
+        const triggerTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Trigger Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 2000,
+            capacity: 5,
+            availabilityBehavior: 'always_available',
+          }
+        );
+        const dependentTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `After Sold Out Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+            availabilityBehavior: 'after_ticket_sold_out',
+            triggerTicketTypeId: triggerTicket.data.id,
+          }
+        );
+
+        expect(dependentTicket.data.availabilityBehavior).toBe('after_ticket_sold_out');
+        expect(dependentTicket.data.triggerTicketTypeId ?? null).toBe(triggerTicket.data.id);
+      });
+
+      it('sets after_ticket_ends_or_sold_out on a ticket type with a trigger ticket type', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Group ${uniqueSuffix()}`,
+        });
+        const triggerTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Trigger Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 2000,
+            availabilityBehavior: 'date_time_based',
+            saleStartOn: '2026-08-01T09:00:00Z',
+            saleEndOn: '2026-08-31T23:59:59Z',
+          }
+        );
+        const dependentTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `After Ends Or Sold Out Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+            availabilityBehavior: 'after_ticket_ends_or_sold_out',
+            triggerTicketTypeId: triggerTicket.data.id,
+          }
+        );
+
+        expect(dependentTicket.data.availabilityBehavior).toBe('after_ticket_ends_or_sold_out');
+        expect(dependentTicket.data.triggerTicketTypeId ?? null).toBe(triggerTicket.data.id);
+      });
+    });
+
+    describe('switching availability behaviors', () => {
+      it('switches ticket group from date_time_based to always_available and clears dates', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Switch Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'date_time_based',
+          saleStartOn: '2026-08-01T09:00:00Z',
+          saleEndOn: '2026-08-31T23:59:59Z',
+        });
+
+        expect(group.data.availabilityBehavior).toBe('date_time_based');
+
+        const updated = await client.events.ticketGroups.update(event.data.id, group.data.id, {
+          availabilityBehavior: 'always_available',
+          saleStartOn: null,
+          saleEndOn: null,
+        });
+
+        expect(updated.data.availabilityBehavior).toBe('always_available');
+        expect(updated.data.saleStartOn).toBeNull();
+        expect(updated.data.saleEndOn).toBeNull();
+      });
+
+      it('switches ticket group from always_available to date_time_based with dates', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Switch Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'always_available',
+        });
+
+        const updated = await client.events.ticketGroups.update(event.data.id, group.data.id, {
+          availabilityBehavior: 'date_time_based',
+          saleStartOn: '2026-08-15T09:00:00Z',
+          saleEndOn: '2026-09-15T23:59:59Z',
+        });
+
+        expect(updated.data.availabilityBehavior).toBe('date_time_based');
+        expect(updated.data.saleStartOn).toBe('2026-08-15T09:00:00.000Z');
+        expect(updated.data.saleEndOn).toBe('2026-09-15T23:59:59.000Z');
+      });
+
+      it('switches ticket group from date_time_based to until_event_starts and clears dates', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Switch Group ${uniqueSuffix()}`,
+          availabilityBehavior: 'date_time_based',
+          saleStartOn: '2026-08-01T09:00:00Z',
+          saleEndOn: '2026-08-31T23:59:59Z',
+        });
+
+        const updated = await client.events.ticketGroups.update(event.data.id, group.data.id, {
+          availabilityBehavior: 'until_event_starts',
+          saleStartOn: null,
+          saleEndOn: null,
+        });
+
+        expect(updated.data.availabilityBehavior).toBe('until_event_starts');
+        expect(updated.data.saleStartOn).toBeNull();
+        expect(updated.data.saleEndOn).toBeNull();
+      });
+
+      it('switches ticket type from date_time_based to always_available and clears dates', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Group ${uniqueSuffix()}`,
+        });
+        const ticketType = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Switch Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+            availabilityBehavior: 'date_time_based',
+            saleStartOn: '2026-08-01T09:00:00Z',
+            saleEndOn: '2026-08-31T23:59:59Z',
+          }
+        );
+
+        expect(ticketType.data.availabilityBehavior).toBe('date_time_based');
+
+        const updated = await client.events.ticketGroups.ticketTypes.update(
+          event.data.id,
+          group.data.id,
+          ticketType.data.id,
+          {
+            availabilityBehavior: 'always_available',
+            saleStartOn: null,
+            saleEndOn: null,
+          }
+        );
+
+        expect(updated.data.availabilityBehavior).toBe('always_available');
+        expect(updated.data.saleStartOn).toBeNull();
+        expect(updated.data.saleEndOn).toBeNull();
+      });
+
+      it('switches ticket type from always_available to until_event_starts', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Group ${uniqueSuffix()}`,
+        });
+        const ticketType = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Switch Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+            availabilityBehavior: 'always_available',
+          }
+        );
+
+        const updated = await client.events.ticketGroups.ticketTypes.update(
+          event.data.id,
+          group.data.id,
+          ticketType.data.id,
+          { availabilityBehavior: 'until_event_starts' }
+        );
+
+        expect(updated.data.availabilityBehavior).toBe('until_event_starts');
+        expect(updated.data.saleStartOn ?? null).toBeNull();
+        expect(updated.data.saleEndOn ?? null).toBeNull();
+      });
+
+      it('switches ticket type from trigger-based to date_time_based', async () => {
+        const event = await createEvent();
+        const group = await client.events.ticketGroups.create(event.data.id, {
+          name: `Group ${uniqueSuffix()}`,
+        });
+        const triggerTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Trigger ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 2000,
+            availabilityBehavior: 'date_time_based',
+            saleStartOn: '2026-08-01T09:00:00Z',
+            saleEndOn: '2026-08-31T23:59:59Z',
+          }
+        );
+        const dependentTicket = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          group.data.id,
+          {
+            name: `Dependent ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+            availabilityBehavior: 'after_ticket_sale_ends',
+            triggerTicketTypeId: triggerTicket.data.id,
+          }
+        );
+
+        expect(dependentTicket.data.availabilityBehavior).toBe('after_ticket_sale_ends');
+
+        const updated = await client.events.ticketGroups.ticketTypes.update(
+          event.data.id,
+          group.data.id,
+          dependentTicket.data.id,
+          {
+            availabilityBehavior: 'date_time_based',
+            saleStartOn: '2026-09-01T09:00:00Z',
+            saleEndOn: '2026-09-30T23:59:59Z',
+          }
+        );
+
+        expect(updated.data.availabilityBehavior).toBe('date_time_based');
+        expect(updated.data.saleStartOn).toBe('2026-09-01T09:00:00.000Z');
+        expect(updated.data.saleEndOn).toBe('2026-09-30T23:59:59.000Z');
+      });
     });
   });
 });
