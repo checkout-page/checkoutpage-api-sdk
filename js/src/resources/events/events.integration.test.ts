@@ -673,6 +673,20 @@ describe('EventsResource integration tests', () => {
         })
       ).rejects.toThrow(ValidationError);
     });
+
+    it('ignores unknown field', async () => {
+      const created = await client.events.create({
+        name: 'Invalid type field set',
+        // @ts-ignore
+        type: 'removed',
+        // @ts-ignore
+        more_unknown_fields: 'value',
+      });
+
+      expect(created.data.type).toBe('event');
+      // @ts-ignore
+      expect(created.data.more_unknown_fields).toBeUndefined();
+    });
   });
 
   describe('get', () => {
@@ -981,6 +995,23 @@ describe('EventsResource integration tests', () => {
       await expect(
         client.events.update(fakeObjectId('missingevent'), { name: 'Missing event' })
       ).rejects.toThrow(NotFoundError);
+    });
+
+    it('ignores an unknown type field', async () => {
+      const created = await createEvent();
+
+      const updated = await client.events.update(created.data.id, {
+        name: 'updated',
+        // @ts-ignore
+        type: 'unknown field',
+        // @ts-ignore
+        more_unknown_fields: 'value',
+      });
+
+      // @ts-ignore
+      expect(created.data.more_unknown_fields).toBeUndefined();
+      expect(updated.data.name).toBe('updated');
+      expect(updated.data.type).toBe('event');
     });
 
     it('fails for a malformed event id', async () => {

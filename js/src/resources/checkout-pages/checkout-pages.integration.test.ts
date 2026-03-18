@@ -236,10 +236,10 @@ describe('CheckoutPagesResource integration tests', () => {
         },
       });
 
-      expect(data.product?.price).toBe(6500);
-      expect(data.product?.currency).toBe('usd');
-      expect(data.product?.interval).toBeFalsy();
-      expect(data.product?.planIterations).toBeFalsy();
+      expect(data.product?.price.amount).toBe(6500);
+      expect(data.product?.price.currency).toBe('usd');
+      expect(data.product?.price.recurring?.interval).toBeFalsy();
+      expect(data.product?.price.paymentPlan?.planIterations).toBeFalsy();
     });
 
     it('creates a pay what you want checkout page', async () => {
@@ -254,9 +254,9 @@ describe('CheckoutPagesResource integration tests', () => {
         },
       });
 
-      expect(data.product?.payWhatYouWant).toBe(true);
-      expect(data.product?.interval).toBeFalsy();
-      expect(data.product?.planIterations).toBeFalsy();
+      expect(data.product?.price.payWhatYouWant).toBe(true);
+      expect(data.product?.price.recurring?.interval).toBeFalsy();
+      expect(data.product?.price.paymentPlan?.planIterations).toBeFalsy();
     });
 
     it('fails to create a recurring subscription with trialPeriodDays and startDate set at the same time.', async () => {
@@ -298,9 +298,9 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(data.product?.type).toBe('subscription');
-      expect(data.product?.interval).toBe('month');
-      expect(data.product?.intervalCount).toBe(1);
-      expect(data.product?.planIterations).toBe(3);
+      expect(data.product?.price.paymentPlan?.interval).toBe('month');
+      expect(data.product?.price.paymentPlan?.intervalCount).toBe(1);
+      expect(data.product?.price.paymentPlan?.planIterations).toBe(3);
     });
 
     it('creates a checkout page with uploaded imageIds', async () => {
@@ -622,6 +622,56 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.limitSubscriptions?.enabled).toBe(true);
       expect(data.enableFileAccessForInactiveSubscriptions).toBe(true);
       expect(data.allowDynamicPlanIterations).toBe(true);
+    });
+
+    it('creates a checkout page with productData.description and returns it in the response', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Description Test ${uniqueSuffix()}`,
+          description: '<p>My product description</p>',
+          price: {
+            amount: 4900,
+            currency: 'usd',
+          },
+        },
+      });
+
+      expect(data.product?.description).toBeDefined();
+      expect(data.product?.description).not.toBeNull();
+    });
+
+    it('creates a checkout page with productData.price.setupFee and returns it in the response', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Setup Fee Test ${uniqueSuffix()}`,
+          price: {
+            amount: 4900,
+            currency: 'usd',
+            setupFee: 999,
+          },
+        },
+      });
+
+      expect(data.product?.price.setupFee).toBe(999);
+    });
+
+    it('creates a checkout page with productData.price.setupFeeMultipliesWithQuantity and returns it in the response', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Setup Fee Qty Test ${uniqueSuffix()}`,
+          price: {
+            amount: 4900,
+            currency: 'usd',
+            setupFee: 500,
+            setupFeeMultipliesWithQuantity: true,
+          },
+          description: '<p>My Description</p>',
+        },
+      });
+
+      expect(data.product?.price.setupFee).toBe(500);
+      expect(data.product?.price.setupFeeMultipliesWithQuantity).toBe(true);
+      expect(data.product?.description).toEqual('<p>My Description</p>');
     });
 
     it('creates a checkout page with stripe-based subscription limiting', async () => {
@@ -1109,7 +1159,7 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         });
 
-        expect(data.product?.price).toBe(0);
+        expect(data.product?.price.amount).toBe(0);
         expect(data.product?.variantsRequired).toBe(true);
         expect(data.product?.variants).toHaveLength(1);
         const variant = data.product?.variants?.[0];
@@ -1314,7 +1364,7 @@ describe('CheckoutPagesResource integration tests', () => {
         },
       });
 
-      expect(data.product?.discountedFromPrice).toBe(8000);
+      expect(data.product?.price.discountedFromPrice).toBe(8000);
     });
 
     it('creates a checkout page with cash on delivery manual payment option', async () => {
@@ -1370,13 +1420,15 @@ describe('CheckoutPagesResource integration tests', () => {
               planIterations: 3,
               trialPeriodDays: 7,
             },
+            discountedFromPrice: 10000,
           },
         },
       });
 
       expect(data.product?.type).toBe('subscription');
-      expect(data.product?.planIterations).toBe(3);
-      expect(data.product?.trialPeriodDays).toBe(7);
+      expect(data.product?.price.paymentPlan?.planIterations).toBe(3);
+      expect(data.product?.price.paymentPlan?.trialPeriodDays).toBe(7);
+      expect(data.product?.price.discountedFromPrice).toBe(10000);
     });
 
     it('creates a subscription checkout page with a future startDate', async () => {
@@ -1398,8 +1450,8 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(data.product?.type).toBe('subscription');
-      expect(data.product?.interval).toBe('month');
-      expect(data.product?.startDate).toBeTypeOf('string');
+      expect(data.product?.price.recurring?.interval).toBe('month');
+      expect(data.product?.price.recurring?.startDate).toBeTypeOf('string');
     });
 
     it('creates a subscription checkout page with billingCycleAnchorConfig', async () => {
@@ -1424,10 +1476,10 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(data.product?.type).toBe('subscription');
-      expect(data.product?.interval).toBe('month');
-      expect(data.product?.startDate).toEqual(startDate);
-      expect(data.product?.billingCycleAnchorConfig?.enabled).toBe(true);
-      expect(data.product?.billingCycleAnchorConfig?.dayOfMonth).toBe(1);
+      expect(data.product?.price.recurring?.interval).toBe('month');
+      expect(data.product?.price.recurring?.startDate).toEqual(startDate);
+      expect(data.product?.price.recurring?.billingCycleAnchorConfig?.enabled).toBe(true);
+      expect(data.product?.price.recurring?.billingCycleAnchorConfig?.dayOfMonth).toBe(1);
     });
 
     it('creates a checkout page with custom email confirmation', async () => {
@@ -1451,6 +1503,150 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(data.product?.type).toBe('charge');
+    });
+
+    describe('discounts', () => {
+      it('creates a checkout page with a percent-off bulk discount based on checkout quantity', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Percent Discount ${uniqueSuffix()}`,
+            price: { amount: 1000, currency: 'usd' },
+            discounts: [
+              {
+                quantityCondition: 'checkout_quantity',
+                minQuantity: 5,
+                maxQuantity: 10,
+                percentOff: 10,
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.discounts).toHaveLength(1);
+        const discount = data.product?.discounts?.[0];
+        expect(discount?.quantityCondition).toBe('checkout_quantity');
+        expect(discount?.minQuantity).toBe(5);
+        expect(discount?.maxQuantity).toBe(10);
+        expect(discount?.percentOff).toBe(10);
+        expect(discount?.amountOff).toBeFalsy();
+      });
+
+      it('creates a checkout page with an amount-off bulk discount based on checkout quantity', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Amount Discount ${uniqueSuffix()}`,
+            price: { amount: 2000, currency: 'usd' },
+            discounts: [
+              {
+                quantityCondition: 'checkout_quantity',
+                minQuantity: 3,
+                amountOff: 500,
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.discounts).toHaveLength(1);
+        const discount = data.product?.discounts?.[0];
+        expect(discount?.quantityCondition).toBe('checkout_quantity');
+        expect(discount?.minQuantity).toBe(3);
+        expect(discount?.maxQuantity).toBeFalsy();
+        expect(discount?.amountOff).toBe(500);
+        expect(discount?.percentOff).toBeFalsy();
+      });
+
+      it('creates a checkout page with multiple discount tiers', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Tiered Discounts ${uniqueSuffix()}`,
+            price: { amount: 1000, currency: 'usd' },
+            discounts: [
+              {
+                quantityCondition: 'checkout_quantity',
+                minQuantity: 5,
+                maxQuantity: 9,
+                percentOff: 10,
+              },
+              {
+                quantityCondition: 'checkout_quantity',
+                minQuantity: 10,
+                percentOff: 20,
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.discounts).toHaveLength(2);
+        const tier1 = data.product?.discounts?.find((d) => d.minQuantity === 5);
+        const tier2 = data.product?.discounts?.find((d) => d.minQuantity === 10);
+        expect(tier1?.maxQuantity).toBe(9);
+        expect(tier1?.percentOff).toBe(10);
+        expect(tier2?.percentOff).toBe(20);
+        expect(tier2?.maxQuantity).toBeFalsy();
+      });
+
+      it('creates a checkout page with a discount applying to specific variant option quantities', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            title: `Variant Discount ${uniqueSuffix()}`,
+            price: { amount: 1000, currency: 'usd' },
+            variants: [
+              {
+                name: 'Size',
+                selectionType: 'quantity',
+                options: [{ name: 'Small', key: 'small' }, { name: 'Large' }],
+              },
+            ],
+            discounts: [
+              {
+                quantityCondition: 'variant_option_quantity',
+                variantOptionIds: [
+                  {
+                    key: 'small',
+                  },
+                ],
+                minQuantity: 3,
+                percentOff: 15,
+              },
+            ],
+          },
+        });
+
+        expect(data.product?.discounts).toHaveLength(1);
+        const discount = data.product?.discounts?.[0];
+        expect(discount?.quantityCondition).toBe('variant_option_quantity');
+        expect(discount?.minQuantity).toBe(3);
+        expect(discount?.percentOff).toBe(15);
+        expect(discount?.variantOptionIds).toHaveLength(1);
+        expect(discount?.variantOptionIds?.[0]).toMatch(/^[0-9a-f]{24}$/);
+        expect(discount?.variantOptionIds?.[0]).toEqual(data?.product?.variants![0].id);
+      });
+
+      it('throws a validation error when a discount variantOptionIds key does not match any variant option', async () => {
+        await expect(
+          createCheckoutPage({
+            productData: {
+              title: `Variant Discount ${uniqueSuffix()}`,
+              price: { amount: 1000, currency: 'usd' },
+              variants: [
+                {
+                  name: 'Size',
+                  selectionType: 'quantity',
+                  options: [{ name: 'Small', key: 'small' }, { name: 'Large' }],
+                },
+              ],
+              discounts: [
+                {
+                  quantityCondition: 'variant_option_quantity',
+                  variantOptionIds: [{ key: 'nonexistent-key' }],
+                  minQuantity: 3,
+                  percentOff: 15,
+                },
+              ],
+            },
+          })
+        ).rejects.toThrow(ValidationError);
+      });
     });
   });
 
@@ -1493,8 +1689,9 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.product?.title).toContain('Configured Product');
       expect(result.data.product?.sku).toContain('sku-');
       expect(result.data.product?.stock).toBe(12);
-      expect(result.data.product?.price).toBe(7500);
-      expect(result.data.product?.currency).toBe('usd');
+      expect(result.data.product?.price.amount).toBe(7500);
+      expect(result.data.product?.price.currency).toBe('usd');
+      expect(result.data.product?.description).toEqual('<p>Configured product description</p>');
       expect(productIncludesImage(result.data, productImageId)).toBe(true);
       expect(productIncludesFile(result.data, productFileId)).toBe(true);
     }, 15000);

@@ -1438,6 +1438,138 @@
           }
         }
       },
+      "ProductPrice": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Price in smallest currency unit (cents).",
+            "example": 4900
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (lowercase).",
+            "example": "usd"
+          },
+          "payWhatYouWant": {
+            "type": ["boolean", "null"],
+            "description": "Whether pay-what-you-want pricing is enabled."
+          },
+          "pricingType": {
+            "type": ["string", "null"],
+            "enum": ["single", "multiple"],
+            "description": "Pricing structure type.",
+            "example": "single"
+          },
+          "discountedFromPrice": {
+            "type": ["number", "null"],
+            "description": "Original price before discount."
+          },
+          "setupFee": { "type": ["number", "null"], "description": "One-time setup fee in cents." },
+          "setupFeeMultipliesWithQuantity": {
+            "type": ["boolean", "null"],
+            "description": "Whether the setup fee is multiplied by the selected quantity."
+          },
+          "recurring": {
+            "type": ["object", "null"],
+            "properties": {
+              "interval": {
+                "type": ["string", "null"],
+                "description": "Billing interval (day, week, month, year).",
+                "example": "month"
+              },
+              "intervalCount": {
+                "type": ["number", "null"],
+                "description": "Number of intervals between billings.",
+                "example": 1
+              },
+              "trialPeriodDays": {
+                "type": ["number", "null"],
+                "description": "Trial period in days."
+              },
+              "billingCycleAnchorConfig": {
+                "type": ["object", "null"],
+                "properties": {
+                  "enabled": {
+                    "type": ["boolean", "null"],
+                    "description": "Whether billing cycle anchoring is enabled.",
+                    "example": true
+                  },
+                  "dayOfMonth": {
+                    "type": ["number", "null"],
+                    "description": "Day of month to anchor the billing cycle to.",
+                    "example": 1
+                  },
+                  "month": {
+                    "type": ["number", "null"],
+                    "description": "Month to anchor the billing cycle to (for yearly subscriptions).",
+                    "example": 1
+                  }
+                },
+                "description": "Configuration for anchoring the billing cycle to a specific day."
+              },
+              "startDate": {
+                "type": ["string", "null"],
+                "description": "The date on which the subscription begins.",
+                "example": "2026-02-25T06:40:09.463Z"
+              }
+            },
+            "description": "Recurring billing configuration. Present for subscription products."
+          },
+          "paymentPlan": {
+            "type": ["object", "null"],
+            "properties": {
+              "interval": {
+                "type": ["string", "null"],
+                "description": "Billing interval (day, week, month, year).",
+                "example": "month"
+              },
+              "intervalCount": {
+                "type": ["number", "null"],
+                "description": "Number of intervals between billings.",
+                "example": 1
+              },
+              "trialPeriodDays": {
+                "type": ["number", "null"],
+                "description": "Trial period in days."
+              },
+              "billingCycleAnchorConfig": {
+                "type": ["object", "null"],
+                "properties": {
+                  "enabled": {
+                    "type": ["boolean", "null"],
+                    "description": "Whether billing cycle anchoring is enabled.",
+                    "example": true
+                  },
+                  "dayOfMonth": {
+                    "type": ["number", "null"],
+                    "description": "Day of month to anchor the billing cycle to.",
+                    "example": 1
+                  },
+                  "month": {
+                    "type": ["number", "null"],
+                    "description": "Month to anchor the billing cycle to (for yearly subscriptions).",
+                    "example": 1
+                  }
+                },
+                "description": "Configuration for anchoring the billing cycle to a specific day."
+              },
+              "planIterations": {
+                "type": ["number", "null"],
+                "description": "Number of billing cycles after which the plan completes."
+              },
+              "startDate": {
+                "type": ["string", "null"],
+                "description": "The date on which the payment plan begins.",
+                "example": "2026-02-25T06:40:09.463Z"
+              }
+            },
+            "description": "Payment plan configuration. Present for installment products."
+          }
+        },
+        "required": ["amount", "currency"],
+        "description": "Pricing configuration for this product."
+      },
       "Product": {
         "type": ["object", "null"],
         "properties": {
@@ -1452,12 +1584,6 @@
             "description": "Type of product (one-time charge or subscription).",
             "example": "charge"
           },
-          "pricingType": {
-            "type": ["string", "null"],
-            "enum": ["single", "multiple"],
-            "description": "Pricing structure type.",
-            "example": "single"
-          },
           "title": {
             "type": "string",
             "description": "Product title.",
@@ -1468,70 +1594,7 @@
             "description": "Product description as rendered HTML."
           },
           "sku": { "type": ["string", "null"], "description": "Stock keeping unit." },
-          "currency": {
-            "type": "string",
-            "description": "Currency code (lowercase).",
-            "example": "usd"
-          },
-          "price": {
-            "type": "number",
-            "description": "Price in smallest currency unit (cents).",
-            "example": 4900
-          },
-          "discountedFromPrice": {
-            "type": ["number", "null"],
-            "description": "Original price before discount."
-          },
-          "interval": {
-            "type": ["string", "null"],
-            "description": "Billing interval for subscriptions (day, week, month, year).",
-            "example": "month"
-          },
-          "intervalCount": {
-            "type": ["number", "null"],
-            "description": "Number of intervals between billings.",
-            "example": 1
-          },
-          "trialPeriodDays": { "type": ["number", "null"], "description": "Trial period in days." },
-          "planIterations": {
-            "type": ["number", "null"],
-            "description": "Number of billing cycles (for installment plans)."
-          },
-          "billingCycleAnchorConfig": {
-            "type": ["object", "null"],
-            "properties": {
-              "enabled": {
-                "type": ["boolean", "null"],
-                "description": "Whether billing cycle anchoring is enabled.",
-                "example": true
-              },
-              "dayOfMonth": {
-                "type": ["number", "null"],
-                "description": "Day of month to anchor the billing cycle to.",
-                "example": 1
-              },
-              "month": {
-                "type": ["number", "null"],
-                "description": "Month to anchor the billing cycle to (for yearly subscriptions).",
-                "example": 1
-              }
-            },
-            "description": "Configuration for anchoring the billing cycle to a specific day."
-          },
-          "startDate": {
-            "type": ["string", "null"],
-            "description": "The date on which the subscription begins.",
-            "example": "2026-02-25T06:40:09.463Z"
-          },
-          "setupFee": { "type": ["number", "null"], "description": "One-time setup fee in cents." },
-          "setupFeeMultipliesWithQuantity": {
-            "type": ["boolean", "null"],
-            "description": "Whether the setup fee is multiplied by the selected quantity."
-          },
-          "payWhatYouWant": {
-            "type": ["boolean", "null"],
-            "description": "Whether pay-what-you-want pricing is enabled."
-          },
+          "price": { "$ref": "#/components/schemas/ProductPrice" },
           "taxBehavior": {
             "type": ["string", "null"],
             "enum": ["inclusive", "exclusive", "automatic", ""],
@@ -1957,7 +2020,7 @@
             "example": "2024-01-15T10:30:00.000Z"
           }
         },
-        "required": ["id", "type", "title", "currency", "price", "createdAt", "updatedAt"]
+        "required": ["id", "type", "title", "price", "createdAt", "updatedAt"]
       },
       "SharedPage": {
         "type": "object",
@@ -3587,10 +3650,14 @@
                   "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkout_quantity`.",
                   "example": "checkout_quantity"
                 },
-                "variantOptions": {
+                "variantOptionIds": {
                   "type": ["array", "null"],
-                  "items": { "type": "number" },
-                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variant_option_quantity`."
+                  "items": {
+                    "type": "object",
+                    "properties": { "key": { "type": "string" } },
+                    "required": ["key"]
+                  },
+                  "description": "Array of variant option key references. Each entry references a variant option by its `key`. The system resolves the key to the containing variant. Only used when quantityCondition is `variant_option_quantity`."
                 },
                 "minQuantity": {
                   "type": ["number", "null"],
@@ -3624,7 +3691,7 @@
             "example": [
               {
                 "quantityCondition": "checkout_quantity",
-                "variantOptions": [1, 2, 3],
+                "variantOptionIds": [{ "key": "option-key" }],
                 "minQuantity": 0,
                 "maxQuantity": 10,
                 "percentOff": 10
@@ -3657,7 +3724,6 @@
             "example": false
           }
         },
-        "required": ["price"],
         "description": "Product configuration for checkout pages.\n\nUse this object to define pricing mode, subscription/payment plan behavior, inventory, variants, and conditional variant visibility.\n\nCommon setup patterns:\n- Standard one-time checkout: set `price.amount`, `price.currency`, and keep `price.pricingType` as `single`.\n- Variant-driven pricing: set `price.pricingType` to `multiple`, then define `variants` and per-option `additionalChargeAmount`.\n- Subscriptions (recurring): configure `price.recurring`.\n- Payment plans (fixed installments): configure `price.paymentPlan` with `planIterations`.\n\nImportant rules:\n- You cannot set both `price.recurring` and `price.paymentPlan`.\n- `price.payWhatYouWant` cannot be used with subscriptions or payment plans.\n- `trialPeriodDays` and `startDate` are mutually exclusive within `recurring` and `paymentPlan`.\n- For conditional variant logic (`showHideLogic`) or `preselect`, set a `key` on variants/options to enable cross-references. Keys are not persisted.",
         "examples": [
           {
@@ -4532,8 +4598,7 @@
             "description": "Enable automatic tax calculation via Stripe Tax. This requires your store to have [Stripe Tax](https://checkoutpage.com/dashboard/settings/stripe-tax) enabled.",
             "example": { "enabled": true }
           }
-        },
-        "additionalProperties": false
+        }
       },
       "FieldsListResponse": {
         "type": "object",
@@ -4987,7 +5052,7 @@
           },
           "pricing": {
             "type": ["string", "null"],
-            "enum": ["paid", "pwyw", "free"],
+            "enum": ["paid", "free"],
             "description": "Pricing type."
           },
           "price": {
@@ -6869,8 +6934,7 @@
             },
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account."
           }
-        },
-        "additionalProperties": false
+        }
       },
       "TicketGroupDetail": {
         "type": "object",
@@ -7918,7 +7982,7 @@
                   "example": "enabled"
                 },
                 "options": {
-                  "type": ["array", "null"],
+                  "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
@@ -8010,7 +8074,8 @@
                       }
                     },
                     "required": ["name"]
-                  }
+                  },
+                  "minItems": 1
                 },
                 "order": {
                   "type": ["number", "null"],
@@ -8176,7 +8241,7 @@
                   ]
                 }
               },
-              "required": ["name"]
+              "required": ["name", "options"]
             }
           },
           "discounts": {
@@ -8190,10 +8255,14 @@
                   "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkout_quantity`.",
                   "example": "checkout_quantity"
                 },
-                "variantOptions": {
+                "variantOptionIds": {
                   "type": ["array", "null"],
-                  "items": { "type": "number" },
-                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variant_option_quantity`."
+                  "items": {
+                    "type": "object",
+                    "properties": { "key": { "type": "string" } },
+                    "required": ["key"]
+                  },
+                  "description": "Array of variant option key references. Each entry references a variant option by its `key`. The system resolves the key to the containing variant. Only used when quantityCondition is `variant_option_quantity`."
                 },
                 "minQuantity": {
                   "type": ["number", "null"],
@@ -8227,7 +8296,7 @@
             "example": [
               {
                 "quantityCondition": "checkout_quantity",
-                "variantOptions": [1, 2, 3],
+                "variantOptionIds": [{ "key": "option-key" }],
                 "minQuantity": 0,
                 "maxQuantity": 10,
                 "percentOff": 10
@@ -8983,7 +9052,29 @@
             "name": "pageId",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "status", "in": "query" }
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "draft_expired",
+                "incomplete",
+                "incomplete_expired",
+                "trialing",
+                "paused",
+                "scheduled",
+                "active",
+                "past_due",
+                "canceled",
+                "unpaid",
+                "failed",
+                "completed"
+              ]
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          }
         ],
         "responses": {
           "200": {
@@ -10962,8 +11053,7 @@
                     "description": "Array of file IDs for downloadable files. All file IDs must exist and belong to your account.",
                     "example": ["507f1f77bcf86cd799439011", "507f1f77bcf86cd799439012"]
                   }
-                },
-                "additionalProperties": false
+                }
               }
             }
           }

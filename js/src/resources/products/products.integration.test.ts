@@ -15,17 +15,16 @@ describe('ProductResource Integration Tests', () => {
       baseUrl: config.baseUrl,
     });
 
-    // Create a test page with a product to use for testing
-    const { data: page } = await client.pages.create({
+    const { data: page } = await client.checkoutPages.create({
       name: `Product Test Page ${Date.now()}`,
-      type: 'checkout',
-      productDetails: {
-        price: 4900,
-        currency: 'usd',
+      productData: {
+        price: {
+          amount: 4900,
+          currency: 'usd',
+        },
       },
     });
 
-    // The page creation returns a product ID
     if (page.product?.id) {
       testProductId = page.product.id;
     }
@@ -42,8 +41,9 @@ describe('ProductResource Integration Tests', () => {
 
       expect(product).toHaveProperty('id');
       expect(product).toHaveProperty('price');
-      expect(product).toHaveProperty('currency');
       expect(product.id).toBe(testProductId);
+      expect(product.price.amount).toBeDefined();
+      expect(product.price.currency).toBeDefined();
     });
   });
 
@@ -57,13 +57,13 @@ describe('ProductResource Integration Tests', () => {
       const { data: updated } = await client.products.update(testProductId, {
         title: 'Updated Product Title',
         description: 'Updated product description',
-        price: 5900,
+        price: { amount: 5900 },
       });
 
       expect(updated.id).toBe(testProductId);
       expect(updated.title).toBe('Updated Product Title');
       expect(updated.description).toBeDefined();
-      expect(updated.price).toBe(5900);
+      expect(updated.price.amount).toBe(5900);
     });
 
     it('should update product currency', async () => {
@@ -73,11 +73,11 @@ describe('ProductResource Integration Tests', () => {
       }
 
       const { data: updated } = await client.products.update(testProductId, {
-        currency: 'eur',
+        price: { currency: 'eur' },
       });
 
       expect(updated.id).toBe(testProductId);
-      expect(updated.currency).toBe('eur');
+      expect(updated.price.currency).toBe('eur');
     });
 
     it('should update product stock settings', async () => {
@@ -124,20 +124,24 @@ describe('ProductResource Integration Tests', () => {
       expect(updated.sku).toBe('TEST-SKU-123');
     });
 
-    it('should update subscription interval settings', async () => {
+    it('should update subscription recurring settings', async () => {
       if (!testProductId) {
         console.log('Skipping: No test product ID available');
         return;
       }
 
       const { data: updated } = await client.products.update(testProductId, {
-        interval: 'month',
-        intervalCount: 3,
+        price: {
+          recurring: {
+            interval: 'month',
+            intervalCount: 3,
+          },
+        },
       });
 
       expect(updated.id).toBe(testProductId);
-      expect(updated.interval).toBe('month');
-      expect(updated.intervalCount).toBe(3);
+      expect(updated.price.recurring?.interval).toBe('month');
+      expect(updated.price.recurring?.intervalCount).toBe(3);
     });
 
     it('should update subscription trial period', async () => {
@@ -147,39 +151,69 @@ describe('ProductResource Integration Tests', () => {
       }
 
       const { data: updated } = await client.products.update(testProductId, {
-        trialPeriodDays: 14,
+        price: {
+          recurring: {
+            interval: 'month',
+            intervalCount: 1,
+            trialPeriodDays: 14,
+          },
+        },
       });
 
       expect(updated.id).toBe(testProductId);
-      expect(updated.trialPeriodDays).toBe(14);
+      expect(updated.price.recurring?.trialPeriodDays).toBe(14);
     });
 
-    it('should update subscription setup fee', async () => {
+    it('should update setup fee', async () => {
       if (!testProductId) {
         console.log('Skipping: No test product ID available');
         return;
       }
 
       const { data: updated } = await client.products.update(testProductId, {
-        setupFee: 2500,
+        price: { setupFee: 2500 },
       });
 
       expect(updated.id).toBe(testProductId);
-      expect(updated.setupFee).toBe(2500);
+      expect(updated.price.setupFee).toBe(2500);
     });
 
-    it('should update payment plan iterations', async () => {
+    it('should update setupFeeMultipliesWithQuantity', async () => {
       if (!testProductId) {
         console.log('Skipping: No test product ID available');
         return;
       }
 
       const { data: updated } = await client.products.update(testProductId, {
-        planIterations: 6,
+        price: {
+          setupFee: 1500,
+          setupFeeMultipliesWithQuantity: true,
+        },
       });
 
       expect(updated.id).toBe(testProductId);
-      expect(updated.planIterations).toBe(6);
+      expect(updated.price.setupFee).toBe(1500);
+      expect(updated.price.setupFeeMultipliesWithQuantity).toBe(true);
+    });
+
+    it('should update to a payment plan', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const { data: updated } = await client.products.update(testProductId, {
+        price: {
+          paymentPlan: {
+            interval: 'month',
+            intervalCount: 1,
+            planIterations: 6,
+          },
+        },
+      });
+
+      expect(updated.id).toBe(testProductId);
+      expect(updated.price.paymentPlan?.planIterations).toBe(6);
     });
 
     it('should enable pay what you want pricing', async () => {
@@ -189,11 +223,11 @@ describe('ProductResource Integration Tests', () => {
       }
 
       const { data: updated } = await client.products.update(testProductId, {
-        payWhatYouWant: true,
+        price: { payWhatYouWant: true },
       });
 
       expect(updated.id).toBe(testProductId);
-      expect(updated.payWhatYouWant).toBe(true);
+      expect(updated.price.payWhatYouWant).toBe(true);
     });
 
     it('should update multiple fields simultaneously', async () => {
@@ -205,26 +239,27 @@ describe('ProductResource Integration Tests', () => {
       const { data: updated } = await client.products.update(testProductId, {
         title: 'Complete Update Test',
         description: 'Testing <b>multiple</b> <i>field</i> updates',
-        price: 7900,
-        currency: 'usd',
+        price: {
+          amount: 7900,
+          currency: 'usd',
+          setupFee: 1000,
+          payWhatYouWant: false,
+        },
         stock: 50,
         hasUnlimitedStock: false,
         sku: 'MULTI-UPDATE-001',
-        setupFee: 1000,
-        payWhatYouWant: false,
       });
 
       expect(updated.id).toBe(testProductId);
       expect(updated.title).toBe('Complete Update Test');
-      // The description is returned in lexical format
       expect(updated.description).toBeDefined();
-      expect(updated.price).toBe(7900);
-      expect(updated.currency).toBe('usd');
+      expect(updated.price.amount).toBe(7900);
+      expect(updated.price.currency).toBe('usd');
+      expect(updated.price.setupFee).toBe(1000);
+      expect(updated.price.payWhatYouWant).toBe(false);
       expect(updated.stock).toBe(50);
       expect(updated.hasUnlimitedStock).toBe(false);
       expect(updated.sku).toBe('MULTI-UPDATE-001');
-      expect(updated.setupFee).toBe(1000);
-      expect(updated.payWhatYouWant).toBe(false);
     });
   });
 });
