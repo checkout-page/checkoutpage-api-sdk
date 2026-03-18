@@ -1012,4 +1012,41 @@ describe('FormsResource integration tests', () => {
       await expect(client.forms.delete('not-a-valid-id')).rejects.toThrow(ValidationError);
     });
   });
+
+  describe('rich text fields return HTML', () => {
+    it('returns description as HTML, not lexical JSON', async () => {
+      const { data } = await createForm({
+        description: '<p>This is the <strong>form</strong> description.</p>',
+      });
+
+      expect(data.description).toBeTypeOf('string');
+      expect(data.description).toContain('<p>');
+      expect(data.description).not.toContain('"root"');
+    });
+
+    it('returns confirmationCheckoutMessage as HTML, not slate JSON', async () => {
+      const { data } = await createForm({
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: 'Form submitted',
+        confirmationCheckoutMessage: '<p>Thanks for submitting.</p>',
+      });
+
+      expect(data.confirmationCheckoutMessage).toBeTypeOf('string');
+      expect(data.confirmationCheckoutMessage).toContain('<p>');
+      expect(data.confirmationCheckoutMessage).not.toContain('"children"');
+    });
+
+    it('returns confirmationEmailMessage as HTML, not slate JSON', async () => {
+      const { data } = await createForm({
+        sendEmailConfirmation: true,
+        customizeEmailConfirmation: true,
+        confirmationEmailSubject: 'Your submission',
+        confirmationEmailMessage: '<p>We received your form.</p>',
+      });
+
+      expect(data.confirmationEmailMessage).toBeTypeOf('string');
+      expect(data.confirmationEmailMessage).toContain('<p>');
+      expect(data.confirmationEmailMessage).not.toContain('"children"');
+    });
+  });
 });

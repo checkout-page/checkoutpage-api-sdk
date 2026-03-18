@@ -1352,7 +1352,7 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(
         data.paymentOptions?.some(
-          (option) => option.type === 'manual' && option.manualType === 'cashOnDelivery'
+          (option) => option.type === 'manual' && option.manualType === 'cash_on_delivery'
         )
       ).toBe(true);
     });
@@ -1835,6 +1835,47 @@ describe('CheckoutPagesResource integration tests', () => {
 
     it('fails for a malformed checkout page id', async () => {
       await expect(client.checkoutPages.delete('not-a-valid-id')).rejects.toThrow(ValidationError);
+    });
+  });
+
+  describe('rich text fields return HTML', () => {
+    it('returns confirmationCheckoutMessage as HTML, not slate JSON', async () => {
+      const { data } = await createCheckoutPage({
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: 'Order confirmed',
+        confirmationCheckoutMessage: '<p>Thanks for your purchase.</p>',
+      });
+
+      expect(data.confirmationCheckoutMessage).toBeTypeOf('string');
+      expect(data.confirmationCheckoutMessage).toContain('<p>');
+      expect(data.confirmationCheckoutMessage).not.toContain('"children"');
+    });
+
+    it('returns confirmationEmailMessage as HTML, not slate JSON', async () => {
+      const { data } = await createCheckoutPage({
+        sendEmailConfirmation: true,
+        customizeEmailConfirmation: true,
+        confirmationEmailSubject: 'Thank you!',
+        confirmationEmailMessage: '<p>Your order is confirmed.</p>',
+      });
+
+      expect(data.confirmationEmailMessage).toBeTypeOf('string');
+      expect(data.confirmationEmailMessage).toContain('<p>');
+      expect(data.confirmationEmailMessage).not.toContain('"children"');
+    });
+
+    it('returns product description as HTML, not lexical JSON', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `HTML Desc Product ${uniqueSuffix()}`,
+          description: '<p>This is the <strong>product</strong> description.</p>',
+          price: { amount: 1000, currency: 'usd' },
+        },
+      });
+
+      expect(data.product?.description).toBeTypeOf('string');
+      expect(data.product?.description).toContain('<p>');
+      expect(data.product?.description).not.toContain('"root"');
     });
   });
 });

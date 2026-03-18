@@ -1753,4 +1753,41 @@ describe('EventsResource integration tests', () => {
       });
     });
   });
+
+  describe('rich text fields return HTML', () => {
+    it('returns description as HTML, not lexical JSON', async () => {
+      const { data } = await createEvent({
+        description: '<p>This is the <strong>event</strong> description.</p>',
+      });
+
+      expect(data.description).toBeTypeOf('string');
+      expect(data.description).toContain('<p>');
+      expect(data.description).not.toContain('"root"');
+    });
+
+    it('returns confirmationCheckoutMessage as HTML, not slate JSON', async () => {
+      const { data } = await createEvent({
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: 'Booking confirmed',
+        confirmationCheckoutMessage: '<p>See you at the event.</p>',
+      });
+
+      expect(data.confirmationCheckoutMessage).toBeTypeOf('string');
+      expect(data.confirmationCheckoutMessage).toContain('<p>');
+      expect(data.confirmationCheckoutMessage).not.toContain('"children"');
+    });
+
+    it('returns confirmationEmailMessage as HTML, not slate JSON', async () => {
+      const { data } = await createEvent({
+        sendEmailConfirmation: true,
+        customizeEmailConfirmation: true,
+        confirmationEmailSubject: 'Your booking',
+        confirmationEmailMessage: '<p>Your booking is confirmed.</p>',
+      });
+
+      expect(data.confirmationEmailMessage).toBeTypeOf('string');
+      expect(data.confirmationEmailMessage).toContain('<p>');
+      expect(data.confirmationEmailMessage).not.toContain('"children"');
+    });
+  });
 });
