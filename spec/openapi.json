@@ -543,7 +543,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -961,7 +961,7 @@
               "enabled": { "type": ["boolean", "null"] },
               "comparison": {
                 "type": ["string", "null"],
-                "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"]
+                "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"]
               },
               "value": { "type": ["string", "null"] },
               "element": {
@@ -1347,8 +1347,8 @@
           },
           "manualType": {
             "type": ["string", "null"],
-            "enum": ["invoice", "cashOnDelivery"],
-            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cashOnDelivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
+            "enum": ["invoice", "cash_on_delivery"],
+            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cash_on_delivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
             "example": "invoice"
           }
         }
@@ -1587,7 +1587,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -1712,7 +1712,7 @@
                           "allOf": [
                             { "$ref": "#/components/schemas/UniqueIdentifier" },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                             }
                           ]
@@ -1788,7 +1788,7 @@
                     },
                     "comparison": {
                       "type": ["string", "null"],
-                      "enum": ["is", "isNot", "isEmpty", "isNotEmpty", "contains"],
+                      "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                       "description": "Comparison operator for the condition. Defaults to `is`.",
                       "example": "is"
                     },
@@ -1890,9 +1890,9 @@
               "properties": {
                 "quantityCondition": {
                   "type": "string",
-                  "enum": ["checkoutQuantity", "variantOptionQuantity"],
+                  "enum": ["checkout_quantity", "variant_option_quantity"],
                   "description": "How the discount quantity threshold is evaluated.",
-                  "example": "checkoutQuantity"
+                  "example": "checkout_quantity"
                 },
                 "variantOptionIds": {
                   "type": ["array", "null"],
@@ -1900,7 +1900,7 @@
                     "allOf": [
                       { "$ref": "#/components/schemas/UniqueIdentifier" },
                       {
-                        "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
                         "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                       }
                     ]
@@ -1966,7 +1966,7 @@
             "allOf": [
               { "$ref": "#/components/schemas/UniqueIdentifier" },
               {
-                "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "example": "65f4a1c2e4a9f3d2b1c0a9e8"
               }
             ]
@@ -1975,7 +1975,7 @@
             "allOf": [
               { "$ref": "#/components/schemas/UniqueIdentifier" },
               {
-                "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "example": "65f4a1c2e4a9f3d2b1c0a9e8"
               }
             ]
@@ -2530,9 +2530,9 @@
               },
               "comparison": {
                 "type": ["string", "null"],
-                "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                 "description": "Comparison operator used for conditional visibility checks.",
-                "example": "IS"
+                "example": "is"
               },
               "value": {
                 "type": ["string", "null"],
@@ -2717,7 +2717,7 @@
             "reference": "shipping-address-line1",
             "showHideLogic": {
               "enabled": true,
-              "comparison": "IS",
+              "comparison": "is",
               "value": "physical-delivery",
               "element": { "elementType": "field", "elementId": "shipping-method" }
             }
@@ -2948,13 +2948,13 @@
           },
           "manualType": {
             "type": ["string", "null"],
-            "enum": ["invoice", "cashOnDelivery"],
-            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cashOnDelivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
+            "enum": ["invoice", "cash_on_delivery"],
+            "description": "Variant of the manual payment flow. `invoice` sends the customer a confirmation with an invoice and marks the order as unpaid — use this when you will collect payment separately (e.g. bank transfer). `cash_on_delivery` behaves identically but is labelled for COD scenarios. Applies only when `type` is `manual`.",
             "example": "invoice"
           }
         },
         "required": ["type", "name"],
-        "description": "Configures a single payment option shown at checkout. Multiple options can be combined (e.g. pay in full + pay via invoice) or a single option can be offered alone.\n\n**Option types:**\n- `full` — customer pays the entire amount immediately.\n- `manual` — no payment is collected at checkout. A confirmation with an invoice is sent and the order is marked unpaid. Set `manualType` to `invoice` or `cashOnDelivery`.\n- `partial` — customer pays `partialAmount` now; the remaining balance is due later and the order is marked as partially paid.\n\nDigital files and event tickets are always issued immediately after checkout regardless of which option the customer selects. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+        "description": "Configures a single payment option shown at checkout. Multiple options can be combined (e.g. pay in full + pay via invoice) or a single option can be offered alone.\n\n**Option types:**\n- `full` — customer pays the entire amount immediately.\n- `manual` — no payment is collected at checkout. A confirmation with an invoice is sent and the order is marked unpaid. Set `manualType` to `invoice` or `cash_on_delivery`.\n- `partial` — customer pays `partialAmount` now; the remaining balance is due later and the order is marked as partially paid.\n\nDigital files and event tickets are always issued immediately after checkout regardless of which option the customer selects. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
         "example": [
           {
             "type": "full",
@@ -2992,7 +2992,7 @@
             "instructions": "Pay the full amount when your order is delivered.",
             "partialAmount": null,
             "showPaymentButton": true,
-            "manualType": "cashOnDelivery"
+            "manualType": "cash_on_delivery"
           }
         ]
       },
@@ -3276,7 +3276,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -3290,7 +3290,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -3330,7 +3330,7 @@
                   "example": "enabled"
                 },
                 "options": {
-                  "type": ["array", "null"],
+                  "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
@@ -3359,7 +3359,7 @@
                           { "$ref": "#/components/schemas/UniqueIdentifier" },
                           {
                             "type": ["string", "null"],
-                            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           }
                         ]
@@ -3404,7 +3404,7 @@
                           "allOf": [
                             { "$ref": "#/components/schemas/UniqueIdentifier" },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                             }
                           ]
@@ -3414,7 +3414,8 @@
                     },
                     "required": ["name"]
                   },
-                  "description": "Options within this variant."
+                  "minItems": 1,
+                  "description": "Options within this variant. Variant must have at least one option."
                 },
                 "order": {
                   "type": ["number", "null"],
@@ -3480,7 +3481,7 @@
                     },
                     "comparison": {
                       "type": ["string", "null"],
-                      "enum": ["is", "isNot", "isEmpty", "isNotEmpty", "contains"],
+                      "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                       "description": "Comparison operator for the condition. Defaults to `is`.",
                       "example": "is"
                     },
@@ -3571,7 +3572,7 @@
                   "description": "Layout configuration for this variant."
                 }
               },
-              "required": ["name"]
+              "required": ["name", "options"]
             },
             "description": "Product variants and options."
           },
@@ -3582,14 +3583,14 @@
               "properties": {
                 "quantityCondition": {
                   "type": "string",
-                  "enum": ["checkoutQuantity", "variantOptionQuantity"],
-                  "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkoutQuantity`.",
-                  "example": "checkoutQuantity"
+                  "enum": ["checkout_quantity", "variant_option_quantity"],
+                  "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkout_quantity`.",
+                  "example": "checkout_quantity"
                 },
                 "variantOptions": {
                   "type": ["array", "null"],
                   "items": { "type": "number" },
-                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variantOptionQuantity`."
+                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variant_option_quantity`."
                 },
                 "minQuantity": {
                   "type": ["number", "null"],
@@ -3622,7 +3623,7 @@
             "description": "Offer discounts based on the number of items purchased. [Learn more](https://checkoutpage.com/docs/articles/bulk-discounts)",
             "example": [
               {
-                "quantityCondition": "checkoutQuantity",
+                "quantityCondition": "checkout_quantity",
                 "variantOptions": [1, 2, 3],
                 "minQuantity": 0,
                 "maxQuantity": 10,
@@ -3814,7 +3815,7 @@
           "fields": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FieldInput" },
-            "description": "Custom checkout fields to create. Defaults to a name and email field if none are set."
+            "description": "Custom checkout fields to create. If one of your fields must be an `email` element and `required` must be true. Defaults to a name and email field if none are set."
           },
           "allowDynamicTitle": {
             "type": ["boolean", "null"],
@@ -4027,7 +4028,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cashOnDelivery"
+                "manualType": "cash_on_delivery"
               }
             ]
           },
@@ -4120,7 +4121,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -4428,7 +4429,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cashOnDelivery"
+                "manualType": "cash_on_delivery"
               }
             ]
           },
@@ -4483,7 +4484,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -4734,7 +4735,7 @@
           "fields": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FieldInput" },
-            "description": "Custom checkout fields to create. Defaults to a name and email field if none are set."
+            "description": "Custom checkout fields to create. If one of your fields must be an `email` element and `required` must be true. Defaults to a name and email field if none are set."
           },
           "allowDynamicTitle": {
             "type": ["boolean", "null"],
@@ -4915,7 +4916,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -4928,7 +4929,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -5679,7 +5680,7 @@
           },
           "saleStartOn": {
             "type": ["string", "null"],
-            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded.",
+            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded. For `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors, this is automatically derived from the trigger ticket type's `saleEndOn` (or the event `startDate` if the trigger uses `until_event_starts`) when the trigger is referenced by `key` within the same request.",
             "example": "2025-06-01T09:00:00Z"
           },
           "saleEndOn": {
@@ -5689,7 +5690,7 @@
           },
           "triggerTicketTypeId": {
             "type": ["string", "null"],
-            "description": "The `key` or ID of the ticket type that triggers this ticket type to become available. Use a `key` value to reference another ticket type in the same request. Required when `availabilityBehavior` is `after_ticket_sale_ends`, `after_ticket_sold_out`, or `after_ticket_ends_or_sold_out`.",
+            "description": "The `key` or ID of the ticket type that triggers this ticket type to become available. Use a `key` value to reference another ticket type in the same request. Required when `availabilityBehavior` is `after_ticket_sale_ends`, `after_ticket_sold_out`, or `after_ticket_ends_or_sold_out`. When referenced by `key`, `saleStartOn` is automatically derived from the trigger's `saleEndOn` for `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors.",
             "example": "early-bird"
           }
         },
@@ -5869,7 +5870,7 @@
           },
           "saleStartOn": {
             "type": ["string", "null"],
-            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded.",
+            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded. For `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors, this is automatically derived from the trigger ticket group's `saleEndOn` (or the event `startDate` if the trigger uses `until_event_starts`) when the trigger is referenced by `key` within the same request.",
             "example": "2025-06-01T09:00:00Z"
           },
           "saleEndOn": {
@@ -5879,7 +5880,7 @@
           },
           "triggerTicketGroupId": {
             "type": ["string", "null"],
-            "description": "The `key` or ID of the ticket group that triggers this ticket group to become available. Use a `key` value to reference another ticket group in the same request. Required when `availabilityBehavior` is `after_ticket_sale_ends`, `after_ticket_sold_out`, or `after_ticket_ends_or_sold_out`.",
+            "description": "The `key` or ID of the ticket group that triggers this ticket group to become available. Use a `key` value to reference another ticket group in the same request. Required when `availabilityBehavior` is `after_ticket_sale_ends`, `after_ticket_sold_out`, or `after_ticket_ends_or_sold_out`. When referenced by `key`, `saleStartOn` is automatically derived from the trigger's `saleEndOn` for `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors.",
             "example": "general-admission"
           },
           "ticketTypes": {
@@ -5981,7 +5982,7 @@
           "fields": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/FieldInput" },
-            "description": "Custom checkout fields to create. Defaults to a name and email field if none are set."
+            "description": "Custom checkout fields to create. If one of your fields must be an `email` element and `required` must be true. Defaults to a name and email field if none are set."
           },
           "allowDynamicTitle": {
             "type": ["boolean", "null"],
@@ -6194,7 +6195,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cashOnDelivery"
+                "manualType": "cash_on_delivery"
               }
             ]
           },
@@ -6376,7 +6377,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -6684,7 +6685,7 @@
                 "instructions": "Pay the full amount when your order is delivered.",
                 "partialAmount": null,
                 "showPaymentButton": true,
-                "manualType": "cashOnDelivery"
+                "manualType": "cash_on_delivery"
               }
             ]
           },
@@ -6861,7 +6862,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -7026,7 +7027,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -7216,7 +7217,7 @@
           },
           "saleStartOn": {
             "type": ["string", "null"],
-            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded.",
+            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded. For `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors, this is automatically derived from the trigger ticket group's `saleEndOn` (or the event `startDate` if the trigger uses `until_event_starts`) when the trigger is referenced by `key` within the same request.",
             "example": "2025-06-01T09:00:00Z"
           },
           "saleEndOn": {
@@ -7229,7 +7230,7 @@
               { "$ref": "#/components/schemas/UniqueIdentifier" },
               {
                 "type": ["string", "null"],
-                "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "example": "65f4a1c2e4a9f3d2b1c0a9e8"
               }
             ]
@@ -7406,7 +7407,7 @@
           },
           "saleStartOn": {
             "type": ["string", "null"],
-            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded.",
+            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded. For `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors, this is automatically derived from the trigger ticket group's `saleEndOn` (or the event `startDate` if the trigger uses `until_event_starts`) when the trigger is referenced by `key` within the same request.",
             "example": "2025-06-01T09:00:00Z"
           },
           "saleEndOn": {
@@ -7551,7 +7552,7 @@
           },
           "saleStartOn": {
             "type": ["string", "null"],
-            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded.",
+            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded. For `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors, this is automatically derived from the trigger ticket type's `saleEndOn` (or the event `startDate` if the trigger uses `until_event_starts`) when the trigger is referenced by `key` within the same request.",
             "example": "2025-06-01T09:00:00Z"
           },
           "saleEndOn": {
@@ -7564,7 +7565,7 @@
               { "$ref": "#/components/schemas/UniqueIdentifier" },
               {
                 "type": ["string", "null"],
-                "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "example": "65f4a1c2e4a9f3d2b1c0a9e8"
               }
             ]
@@ -7686,7 +7687,7 @@
           },
           "saleStartOn": {
             "type": ["string", "null"],
-            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded.",
+            "description": "Sale start date in ISO 8601 format. Used with `availabilityBehavior: \"date_time_based\"` to set when sales open. Omit to leave the start unbounded. For `after_ticket_sale_ends` and `after_ticket_ends_or_sold_out` behaviors, this is automatically derived from the trigger ticket type's `saleEndOn` (or the event `startDate` if the trigger uses `until_event_starts`) when the trigger is referenced by `key` within the same request.",
             "example": "2025-06-01T09:00:00Z"
           },
           "saleEndOn": {
@@ -7867,7 +7868,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -7881,7 +7882,7 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
@@ -7946,7 +7947,7 @@
                           { "$ref": "#/components/schemas/UniqueIdentifier" },
                           {
                             "type": ["string", "null"],
-                            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           }
                         ]
@@ -7991,7 +7992,7 @@
                           "allOf": [
                             { "$ref": "#/components/schemas/UniqueIdentifier" },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                             }
                           ]
@@ -8002,7 +8003,7 @@
                         "allOf": [
                           { "$ref": "#/components/schemas/UniqueIdentifier" },
                           {
-                            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           }
                         ]
@@ -8075,7 +8076,7 @@
                     },
                     "comparison": {
                       "type": ["string", "null"],
-                      "enum": ["is", "isNot", "isEmpty", "isNotEmpty", "contains"],
+                      "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                       "description": "Comparison operator for the condition. Defaults to `is`.",
                       "example": "is"
                     },
@@ -8169,7 +8170,7 @@
                   "allOf": [
                     { "$ref": "#/components/schemas/UniqueIdentifier" },
                     {
-                      "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                     }
                   ]
@@ -8185,14 +8186,14 @@
               "properties": {
                 "quantityCondition": {
                   "type": "string",
-                  "enum": ["checkoutQuantity", "variantOptionQuantity"],
-                  "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkoutQuantity`.",
-                  "example": "checkoutQuantity"
+                  "enum": ["checkout_quantity", "variant_option_quantity"],
+                  "description": "Whether the discount applies based on the checkout quantity or specific variant option quantities. Defaults to `checkout_quantity`.",
+                  "example": "checkout_quantity"
                 },
                 "variantOptions": {
                   "type": ["array", "null"],
                   "items": { "type": "number" },
-                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variantOptionQuantity`."
+                  "description": "Array of variant indexes. The index number will be mapped to a variant. This discount only applies to variants it is mapped to. Only used when quantityCondition is `variant_option_quantity`."
                 },
                 "minQuantity": {
                   "type": ["number", "null"],
@@ -8225,7 +8226,7 @@
             "description": "Offer discounts based on the number of items purchased. [Learn more](https://checkoutpage.com/docs/articles/bulk-discounts)",
             "example": [
               {
-                "quantityCondition": "checkoutQuantity",
+                "quantityCondition": "checkout_quantity",
                 "variantOptions": [1, 2, 3],
                 "minQuantity": 0,
                 "maxQuantity": 10,
@@ -8531,13 +8532,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": false,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "query"
           }
@@ -8790,7 +8791,7 @@
                       "allOf": [
                         { "$ref": "#/components/schemas/UniqueIdentifier" },
                         {
-                          "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                         }
                       ]
@@ -8972,13 +8973,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": false,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "query"
           },
@@ -9415,13 +9416,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": false,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "query"
           }
@@ -9609,13 +9610,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -9704,13 +9705,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -9750,13 +9751,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -9789,13 +9790,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -9943,9 +9944,9 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                         "description": "Comparison operator used for conditional visibility checks.",
-                        "example": "IS"
+                        "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
@@ -10072,13 +10073,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -10087,13 +10088,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -10126,13 +10127,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -10141,13 +10142,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -10295,9 +10296,9 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                         "description": "Comparison operator used for conditional visibility checks.",
-                        "example": "IS"
+                        "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
@@ -10421,13 +10422,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -10436,13 +10437,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -10615,13 +10616,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -10940,7 +10941,7 @@
                       "allOf": [
                         { "$ref": "#/components/schemas/UniqueIdentifier" },
                         {
-                          "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                         }
                       ]
@@ -10953,7 +10954,7 @@
                       "allOf": [
                         { "$ref": "#/components/schemas/UniqueIdentifier" },
                         {
-                          "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                         }
                       ]
@@ -11000,13 +11001,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -11046,13 +11047,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -11085,13 +11086,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -11239,9 +11240,9 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                         "description": "Comparison operator used for conditional visibility checks.",
-                        "example": "IS"
+                        "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
@@ -11368,13 +11369,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -11383,13 +11384,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -11422,13 +11423,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -11437,13 +11438,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -11591,9 +11592,9 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                         "description": "Comparison operator used for conditional visibility checks.",
-                        "example": "IS"
+                        "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
@@ -11717,13 +11718,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -11732,13 +11733,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -11913,13 +11914,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -12005,13 +12006,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -12051,13 +12052,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -12090,13 +12091,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -12244,9 +12245,9 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                         "description": "Comparison operator used for conditional visibility checks.",
-                        "example": "IS"
+                        "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
@@ -12373,13 +12374,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -12388,13 +12389,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -12427,13 +12428,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -12442,13 +12443,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -12596,9 +12597,9 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["IS", "IS_NOT", "IS_EMPTY", "IS_NOT_EMPTY"],
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
                         "description": "Comparison operator used for conditional visibility checks.",
-                        "example": "IS"
+                        "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
@@ -12722,13 +12723,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           },
@@ -12737,13 +12738,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fieldId",
             "in": "path"
           }
@@ -12821,13 +12822,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
             "in": "path"
           }
@@ -13349,13 +13350,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "productId",
             "in": "path"
           }
@@ -13388,13 +13389,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "productId",
             "in": "path"
           }
@@ -13489,13 +13490,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fileId",
             "in": "path"
           }
@@ -13544,13 +13545,13 @@
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
                 {
-                  "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
                   "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                 }
               ]
             },
             "required": true,
-            "description": "Unique identifier. Must be in BSON ObjectId format. It is recommended to only set the id if you need to reference this variant in conditional show/hide logic.",
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "fileId",
             "in": "path"
           }
