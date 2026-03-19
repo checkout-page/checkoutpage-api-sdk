@@ -192,6 +192,50 @@ describe('EventsResource integration tests', () => {
       expect(result.data.some((event) => event.id === created.data.id)).toBe(true);
     });
 
+    it.each([
+      {
+        name: 'search only',
+        params: (token: string) => ({ search: token }),
+        expectedStatuses: ['published', 'draft'],
+      },
+      {
+        name: 'search and published status',
+        params: (token: string) => ({ search: token, status: 'published' as const }),
+        expectedStatuses: ['published'],
+      },
+      {
+        name: 'search and draft status',
+        params: (token: string) => ({ search: token, status: 'draft' as const }),
+        expectedStatuses: ['draft'],
+      },
+    ])('supports combined list filters for $name', async ({ params, expectedStatuses }) => {
+      const token = `sdk-event-list-combo-${uniqueSuffix()}`;
+
+      const published = await createEvent({
+        name: `${token}-published`,
+        title: `${token}-published`,
+        status: 'published',
+      });
+      const draft = await createEvent({
+        name: `${token}-draft`,
+        title: `${token}-draft`,
+        status: 'draft',
+      });
+
+      const result = await client.events.list(params(token));
+      const matchingEvents = result.data.filter(
+        (event) => event.id === published.data.id || event.id === draft.data.id
+      );
+
+      expect(matchingEvents).not.toHaveLength(0);
+      expect(matchingEvents.map((event) => event.status).sort()).toEqual(expectedStatuses.sort());
+      expect(
+        matchingEvents.every(
+          (event) => event.name?.includes(token) || event.title?.includes(token) || false
+        )
+      ).toBe(true);
+    });
+
     it('returns an empty list for an unmatched search', async () => {
       const result = await client.events.list({
         search: `sdk-event-unmatched-${uniqueSuffix()}`,
@@ -273,7 +317,7 @@ describe('EventsResource integration tests', () => {
           {
             parameter: 'email',
             key: 'fields',
-            identifier: 'customer_email',
+            fieldKey: 'customer_email',
           },
         ],
         redirectUrlInsideEmbed: true,
@@ -653,13 +697,11 @@ describe('EventsResource integration tests', () => {
         redirectUrl: 'https://not-a-url',
         redirectUrlPath: [
           {
-            identifier: 'url_path_key',
+            fieldKey: 'url_path_key',
             key: 'fields',
           },
         ],
-        redirectUrlQuery: [
-          { key: 'fields', identifier: 'url_path_key', parameter: 'URLPathParam' },
-        ],
+        redirectUrlQuery: [{ key: 'fields', fieldKey: 'url_path_key', parameter: 'URLPathParam' }],
       });
 
       const urlPathField = data.fields?.find((f) => f.reference === 'url_path');
@@ -816,7 +858,9 @@ describe('EventsResource integration tests', () => {
           {
             parameter: 'email',
             key: 'fields',
-            identifier: 'customer_email',
+            fieldId: created.data.fields?.find(
+              (field) => field.reference === 'email' || field.type === 'email'
+            )?.id,
           },
         ],
         redirectUrlInsideEmbed: true,
@@ -1018,6 +1062,114 @@ describe('EventsResource integration tests', () => {
       expect(result.data.confirmationEmailSubject).toBeNull();
       expect(result.data.confirmationEmailMessage).toBeNull();
       expect(result.data.trackingCodes).toBeNull();
+    });
+
+    it('preserves images when imageIds is omitted and clears them when an empty array is provided', async () => {
+      const originalImageId = await uploadImage('event-preserve-original-image');
+      const replacementImageId = await uploadImage('event-preserve-replacement-image');
+      const created = await createEvent({
+        imageIds: [originalImageId],
+      });
+
+      const metadataOnlyUpdate = await client.events.update(created.data.id, {
+        name: `Metadata only ${uniqueSuffix()}`,
+      });
+
+      expect(pageIncludesImage(metadataOnlyUpdate.data, originalImageId)).toBe(true);
+
+      const replacementUpdate = await client.events.update(created.data.id, {
+        imageIds: [replacementImageId],
+      });
+
+      expect(pageIncludesImage(replacementUpdate.data, replacementImageId)).toBe(true);
+      expect(pageIncludesImage(replacementUpdate.data, originalImageId)).toBe(false);
+
+      const clearedUpdate = await client.events.update(created.data.id, {
+        imageIds: [],
+      });
+
+      expect(clearedUpdate.data.images ?? []).toEqual([]);
+    }, 15000);
+
+    it('resolves redirect path and query identifiers on update across field and built-in keys', async () => {
+      const created = await createEvent({
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+          {
+            element: 'text',
+            required: true,
+            label: 'Order Reference',
+            key: 'order_reference',
+            reference: 'order-reference',
+          },
+        ],
+      });
+
+      const createdOrderReferenceField = created.data.fields?.find(
+        (field) => field.reference === 'order-reference'
+      );
+      const createdEmailField = created.data.fields?.find((field) => field.reference === 'email');
+
+      expect(createdOrderReferenceField).toBeDefined();
+      expect(createdEmailField).toBeDefined();
+
+      const updated = await client.events.update(created.data.id, {
+        afterPaymentAction: 'redirect',
+        redirectUrl: 'https://example.com/events/updated',
+        redirectUrlPath: [
+          {
+            key: 'fields',
+            fieldId: createdOrderReferenceField!.id,
+          },
+          {
+            key: 'orderId',
+            identifier: 'orderId',
+          },
+        ],
+        redirectUrlQuery: [
+          {
+            parameter: 'email',
+            key: 'fields',
+            fieldId: createdEmailField!.id,
+          },
+          {
+            parameter: 'orderId',
+            key: 'orderId',
+            identifier: 'orderId',
+          },
+        ],
+      });
+
+      const orderReferenceField = updated.data.fields?.find(
+        (field) => field.reference === 'order-reference'
+      );
+      const emailField = updated.data.fields?.find((field) => field.reference === 'email');
+
+      expect(orderReferenceField).toBeDefined();
+      expect(emailField).toBeDefined();
+      expect(updated.data.redirectUrl).toBe('https://example.com/events/updated');
+      expect(updated.data.redirectUrlPath).toEqual([
+        { key: 'fields', identifier: orderReferenceField?.id },
+        { key: 'orderId', identifier: 'orderId' },
+      ]);
+      expect(updated.data.redirectUrlQuery).toEqual([
+        {
+          parameter: 'email',
+          key: 'fields',
+          identifier: emailField?.id,
+        },
+        {
+          parameter: 'orderId',
+          key: 'orderId',
+          identifier: 'orderId',
+        },
+      ]);
     });
 
     it('fails for an unknown event id', async () => {
@@ -1815,7 +1967,7 @@ describe('EventsResource integration tests', () => {
   });
 
   describe('eventDetails.discounts key linking', () => {
-    it('totalQuantity discounts are stored with empty ticketTypeIds array', async () => {
+    it('total_quantity discounts are stored with empty ticketTypeIds array', async () => {
       const { data } = await client.events.create({
         name: `SDK Event ${uniqueSuffix()}`,
         eventDetails: {
@@ -1827,7 +1979,7 @@ describe('EventsResource integration tests', () => {
           location: 'Test Venue',
           discounts: [
             {
-              quantityCondition: 'totalQuantity',
+              quantityCondition: 'total_quantity',
               minQuantity: 2,
               maxQuantity: 5,
               percentOff: 10,
@@ -1846,14 +1998,14 @@ describe('EventsResource integration tests', () => {
 
       const eventDetails = (data as any).eventDetails;
       expect(eventDetails.discounts).toHaveLength(1);
-      expect(eventDetails.discounts[0].quantityCondition).toBe('totalQuantity');
+      expect(eventDetails.discounts[0].quantityCondition).toBe('total_quantity');
       expect(eventDetails.discounts[0].ticketTypeIds).toEqual([]);
       expect(eventDetails.discounts[0].minQuantity).toBe(2);
       expect(eventDetails.discounts[0].maxQuantity).toBe(5);
       expect(eventDetails.discounts[0].percentOff).toBe(10);
     });
 
-    it('ticketTypeQuantity discounts resolve ticket type keys to ObjectIds', async () => {
+    it('ticket_type_quantity discounts resolve ticket type keys to ObjectIds', async () => {
       const { data } = await client.events.create({
         name: `SDK Event - 2 ${uniqueSuffix()}`,
         eventDetails: {
@@ -1865,7 +2017,7 @@ describe('EventsResource integration tests', () => {
           location: 'Test Venue',
           discounts: [
             {
-              quantityCondition: 'ticketTypeQuantity',
+              quantityCondition: 'ticket_type_quantity',
               ticketTypeIds: [{ key: 'vip' }],
               minQuantity: 2,
               percentOff: 15,
@@ -1891,7 +2043,7 @@ describe('EventsResource integration tests', () => {
       const eventDetails = (data as any).eventDetails;
       expect(eventDetails.discounts).toHaveLength(1);
       const discount = eventDetails.discounts[0];
-      expect(discount.quantityCondition).toBe('ticketTypeQuantity');
+      expect(discount.quantityCondition).toBe('ticket_type_quantity');
       expect(discount.ticketTypeIds).toHaveLength(1);
       expect(discount.ticketTypeIds[0]).toBe(ticketType.id);
       expect(discount.minQuantity).toBe(2);
@@ -1910,7 +2062,7 @@ describe('EventsResource integration tests', () => {
           location: 'Test Venue',
           discounts: [
             {
-              quantityCondition: 'ticketTypeQuantity',
+              quantityCondition: 'ticket_type_quantity',
               ticketTypeIds: [{ key: 'early-bird' }, { key: 'standard' }],
               minQuantity: 3,
               amountOff: 500,
@@ -1955,7 +2107,7 @@ describe('EventsResource integration tests', () => {
             location: 'Test Venue',
             discounts: [
               {
-                quantityCondition: 'ticketTypeQuantity',
+                quantityCondition: 'ticket_type_quantity',
                 ticketTypeIds: [{ key: 'nonexistent-key' }],
                 minQuantity: 2,
                 percentOff: 10,
@@ -1974,14 +2126,14 @@ describe('EventsResource integration tests', () => {
   });
 
   describe('eventDetails.discounts update', () => {
-    it('adds a totalQuantity discount to an existing event', async () => {
+    it('adds a total_quantity discount to an existing event', async () => {
       const { data: created } = await createEvent();
 
       const updated = await client.events.update(created.id, {
         eventDetails: {
           discounts: [
             {
-              quantityCondition: 'totalQuantity',
+              quantityCondition: 'total_quantity',
               minQuantity: 2,
               maxQuantity: 4,
               percentOff: 10,
@@ -1992,14 +2144,14 @@ describe('EventsResource integration tests', () => {
 
       const eventDetails = (updated.data as any).eventDetails;
       expect(eventDetails.discounts).toHaveLength(1);
-      expect(eventDetails.discounts[0].quantityCondition).toBe('totalQuantity');
+      expect(eventDetails.discounts[0].quantityCondition).toBe('total_quantity');
       expect(eventDetails.discounts[0].ticketTypeIds).toEqual([]);
       expect(eventDetails.discounts[0].minQuantity).toBe(2);
       expect(eventDetails.discounts[0].maxQuantity).toBe(4);
       expect(eventDetails.discounts[0].percentOff).toBe(10);
     });
 
-    it('adds a ticketTypeQuantity discount referencing ticket types by { id }', async () => {
+    it('adds a ticket_type_quantity discount referencing ticket types by { id }', async () => {
       const { data: created } = await createEvent({
         ticketGroups: [
           {
@@ -2016,7 +2168,7 @@ describe('EventsResource integration tests', () => {
         eventDetails: {
           discounts: [
             {
-              quantityCondition: 'ticketTypeQuantity',
+              quantityCondition: 'ticket_type_quantity',
               ticketTypeIds: [{ id: ticketType.id }],
               minQuantity: 3,
               percentOff: 15,
@@ -2028,7 +2180,7 @@ describe('EventsResource integration tests', () => {
       const eventDetails = (updated.data as any).eventDetails;
       expect(eventDetails.discounts).toHaveLength(1);
       const discount = eventDetails.discounts[0];
-      expect(discount.quantityCondition).toBe('ticketTypeQuantity');
+      expect(discount.quantityCondition).toBe('ticket_type_quantity');
       expect(discount.ticketTypeIds).toHaveLength(1);
       expect(discount.ticketTypeIds[0]).toBe(ticketType.id);
       expect(discount.minQuantity).toBe(3);
@@ -2038,14 +2190,14 @@ describe('EventsResource integration tests', () => {
     it('replaces existing discounts when updated', async () => {
       const { data: created } = await createEvent({
         eventDetails: {
-          discounts: [{ quantityCondition: 'totalQuantity', minQuantity: 2, percentOff: 10 }],
+          discounts: [{ quantityCondition: 'total_quantity', minQuantity: 2, percentOff: 10 }],
         } as any,
       });
 
       const updated = await client.events.update(created.id, {
         eventDetails: {
           discounts: [
-            { quantityCondition: 'totalQuantity', minQuantity: 5, percentOff: 20 } as any,
+            { quantityCondition: 'total_quantity', minQuantity: 5, percentOff: 20 } as any,
           ],
         } as any,
       } as any);
@@ -2059,7 +2211,7 @@ describe('EventsResource integration tests', () => {
     it('clears discounts when null is provided', async () => {
       const { data: created } = await createEvent({
         eventDetails: {
-          discounts: [{ quantityCondition: 'totalQuantity', minQuantity: 2, percentOff: 10 }],
+          discounts: [{ quantityCondition: 'total_quantity', minQuantity: 2, percentOff: 10 }],
         } as any,
       });
 
@@ -2073,7 +2225,7 @@ describe('EventsResource integration tests', () => {
       expect(eventDetails.discounts ?? null).toBeNull();
     });
 
-    it('returns 400 when a ticketTypeQuantity discount references an invalid id', async () => {
+    it('returns 400 when a ticket_type_quantity discount references an invalid id', async () => {
       const { data: created } = await createEvent();
 
       await expect(
@@ -2081,7 +2233,7 @@ describe('EventsResource integration tests', () => {
           eventDetails: {
             discounts: [
               {
-                quantityCondition: 'ticketTypeQuantity',
+                quantityCondition: 'ticket_type_quantity',
                 ticketTypeIds: [{ id: 'not-a-valid-objectid' }],
                 minQuantity: 2,
                 percentOff: 10,

@@ -242,6 +242,50 @@ describe('FormsResource integration tests', () => {
       expect(pageIncludesFile(matched!, fileId)).toBe(true);
     }, 10000);
 
+    it.each([
+      {
+        name: 'search only',
+        params: (token: string) => ({ search: token }),
+        expectedStatuses: ['published', 'draft'],
+      },
+      {
+        name: 'search and published status',
+        params: (token: string) => ({ search: token, status: 'published' as const }),
+        expectedStatuses: ['published'],
+      },
+      {
+        name: 'search and draft status',
+        params: (token: string) => ({ search: token, status: 'draft' as const }),
+        expectedStatuses: ['draft'],
+      },
+    ])('supports combined list filters for $name', async ({ params, expectedStatuses }) => {
+      const token = `sdk-form-list-combo-${uniqueSuffix()}`;
+
+      const published = await createForm({
+        name: `${token}-published`,
+        title: `${token}-published`,
+        status: 'published',
+      });
+      const draft = await createForm({
+        name: `${token}-draft`,
+        title: `${token}-draft`,
+        status: 'draft',
+      });
+
+      const result = await client.forms.list(params(token));
+      const matchingForms = result.data.filter(
+        (form) => form.id === published.data.id || form.id === draft.data.id
+      );
+
+      expect(matchingForms).not.toHaveLength(0);
+      expect(matchingForms.map((form) => form.status).sort()).toEqual(expectedStatuses.sort());
+      expect(
+        matchingForms.every(
+          (form) => form.name?.includes(token) || form.title?.includes(token) || false
+        )
+      ).toBe(true);
+    });
+
     it('returns an empty list for an unmatched search', async () => {
       const result = await client.forms.list({
         search: `sdk-form-unmatched-${uniqueSuffix()}`,
@@ -479,7 +523,7 @@ describe('FormsResource integration tests', () => {
         confirmationCheckoutMessage: '<p>Thanks for submitting the form.</p>',
         redirectUrl: 'https://example.com/forms/thanks',
         redirectUrlPath: [{ key: 'order', identifier: 'orderId' }],
-        redirectUrlQuery: [{ parameter: 'email', key: 'fields', identifier: 'business-email' }],
+        redirectUrlQuery: [{ parameter: 'email', key: 'fields', fieldKey: 'business-email' }],
         redirectUrlInsideEmbed: true,
         sendPaymentNotification: false,
         notifyEmail: 'forms@example.com',
@@ -713,13 +757,11 @@ describe('FormsResource integration tests', () => {
         redirectUrl: 'https://not-a-url',
         redirectUrlPath: [
           {
-            identifier: 'url_path_key',
+            fieldKey: 'url_path_key',
             key: 'fields',
           },
         ],
-        redirectUrlQuery: [
-          { key: 'fields', identifier: 'url_path_key', parameter: 'URLPathParam' },
-        ],
+        redirectUrlQuery: [{ key: 'fields', fieldKey: 'url_path_key', parameter: 'URLPathParam' }],
       });
 
       const urlPathField = data.fields?.find((f) => f.reference === 'url_path');
@@ -807,10 +849,23 @@ describe('FormsResource integration tests', () => {
 
   describe('update', () => {
     it('updates form metadata and attachments exhaustively', async () => {
-      const created = await createForm();
+      const created = await createForm({
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+        ],
+      });
       const imageId = await uploadImage('form-update-image');
       const fileId = await uploadFile('form-update-file');
       const updatedSlug = `/updated-form-${uniqueSuffix()}`;
+      const createdEmailField = created.data.fields?.find((field) => field.reference === 'email');
+
+      expect(createdEmailField).toBeDefined();
 
       const result = await client.forms.update(created.data.id, {
         name: `Updated Form ${uniqueSuffix()}`,
@@ -829,7 +884,13 @@ describe('FormsResource integration tests', () => {
         confirmationCheckoutMessage: '<p>Updated confirmation body.</p>',
         redirectUrl: 'https://example.com/updated-redirect',
         redirectUrlPath: [{ key: 'order', identifier: 'orderId' }],
-        redirectUrlQuery: [{ parameter: 'email', key: 'fields', identifier: 'email' }],
+        redirectUrlQuery: [
+          {
+            parameter: 'email',
+            key: 'fields',
+            fieldId: createdEmailField!.id,
+          },
+        ],
         redirectUrlInsideEmbed: true,
         redirectPageId: config.testCheckoutPageId,
         sendPaymentNotification: true,
@@ -933,6 +994,115 @@ describe('FormsResource integration tests', () => {
       expect(pageIncludesFile(fileResult.data, fileId)).toBe(true);
       expectFileMetadata(fileResult.data, fileId);
     }, 10000);
+
+    it('preserves omitted attachment collections while replacing the provided collection', async () => {
+      const originalImageId = await uploadImage('form-preserve-original-image');
+      const originalFileId = await uploadFile('form-preserve-original-file');
+      const replacementImageId = await uploadImage('form-preserve-replacement-image');
+      const replacementFileId = await uploadFile('form-preserve-replacement-file');
+
+      const created = await createForm({
+        imageIds: [originalImageId],
+        fileIds: [originalFileId],
+      });
+
+      const imageOnlyResult = await client.forms.update(created.data.id, {
+        imageIds: [replacementImageId],
+      });
+
+      expect(pageIncludesImage(imageOnlyResult.data, replacementImageId)).toBe(true);
+      expect(pageIncludesImage(imageOnlyResult.data, originalImageId)).toBe(false);
+      expect(pageIncludesFile(imageOnlyResult.data, originalFileId)).toBe(true);
+
+      const fileOnlyResult = await client.forms.update(created.data.id, {
+        fileIds: [replacementFileId],
+      });
+
+      expect(pageIncludesImage(fileOnlyResult.data, replacementImageId)).toBe(true);
+      expect(pageIncludesFile(fileOnlyResult.data, replacementFileId)).toBe(true);
+      expect(pageIncludesFile(fileOnlyResult.data, originalFileId)).toBe(false);
+    }, 15000);
+
+    it('resolves redirect path and query identifiers on update across field and built-in keys', async () => {
+      const created = await createForm({
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+          {
+            element: 'text',
+            required: true,
+            label: 'Order Reference',
+            key: 'order_reference',
+            reference: 'order-reference',
+          },
+        ],
+      });
+
+      const createdOrderReferenceField = created.data.fields?.find(
+        (field) => field.reference === 'order-reference'
+      );
+      const createdEmailField = created.data.fields?.find((field) => field.reference === 'email');
+
+      expect(createdOrderReferenceField).toBeDefined();
+      expect(createdEmailField).toBeDefined();
+
+      const updated = await client.forms.update(created.data.id, {
+        afterPaymentAction: 'redirect',
+        redirectUrl: 'https://example.com/forms/updated',
+        redirectUrlPath: [
+          {
+            key: 'fields',
+            fieldId: createdOrderReferenceField!.id,
+          },
+          {
+            key: 'orderId',
+            identifier: 'orderId',
+          },
+        ],
+        redirectUrlQuery: [
+          {
+            parameter: 'email',
+            key: 'fields',
+            fieldId: createdEmailField!.id,
+          },
+          {
+            parameter: 'orderId',
+            key: 'orderId',
+            identifier: 'orderId',
+          },
+        ],
+      });
+
+      const orderReferenceField = updated.data.fields?.find(
+        (field) => field.reference === 'order-reference'
+      );
+      const emailField = updated.data.fields?.find((field) => field.reference === 'email');
+
+      expect(orderReferenceField).toBeDefined();
+      expect(emailField).toBeDefined();
+      expect(updated.data.redirectUrl).toBe('https://example.com/forms/updated');
+      expect(updated.data.redirectUrlPath).toEqual([
+        { key: 'fields', identifier: orderReferenceField?.id },
+        { key: 'orderId', identifier: 'orderId' },
+      ]);
+      expect(updated.data.redirectUrlQuery).toEqual([
+        {
+          parameter: 'email',
+          key: 'fields',
+          identifier: emailField?.id,
+        },
+        {
+          parameter: 'orderId',
+          key: 'orderId',
+          identifier: 'orderId',
+        },
+      ]);
+    });
 
     it('clears nullable settings and attachment collections when null or empty arrays are provided', async () => {
       const imageId = await uploadImage('form-clear-image');

@@ -718,13 +718,11 @@ describe('CheckoutPagesResource integration tests', () => {
         redirectUrl: 'https://not-a-url',
         redirectUrlPath: [
           {
-            identifier: 'url_path_key',
+            fieldKey: 'url_path_key',
             key: 'fields',
           },
         ],
-        redirectUrlQuery: [
-          { key: 'fields', identifier: 'url_path_key', parameter: 'URLPathParam' },
-        ],
+        redirectUrlQuery: [{ key: 'fields', fieldKey: 'url_path_key', parameter: 'URLPathParam' }],
       });
 
       const urlPathField = data.fields?.find((f) => f.reference === 'url_path');
@@ -794,7 +792,7 @@ describe('CheckoutPagesResource integration tests', () => {
             },
           ],
           redirectUrl: 'https://not-a-url',
-          redirectUrlQuery: [{ key: 'fields', identifier: 'missing', parameter: 'URLPathParam' }],
+          redirectUrlQuery: [{ key: 'fields', fieldKey: 'missing', parameter: 'URLPathParam' }],
         })
       ).rejects.toThrow(ValidationError);
     });
@@ -1774,6 +1772,87 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.afterPaymentAction).toBe('redirect');
       expect(result.data.redirectUrl).toBe('https://example.com/redirected');
       expect(result.data.redirectUrlInsideEmbed).toBe(true);
+    });
+
+    it('resolves redirect path and query identifiers on update across field and built-in keys', async () => {
+      const created = await createCheckoutPage({
+        fields: [
+          {
+            element: 'email',
+            type: 'email',
+            required: true,
+            label: 'Email',
+            reference: 'email',
+          },
+          {
+            element: 'text',
+            required: true,
+            label: 'Order Reference',
+            key: 'order_reference',
+            reference: 'order-reference',
+          },
+        ],
+      });
+
+      const createdOrderReferenceField = created.data.fields?.find(
+        (field) => field.reference === 'order-reference'
+      );
+      const createdEmailField = created.data.fields?.find((field) => field.reference === 'email');
+
+      expect(createdOrderReferenceField).toBeDefined();
+      expect(createdEmailField).toBeDefined();
+
+      const updated = await client.checkoutPages.update(created.data.id, {
+        afterPaymentAction: 'redirect',
+        redirectUrl: 'https://example.com/checkout-pages/updated',
+        redirectUrlPath: [
+          {
+            key: 'fields',
+            fieldId: createdOrderReferenceField!.id,
+          },
+          {
+            key: 'orderId',
+            identifier: 'orderId',
+          },
+        ],
+        redirectUrlQuery: [
+          {
+            parameter: 'email',
+            key: 'fields',
+            fieldId: createdEmailField!.id,
+          },
+          {
+            parameter: 'orderId',
+            key: 'orderId',
+            identifier: 'orderId',
+          },
+        ],
+      });
+
+      const orderReferenceField = updated.data.fields?.find(
+        (field) => field.reference === 'order-reference'
+      );
+      const emailField = updated.data.fields?.find((field) => field.reference === 'email');
+
+      expect(orderReferenceField).toBeDefined();
+      expect(emailField).toBeDefined();
+      expect(updated.data.redirectUrl).toBe('https://example.com/checkout-pages/updated');
+      expect(updated.data.redirectUrlPath).toEqual([
+        { key: 'fields', identifier: orderReferenceField?.id },
+        { key: 'orderId', identifier: 'orderId' },
+      ]);
+      expect(updated.data.redirectUrlQuery).toEqual([
+        {
+          parameter: 'email',
+          key: 'fields',
+          identifier: emailField?.id,
+        },
+        {
+          parameter: 'orderId',
+          key: 'orderId',
+          identifier: 'orderId',
+        },
+      ]);
     });
 
     it('updates checkout redirect settings', async () => {
