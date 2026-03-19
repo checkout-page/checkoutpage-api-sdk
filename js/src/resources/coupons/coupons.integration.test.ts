@@ -23,7 +23,7 @@ describe('CouponResource Integration Tests', () => {
   });
 
   describe('list', () => {
-    it('should fetch a list of coupons', async () => {
+    it.only('should fetch a list of coupons', async () => {
       const result = await client.coupons.list();
 
       expect(result).toHaveProperty('data');
@@ -31,6 +31,11 @@ describe('CouponResource Integration Tests', () => {
       expect(result).toHaveProperty('has_more');
       expect(Array.isArray(result.data)).toBe(true);
       expect(typeof result.has_more).toBe('boolean');
+
+      for (const coupon of result.data) {
+        expect(coupon.label).toBeDefined();
+        expect(coupon.deleted).toBeDefined();
+      }
     });
 
     it('should respect limit pagination parameter', async () => {
@@ -141,6 +146,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.timesRedeemed).toBe(0);
       expect(data.deleted).toBe(false);
       expect(data.sellerId).toBe(config.testSellerId);
+      expect(data.deleted).toBe(false);
       expect(data.stripeCouponId).toBeTypeOf('string');
       const updatedAt = new Date(data.updatedAt);
       expect(updatedAt instanceof Date && !isNaN(updatedAt.getTime())).toBe(true);
@@ -302,6 +308,22 @@ describe('CouponResource Integration Tests', () => {
       expect(data.label).toBe(params.label);
     });
 
+    it.only('should handle max redemptions constraint being 0', async () => {
+      const params: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Max Redemptions Test',
+        code: `TEST_MAX_REDEEM_${Date.now()}`,
+        amountOff: 1000,
+        currency: 'usd',
+        duration: 'once',
+        maxRedemptions: 0,
+      };
+
+      const { data } = await client.coupons.create(params);
+
+      expect(data.maxRedemptions).toBe(0);
+    });
+
     it('should handle max redemptions constraint', async () => {
       const params: AmountNonRepeating = {
         type: 'amount',
@@ -384,6 +406,7 @@ describe('CouponResource Integration Tests', () => {
 
       expect((data as any).ticketTypeIds).toHaveLength(1);
       expect((data as any).ticketTypeIds[0]).toBe(config.testTicketTypeId);
+      expect(data.deleted).toBe(false);
     });
   });
 

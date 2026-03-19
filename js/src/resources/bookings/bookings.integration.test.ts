@@ -46,6 +46,28 @@ describe('BookingResource Integration Tests', () => {
       expect(Array.isArray(booking.taxBreakdown)).toBe(true);
     });
 
+    it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
+      const result = await client.bookings.list({ limit: 25 });
+      const bookingWithPaymentMethod = result.data.find((booking) => booking.paymentMethod != null);
+
+      if (!bookingWithPaymentMethod?.paymentMethod) {
+        throw new Error('No booking with paymentMethod found for payment method expiry field test');
+      }
+
+      const paymentMethod = bookingWithPaymentMethod.paymentMethod as Record<string, unknown>;
+
+      if (paymentMethod.exp_month == null || paymentMethod.exp_year == null) {
+        throw new Error('Booking paymentMethod is missing deprecated exp_month/exp_year fields');
+      }
+
+      expect(paymentMethod).toHaveProperty('exp_month');
+      expect(paymentMethod).toHaveProperty('exp_year');
+      expect(paymentMethod).toHaveProperty('expMonth');
+      expect(paymentMethod).toHaveProperty('expYear');
+      expect(paymentMethod.expMonth).toBe(paymentMethod.exp_month);
+      expect(paymentMethod.expYear).toBe(paymentMethod.exp_year);
+    });
+
     it('should respect limit pagination parameter', async () => {
       const result = await client.bookings.list({
         limit: 5,

@@ -1785,6 +1785,282 @@ describe('EventsResource integration tests', () => {
     });
   });
 
+  describe('eventDetails.discounts key linking', () => {
+    it('totalQuantity discounts are stored with empty ticketTypes array', async () => {
+      const { data } = await client.events.create({
+        name: `SDK Event ${uniqueSuffix()}`,
+        eventDetails: {
+          type: 'in_person',
+          currency: 'usd',
+          startDate: '2026-09-01T09:00:00Z',
+          endDate: '2026-09-01T17:00:00Z',
+          timezone: 'UTC',
+          location: 'Test Venue',
+          discounts: [
+            {
+              quantityCondition: 'totalQuantity',
+              minQuantity: 2,
+              maxQuantity: 5,
+              percentOff: 10,
+            },
+          ],
+        } as any,
+        ticketGroups: [
+          {
+            name: 'General Admission',
+            ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 2000 }],
+          },
+        ],
+      } as any);
+
+      rememberPage(data.id);
+
+      const eventDetails = (data as any).eventDetails;
+      expect(eventDetails.discounts).toHaveLength(1);
+      expect(eventDetails.discounts[0].quantityCondition).toBe('totalQuantity');
+      expect(eventDetails.discounts[0].ticketTypes).toEqual([]);
+      expect(eventDetails.discounts[0].minQuantity).toBe(2);
+      expect(eventDetails.discounts[0].maxQuantity).toBe(5);
+      expect(eventDetails.discounts[0].percentOff).toBe(10);
+    });
+
+    it('ticketTypeQuantity discounts resolve ticket type keys to ObjectIds', async () => {
+      const { data } = await client.events.create({
+        name: `SDK Event ${uniqueSuffix()}`,
+        eventDetails: {
+          type: 'in_person',
+          currency: 'usd',
+          startDate: '2026-09-01T09:00:00Z',
+          endDate: '2026-09-01T17:00:00Z',
+          timezone: 'UTC',
+          location: 'Test Venue',
+          discounts: [
+            {
+              quantityCondition: 'ticketTypeQuantity',
+              ticketTypeIds: [{ key: 'vip' }],
+              minQuantity: 2,
+              percentOff: 15,
+            },
+          ],
+        } as any,
+        ticketGroups: [
+          {
+            name: 'VIP',
+            ticketTypes: [{ key: 'vip', name: 'VIP Ticket', pricing: 'paid', price: 5000 }],
+          },
+        ],
+      } as any);
+
+      rememberPage(data.id);
+
+      const group = getTicketGroupByName(data, 'VIP');
+      const ticketType = getTicketTypeByName(group, 'VIP Ticket');
+
+      const eventDetails = (data as any).eventDetails;
+      expect(eventDetails.discounts).toHaveLength(1);
+      const discount = eventDetails.discounts[0];
+      expect(discount.quantityCondition).toBe('ticketTypeQuantity');
+      expect(discount.ticketTypes).toHaveLength(1);
+      expect(discount.ticketTypes[0]).toBe(ticketType.id);
+      expect(discount.minQuantity).toBe(2);
+      expect(discount.percentOff).toBe(15);
+    });
+
+    it('resolves multiple ticket type keys across groups', async () => {
+      const { data } = await client.events.create({
+        name: `SDK Event ${uniqueSuffix()}`,
+        eventDetails: {
+          type: 'in_person',
+          currency: 'usd',
+          startDate: '2026-09-01T09:00:00Z',
+          endDate: '2026-09-01T17:00:00Z',
+          timezone: 'UTC',
+          location: 'Test Venue',
+          discounts: [
+            {
+              quantityCondition: 'ticketTypeQuantity',
+              ticketTypeIds: [{ key: 'early-bird' }, { key: 'standard' }],
+              minQuantity: 3,
+              amountOff: 500,
+            },
+          ],
+        } as any,
+        ticketGroups: [
+          {
+            name: 'General',
+            ticketTypes: [
+              { key: 'early-bird', name: 'Early Bird', pricing: 'paid', price: 1500 },
+              { key: 'standard', name: 'Standard', pricing: 'paid', price: 2000 },
+            ],
+          },
+        ],
+      } as any);
+
+      rememberPage(data.id);
+
+      const group = getTicketGroupByName(data, 'General');
+      const earlyBird = getTicketTypeByName(group, 'Early Bird');
+      const standard = getTicketTypeByName(group, 'Standard');
+
+      const eventDetails = (data as any).eventDetails;
+      const discount = eventDetails.discounts[0];
+      expect(discount.ticketTypes).toHaveLength(2);
+      expect(discount.ticketTypes).toContain(earlyBird.id);
+      expect(discount.ticketTypes).toContain(standard.id);
+      expect(discount.amountOff).toBe(500);
+    });
+
+    it('returns 400 when a discount references an unknown ticket type key', async () => {
+      await expect(
+        client.events.create({
+          name: `SDK Event ${uniqueSuffix()}`,
+          eventDetails: {
+            type: 'in_person',
+            currency: 'usd',
+            startDate: '2026-09-01T09:00:00Z',
+            endDate: '2026-09-01T17:00:00Z',
+            timezone: 'UTC',
+            location: 'Test Venue',
+            discounts: [
+              {
+                quantityCondition: 'ticketTypeQuantity',
+                ticketTypeIds: [{ key: 'nonexistent-key' }],
+                minQuantity: 2,
+                percentOff: 10,
+              },
+            ],
+          } as any,
+          ticketGroups: [
+            {
+              name: 'General',
+              ticketTypes: [{ name: 'Standard', pricing: 'paid', price: 2000 }],
+            },
+          ],
+        } as any)
+      ).rejects.toThrow(ValidationError);
+    });
+  });
+
+  describe('eventDetails.discounts update', () => {
+    it('adds a totalQuantity discount to an existing event', async () => {
+      const { data: created } = await createEvent();
+
+      const updated = await client.events.update(created.id, {
+        eventDetails: {
+          discounts: [
+            {
+              quantityCondition: 'totalQuantity',
+              minQuantity: 2,
+              maxQuantity: 4,
+              percentOff: 10,
+            } as any,
+          ],
+        } as any,
+      } as any);
+
+      const eventDetails = (updated.data as any).eventDetails;
+      expect(eventDetails.discounts).toHaveLength(1);
+      expect(eventDetails.discounts[0].quantityCondition).toBe('totalQuantity');
+      expect(eventDetails.discounts[0].ticketTypes).toEqual([]);
+      expect(eventDetails.discounts[0].minQuantity).toBe(2);
+      expect(eventDetails.discounts[0].maxQuantity).toBe(4);
+      expect(eventDetails.discounts[0].percentOff).toBe(10);
+    });
+
+    it('adds a ticketTypeQuantity discount referencing ticket types by { id }', async () => {
+      const { data: created } = await createEvent({
+        ticketGroups: [
+          {
+            name: 'General',
+            ticketTypes: [{ key: 'ga', name: 'General Admission', pricing: 'paid', price: 2000 }],
+          },
+        ],
+      });
+
+      const group = getTicketGroupByName(created, 'General');
+      const ticketType = getTicketTypeByName(group, 'General Admission');
+
+      const updated = await client.events.update(created.id, {
+        eventDetails: {
+          discounts: [
+            {
+              quantityCondition: 'ticketTypeQuantity',
+              ticketTypeIds: [{ id: ticketType.id }],
+              minQuantity: 3,
+              percentOff: 15,
+            } as any,
+          ],
+        } as any,
+      } as any);
+
+      const eventDetails = (updated.data as any).eventDetails;
+      expect(eventDetails.discounts).toHaveLength(1);
+      const discount = eventDetails.discounts[0];
+      expect(discount.quantityCondition).toBe('ticketTypeQuantity');
+      expect(discount.ticketTypes).toHaveLength(1);
+      expect(discount.ticketTypes[0]).toBe(ticketType.id);
+      expect(discount.minQuantity).toBe(3);
+      expect(discount.percentOff).toBe(15);
+    });
+
+    it('replaces existing discounts when updated', async () => {
+      const { data: created } = await createEvent({
+        eventDetails: {
+          discounts: [{ quantityCondition: 'totalQuantity', minQuantity: 2, percentOff: 10 }],
+        } as any,
+      });
+
+      const updated = await client.events.update(created.id, {
+        eventDetails: {
+          discounts: [
+            { quantityCondition: 'totalQuantity', minQuantity: 5, percentOff: 20 } as any,
+          ],
+        } as any,
+      } as any);
+
+      const eventDetails = (updated.data as any).eventDetails;
+      expect(eventDetails.discounts).toHaveLength(1);
+      expect(eventDetails.discounts[0].minQuantity).toBe(5);
+      expect(eventDetails.discounts[0].percentOff).toBe(20);
+    });
+
+    it('clears discounts when null is provided', async () => {
+      const { data: created } = await createEvent({
+        eventDetails: {
+          discounts: [{ quantityCondition: 'totalQuantity', minQuantity: 2, percentOff: 10 }],
+        } as any,
+      });
+
+      const updated = await client.events.update(created.id, {
+        eventDetails: {
+          discounts: null,
+        } as any,
+      } as any);
+
+      const eventDetails = (updated.data as any).eventDetails;
+      expect(eventDetails.discounts ?? null).toBeNull();
+    });
+
+    it('returns 400 when a ticketTypeQuantity discount references an invalid id', async () => {
+      const { data: created } = await createEvent();
+
+      await expect(
+        client.events.update(created.id, {
+          eventDetails: {
+            discounts: [
+              {
+                quantityCondition: 'ticketTypeQuantity',
+                ticketTypeIds: [{ id: 'not-a-valid-objectid' }],
+                minQuantity: 2,
+                percentOff: 10,
+              } as any,
+            ],
+          } as any,
+        } as any)
+      ).rejects.toThrow(ValidationError);
+    });
+  });
+
   describe('rich text fields return HTML', () => {
     it('returns description as HTML, not lexical JSON', async () => {
       const { data } = await createEvent({
