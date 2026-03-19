@@ -1815,7 +1815,7 @@ describe('EventsResource integration tests', () => {
   });
 
   describe('eventDetails.discounts key linking', () => {
-    it('totalQuantity discounts are stored with empty ticketTypes array', async () => {
+    it('totalQuantity discounts are stored with empty ticketTypeIds array', async () => {
       const { data } = await client.events.create({
         name: `SDK Event ${uniqueSuffix()}`,
         eventDetails: {
@@ -1847,7 +1847,7 @@ describe('EventsResource integration tests', () => {
       const eventDetails = (data as any).eventDetails;
       expect(eventDetails.discounts).toHaveLength(1);
       expect(eventDetails.discounts[0].quantityCondition).toBe('totalQuantity');
-      expect(eventDetails.discounts[0].ticketTypes).toEqual([]);
+      expect(eventDetails.discounts[0].ticketTypeIds).toEqual([]);
       expect(eventDetails.discounts[0].minQuantity).toBe(2);
       expect(eventDetails.discounts[0].maxQuantity).toBe(5);
       expect(eventDetails.discounts[0].percentOff).toBe(10);
@@ -1855,7 +1855,7 @@ describe('EventsResource integration tests', () => {
 
     it('ticketTypeQuantity discounts resolve ticket type keys to ObjectIds', async () => {
       const { data } = await client.events.create({
-        name: `SDK Event ${uniqueSuffix()}`,
+        name: `SDK Event - 2 ${uniqueSuffix()}`,
         eventDetails: {
           type: 'in_person',
           currency: 'usd',
@@ -1875,7 +1875,10 @@ describe('EventsResource integration tests', () => {
         ticketGroups: [
           {
             name: 'VIP',
-            ticketTypes: [{ key: 'vip', name: 'VIP Ticket', pricing: 'paid', price: 5000 }],
+            ticketTypes: [
+              { key: 'vip', name: 'VIP Ticket', pricing: 'paid', price: 5000 },
+              { name: 'General admission', price: 1000 },
+            ],
           },
         ],
       } as any);
@@ -1889,8 +1892,8 @@ describe('EventsResource integration tests', () => {
       expect(eventDetails.discounts).toHaveLength(1);
       const discount = eventDetails.discounts[0];
       expect(discount.quantityCondition).toBe('ticketTypeQuantity');
-      expect(discount.ticketTypes).toHaveLength(1);
-      expect(discount.ticketTypes[0]).toBe(ticketType.id);
+      expect(discount.ticketTypeIds).toHaveLength(1);
+      expect(discount.ticketTypeIds[0]).toBe(ticketType.id);
       expect(discount.minQuantity).toBe(2);
       expect(discount.percentOff).toBe(15);
     });
@@ -1933,9 +1936,9 @@ describe('EventsResource integration tests', () => {
 
       const eventDetails = (data as any).eventDetails;
       const discount = eventDetails.discounts[0];
-      expect(discount.ticketTypes).toHaveLength(2);
-      expect(discount.ticketTypes).toContain(earlyBird.id);
-      expect(discount.ticketTypes).toContain(standard.id);
+      expect(discount.ticketTypeIds).toHaveLength(2);
+      expect(discount.ticketTypeIds).toContain(earlyBird.id);
+      expect(discount.ticketTypeIds).toContain(standard.id);
       expect(discount.amountOff).toBe(500);
     });
 
@@ -1990,7 +1993,7 @@ describe('EventsResource integration tests', () => {
       const eventDetails = (updated.data as any).eventDetails;
       expect(eventDetails.discounts).toHaveLength(1);
       expect(eventDetails.discounts[0].quantityCondition).toBe('totalQuantity');
-      expect(eventDetails.discounts[0].ticketTypes).toEqual([]);
+      expect(eventDetails.discounts[0].ticketTypeIds).toEqual([]);
       expect(eventDetails.discounts[0].minQuantity).toBe(2);
       expect(eventDetails.discounts[0].maxQuantity).toBe(4);
       expect(eventDetails.discounts[0].percentOff).toBe(10);
@@ -2026,8 +2029,8 @@ describe('EventsResource integration tests', () => {
       expect(eventDetails.discounts).toHaveLength(1);
       const discount = eventDetails.discounts[0];
       expect(discount.quantityCondition).toBe('ticketTypeQuantity');
-      expect(discount.ticketTypes).toHaveLength(1);
-      expect(discount.ticketTypes[0]).toBe(ticketType.id);
+      expect(discount.ticketTypeIds).toHaveLength(1);
+      expect(discount.ticketTypeIds[0]).toBe(ticketType.id);
       expect(discount.minQuantity).toBe(3);
       expect(discount.percentOff).toBe(15);
     });
