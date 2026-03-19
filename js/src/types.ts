@@ -124,21 +124,9 @@ export type ValidateTicketParams = NonNullable<
 // Products
 export type Product = operations['products/get']['responses'][200]['content']['application/json'];
 
-export type UpdateProductParams = {
-  title?: string | null;
-  description?: string | null;
-  price?: number | null;
-  currency?: string | null;
-  interval?: string | null;
-  intervalCount?: number | null;
-  trialPeriodDays?: number | null;
-  setupFee?: number | null;
-  planIterations?: number | null;
-  payWhatYouWant?: boolean | null;
-  stock?: number | null;
-  hasUnlimitedStock?: boolean | null;
-  sku?: string | null;
-};
+export type UpdateProductParams = NonNullable<
+  operations['products/update']['requestBody']
+>['content']['application/json'];
 
 // Events
 export type EventList = operations['events/list']['responses'][200]['content']['application/json'];

@@ -912,6 +912,15 @@
             "items": {
               "type": "object",
               "properties": {
+                "id": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                    }
+                  ]
+                },
                 "label": {
                   "type": "string",
                   "description": "Display label shown to customers for this option.",
@@ -923,7 +932,7 @@
                   "example": "value"
                 }
               },
-              "required": ["label"]
+              "required": ["id", "label"]
             },
             "description": "Selectable options. Applies to `select` and `multiple-choice` elements."
           },
@@ -1364,7 +1373,7 @@
           "amount": {
             "type": ["number", "null"],
             "minimum": 0,
-            "maximum": 99999999999,
+            "maximum": 99999999,
             "description": "Fixed fee amount in the page currency minor unit (e.g. cents).",
             "example": 50
           },
@@ -1475,6 +1484,7 @@
             "properties": {
               "interval": {
                 "type": ["string", "null"],
+                "enum": ["day", "week", "month", "year"],
                 "description": "Billing interval (day, week, month, year).",
                 "example": "month"
               },
@@ -1497,11 +1507,15 @@
                   },
                   "dayOfMonth": {
                     "type": ["number", "null"],
-                    "description": "Day of month to anchor the billing cycle to.",
+                    "minimum": 1,
+                    "maximum": 31,
+                    "description": "The first billing period will be prorated based on the remaining days in the month. Defaults to `1`.",
                     "example": 1
                   },
                   "month": {
                     "type": ["number", "null"],
+                    "minimum": 1,
+                    "maximum": 12,
                     "description": "Month to anchor the billing cycle to (for yearly subscriptions).",
                     "example": 1
                   }
@@ -1510,6 +1524,7 @@
               },
               "startDate": {
                 "type": ["string", "null"],
+                "format": "date-time",
                 "description": "The date on which the subscription begins.",
                 "example": "2026-02-25T06:40:09.463Z"
               }
@@ -1521,6 +1536,7 @@
             "properties": {
               "interval": {
                 "type": ["string", "null"],
+                "enum": ["day", "week", "month", "year"],
                 "description": "Billing interval (day, week, month, year).",
                 "example": "month"
               },
@@ -1543,11 +1559,15 @@
                   },
                   "dayOfMonth": {
                     "type": ["number", "null"],
-                    "description": "Day of month to anchor the billing cycle to.",
+                    "minimum": 1,
+                    "maximum": 31,
+                    "description": "The first billing period will be prorated based on the remaining days in the month. Defaults to `1`.",
                     "example": 1
                   },
                   "month": {
                     "type": ["number", "null"],
+                    "minimum": 1,
+                    "maximum": 12,
                     "description": "Month to anchor the billing cycle to (for yearly subscriptions).",
                     "example": 1
                   }
@@ -1560,6 +1580,7 @@
               },
               "startDate": {
                 "type": ["string", "null"],
+                "format": "date-time",
                 "description": "The date on which the payment plan begins.",
                 "example": "2026-02-25T06:40:09.463Z"
               }
@@ -3070,7 +3091,7 @@
           "amount": {
             "type": ["number", "null"],
             "minimum": 0,
-            "maximum": 99999999999,
+            "maximum": 99999999,
             "description": "Fixed fee amount in the page currency minor unit (e.g. cents).",
             "example": 50
           },

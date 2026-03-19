@@ -1013,6 +1013,85 @@ describe('FormsResource integration tests', () => {
     });
   });
 
+  describe('field option ids', () => {
+    it('returns an id on each option for a select field', async () => {
+      const { data } = await createForm({
+        fields: [
+          { label: 'Email', element: 'email', type: 'email', required: true },
+          {
+            label: 'Delivery Method',
+            element: 'select',
+            required: false,
+            options: [
+              { label: 'Digital', value: 'digital' },
+              { label: 'Physical', value: 'physical' },
+            ],
+          },
+        ],
+      });
+
+      const selectField = data.fields?.find((f) => f.element === 'select');
+      expect(selectField).toBeDefined();
+      expect(selectField?.options).toHaveLength(2);
+      selectField?.options?.forEach((option) => {
+        expect(option.id).toBeTypeOf('string');
+        expect(option.id).toMatch(/^[0-9a-f]{24}$/);
+      });
+    });
+
+    it('returns an id on each option for a multiple-choice field', async () => {
+      const { data } = await createForm({
+        fields: [
+          { label: 'Email', element: 'email', type: 'email', required: true },
+          {
+            label: 'T-Shirt Size',
+            element: 'multiple-choice',
+            required: false,
+            options: [
+              { label: 'Small', value: 's' },
+              { label: 'Medium', value: 'm' },
+              { label: 'Large', value: 'l' },
+            ],
+          },
+        ],
+      });
+
+      const choiceField = data.fields?.find((f) => f.element === 'multiple-choice');
+      expect(choiceField).toBeDefined();
+      expect(choiceField?.options).toHaveLength(3);
+      choiceField?.options?.forEach((option) => {
+        expect(option.id).toBeTypeOf('string');
+        expect(option.id).toMatch(/^[0-9a-f]{24}$/);
+      });
+    });
+
+    it('returns option ids when retrieving a form by id', async () => {
+      const created = await createForm({
+        fields: [
+          { label: 'Email', element: 'email', type: 'email', required: true },
+          {
+            label: 'Preferred Plan',
+            element: 'select',
+            required: false,
+            options: [
+              { label: 'Starter', value: 'starter' },
+              { label: 'Pro', value: 'pro' },
+            ],
+          },
+        ],
+      });
+
+      const result = await client.forms.get(created.data.id);
+      const selectField = result.data.fields?.find((f) => f.element === 'select');
+      expect(selectField).toBeDefined();
+      expect(selectField?.options).toHaveLength(2);
+      selectField?.options?.forEach((option) => {
+        expect(option.id).toBeTypeOf('string');
+        expect(option.id).toMatch(/^[0-9a-f]{24}$/);
+      });
+    });
+  });
+
   describe('rich text fields return HTML', () => {
     it('returns description as HTML, not lexical JSON', async () => {
       const { data } = await createForm({
