@@ -45,6 +45,25 @@ describe('EventsResource integration tests', () => {
     expect(Number.isNaN(new Date(value as string).getTime())).toBe(false);
   };
 
+  const expectErrorEnvelope = (payload: unknown, expectedMessage: string) => {
+    expect(payload).toEqual({
+      status: 'error',
+      type: 'error',
+      message: expectedMessage,
+    });
+  };
+
+  const requestRaw = async (path: string, init?: RequestInit) => {
+    return fetch(new URL(path, config.baseUrl), {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${config.apiKey}`,
+        'Content-Type': 'application/json',
+        ...(init?.headers ?? {}),
+      },
+    });
+  };
+
   const expectBaseEventResponse = (event: Event, expectedName?: string) => {
     expect(event.id).toBeTypeOf('string');
     expect(event.sellerId).toBe(config.testSellerId);
@@ -735,6 +754,16 @@ describe('EventsResource integration tests', () => {
 
     it('fails for an unknown event id', async () => {
       await expect(client.events.get(fakeObjectId('missingevent'))).rejects.toThrow(NotFoundError);
+    });
+
+    it('returns the JSON error envelope for an unknown event id', async () => {
+      const eventId = fakeObjectId('missingevent');
+      const response = await requestRaw(`/v1/events/${eventId}`);
+      const payload = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(response.headers.get('content-type')).toContain('application/json');
+      expectErrorEnvelope(payload, `Event ${eventId} not found`);
     });
 
     it('fails for a malformed event id', async () => {
