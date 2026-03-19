@@ -1522,6 +1522,8 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         });
 
+        expect(data.product?.price.amount).toBe(1000);
+        expect(data.product?.price.currency).toBe('usd');
         expect(data.product?.discounts).toHaveLength(1);
         const discount = data.product?.discounts?.[0];
         expect(discount?.quantityCondition).toBe('checkout_quantity');
@@ -1546,6 +1548,8 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         });
 
+        expect(data.product?.price.amount).toBe(2000);
+        expect(data.product?.price.currency).toBe('usd');
         expect(data.product?.discounts).toHaveLength(1);
         const discount = data.product?.discounts?.[0];
         expect(discount?.quantityCondition).toBe('checkout_quantity');
@@ -1576,6 +1580,8 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         });
 
+        expect(data.product?.price.amount).toBe(1000);
+        expect(data.product?.price.currency).toBe('usd');
         expect(data.product?.discounts).toHaveLength(2);
         const tier1 = data.product?.discounts?.find((d) => d.minQuantity === 5);
         const tier2 = data.product?.discounts?.find((d) => d.minQuantity === 10);
@@ -1612,6 +1618,8 @@ describe('CheckoutPagesResource integration tests', () => {
           },
         });
 
+        expect(data.product?.price.amount).toBe(1000);
+        expect(data.product?.price.currency).toBe('usd');
         expect(data.product?.discounts).toHaveLength(1);
         const discount = data.product?.discounts?.[0];
         expect(discount?.quantityCondition).toBe('variant_option_quantity');
