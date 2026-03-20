@@ -152,25 +152,41 @@ describe('EventsResource integration tests', () => {
     });
 
     it('supports starting_after pagination', async () => {
-      const seed = await client.events.list({ limit: 2 });
+      const token = `sdk-event-pagination-${uniqueSuffix()}`;
+      await createEvent({ name: `${token}-a`, title: `${token}-a` });
+      await createEvent({ name: `${token}-b`, title: `${token}-b` });
+      const seed = await client.events.list({ limit: 2, search: token });
+
+      expect(seed.data.length).toBeGreaterThanOrEqual(2);
 
       const nextPage = await client.events.list({
         limit: 1,
+        search: token,
         starting_after: seed.data[0].id,
       });
 
-      expect(nextPage.data[0]?.id).toBe(seed.data[1].id);
+      expect(nextPage.data).toHaveLength(1);
+      expect(nextPage.data[0]?.id).not.toBe(seed.data[0].id);
+      expect([seed.data[0].id, seed.data[1].id]).toContain(nextPage.data[0]?.id);
     });
 
     it('supports ending_before pagination', async () => {
-      const seed = await client.events.list({ limit: 3 });
+      const token = `sdk-event-pagination-${uniqueSuffix()}`;
+      await createEvent({ name: `${token}-a`, title: `${token}-a` });
+      await createEvent({ name: `${token}-b`, title: `${token}-b` });
+      const seed = await client.events.list({ limit: 2, search: token });
+
+      expect(seed.data.length).toBeGreaterThanOrEqual(2);
 
       const prevPage = await client.events.list({
         limit: 1,
+        search: token,
         ending_before: seed.data[1].id,
       });
 
-      expect(prevPage.data[0]?.id).toBe(seed.data[0].id);
+      expect(prevPage.data).toHaveLength(1);
+      expect(prevPage.data[0]?.id).not.toBe(seed.data[1].id);
+      expect([seed.data[0].id, seed.data[1].id]).toContain(prevPage.data[0]?.id);
     });
 
     it('filters events by status', async () => {
@@ -1915,6 +1931,60 @@ describe('EventsResource integration tests', () => {
         expect(updated.data.availabilityBehavior).toBe('until_event_starts');
         expect(updated.data.saleStartOn ?? null).toBeNull();
         expect(updated.data.saleEndOn ?? null).toBeNull();
+      });
+
+      it('moves a ticket type to another ticket group by updating ticketGroupId', async () => {
+        const event = await createEvent();
+        const sourceGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `Source Group ${uniqueSuffix()}`,
+        });
+        const destinationGroup = await client.events.ticketGroups.create(event.data.id, {
+          name: `Destination Group ${uniqueSuffix()}`,
+        });
+        const ticketType = await client.events.ticketGroups.ticketTypes.create(
+          event.data.id,
+          sourceGroup.data.id,
+          {
+            name: `Move Ticket ${uniqueSuffix()}`,
+            pricing: 'paid',
+            price: 1500,
+          }
+        );
+
+        const updated = await client.events.ticketGroups.ticketTypes.update(
+          event.data.id,
+          sourceGroup.data.id,
+          ticketType.data.id,
+          {
+            ticketGroupId: destinationGroup.data.id,
+            name: `Moved Ticket ${uniqueSuffix()}`,
+          }
+        );
+
+        expect(updated.data.ticketGroupId).toBe(destinationGroup.data.id);
+        expect(updated.data.name).toContain('Moved Ticket');
+
+        const destinationGroupRead = await client.events.ticketGroups.get(
+          event.data.id,
+          destinationGroup.data.id
+        );
+        expect(destinationGroupRead.data.ticketTypeIds).toContain(ticketType.data.id);
+
+        const eventRead = await client.events.get(event.data.id);
+        const sourceGroupInEvent = eventRead.data.ticketGroups?.find(
+          (group) => group.id === sourceGroup.data.id
+        );
+        const destinationGroupInEvent = eventRead.data.ticketGroups?.find(
+          (group) => group.id === destinationGroup.data.id
+        );
+
+        expect(
+          sourceGroupInEvent?.ticketTypes?.some((ticket) => ticket.id === ticketType.data.id) ??
+            false
+        ).toBe(false);
+        expect(
+          destinationGroupInEvent?.ticketTypes?.some((ticket) => ticket.id === ticketType.data.id)
+        ).toBe(true);
       });
 
       it('switches ticket type from trigger-based to date_time_based', async () => {

@@ -23,7 +23,7 @@ describe('CouponResource Integration Tests', () => {
   });
 
   describe('list', () => {
-    it.only('should fetch a list of coupons', async () => {
+    it('should fetch a list of coupons', async () => {
       const result = await client.coupons.list();
 
       expect(result).toHaveProperty('data');
@@ -308,7 +308,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.label).toBe(params.label);
     });
 
-    it.only('should handle max redemptions constraint being 0', async () => {
+    it('should handle max redemptions constraint being 0', async () => {
       const params: AmountNonRepeating = {
         type: 'amount',
         label: 'Max Redemptions Test',

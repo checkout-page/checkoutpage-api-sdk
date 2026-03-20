@@ -5723,6 +5723,11 @@
         "type": "object",
         "properties": {
           "id": { "type": "string", "description": "Unique identifier for the ticket type." },
+          "ticketGroupId": {
+            "type": ["string", "null"],
+            "description": "ID of the ticket group this ticket type belongs to. This moves the ticket from the current group to the new group.",
+            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+          },
           "name": { "type": "string", "description": "Name of the ticket type." },
           "description": {
             "type": ["string", "null"],
@@ -8630,6 +8635,15 @@
             "pattern": "^[0-9a-fA-F]{24}$",
             "description": "Ticket type ID that triggers this type's availability.",
             "example": "507f1f77bcf86cd799439014"
+          },
+          "ticketGroupId": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              {
+                "description": "Destination ticket group ID. When provided, the ticket type is moved to this ticket group before applying the remaining updates.",
+                "example": "507f1f77bcf86cd799439015"
+              }
+            ]
           }
         }
       },
@@ -15397,7 +15411,7 @@
             }
           },
           "400": {
-            "description": "Bad request - invalid input",
+            "description": "Bad request - Invalid request parameters",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -15594,7 +15608,7 @@
             }
           },
           "400": {
-            "description": "Bad request - invalid input",
+            "description": "Bad request - Invalid request parameters",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -15885,7 +15899,7 @@
             }
           },
           "400": {
-            "description": "Bad request - invalid input",
+            "description": "Bad request - Invalid request parameters",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }

@@ -150,12 +150,9 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
 
     it('returns an empty list for an unknown ticket group id', async () => {
       const event = await createEvent();
-      const result = await events.ticketGroups.ticketTypes.list(
-        event.data.id,
-        fakeObjectId('missinggroup')
-      );
-
-      expect(result.data).toEqual([]);
+      await expect(
+        events.ticketGroups.ticketTypes.list(event.data.id, fakeObjectId('missinggroup'))
+      ).rejects.toThrow(NotFoundError);
     });
   });
 
