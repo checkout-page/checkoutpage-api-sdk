@@ -85,25 +85,18 @@ describe('PaymentResource Integration Tests', () => {
     });
 
     it('should respect limit pagination parameter', async () => {
-      const result = await listPayments({
-        limit: 2,
-      });
-
+      const result = await listPayments({ limit: 2 });
       expect(result?.data.length).toBe(2);
     });
 
     it('should use cursor-based pagination with starting_after', async () => {
-      const firstPage = await listPayments({
-        limit: 1,
-      });
-
+      const firstPage = await listPayments({ limit: 1 });
       if (!firstPage) throw Error();
 
       const secondPage = await listPayments({
         limit: 1,
         starting_after: firstPage.data[0].id,
       });
-
       if (!secondPage) throw Error();
 
       expect(firstPage.data[0].id).not.toBe(secondPage.data[0].id);
@@ -111,14 +104,9 @@ describe('PaymentResource Integration Tests', () => {
     });
 
     it('should use cursor-based pagination with ending_before', async () => {
-      /**
-       * We can't be at the start of the list for this test to be affective. We'll be paging backwards.
-       */
-      const moveAwayFromStart = await listPayments({
-        limit: 5,
-      });
-
+      const moveAwayFromStart = await listPayments({ limit: 5 });
       if (!moveAwayFromStart) throw Error();
+
       const firstPage = await listPayments({
         limit: 1,
         starting_after: moveAwayFromStart.data[moveAwayFromStart.data.length - 1].id,
@@ -136,12 +124,9 @@ describe('PaymentResource Integration Tests', () => {
     });
 
     it('should filter payments by status', async () => {
-      const result = await listPayments({
-        status: 'paid',
-      });
+      const result = await listPayments({ status: 'paid' });
       if (!result) throw Error();
 
-      expect(result).toHaveProperty('data');
       expect(Array.isArray(result.data)).toBe(true);
       expect(result.data.length).toBeGreaterThan(1);
 
@@ -150,51 +135,181 @@ describe('PaymentResource Integration Tests', () => {
       }
     });
 
-    it('should support searching payments', async () => {
-      const result = await listPayments({
-        limit: 10,
-      });
-      if (!result) throw Error();
+    it('should support searching payments by customer email', async () => {
+      const seed = await listPayments({ limit: 10 });
+      if (!seed) throw Error();
 
-      if (result.data.length > 0 && result.data[0].customerEmail) {
-        const searchResult = await listPayments({
-          search: result.data[0].customerEmail,
-        });
-        if (!searchResult) throw Error();
+      if (!seed.data[0]?.customerEmail) throw Error();
 
-        expect(Array.isArray(searchResult.data)).toBe(true);
-      } else {
-        throw Error();
+      const searchResult = await listPayments({ search: seed.data[0].customerEmail });
+      if (!searchResult) throw Error();
+
+      expect(Array.isArray(searchResult.data)).toBe(true);
+      for (const payment of searchResult.data) {
+        expect(payment.customerEmail).toBe(seed.data[0].customerEmail);
       }
     });
 
-    it('should filter payments by pageId if available', async () => {
-      const result = await listPayments({
-        limit: 1,
-      });
+    it('should filter payments by pageId', async () => {
+      const seed = await listPayments({ limit: 1 });
+      if (!seed || !seed.data[0]?.pageId) throw Error();
+
+      const result = await listPayments({ pageId: seed.data[0].pageId });
       if (!result) throw Error();
 
-      if (result.data.length > 0 && result.data[0].pageId) {
-        const pageFilterResult = await listPayments({
-          pageId: result.data[0].pageId,
-        });
-        if (!pageFilterResult) throw Error();
+      expect(Array.isArray(result.data)).toBe(true);
+      for (const payment of result.data) {
+        expect(payment.pageId).toBe(seed.data[0].pageId);
+      }
+    });
 
-        expect(Array.isArray(pageFilterResult.data)).toBe(true);
+    it('should filter payments by customerId', async () => {
+      const seed = await listPayments({ limit: 10 });
+      if (!seed) throw Error();
 
-        for (const payment of pageFilterResult.data) {
-          expect(payment.pageId).toBe(result.data[0].pageId);
-        }
-      } else {
-        throw Error();
+      const paymentWithCustomer = seed.data.find((p) => p.customerId != null);
+      if (!paymentWithCustomer?.customerId) throw Error();
+
+      const result = await listPayments({ customerId: paymentWithCustomer.customerId });
+      if (!result) throw Error();
+
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const payment of result.data) {
+        expect(payment.customerId).toBe(paymentWithCustomer.customerId);
+      }
+    });
+
+    it('should filter payments by exact orderId', async () => {
+      const seed = await listPayments({ limit: 10 });
+      if (!seed) throw Error();
+
+      const paymentWithOrder = seed.data.find((p) => p.orderId != null);
+      if (!paymentWithOrder?.orderId) throw Error();
+
+      const result = await listPayments({ orderId: paymentWithOrder.orderId });
+      if (!result) throw Error();
+
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const payment of result.data) {
+        expect(payment.orderId).toBe(paymentWithOrder.orderId);
+      }
+    });
+
+    it('should return empty results for a non-existent orderId', async () => {
+      const result = await listPayments({ orderId: 'NON-EXISTENT-ORDER-XYZ-99999' });
+      if (!result) throw Error();
+
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
+    });
+
+    it('should filter payments by couponCode', async () => {
+      // First find a payment that used a coupon
+      const seed = await listPayments({ limit: 20 });
+      if (!seed) throw Error();
+
+      const paymentWithCoupon = seed.data.find((p) => p.coupon?.code != null);
+      if (!paymentWithCoupon?.coupon?.code) {
+        // No coupon payments in the result set — skip gracefully
+        return;
+      }
+
+      const result = await listPayments({ couponCode: paymentWithCoupon.coupon.code });
+      if (!result) throw Error();
+
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const payment of result.data) {
+        expect(payment.coupon?.code).toBe(paymentWithCoupon.coupon.code);
+      }
+    });
+
+    it('should filter payments by productId', async () => {
+      const seed = await listPayments({ limit: 10 });
+      if (!seed) throw Error();
+
+      const paymentWithProduct = seed.data.find((p) => p.productId != null);
+      if (!paymentWithProduct?.productId) throw Error();
+
+      const result = await listPayments({ productId: paymentWithProduct.productId });
+      if (!result) throw Error();
+
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const payment of result.data) {
+        expect(payment.productId).toBe(paymentWithProduct.productId);
+      }
+    });
+
+    it('should filter payments by createdAfter', async () => {
+      const createdAfter = '2020-01-01T00:00:00Z';
+      const result = await listPayments({ createdAfter });
+      if (!result) throw Error();
+
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const payment of result.data) {
+        expect(new Date(payment.createdAt).getTime()).toBeGreaterThanOrEqual(
+          new Date(createdAfter).getTime()
+        );
+      }
+    });
+
+    it('should filter payments by createdBefore', async () => {
+      const createdBefore = '2099-01-01T00:00:00Z';
+      const result = await listPayments({ createdBefore });
+      if (!result) throw Error();
+
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data.length).toBeGreaterThan(0);
+      for (const payment of result.data) {
+        expect(new Date(payment.createdAt).getTime()).toBeLessThanOrEqual(
+          new Date(createdBefore).getTime()
+        );
+      }
+    });
+
+    it('should return empty results when createdAfter is in the future', async () => {
+      const result = await listPayments({ createdAfter: '2099-01-01T00:00:00Z' });
+      if (!result) throw Error();
+
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
+    });
+
+    it('should return empty results when createdBefore is far in the past', async () => {
+      const result = await listPayments({ createdBefore: '2000-01-01T00:00:00Z' });
+      if (!result) throw Error();
+
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
+    });
+
+    it('should filter abandoned payments', async () => {
+      const result = await listPayments({ abandonmentStatus: 'abandoned' });
+      if (!result) throw Error();
+
+      expect(Array.isArray(result.data)).toBe(true);
+      for (const payment of result.data) {
+        expect(payment.isAbandoned).toBe(true);
+        expect(payment.recoveredAt).toBeFalsy();
+        expect(payment.abandonmentStatus).toBe('abandoned');
+      }
+    });
+
+    it('should filter recovered payments', async () => {
+      const result = await listPayments({ abandonmentStatus: 'recovered' });
+      if (!result) throw Error();
+
+      expect(Array.isArray(result.data)).toBe(true);
+      for (const payment of result.data) {
+        expect(payment.isAbandoned).toBe(true);
+        expect(payment.recoveredAt).toBeTruthy();
+        expect(payment.abandonmentStatus).toBe('recovered');
       }
     });
 
     it('should combine multiple filters', async () => {
-      const result = await listPayments({
-        status: 'paid',
-        limit: 5,
-      });
+      const result = await listPayments({ status: 'paid', limit: 5 });
       if (!result) throw Error();
 
       expect(Array.isArray(result.data)).toBe(true);
