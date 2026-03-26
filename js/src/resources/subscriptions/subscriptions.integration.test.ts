@@ -40,16 +40,22 @@ describe('SubscriptionResource Integration Tests', () => {
 
     it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
       const result = await client.subscriptions.list({ limit: 25 });
-      const subscriptionWithPaymentMethod = result.data.find((subscription) => subscription.paymentMethod != null);
+      const subscriptionWithPaymentMethod = result.data.find(
+        (subscription) => subscription.paymentMethod != null
+      );
 
       if (!subscriptionWithPaymentMethod?.paymentMethod) {
-        throw new Error('No subscription with paymentMethod found for payment method expiry field test');
+        throw new Error(
+          'No subscription with paymentMethod found for payment method expiry field test'
+        );
       }
 
       const paymentMethod = subscriptionWithPaymentMethod.paymentMethod as Record<string, unknown>;
 
       if (paymentMethod.exp_month == null || paymentMethod.exp_year == null) {
-        throw new Error('Subscription paymentMethod is missing deprecated exp_month/exp_year fields');
+        throw new Error(
+          'Subscription paymentMethod is missing deprecated exp_month/exp_year fields'
+        );
       }
 
       expect(paymentMethod).toHaveProperty('exp_month');
@@ -165,6 +171,27 @@ describe('SubscriptionResource Integration Tests', () => {
 
       for (const subscription of result.data) {
         expect(subscription.status).toBe('active');
+      }
+    });
+
+    it('should include pageName and pageSlug when a page is associated', async () => {
+      const result = await client.subscriptions.list({ limit: 10 });
+
+      const subWithPage = result.data.find((s) => s.pageId != null);
+      if (!subWithPage) return;
+
+      expect(typeof subWithPage.pageName === 'string' || subWithPage.pageName == null).toBe(true);
+      expect(typeof subWithPage.pageSlug === 'string' || subWithPage.pageSlug == null).toBe(true);
+      expect(typeof subWithPage.pageTitle === 'string' || subWithPage.pageTitle == null).toBe(true);
+    });
+
+    it('should return clientIp as a string or undefined', async () => {
+      const result = await client.subscriptions.list({ limit: 10 });
+
+      for (const subscription of result.data) {
+        expect(
+          subscription.clientIp === undefined || typeof subscription.clientIp === 'string'
+        ).toBe(true);
       }
     });
   });

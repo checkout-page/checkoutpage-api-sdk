@@ -269,5 +269,30 @@ describe('BookingResource Integration Tests', () => {
       expect(result.has_more).toBe(typeof result.has_more === 'boolean' ? result.has_more : false);
       expect(result.total).toBeGreaterThanOrEqual(result.data.length);
     });
+
+    it('should include pageName and pageSlug when a page is associated', async () => {
+      const result = await client.bookings.list({ limit: 10 });
+
+      const bookingWithPage = result.data.find((b) => b.pageId != null);
+      if (!bookingWithPage) return;
+
+      expect(typeof bookingWithPage.pageName === 'string' || bookingWithPage.pageName == null).toBe(
+        true
+      );
+      expect(typeof bookingWithPage.pageSlug === 'string' || bookingWithPage.pageSlug == null).toBe(
+        true
+      );
+      expect(
+        typeof bookingWithPage.pageTitle === 'string' || bookingWithPage.pageTitle == null
+      ).toBe(true);
+    });
+
+    it('should return clientIp as a string or undefined', async () => {
+      const result = await client.bookings.list({ limit: 10 });
+
+      for (const booking of result.data) {
+        expect(booking.clientIp === undefined || typeof booking.clientIp === 'string').toBe(true);
+      }
+    });
   });
 });
