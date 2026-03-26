@@ -320,22 +320,16 @@ describe('PaymentResource Integration Tests', () => {
       }
     });
 
-    it('should include pageName and pageSlug when a page is associated', async () => {
+    it('should include pageSlug when a page is associated', async () => {
       const result = await listPayments({ limit: 10 });
       if (!result) return;
 
       const paymentWithPage = result.data.find((p) => p.pageId != null);
       if (!paymentWithPage) return;
 
-      expect(typeof paymentWithPage.pageName === 'string' || paymentWithPage.pageName == null).toBe(
-        true
-      );
       expect(typeof paymentWithPage.pageSlug === 'string' || paymentWithPage.pageSlug == null).toBe(
         true
       );
-      expect(
-        typeof paymentWithPage.pageTitle === 'string' || paymentWithPage.pageTitle == null
-      ).toBe(true);
     });
 
     it('should return clientIp as a string or undefined', async () => {

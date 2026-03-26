@@ -174,15 +174,13 @@ describe('SubscriptionResource Integration Tests', () => {
       }
     });
 
-    it('should include pageName and pageSlug when a page is associated', async () => {
+    it('should include pageSlug when a page is associated', async () => {
       const result = await client.subscriptions.list({ limit: 10 });
 
       const subWithPage = result.data.find((s) => s.pageId != null);
       if (!subWithPage) return;
 
-      expect(typeof subWithPage.pageName === 'string' || subWithPage.pageName == null).toBe(true);
       expect(typeof subWithPage.pageSlug === 'string' || subWithPage.pageSlug == null).toBe(true);
-      expect(typeof subWithPage.pageTitle === 'string' || subWithPage.pageTitle == null).toBe(true);
     });
 
     it('should return clientIp as a string or undefined', async () => {

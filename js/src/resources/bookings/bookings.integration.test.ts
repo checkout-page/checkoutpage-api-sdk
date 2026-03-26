@@ -270,21 +270,15 @@ describe('BookingResource Integration Tests', () => {
       expect(result.total).toBeGreaterThanOrEqual(result.data.length);
     });
 
-    it('should include pageName and pageSlug when a page is associated', async () => {
+    it('should include pageSlug when a page is associated', async () => {
       const result = await client.bookings.list({ limit: 10 });
 
       const bookingWithPage = result.data.find((b) => b.pageId != null);
       if (!bookingWithPage) return;
 
-      expect(typeof bookingWithPage.pageName === 'string' || bookingWithPage.pageName == null).toBe(
-        true
-      );
       expect(typeof bookingWithPage.pageSlug === 'string' || bookingWithPage.pageSlug == null).toBe(
         true
       );
-      expect(
-        typeof bookingWithPage.pageTitle === 'string' || bookingWithPage.pageTitle == null
-      ).toBe(true);
     });
 
     it('should return clientIp as a string or undefined', async () => {
