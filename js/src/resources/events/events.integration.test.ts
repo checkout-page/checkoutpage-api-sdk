@@ -45,6 +45,8 @@ describe('EventsResource integration tests', () => {
     expect(Number.isNaN(new Date(value as string).getTime())).toBe(false);
   };
 
+  const normalizeSlug = (slug: string | null | undefined) => slug?.replace(/^\/+/, '') ?? slug;
+
   const expectErrorEnvelope = (payload: unknown, expectedMessage: string) => {
     expect(payload).toEqual({
       status: 'error',
@@ -543,7 +545,7 @@ describe('EventsResource integration tests', () => {
       });
 
       expectBaseEventResponse(data, eventName);
-      expect(data.slug).toBe(slug);
+      expect(normalizeSlug(data.slug)).toBe(normalizeSlug(slug));
       expect(data.locale).toBe('en-US');
       expect(data.title).toBe(title);
       expect(data.description).toBeDefined();
@@ -689,6 +691,40 @@ describe('EventsResource integration tests', () => {
 
       expect(data.afterPaymentAction).toBe('checkout');
       expect(data.redirectPageId).toBe(config.testCheckoutPageId);
+    });
+
+    it('rejects an uppercase slug on create', async () => {
+      await expect(
+        createEvent({
+          slug: `/SDK-Event-${uniqueSuffix()}`,
+        })
+      ).rejects.toThrow(/slug needs to be lowercase/i);
+    });
+
+    it('rejects an unknown redirectPageId on create', async () => {
+      await expect(
+        createEvent({
+          afterPaymentAction: 'checkout',
+          redirectPageId: fakeObjectId('missingredirect'),
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
+    it('rejects an unknown funnel page reference on create', async () => {
+      await expect(
+        createEvent({
+          funnelSteps: [
+            {
+              type: 'checkout',
+              order: 0,
+              enabled: true,
+              config: {
+                pageId: fakeObjectId('missingfunnel'),
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
     });
 
     it('creates an event with a custom redirectUrl resolving field keys to field IDs', async () => {
@@ -975,7 +1011,7 @@ describe('EventsResource integration tests', () => {
 
       expectBaseEventResponse(result.data);
       expect(result.data.status).toBe('draft');
-      expect(result.data.slug).toBe(updatedSlug);
+      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(updatedSlug));
       expect(result.data.locale).toBe('fr-FR');
       expect(result.data.allowDynamicTitle).toBe(true);
       expect(result.data.allowDynamicDescription).toBe(true);
@@ -1046,7 +1082,47 @@ describe('EventsResource integration tests', () => {
       expect(result.data.ticketGroups?.[0]?.ticketTypes?.[0]?.name).toBe('Standard');
     });
 
-    it('clears nullable settings when null is provided', async () => {
+    it('rejects an uppercase slug on update', async () => {
+      const created = await createEvent();
+
+      await expect(
+        client.events.update(created.data.id, {
+          slug: `/Updated-Event-${uniqueSuffix()}`,
+        })
+      ).rejects.toThrow(/slug needs to be lowercase/i);
+    });
+
+    it('rejects an unknown redirectPageId on update', async () => {
+      const created = await createEvent();
+
+      await expect(
+        client.events.update(created.data.id, {
+          afterPaymentAction: 'checkout',
+          redirectPageId: fakeObjectId('missingredirect'),
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
+    it('rejects an unknown funnel page reference on update', async () => {
+      const created = await createEvent();
+
+      await expect(
+        client.events.update(created.data.id, {
+          funnelSteps: [
+            {
+              type: 'checkout',
+              order: 0,
+              enabled: true,
+              config: {
+                pageId: fakeObjectId('missingfunnel'),
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
+    it('preserves slug while clearing other nullable settings when null is provided', async () => {
       const created = await createEvent({
         slug: `/clear-event-${uniqueSuffix()}`,
         redirectUrl: 'https://example.com/original',
@@ -1070,7 +1146,7 @@ describe('EventsResource integration tests', () => {
         trackingCodes: null,
       });
 
-      expect(result.data.slug).toBeNull();
+      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(created.data.slug));
       expect(result.data.redirectUrl).toBeNull();
       expect(result.data.notifyEmail).toBeNull();
       expect(result.data.confirmationCheckoutTitle).toBeNull();

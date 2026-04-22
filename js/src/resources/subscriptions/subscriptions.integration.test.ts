@@ -52,14 +52,10 @@ describe('SubscriptionResource Integration Tests', () => {
 
       const paymentMethod = subscriptionWithPaymentMethod.paymentMethod as Record<string, unknown>;
 
-      if (paymentMethod.exp_month == null || paymentMethod.exp_year == null) {
-        throw new Error(
-          'Subscription paymentMethod is missing deprecated exp_month/exp_year fields'
-        );
+      if (paymentMethod.expMonth == null || paymentMethod.expYear == null) {
+        throw new Error('Subscription paymentMethod is missing expMonth/expYear fields');
       }
 
-      expect(paymentMethod).toHaveProperty('exp_month');
-      expect(paymentMethod).toHaveProperty('exp_year');
       expect(paymentMethod).toHaveProperty('expMonth');
       expect(paymentMethod).toHaveProperty('expYear');
       expect(paymentMethod.expMonth).toBe(paymentMethod.exp_month);
@@ -126,12 +122,15 @@ describe('SubscriptionResource Integration Tests', () => {
 
     it('should support searching subscriptions', async () => {
       const result = await client.subscriptions.list({
-        limit: 1,
+        limit: 10,
       });
+      const subscriptionWithCustomerEmail = result.data.find(
+        (subscription) => subscription.customerEmail
+      );
 
-      if (result.data.length > 0 && result.data[0].customerEmail) {
+      if (subscriptionWithCustomerEmail?.customerEmail) {
         const searchResult = await client.subscriptions.list({
-          search: result.data[0].customerEmail,
+          search: subscriptionWithCustomerEmail.customerEmail,
         });
 
         expect(Array.isArray(searchResult.data)).toBe(true);

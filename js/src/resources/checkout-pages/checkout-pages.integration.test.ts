@@ -94,6 +94,8 @@ describe('CheckoutPagesResource integration tests', () => {
     expect(page[field]).toBe(expected);
   };
 
+  const normalizeSlug = (slug: string | null | undefined) => slug?.replace(/^\/+/, '') ?? slug;
+
   const createCheckoutPage = async (overrides: Partial<CreateCheckoutPageParams> = {}) => {
     const suffix = uniqueSuffix();
     const params: CreateCheckoutPageParams = {
@@ -441,8 +443,16 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(data.locale).toBe('fr-FR');
-      expect(data.slug).toContain('/sdk-checkout-');
+      expect(normalizeSlug(data.slug)).toContain('sdk-checkout-');
       expect(data.trackingCodes).toContain('sdkCheckoutTest');
+    });
+
+    it('rejects an uppercase slug on create', async () => {
+      await expect(
+        createCheckoutPage({
+          slug: `/SDK-Checkout-${uniqueSuffix()}`,
+        })
+      ).rejects.toThrow(/slug needs to be lowercase/i);
     });
 
     it('creates a checkout page with invoice settings checkout abandonment and tax', async () => {
@@ -596,6 +606,32 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(data.funnelSteps?.length).toBe(1);
       expect(data.funnelSteps?.[0]?.type).toBe('checkout');
+    });
+
+    it('rejects an unknown redirectPageId on create', async () => {
+      await expect(
+        createCheckoutPage({
+          afterPaymentAction: 'checkout',
+          redirectPageId: fakeObjectId('missingredirect'),
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
+    it('rejects an unknown funnel page reference on create', async () => {
+      await expect(
+        createCheckoutPage({
+          funnelSteps: [
+            {
+              type: 'checkout',
+              order: 0,
+              enabled: true,
+              config: {
+                pageId: fakeObjectId('missingfunnel'),
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
     });
 
     it('creates a checkout page with subscription-specific settings', async () => {
@@ -1625,7 +1661,9 @@ describe('CheckoutPagesResource integration tests', () => {
         expect(discount?.percentOff).toBe(15);
         expect(discount?.variantOptionIds).toHaveLength(1);
         expect(discount?.variantOptionIds?.[0]).toMatch(/^[0-9a-f]{24}$/);
-        expect(discount?.variantOptionIds?.[0]).toEqual(data?.product?.variants![0].id);
+        expect(discount?.variantOptionIds?.[0]).toEqual(
+          data?.product?.variants?.[0].options?.[0].id
+        );
       });
 
       it('throws a validation error when a discount variantOptionIds key does not match any variant option', async () => {
@@ -1739,7 +1777,17 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(result.data.name).toContain('Updated');
-      expect(result.data.slug).toContain('/updated-');
+      expect(normalizeSlug(result.data.slug)).toContain('updated-');
+    });
+
+    it('rejects an uppercase slug on update', async () => {
+      const created = await createCheckoutPage();
+
+      await expect(
+        client.checkoutPages.update(created.data.id, {
+          slug: `/Updated-${uniqueSuffix()}`,
+        })
+      ).rejects.toThrow(/slug needs to be lowercase/i);
     });
 
     it('updates checkout page status', async () => {
@@ -1866,6 +1914,17 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.redirectPageId).toBe(config.testCheckoutPageId);
     });
 
+    it('rejects an unknown redirectPageId on update', async () => {
+      const created = await createCheckoutPage();
+
+      await expect(
+        client.checkoutPages.update(created.data.id, {
+          afterPaymentAction: 'checkout',
+          redirectPageId: fakeObjectId('missingredirect'),
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
     it.each([
       ['sendEmailConfirmation', { sendEmailConfirmation: true }, true],
       ['customizeEmailConfirmation', { customizeEmailConfirmation: true }, true],
@@ -1980,6 +2039,25 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.funnelSteps?.[0]?.type).toBe('confirmation');
     });
 
+    it('rejects an unknown funnel page reference on update', async () => {
+      const created = await createCheckoutPage();
+
+      await expect(
+        client.checkoutPages.update(created.data.id, {
+          funnelSteps: [
+            {
+              type: 'checkout',
+              order: 0,
+              enabled: true,
+              config: {
+                pageId: fakeObjectId('missingfunnel'),
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
     it('updates invoice settings checkout abandonment and tax', async () => {
       const created = await createCheckoutPage();
       const result = await client.checkoutPages.update(created.data.id, {
@@ -2066,6 +2144,11 @@ describe('CheckoutPagesResource integration tests', () => {
       const result = await client.checkoutPages.update(created.data.id, {
         [field]: null,
       });
+
+      if (field === 'slug') {
+        expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(created.data.slug));
+        return;
+      }
 
       expectPageFlag(result.data as Record<string, unknown>, field, null);
     });

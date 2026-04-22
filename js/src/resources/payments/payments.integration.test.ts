@@ -64,20 +64,19 @@ describe('PaymentResource Integration Tests', () => {
     it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
       const result = await listPayments({ limit: 25 });
       if (!result) return;
-      const paymentWithPaymentMethod = result.data.find((payment) => payment.paymentMethod != null);
+      const paymentWithExpiryFields = result.data.find(
+        (payment) =>
+          payment.paymentMethod?.expMonth != null && payment.paymentMethod?.expYear != null
+      );
 
-      if (!paymentWithPaymentMethod?.paymentMethod) {
-        throw new Error('No payment with paymentMethod found for payment method expiry field test');
+      if (!paymentWithExpiryFields?.paymentMethod) {
+        throw new Error(
+          'No payment with expMonth/expYear found for payment method expiry field test'
+        );
       }
 
-      const paymentMethod = paymentWithPaymentMethod.paymentMethod as Record<string, unknown>;
+      const paymentMethod = paymentWithExpiryFields.paymentMethod as Record<string, unknown>;
 
-      if (paymentMethod.exp_month == null || paymentMethod.exp_year == null) {
-        throw new Error('Payment paymentMethod is missing deprecated exp_month/exp_year fields');
-      }
-
-      expect(paymentMethod).toHaveProperty('exp_month');
-      expect(paymentMethod).toHaveProperty('exp_year');
       expect(paymentMethod).toHaveProperty('expMonth');
       expect(paymentMethod).toHaveProperty('expYear');
       expect(paymentMethod.expMonth).toBe(paymentMethod.exp_month);
@@ -138,15 +137,18 @@ describe('PaymentResource Integration Tests', () => {
     it('should support searching payments by customer email', async () => {
       const seed = await listPayments({ limit: 10 });
       if (!seed) throw Error();
+      const paymentWithCustomerEmail = seed.data.find((payment) => payment.customerEmail);
 
-      if (!seed.data[0]?.customerEmail) throw Error();
+      if (!paymentWithCustomerEmail?.customerEmail) {
+        throw Error('No payment with customerEmail found for search test');
+      }
 
-      const searchResult = await listPayments({ search: seed.data[0].customerEmail });
+      const searchResult = await listPayments({ search: paymentWithCustomerEmail.customerEmail });
       if (!searchResult) throw Error();
 
       expect(Array.isArray(searchResult.data)).toBe(true);
       for (const payment of searchResult.data) {
-        expect(payment.customerEmail).toBe(seed.data[0].customerEmail);
+        expect(payment.customerEmail).toBe(paymentWithCustomerEmail.customerEmail);
       }
     });
 

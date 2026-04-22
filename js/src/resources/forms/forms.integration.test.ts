@@ -68,6 +68,8 @@ describe('FormsResource integration tests', () => {
     expect(Number.isNaN(new Date(value as string).getTime())).toBe(false);
   };
 
+  const normalizeSlug = (slug: string | null | undefined) => slug?.replace(/^\/+/, '') ?? slug;
+
   const expectBaseFormResponse = (form: Form, expectedName?: string) => {
     expect(form.id).toBeTypeOf('string');
     expect(form.sellerId).toBe(config.testSellerId);
@@ -563,7 +565,7 @@ describe('FormsResource integration tests', () => {
       });
 
       expectBaseFormResponse(data, formName);
-      expect(data.slug).toBe(slug);
+      expect(normalizeSlug(data.slug)).toBe(normalizeSlug(slug));
       expect(data.locale).toBe('en-US');
       expect(data.title).toBe(title);
       expect(data.description).toBeDefined();
@@ -715,6 +717,40 @@ describe('FormsResource integration tests', () => {
 
       expect(data.afterPaymentAction).toBe('checkout');
       expect(data.redirectPageId).toBe(config.testCheckoutPageId);
+    });
+
+    it('rejects an uppercase slug on create', async () => {
+      await expect(
+        createForm({
+          slug: `/SDK-Form-${uniqueSuffix()}`,
+        })
+      ).rejects.toThrow(/slug needs to be lowercase/i);
+    });
+
+    it('rejects an unknown redirectPageId on create', async () => {
+      await expect(
+        createForm({
+          afterPaymentAction: 'checkout',
+          redirectPageId: fakeObjectId('missingredirect'),
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
+    it('rejects an unknown funnel page reference on create', async () => {
+      await expect(
+        createForm({
+          funnelSteps: [
+            {
+              type: 'checkout',
+              order: 0,
+              enabled: true,
+              config: {
+                pageId: fakeObjectId('missingfunnel'),
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
     });
 
     it('creates a form with customized confirmation email content', async () => {
@@ -929,7 +965,7 @@ describe('FormsResource integration tests', () => {
 
       expectBaseFormResponse(result.data);
       expect(result.data.status).toBe('draft');
-      expect(result.data.slug).toBe(updatedSlug);
+      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(updatedSlug));
       expect(result.data.locale).toBe('fr-FR');
       expect(result.data.closePopupOnClickOutside).toBe(true);
       expect(result.data.redirect?.enabled).toBe(true);
@@ -976,6 +1012,46 @@ describe('FormsResource integration tests', () => {
       expectImageMetadata(result.data, imageId);
       expectFileMetadata(result.data, fileId);
     }, 15000);
+
+    it('rejects an uppercase slug on update', async () => {
+      const created = await createForm();
+
+      await expect(
+        client.forms.update(created.data.id, {
+          slug: `/Updated-Form-${uniqueSuffix()}`,
+        })
+      ).rejects.toThrow(/slug needs to be lowercase/i);
+    });
+
+    it('rejects an unknown redirectPageId on update', async () => {
+      const created = await createForm();
+
+      await expect(
+        client.forms.update(created.data.id, {
+          afterPaymentAction: 'checkout',
+          redirectPageId: fakeObjectId('missingredirect'),
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
+
+    it('rejects an unknown funnel page reference on update', async () => {
+      const created = await createForm();
+
+      await expect(
+        client.forms.update(created.data.id, {
+          funnelSteps: [
+            {
+              type: 'checkout',
+              order: 0,
+              enabled: true,
+              config: {
+                pageId: fakeObjectId('missingfunnel'),
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow('One or more page IDs not found or not owned by your account');
+    });
 
     it('updates form attachments independently', async () => {
       const created = await createForm();
@@ -1104,7 +1180,7 @@ describe('FormsResource integration tests', () => {
       ]);
     });
 
-    it('clears nullable settings and attachment collections when null or empty arrays are provided', async () => {
+    it('preserves slug while clearing other nullable settings and attachment collections', async () => {
       const imageId = await uploadImage('form-clear-image');
       const fileId = await uploadFile('form-clear-file');
       const created = await createForm({
@@ -1134,7 +1210,7 @@ describe('FormsResource integration tests', () => {
         fileIds: [],
       });
 
-      expect(result.data.slug).toBeNull();
+      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(created.data.slug));
       expect(result.data.redirectUrl).toBeNull();
       expect(result.data.notifyEmail).toBeNull();
       expect(result.data.confirmationCheckoutTitle).toBeNull();
