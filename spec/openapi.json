@@ -173,6 +173,7 @@
           "orderId": { "type": "string" },
           "orderStatus": { "type": "string" },
           "customerEmail": { "type": "string" },
+          "customerName": { "type": "string" },
           "customerId": { "type": "string" },
           "sellerId": { "type": "string" },
           "pageId": { "type": "string" },
@@ -189,6 +190,7 @@
             "type": "number",
             "description": "The outstanding amount of money to be paid."
           },
+          "amountRefunded": { "type": "number", "description": "The total amount refunded." },
           "amountUsd": { "type": "number" },
           "amountExcludingTax": { "type": "number" },
           "taxAmount": { "type": "number" },
@@ -204,10 +206,10 @@
                 "taxRateDetails": {
                   "type": "object",
                   "properties": {
-                    "country": { "type": "string" },
-                    "percentageDecimal": { "type": "number" },
-                    "state": { "type": "string" },
-                    "taxType": { "type": "string" }
+                    "country": { "type": ["string", "null"] },
+                    "percentageDecimal": { "type": ["number", "null"] },
+                    "state": { "type": ["string", "null"] },
+                    "taxType": { "type": ["string", "null"] }
                   }
                 }
               }
@@ -342,11 +344,11 @@
           "discount": {
             "type": "object",
             "properties": {
-              "minQuantity": { "type": "number" },
-              "maxQuantity": { "type": "number" },
-              "percentOff": { "type": "number" },
-              "amountOff": { "type": "number" },
-              "amount": { "type": "number" }
+              "minQuantity": { "type": ["number", "null"] },
+              "maxQuantity": { "type": ["number", "null"] },
+              "percentOff": { "type": ["number", "null"] },
+              "amountOff": { "type": ["number", "null"] },
+              "amount": { "type": ["number", "null"] }
             }
           },
           "livemode": { "type": "boolean" },
@@ -405,7 +407,7 @@
           },
           "locale": { "type": "string" },
           "sessionId": { "type": "string" },
-          "clientIp": { "type": "string" },
+          "clientIp": { "type": ["string", "null"] },
           "userAgent": { "type": "string" },
           "screenWidth": { "type": "number" },
           "visitId": { "type": "string" },
@@ -418,6 +420,18 @@
           "upsellSubscriptionId": { "type": "string" },
           "invoiceId": { "type": "string" },
           "transactionIds": { "type": "array", "items": { "type": "string" } },
+          "lastRefundAt": {
+            "type": "string",
+            "description": "The date this charge was most recently refunded."
+          },
+          "lastRefundReason": {
+            "type": "string",
+            "description": "The reason on the most recent refund transaction."
+          },
+          "lastRefundReasonNote": {
+            "type": "string",
+            "description": "The custom note on the most recent refund transaction."
+          },
           "canceledAt": { "type": "string", "description": "The date this was canceled." },
           "canceledBy": {
             "type": "string",
@@ -430,16 +444,20 @@
             "format": "date-time",
             "description": "The date at which the customer recovered their checkout through cart abandonment."
           },
+          "abandonmentStatus": {
+            "type": "string",
+            "enum": ["abandoned", "recovered"],
+            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the charge is not an abandoned cart."
+          },
           "abandonedCartEmailStatus": {
             "type": "string",
             "enum": ["pending", "first_sent", "second_sent", "third_sent", "skipped"]
           },
           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-          "pageName": { "type": "string" },
-          "pageTitle": { "type": "string" },
-          "pageSlug": { "type": "string" },
+          "pageSlug": { "type": ["string", "null"] },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" },
+          "eventTitle": { "type": "string" },
           "tickets": {
             "type": "array",
             "items": {
@@ -460,11 +478,11 @@
                 "discount": {
                   "type": "object",
                   "properties": {
-                    "minQuantity": { "type": "number" },
-                    "maxQuantity": { "type": "number" },
-                    "percentOff": { "type": "number" },
-                    "amountOff": { "type": "number" },
-                    "amount": { "type": "number" }
+                    "minQuantity": { "type": ["number", "null"] },
+                    "maxQuantity": { "type": ["number", "null"] },
+                    "percentOff": { "type": ["number", "null"] },
+                    "amountOff": { "type": ["number", "null"] },
+                    "amount": { "type": ["number", "null"] }
                   }
                 }
               }
@@ -628,6 +646,7 @@
           "orderId": { "type": "string" },
           "orderStatus": { "type": "string" },
           "customerEmail": { "type": "string" },
+          "customerName": { "type": "string" },
           "customerId": { "type": "string" },
           "sellerId": { "type": "string" },
           "pageId": { "type": "string" },
@@ -644,6 +663,7 @@
             "type": "number",
             "description": "The outstanding amount of money to be paid."
           },
+          "amountRefunded": { "type": "number", "description": "The total amount refunded." },
           "amountUsd": { "type": "number" },
           "amountExcludingTax": { "type": "number" },
           "taxAmount": { "type": "number" },
@@ -659,10 +679,10 @@
                 "taxRateDetails": {
                   "type": "object",
                   "properties": {
-                    "country": { "type": "string" },
-                    "percentageDecimal": { "type": "number" },
-                    "state": { "type": "string" },
-                    "taxType": { "type": "string" }
+                    "country": { "type": ["string", "null"] },
+                    "percentageDecimal": { "type": ["number", "null"] },
+                    "state": { "type": ["string", "null"] },
+                    "taxType": { "type": ["string", "null"] }
                   }
                 }
               }
@@ -797,11 +817,11 @@
           "discount": {
             "type": "object",
             "properties": {
-              "minQuantity": { "type": "number" },
-              "maxQuantity": { "type": "number" },
-              "percentOff": { "type": "number" },
-              "amountOff": { "type": "number" },
-              "amount": { "type": "number" }
+              "minQuantity": { "type": ["number", "null"] },
+              "maxQuantity": { "type": ["number", "null"] },
+              "percentOff": { "type": ["number", "null"] },
+              "amountOff": { "type": ["number", "null"] },
+              "amount": { "type": ["number", "null"] }
             }
           },
           "livemode": { "type": "boolean" },
@@ -860,7 +880,7 @@
           },
           "locale": { "type": "string" },
           "sessionId": { "type": "string" },
-          "clientIp": { "type": "string" },
+          "clientIp": { "type": ["string", "null"] },
           "userAgent": { "type": "string" },
           "screenWidth": { "type": "number" },
           "visitId": { "type": "string" },
@@ -873,6 +893,18 @@
           "upsellSubscriptionId": { "type": "string" },
           "invoiceId": { "type": "string" },
           "transactionIds": { "type": "array", "items": { "type": "string" } },
+          "lastRefundAt": {
+            "type": "string",
+            "description": "The date this charge was most recently refunded."
+          },
+          "lastRefundReason": {
+            "type": "string",
+            "description": "The reason on the most recent refund transaction."
+          },
+          "lastRefundReasonNote": {
+            "type": "string",
+            "description": "The custom note on the most recent refund transaction."
+          },
           "canceledAt": { "type": "string", "description": "The date this was canceled." },
           "canceledBy": {
             "type": "string",
@@ -885,17 +917,21 @@
             "format": "date-time",
             "description": "The date at which the customer recovered their checkout through cart abandonment."
           },
+          "abandonmentStatus": {
+            "type": "string",
+            "enum": ["abandoned", "recovered"],
+            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the charge is not an abandoned cart."
+          },
           "abandonedCartEmailStatus": {
             "type": "string",
             "enum": ["pending", "first_sent", "second_sent", "third_sent", "skipped"]
           },
           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-          "pageName": { "type": "string" },
-          "pageTitle": { "type": "string" },
-          "pageSlug": { "type": "string" },
+          "pageSlug": { "type": ["string", "null"] },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" },
           "productId": { "type": "string" },
+          "productTitle": { "type": "string" },
           "productPrice": { "type": "number" },
           "payWhatYouWantPrice": { "type": "number" },
           "discountedFromPrice": { "type": "number" },
@@ -925,11 +961,11 @@
                       "discount": {
                         "type": "object",
                         "properties": {
-                          "minQuantity": { "type": "number" },
-                          "maxQuantity": { "type": "number" },
-                          "percentOff": { "type": "number" },
-                          "amountOff": { "type": "number" },
-                          "amount": { "type": "number" }
+                          "minQuantity": { "type": ["number", "null"] },
+                          "maxQuantity": { "type": ["number", "null"] },
+                          "percentOff": { "type": ["number", "null"] },
+                          "amountOff": { "type": ["number", "null"] },
+                          "amount": { "type": ["number", "null"] }
                         }
                       }
                     }
@@ -955,6 +991,11 @@
             "type": "string",
             "description": "Display label shown to customers for this field.",
             "example": "Company Name"
+          },
+          "description": {
+            "type": ["string", "null"],
+            "description": "Optional helper text shown below the field label.",
+            "example": "We will use this on your invoice."
           },
           "placeholder": {
             "type": ["string", "null"],
@@ -2547,6 +2588,12 @@
             "maxLength": 200,
             "description": "Form label for the input element.",
             "example": "Company Name"
+          },
+          "description": {
+            "type": ["string", "null"],
+            "maxLength": 500,
+            "description": "Optional helper text shown below the field label.",
+            "example": "We will use this on your invoice."
           },
           "placeholder": {
             "type": ["string", "null"],
@@ -4187,7 +4234,7 @@
             "minLength": 1,
             "maxLength": 200,
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
-            "example": "/premium-course-checkout"
+            "example": "premium-course-checkout"
           },
           "locale": {
             "type": ["string", "null"],
@@ -4361,7 +4408,7 @@
           },
           "sendEmailConfirmation": {
             "type": ["boolean", "null"],
-            "description": "Send an email confirmation to the customer.",
+            "description": "Send an email confirmation to the customer. Defaults to `true`.",
             "example": true
           },
           "customizeEmailConfirmation": {
@@ -4930,7 +4977,7 @@
             "minLength": 1,
             "maxLength": 200,
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
-            "example": "/premium-course-checkout"
+            "example": "premium-course-checkout"
           },
           "locale": {
             "type": ["string", "null"],
@@ -5069,7 +5116,7 @@
           },
           "sendEmailConfirmation": {
             "type": ["boolean", "null"],
-            "description": "Send an email confirmation to the customer.",
+            "description": "Send an email confirmation to the customer. Defaults to `true`.",
             "example": true
           },
           "customizeEmailConfirmation": {
@@ -5432,7 +5479,7 @@
             "minLength": 1,
             "maxLength": 200,
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
-            "example": "/premium-course-checkout"
+            "example": "premium-course-checkout"
           },
           "locale": {
             "type": ["string", "null"],
@@ -5606,7 +5653,7 @@
           },
           "sendEmailConfirmation": {
             "type": ["boolean", "null"],
-            "description": "Send an email confirmation to the customer.",
+            "description": "Send an email confirmation to the customer. Defaults to `true`.",
             "example": true
           },
           "customizeEmailConfirmation": {
@@ -6727,7 +6774,7 @@
             "minLength": 1,
             "maxLength": 200,
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
-            "example": "/premium-course-checkout"
+            "example": "premium-course-checkout"
           },
           "locale": {
             "type": ["string", "null"],
@@ -6901,7 +6948,7 @@
           },
           "sendEmailConfirmation": {
             "type": ["boolean", "null"],
-            "description": "Send an email confirmation to the customer.",
+            "description": "Send an email confirmation to the customer. Defaults to `true`.",
             "example": true
           },
           "customizeEmailConfirmation": {
@@ -7289,7 +7336,7 @@
             "minLength": 1,
             "maxLength": 200,
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
-            "example": "/premium-course-checkout"
+            "example": "premium-course-checkout"
           },
           "locale": {
             "type": ["string", "null"],
@@ -7428,7 +7475,7 @@
           },
           "sendEmailConfirmation": {
             "type": ["boolean", "null"],
-            "description": "Send an email confirmation to the customer.",
+            "description": "Send an email confirmation to the customer. Defaults to `true`.",
             "example": true
           },
           "customizeEmailConfirmation": {
@@ -9503,16 +9550,6 @@
           {
             "schema": {
               "type": "string",
-              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term."
-            },
-            "required": false,
-            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term.",
-            "name": "search",
-            "in": "query"
-          },
-          {
-            "schema": {
-              "type": "string",
               "enum": [
                 "created",
                 "pending",
@@ -9532,6 +9569,12 @@
             "in": "query"
           },
           {
+            "schema": { "type": "string", "enum": ["archived", "active", "canceled"] },
+            "required": false,
+            "name": "orderStatus",
+            "in": "query"
+          },
+          {
             "schema": {
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
@@ -9544,6 +9587,56 @@
             "required": false,
             "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
+                  "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "customerId",
+            "in": "query"
+          },
+          { "schema": { "type": "string" }, "required": false, "name": "orderId", "in": "query" },
+          {
+            "schema": { "type": "string" },
+            "required": false,
+            "name": "couponCode",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdBefore",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "enum": ["abandoned", "recovered"] },
+            "required": false,
+            "name": "abandonmentStatus",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `eventTitle` and `orderId`. Note: searching by `orderId` via `search` is deprecated — use the `orderId` filter parameter instead."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `eventTitle` and `orderId`. Note: searching by `orderId` via `search` is deprecated — use the `orderId` filter parameter instead.",
+            "name": "search",
             "in": "query"
           }
         ],
@@ -9660,7 +9753,19 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" }
+          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdBefore",
+            "in": "query"
+          }
         ],
         "responses": {
           "200": {
@@ -9872,16 +9977,17 @@
                       "sek",
                       "sgd",
                       "usd",
-                      "zar"
+                      "zar",
+                      "thb"
                     ],
-                    "description": "Three-letter ISO code for the currency of the amountOff parameter (required if `amountOff` is passed).",
+                    "description": "Three-letter ISO code for the currency of the amountOff parameter. Required when `amountOff` is set, and not allowed when `percentOff` is set.",
                     "example": "usd"
                   },
                   "duration": { "type": "string", "enum": ["once", "repeating", "forever"] },
                   "durationInMonths": {
                     "type": "number",
                     "exclusiveMinimum": 0,
-                    "description": "A positive integer representing the number of months the coupon applies for (required if `duration === repeating`)",
+                    "description": "A positive integer representing the number of months the coupon applies for. Required when `duration === repeating`, and not allowed when `duration` is `once` or `forever`.",
                     "example": 3
                   },
                   "percentOff": {
@@ -9927,7 +10033,7 @@
                     "type": "number",
                     "minimum": 0,
                     "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times.",
-                    "example": 0
+                    "example": 10
                   },
                   "redeemBy": {
                     "type": "string",
@@ -10168,7 +10274,16 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive search matched against customer email, customer name, product title, orderId, and subscriptionId."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against customer email, customer name, product title, orderId, and subscriptionId.",
+            "name": "search",
+            "in": "query"
+          },
           {
             "schema": {
               "allOf": [
@@ -10182,6 +10297,40 @@
             "required": false,
             "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
+                  "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "customerId",
+            "in": "query"
+          },
+          { "schema": { "type": "string" }, "required": false, "name": "orderId", "in": "query" },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdBefore",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "enum": ["abandoned", "recovered"] },
+            "required": false,
+            "name": "abandonmentStatus",
             "in": "query"
           },
           {
@@ -10236,6 +10385,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -10441,6 +10591,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -10541,11 +10723,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -10558,8 +10749,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -10661,16 +10850,6 @@
           {
             "schema": {
               "type": "string",
-              "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term."
-            },
-            "required": false,
-            "description": "Case-insensitive search matched against `customerEmail` and `orderId`. Returns documents where either field contains the search term.",
-            "name": "search",
-            "in": "query"
-          },
-          {
-            "schema": {
-              "type": "string",
               "enum": [
                 "created",
                 "pending",
@@ -10690,6 +10869,12 @@
             "in": "query"
           },
           {
+            "schema": { "type": "string", "enum": ["archived", "active", "canceled"] },
+            "required": false,
+            "name": "orderStatus",
+            "in": "query"
+          },
+          {
             "schema": {
               "allOf": [
                 { "$ref": "#/components/schemas/UniqueIdentifier" },
@@ -10702,6 +10887,71 @@
             "required": false,
             "description": "Unique identifier. Must be in BSON ObjectId format.",
             "name": "pageId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
+                  "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "customerId",
+            "in": "query"
+          },
+          { "schema": { "type": "string" }, "required": false, "name": "orderId", "in": "query" },
+          {
+            "schema": { "type": "string" },
+            "required": false,
+            "name": "couponCode",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdBefore",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "enum": ["abandoned", "recovered"] },
+            "required": false,
+            "name": "abandonmentStatus",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `orderId`. Note: searching by `orderId` via `search` is deprecated — use the `orderId` filter parameter instead."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `orderId`. Note: searching by `orderId` via `search` is deprecated — use the `orderId` filter parameter instead.",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format.",
+                  "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "productId",
             "in": "query"
           }
         ],
@@ -10961,6 +11211,14 @@
               }
             }
           },
+          "409": {
+            "description": "Conflict - slug already exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
           "429": {
             "description": "Rate Limit Exceeded - Please try again later.",
             "content": {
@@ -11136,6 +11394,14 @@
           },
           "404": {
             "description": "Checkout page not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - slug already exists",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -11365,6 +11631,12 @@
                     "maxLength": 200,
                     "description": "Form label for the input element.",
                     "example": "Company Name"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 500,
+                    "description": "Optional helper text shown below the field label.",
+                    "example": "We will use this on your invoice."
                   },
                   "placeholder": {
                     "type": ["string", "null"],
@@ -11803,6 +12075,12 @@
                     "maxLength": 200,
                     "description": "Form label for the input element.",
                     "example": "Company Name"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 500,
+                    "description": "Optional helper text shown below the field label.",
+                    "example": "We will use this on your invoice."
                   },
                   "placeholder": {
                     "type": ["string", "null"],
@@ -12378,6 +12656,14 @@
               }
             }
           },
+          "409": {
+            "description": "Conflict - slug already exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
           "429": {
             "description": "Rate Limit Exceeded - Please try again later.",
             "content": {
@@ -12522,7 +12808,7 @@
                     "minLength": 1,
                     "maxLength": 200,
                     "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
-                    "example": "/premium-course-checkout"
+                    "example": "premium-course-checkout"
                   },
                   "locale": {
                     "type": ["string", "null"],
@@ -12661,7 +12947,7 @@
                   },
                   "sendEmailConfirmation": {
                     "type": ["boolean", "null"],
-                    "description": "Send an email confirmation to the customer.",
+                    "description": "Send an email confirmation to the customer. Defaults to `true`.",
                     "example": true
                   },
                   "customizeEmailConfirmation": {
@@ -12827,6 +13113,14 @@
           },
           "404": {
             "description": "Form not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - slug already exists",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -13056,6 +13350,12 @@
                     "maxLength": 200,
                     "description": "Form label for the input element.",
                     "example": "Company Name"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 500,
+                    "description": "Optional helper text shown below the field label.",
+                    "example": "We will use this on your invoice."
                   },
                   "placeholder": {
                     "type": ["string", "null"],
@@ -13494,6 +13794,12 @@
                     "maxLength": 200,
                     "description": "Form label for the input element.",
                     "example": "Company Name"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 500,
+                    "description": "Optional helper text shown below the field label.",
+                    "example": "We will use this on your invoice."
                   },
                   "placeholder": {
                     "type": ["string", "null"],
@@ -14071,6 +14377,14 @@
               }
             }
           },
+          "409": {
+            "description": "Conflict - slug already exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
           "429": {
             "description": "Rate Limit Exceeded - Please try again later.",
             "content": {
@@ -14243,6 +14557,14 @@
           },
           "404": {
             "description": "Event not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - slug already exists",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -14472,6 +14794,12 @@
                     "maxLength": 200,
                     "description": "Form label for the input element.",
                     "example": "Company Name"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 500,
+                    "description": "Optional helper text shown below the field label.",
+                    "example": "We will use this on your invoice."
                   },
                   "placeholder": {
                     "type": ["string", "null"],
@@ -14910,6 +15238,12 @@
                     "maxLength": 200,
                     "description": "Form label for the input element.",
                     "example": "Company Name"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "maxLength": 500,
+                    "description": "Optional helper text shown below the field label.",
+                    "example": "We will use this on your invoice."
                   },
                   "placeholder": {
                     "type": ["string", "null"],
@@ -16770,9 +17104,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -16783,7 +17136,15 @@
                     "required": ["customer"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -16806,9 +17167,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -16819,7 +17199,15 @@
                     "required": ["customer"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -16842,9 +17230,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -16855,7 +17262,15 @@
                     "required": ["payment"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -16878,9 +17293,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -16891,7 +17325,15 @@
                     "required": ["payment"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -16914,9 +17356,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -16927,7 +17388,15 @@
                     "required": ["booking"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -16950,9 +17419,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -16963,7 +17451,15 @@
                     "required": ["booking"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -16986,9 +17482,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -17004,6 +17519,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -17209,6 +17725,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -17309,11 +17857,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -17326,8 +17883,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -17338,7 +17893,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -17361,9 +17924,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -17379,6 +17961,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -17584,6 +18167,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -17684,11 +18299,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -17701,8 +18325,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -17713,7 +18335,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -17736,9 +18366,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -17754,6 +18403,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -17959,6 +18609,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -18059,11 +18741,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -18076,8 +18767,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -18088,7 +18777,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -18111,9 +18808,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -18129,6 +18845,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -18334,6 +19051,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -18434,11 +19183,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -18451,8 +19209,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -18463,7 +19219,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -18486,9 +19250,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -18504,6 +19287,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -18709,6 +19493,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -18809,11 +19625,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -18826,8 +19651,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -18838,7 +19661,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -18861,9 +19692,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -18879,6 +19729,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -19084,6 +19935,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -19184,11 +20067,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -19201,8 +20093,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -19213,7 +20103,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -19236,9 +20134,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -19254,6 +20171,7 @@
                           "stripeSubscriptionId": { "type": "string" },
                           "stripeCustomerId": { "type": "string" },
                           "customerEmail": { "type": "string" },
+                          "customerName": { "type": "string" },
                           "currency": { "type": "string" },
                           "amount": { "type": "number" },
                           "amountUsd": { "type": "number" },
@@ -19459,6 +20377,38 @@
                             }
                           },
                           "couponId": { "type": "string" },
+                          "couponSnapshot": {
+                            "type": "object",
+                            "properties": {
+                              "label": { "type": "string" },
+                              "code": { "type": "string" },
+                              "amountOff": { "type": "number" },
+                              "percentOff": { "type": "number" },
+                              "appliesToSetupFee": { "type": "boolean" },
+                              "duration": {
+                                "type": "string",
+                                "enum": ["once", "repeating", "forever"]
+                              },
+                              "durationInMonths": { "type": "number" },
+                              "redeemBy": { "type": "string", "format": "date-time" },
+                              "maxRedemptions": { "type": "number" },
+                              "timesRedeemed": { "type": "number" },
+                              "currency": { "type": "string" },
+                              "deleted": { "type": "boolean" },
+                              "pageIds": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
                           "licenseKeyId": { "type": "string" },
                           "livemode": { "type": "boolean" },
                           "status": {
@@ -19559,11 +20509,20 @@
                           "customerId": { "type": "string" },
                           "pageId": { "type": "string" },
                           "productId": { "type": "string" },
+                          "productTitle": { "type": "string" },
+                          "lastRefundAt": { "type": "string", "format": "date-time" },
+                          "lastRefundReason": { "type": "string" },
+                          "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
+                          "abandonmentStatus": {
+                            "type": "string",
+                            "enum": ["abandoned", "recovered"],
+                            "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the subscription is not an abandoned cart."
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -19576,8 +20535,6 @@
                             ]
                           },
                           "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "pageName": { "type": "string" },
-                          "pageTitle": { "type": "string" },
                           "pageSlug": { "type": "string" },
                           "createdAt": { "type": "string", "format": "date-time" },
                           "updatedAt": { "type": "string", "format": "date-time" }
@@ -19588,7 +20545,15 @@
                     "required": ["subscription"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
@@ -19611,9 +20576,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
+                  "seller_id": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                        "deprecated": true
+                      }
+                    ]
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      { "$ref": "#/components/schemas/UniqueIdentifier" },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format.",
+                        "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                      }
+                    ]
+                  },
                   "timestamp": { "type": "string", "format": "date-time" },
-                  "event_id": {
+                  "event_id": { "type": "string", "deprecated": true },
+                  "eventId": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
@@ -19624,12 +20608,92 @@
                       "ticket": {
                         "type": "object",
                         "properties": {
-                          "id": { "type": "string" },
-                          "seller": { "type": "string" },
-                          "charge": { "type": "string" },
+                          "id": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                              }
+                            ]
+                          },
+                          "seller": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "sellerId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                              }
+                            ]
+                          },
+                          "charge": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "bookingId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                              }
+                            ]
+                          },
                           "orderId": { "type": "string" },
-                          "page": { "type": "string" },
-                          "ticketType": { "type": "string" },
+                          "page": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "pageId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                              }
+                            ]
+                          },
+                          "ticketType": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "ticketTypeId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                              }
+                            ]
+                          },
                           "originalPrice": { "type": "number" },
                           "discountAmount": { "type": "number" },
                           "feeAmount": { "type": "number" },
@@ -19637,7 +20701,25 @@
                           "couponAmount": { "type": "number" },
                           "revenue": { "type": "number" },
                           "currency": { "type": "string" },
-                          "customer": { "type": "string" },
+                          "customer": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "customerId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                              }
+                            ]
+                          },
                           "ticketShortId": { "type": "string" },
                           "status": { "type": "string", "enum": ["PAID", "CANCELED"] },
                           "checkIns": {
@@ -19650,7 +20732,15 @@
                                   "enum": ["UNCHECKEDIN", "CHECKEDIN"]
                                 },
                                 "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-                                "checkedInBy": { "type": "string" },
+                                "checkedInBy": {
+                                  "allOf": [
+                                    { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                      "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                    }
+                                  ]
+                                },
                                 "checkedInAt": { "type": "string", "format": "date-time" }
                               },
                               "required": ["status", "method", "checkedInBy", "checkedInAt"]
@@ -19661,7 +20751,15 @@
                             "properties": {
                               "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] },
                               "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-                              "checkedInBy": { "type": "string" },
+                              "checkedInBy": {
+                                "allOf": [
+                                  { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                  {
+                                    "description": "Unique identifier. Must be in BSON ObjectId format.",
+                                    "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                                  }
+                                ]
+                              },
                               "checkedInAt": { "type": "string", "format": "date-time" }
                             },
                             "required": ["status", "method", "checkedInBy", "checkedInAt"]
@@ -19688,10 +20786,14 @@
                         "required": [
                           "id",
                           "seller",
+                          "sellerId",
                           "charge",
+                          "bookingId",
                           "orderId",
                           "page",
+                          "pageId",
                           "ticketType",
+                          "ticketTypeId",
                           "originalPrice",
                           "discountAmount",
                           "feeAmount",
@@ -19699,6 +20801,7 @@
                           "couponAmount",
                           "revenue",
                           "customer",
+                          "customerId",
                           "ticketShortId",
                           "status",
                           "checkIns",
@@ -19713,7 +20816,15 @@
                     "required": ["ticket"]
                   }
                 },
-                "required": ["seller_id", "timestamp", "event_id", "event", "data"]
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ]
               }
             }
           }
