@@ -27,6 +27,21 @@ export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit'> & 
 export type Address = NonNullable<Customer['data']['address']>;
 export type Shipping = NonNullable<Customer['data']['shipping']>;
 
+// Submissions
+export type SubmissionResponse =
+  operations['submissions/get']['responses'][200]['content']['application/json'];
+
+export type Submission = SubmissionResponse['data'];
+
+export type SubmissionList =
+  operations['submissions/list']['responses'][200]['content']['application/json'];
+
+export type SubmissionListArgs = operations['submissions/list']['parameters']['query'];
+
+export type SubmissionListParams = Omit<NonNullable<SubmissionListArgs>, 'limit'> & {
+  limit?: number;
+};
+
 // Coupons
 export type CouponList =
   operations['coupons/list']['responses'][200]['content']['application/json'];

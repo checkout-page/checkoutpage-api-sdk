@@ -10,6 +10,7 @@ import { FileResource } from './resources/files/files';
 import { CheckoutPagesResource } from './resources/checkout-pages/checkout-pages';
 import { EventsResource } from './resources/events/events';
 import { FormsResource } from './resources/forms/forms';
+import { SubmissionResource } from './resources/submissions/submissions';
 
 export class CheckoutPageClient {
   public readonly customers: CustomerResource;
@@ -23,6 +24,7 @@ export class CheckoutPageClient {
   public readonly checkoutPages: CheckoutPagesResource;
   public readonly events: EventsResource;
   public readonly forms: FormsResource;
+  public readonly submissions: SubmissionResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -38,6 +40,7 @@ export class CheckoutPageClient {
     this.checkoutPages = new CheckoutPagesResource(this.client);
     this.events = new EventsResource(this.client);
     this.forms = new FormsResource(this.client);
+    this.submissions = new SubmissionResource(this.client);
   }
 }
 
@@ -49,6 +52,10 @@ export const createCheckoutPageClient = (options: CheckoutPageApiClientOptions) 
 export type { CheckoutPageApiClientOptions } from './client';
 export type {
   Customer,
+  Submission,
+  SubmissionResponse,
+  SubmissionList,
+  SubmissionListParams,
   Address,
   Shipping,
   Coupon,

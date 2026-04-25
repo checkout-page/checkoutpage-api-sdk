@@ -644,7 +644,7 @@
           },
           "value": {
             "type": ["string", "null"],
-            "description": "Submitted value rendered as a string when available."
+            "description": "Submitted value rendered as a string."
           },
           "element": {
             "type": ["string", "null"],
@@ -698,6 +698,10 @@
           "customerName": {
             "type": ["string", "null"],
             "description": "Customer name captured on the submission. This can differ from `billing.name` or `shipping.name`."
+          },
+          "formTitle": {
+            "type": ["string", "null"],
+            "description": "Public title of the form that received the submission."
           },
           "billing": {
             "type": ["object", "null"],
@@ -10774,10 +10778,10 @@
           {
             "schema": {
               "type": "string",
-              "description": "Case-insensitive search matched against `customerEmail` and `customerName` (for example, 'jane' matches 'jane@example.com' and 'Jane Smith')."
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, and `formTitle` (for example, 'jane' matches 'jane@example.com' and 'Jane Smith', while 'lead' matches 'Lead Capture Form')."
             },
             "required": false,
-            "description": "Case-insensitive search matched against `customerEmail` and `customerName` (for example, 'jane' matches 'jane@example.com' and 'Jane Smith').",
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, and `formTitle` (for example, 'jane' matches 'jane@example.com' and 'Jane Smith', while 'lead' matches 'Lead Capture Form').",
             "name": "search",
             "in": "query"
           },
