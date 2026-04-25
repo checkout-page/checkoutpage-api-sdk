@@ -120,6 +120,62 @@ describe('SubscriptionResource Integration Tests', () => {
       }
     });
 
+    it('benchmarks subscription search queries', async () => {
+      const baseline = await client.subscriptions.list({
+        limit: 100,
+      });
+
+      const subscriptionWithCustomerEmail = baseline.data.find(
+        (subscription) => subscription.customerEmail
+      );
+
+      if (!subscriptionWithCustomerEmail?.customerEmail) {
+        throw new Error('No subscription with customerEmail found for search benchmark');
+      }
+
+      const searches = [
+        '@gmail.com',
+        'basic',
+        '72602704',
+        'sub_1QcLKnFdCGuDCwTS9kliOclj',
+        'tapkids2',
+        'tapkids2010chihiro',
+        'matt',
+        'john',
+        'sander',
+        'andy',
+      ] as const;
+
+      const results = await Promise.all(
+        searches.map(async (search) => {
+          const startedAt = Date.now();
+
+          const searchResult = await client.subscriptions.list({
+            limit: 10,
+            search,
+          });
+
+          const result = {
+            search,
+            found: searchResult.data.length,
+            total: searchResult.total,
+            timeMs: Date.now() - startedAt,
+          };
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          return result;
+        })
+      );
+
+      for (const result of results) {
+        expect(typeof result.search).toBe('string');
+        expect(typeof result.found).toBe('number');
+        expect(typeof result.total).toBe('number');
+        expect(typeof result.timeMs).toBe('number');
+      }
+    });
+
     it('should support searching subscriptions', async () => {
       const result = await client.subscriptions.list({
         limit: 10,
