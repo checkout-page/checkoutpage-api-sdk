@@ -1205,65 +1205,98 @@ describe('CheckoutPagesResource integration tests', () => {
         expect(pro?.type).toBe('one_time');
       });
 
-      it('creates variants with conditional show/hide logic and resolves keys to ObjectIds in the response', async () => {
-        const { data } = await createCheckoutPage({
-          productData: {
-            title: `Conditional Variant ${uniqueSuffix()}`,
-            price: { amount: 5000, currency: 'usd' },
-            variants: [
-              {
-                key: 'tier',
-                name: 'Select tier',
-                required: true,
-                options: [
-                  { key: 'standard', name: 'Standard' },
-                  { key: 'pro', name: 'Pro' },
-                ],
-              },
-              {
-                name: 'Onboarding call',
-                showHideLogic: {
-                  enabled: true,
-                  comparison: 'is',
-                  value: 'pro',
-                  element: { elementId: 'tier' },
+      it.each([['is'], ['is_not'], ['is_empty'], ['is_not_empty'], ['contains']] as const)(
+        'persists %s variant showHideLogic comparison correctly on create and get',
+        async (comparison) => {
+          const sourceVariantName = comparison === 'contains' ? 'Add-ons' : 'Select tier';
+          const sourceOptionName = comparison === 'contains' ? 'Training session' : 'Pro';
+          const dependentVariantName =
+            comparison === 'contains' ? 'Implementation package' : 'Onboarding call';
+
+          const { data } = await createCheckoutPage({
+            productData: {
+              title: `Conditional Variant ${comparison} ${uniqueSuffix()}`,
+              price: { amount: 5000, currency: 'usd' },
+              variants: [
+                {
+                  key: 'source',
+                  name: sourceVariantName,
+                  required: true,
+                  selectionType: comparison === 'contains' ? 'multiple' : 'single',
+                  options: [
+                    {
+                      key: 'standard',
+                      name: comparison === 'contains' ? 'Priority support' : 'Standard',
+                    },
+                    { key: 'pro', name: sourceOptionName },
+                  ],
                 },
-                options: [
-                  { name: 'No call', additionalChargeAmount: 0 },
-                  { name: 'Include call', additionalChargeAmount: 15000 },
-                ],
-              },
-              {
-                name: 'Donation',
-                options: [
-                  {
-                    name: 'Donation',
-                    description: '<b>Please donate!</b>',
-                    payWhatYouWant: true,
-                    additionalChargeAmount: 100,
+                {
+                  name: dependentVariantName,
+                  showHideLogic: {
+                    enabled: true,
+                    comparison,
+                    value: 'pro',
+                    element: { elementId: 'source' },
                   },
-                ],
-              },
-            ],
-          },
-        });
+                  options: [
+                    { name: 'No call', additionalChargeAmount: 0 },
+                    { name: 'Include call', additionalChargeAmount: 15000 },
+                  ],
+                },
+                {
+                  name: 'Donation',
+                  options: [
+                    {
+                      name: 'Donation',
+                      description: '<b>Please donate!</b>',
+                      payWhatYouWant: true,
+                      additionalChargeAmount: 100,
+                    },
+                  ],
+                },
+              ],
+            },
+          });
 
-        expect(data.product?.variants).toHaveLength(3);
-        const tierVariant = data.product?.variants?.find((v) => v.name === 'Select tier');
-        const callVariant = data.product?.variants?.find((v) => v.name === 'Onboarding call');
-        const donationVariant = data.product?.variants?.find((v) => v.name === 'Donation');
-        expect(tierVariant?.options).toHaveLength(2);
-        expect(callVariant?.options).toHaveLength(2);
-        expect(donationVariant?.options).toHaveLength(1);
+          expect(data.product?.variants).toHaveLength(3);
+          const sourceVariant = data.product?.variants?.find((v) => v.name === sourceVariantName);
+          const dependentVariant = data.product?.variants?.find(
+            (v) => v.name === dependentVariantName
+          );
+          const donationVariant = data.product?.variants?.find((v) => v.name === 'Donation');
+          expect(sourceVariant?.options).toHaveLength(2);
+          expect(dependentVariant?.options).toHaveLength(2);
+          expect(donationVariant?.options).toHaveLength(1);
 
-        // Keys are not persisted — the response resolves them to ObjectIds
-        const proOptionId = tierVariant?.options?.find((o) => o.name === 'Pro')?.id;
-        expect(proOptionId).toMatch(/^[0-9a-f]{24}$/);
-        expect(callVariant?.showHideLogic?.enabled).toBe(true);
-        expect(callVariant?.showHideLogic?.comparison).toBe('is');
-        expect(callVariant?.showHideLogic?.value).toBe(proOptionId);
-        expect(callVariant?.showHideLogic?.element?.elementId).toBe(tierVariant?.id);
-      });
+          const sourceOptionId = sourceVariant?.options?.find(
+            (o) => o.name === sourceOptionName
+          )?.id;
+          expect(sourceOptionId).toMatch(/^[0-9a-f]{24}$/);
+          expect(dependentVariant?.showHideLogic?.enabled).toBe(true);
+          expect(dependentVariant?.showHideLogic?.comparison).toBe(comparison);
+          expect(dependentVariant?.showHideLogic?.element?.elementId).toBe(sourceVariant?.id);
+          expect(dependentVariant?.showHideLogic?.value).toBe(sourceOptionId);
+
+          const fetched = await client.checkoutPages.get(data.id);
+          const fetchedSourceVariant = fetched.data.product?.variants?.find(
+            (v) => v.name === sourceVariantName
+          );
+          const fetchedDependentVariant = fetched.data.product?.variants?.find(
+            (v) => v.name === dependentVariantName
+          );
+          const fetchedSourceOptionId = fetchedSourceVariant?.options?.find(
+            (o) => o.name === sourceOptionName
+          )?.id;
+
+          expect(fetchedSourceOptionId).toMatch(/^[0-9a-f]{24}$/);
+          expect(fetchedDependentVariant?.showHideLogic?.comparison).toBe(comparison);
+          expect(fetchedDependentVariant?.showHideLogic?.element?.elementId).toBe(
+            fetchedSourceVariant?.id
+          );
+          expect(fetchedDependentVariant?.showHideLogic?.value).toBe(fetchedSourceOptionId);
+        }
+      );
 
       it('creates a variant with a preselected option and resolves the key to an ObjectId in the response', async () => {
         const { data } = await createCheckoutPage({
@@ -1539,6 +1572,59 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.product?.type).toBe('charge');
     });
 
+    it('creates a checkout page with top-level checkout confirmation settings', async () => {
+      const confirmationCheckoutTitle = `Top-level confirmation ${uniqueSuffix()}`;
+      const confirmationCheckoutMessage = `<p>Top-level confirmation body ${uniqueSuffix()}</p>`;
+
+      const { data } = await createCheckoutPage({
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle,
+        confirmationCheckoutMessage,
+      });
+
+      expect(data.customizeCheckoutConfirmation).toBe(true);
+      expect(data.confirmationCheckoutTitle).toBe(confirmationCheckoutTitle);
+      expect(data.confirmationCheckoutMessage).toBe(confirmationCheckoutMessage);
+      expect(data.funnelSteps).toEqual([]);
+    });
+
+    it('creates a checkout page with confirmation funnel step settings without setting top-level confirmation', async () => {
+      const confirmationCheckoutTitle = `Funnel confirmation ${uniqueSuffix()}`;
+      const confirmationCheckoutMessage = `<p>Funnel confirmation body ${uniqueSuffix()}</p>`;
+
+      const { data } = await createCheckoutPage({
+        funnelSteps: [
+          {
+            type: 'confirmation',
+            order: 0,
+            enabled: true,
+            config: {
+              action: 'confirmation',
+              customizeCheckoutConfirmation: true,
+              confirmationCheckoutTitle,
+              confirmationCheckoutMessage,
+            },
+          },
+        ],
+      });
+
+      expect(data.customizeCheckoutConfirmation ?? false).toBe(false);
+      expect(data.confirmationCheckoutTitle ?? null).toBeNull();
+      expect(data.confirmationCheckoutMessage ?? null).toBeNull();
+      expect(data.funnelSteps).toHaveLength(1);
+      expect(data.funnelSteps?.[0]).toMatchObject({
+        type: 'confirmation',
+        order: 0,
+        enabled: true,
+        config: {
+          action: 'confirmation',
+          customizeCheckoutConfirmation: true,
+          confirmationCheckoutTitle,
+          confirmationCheckoutMessage,
+        },
+      });
+    });
+
     describe('discounts', () => {
       it('creates a checkout page with a percent-off bulk discount based on checkout quantity', async () => {
         const { data } = await createCheckoutPage({
@@ -1755,6 +1841,47 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.showCouponCodeField).toBe(true);
       expect(result.data.tax?.enabled).toBe(true);
       expect(Array.isArray(result.data.fields)).toBe(true);
+    });
+
+    it('returns top-level and funnel confirmation settings independently', async () => {
+      const topLevelTitle = `Top-level title ${uniqueSuffix()}`;
+      const topLevelMessage = `<p>Top-level message ${uniqueSuffix()}</p>`;
+      const funnelTitle = `Funnel title ${uniqueSuffix()}`;
+      const funnelMessage = `<p>Funnel message ${uniqueSuffix()}</p>`;
+
+      const created = await createCheckoutPage({
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: topLevelTitle,
+        confirmationCheckoutMessage: topLevelMessage,
+        funnelSteps: [
+          {
+            type: 'confirmation',
+            order: 0,
+            enabled: true,
+            config: {
+              action: 'confirmation',
+              customizeCheckoutConfirmation: true,
+              confirmationCheckoutTitle: funnelTitle,
+              confirmationCheckoutMessage: funnelMessage,
+            },
+          },
+        ],
+      });
+      const result = await client.checkoutPages.get(created.data.id);
+
+      expect(result.data.customizeCheckoutConfirmation).toBe(true);
+      expect(result.data.confirmationCheckoutTitle).toBe(topLevelTitle);
+      expect(result.data.confirmationCheckoutMessage).toBe(topLevelMessage);
+      expect(result.data.funnelSteps).toHaveLength(1);
+      expect(result.data.funnelSteps?.[0]).toMatchObject({
+        type: 'confirmation',
+        config: {
+          action: 'confirmation',
+          customizeCheckoutConfirmation: true,
+          confirmationCheckoutTitle: funnelTitle,
+          confirmationCheckoutMessage: funnelMessage,
+        },
+      });
     });
 
     it('fails for an unknown checkout page id', async () => {
@@ -2171,6 +2298,48 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(result.data.confirmationEmailMessage).toBeNull();
     });
 
+    it('updates top-level checkout confirmation settings without changing confirmation funnel steps', async () => {
+      const initialFunnelTitle = `Initial funnel title ${uniqueSuffix()}`;
+      const initialFunnelMessage = `<p>Initial funnel message ${uniqueSuffix()}</p>`;
+      const created = await createCheckoutPage({
+        funnelSteps: [
+          {
+            type: 'confirmation',
+            order: 0,
+            enabled: true,
+            config: {
+              action: 'confirmation',
+              customizeCheckoutConfirmation: true,
+              confirmationCheckoutTitle: initialFunnelTitle,
+              confirmationCheckoutMessage: initialFunnelMessage,
+            },
+          },
+        ],
+      });
+
+      const updatedTitle = `Updated top-level title ${uniqueSuffix()}`;
+      const updatedMessage = `<p>Updated top-level message ${uniqueSuffix()}</p>`;
+      const result = await client.checkoutPages.update(created.data.id, {
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: updatedTitle,
+        confirmationCheckoutMessage: updatedMessage,
+      });
+
+      expect(result.data.customizeCheckoutConfirmation).toBe(true);
+      expect(result.data.confirmationCheckoutTitle).toBe(updatedTitle);
+      expect(result.data.confirmationCheckoutMessage).toBe(updatedMessage);
+      expect(result.data.funnelSteps).toHaveLength(1);
+      expect(result.data.funnelSteps?.[0]).toMatchObject({
+        type: 'confirmation',
+        config: {
+          action: 'confirmation',
+          customizeCheckoutConfirmation: true,
+          confirmationCheckoutTitle: initialFunnelTitle,
+          confirmationCheckoutMessage: initialFunnelMessage,
+        },
+      });
+    });
+
     it('fails for an unknown checkout page id', async () => {
       await expect(
         client.checkoutPages.update(fakeObjectId('missingpage'), { name: 'Missing page' })
@@ -2212,7 +2381,7 @@ describe('CheckoutPagesResource integration tests', () => {
         confirmationCheckoutTitle: 'Order confirmed',
         confirmationCheckoutMessage: '<p>Thanks for your purchase.</p>',
       });
-
+      expect(data.customizeCheckoutConfirmation).toBe(true);
       expect(data.confirmationCheckoutMessage).toBeTypeOf('string');
       expect(data.confirmationCheckoutMessage).toContain('<p>');
       expect(data.confirmationCheckoutMessage).not.toContain('"children"');
