@@ -497,7 +497,7 @@ describe('CheckoutPagesResource integration tests', () => {
             name: 'Pay by invoice',
             description: 'We will send an invoice after checkout.',
             instructions: 'Please pay within 30 days.',
-            showPaymentButton: true,
+            showPaymentButton: false,
             manualType: 'invoice',
           },
         ],
