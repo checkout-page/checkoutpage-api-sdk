@@ -352,6 +352,38 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.fields?.some((field) => field.label === `Company ${suffix}`)).toBe(true);
     });
 
+    it('rejects inline custom fields with unsupported contains logic', async () => {
+      const suffix = uniqueSuffix();
+      await expect(
+        createCheckoutPage({
+          name: `T012_contains_comparison_${suffix}`,
+          productData: { title: `T012_${suffix}`, price: { amount: 100, currency: 'usd' } },
+          fields: [
+            { label: 'Email Address', element: 'email', type: 'email', required: true },
+            {
+              label: 'Trigger Select',
+              element: 'select',
+              key: 'trigger-select',
+              options: [
+                { label: 'Premium', value: 'premium', key: 'opt-premium' },
+                { label: 'Basic', value: 'basic', key: 'opt-basic' },
+              ],
+            },
+            {
+              label: 'Conditional Notes',
+              element: 'textarea',
+              showHideLogic: {
+                enabled: true,
+                comparison: 'contains',
+                element: { elementType: 'field', elementId: 'trigger-select' },
+                value: 'opt-premium',
+              },
+            },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
     it('creates a checkout page with redirect configuration', async () => {
       const { data } = await createCheckoutPage({
         afterPaymentAction: 'redirect',
