@@ -660,6 +660,879 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.fees?.[1]?.percentage).toBe(1);
     });
 
+    it('creates a large page with many options, fields, variants etc', async () => {
+      const suffix = uniqueSuffix();
+      const slug = `t013b-qa-scenario-slice-${suffix}`;
+
+      const { data } = await createCheckoutPage({
+        name: `T013b_QA_scenario_slice_${suffix}`,
+        slug,
+        status: 'published',
+        locale: 'en-US',
+        googleIndex: false,
+        closePopupOnClickOutside: true,
+        trackingCodes:
+          "<!-- GTM stub --><script>(function(w,d,s,l,i){w[l]=w[l]||[];})(window,document,'script','dataLayer','GTM-XXXXXX');</script>",
+        tax: { enabled: true },
+        notifyEmail: 'team@example.com,sales@example.com',
+        sendEmailConfirmation: true,
+        sendPaymentNotification: true,
+        savePaymentMethod: true,
+        showCouponCodeField: true,
+        showCouponCodeFieldType: 'field',
+        allowDynamicDescription: true,
+        allowDynamicPrice: true,
+        allowDynamicTitle: true,
+        allowDynamicDiscountedFromPrice: true,
+        allowDynamicRedirectUrl: true,
+        afterPaymentAction: 'redirect',
+        redirectUrl: 'https://example.com/thank-you',
+        redirectUrlInsideEmbed: true,
+        redirectUrlPath: [{ identifier: 'orderId', key: 'orderId' }],
+        redirectUrlQuery: [
+          { identifier: 'orderId', key: 'orderId' },
+          { fieldKey: 'email-field', key: 'fields', parameter: 'email' },
+        ],
+        redirect: { enabled: false, url: 'https://example.com/redirected' },
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: 'Your teapot is on its way',
+        confirmationCheckoutMessage:
+          "<p>Thanks for your order. We'll send tracking when it ships.</p>",
+        customizeEmailConfirmation: true,
+        confirmationEmailSubject: 'Your artisan teapot order is confirmed',
+        confirmationEmailMessage:
+          "<h2>Thanks for ordering</h2><p>Here's what's <strong>included</strong>:</p><ul><li>The teapot</li><li>Care instructions</li><li>Optional bonuses</li></ul>",
+        confirmationEmailShowLogo: true,
+        confirmationEmailShowStoreName: true,
+        checkoutAbandonment: {
+          disableEmails: false,
+          showStoreLogo: true,
+          showStoreName: true,
+          emailReminders: {
+            reminder1: {
+              customizeEmail: true,
+              subject: 'Only a few teapots left',
+              body: '<p>Stock is limited — secure yours.</p>',
+              buttonText: 'Complete order',
+            },
+            reminder2: {
+              customizeEmail: true,
+              subject: 'Bonuses included with your teapot',
+              body: '<p>Your purchase includes:</p><ul><li>Care guide</li><li>Tea sampler</li></ul>',
+              buttonText: 'Pick up where you left off',
+            },
+            reminder3: {
+              customizeEmail: true,
+              subject: 'Last chance — your cart expires soon',
+              body: '<p>This cart expires shortly.</p>',
+              buttonText: 'Finish checkout',
+            },
+          },
+        },
+        paymentMethods: {
+          stripe: {
+            card: { enabled: true },
+            agpay: { enabled: true, mode: 'express' },
+            multiple: { enabled: true },
+          },
+        },
+        paymentOptions: [
+          {
+            type: 'full',
+            name: 'Pay in full',
+            description: 'Pay the full amount today.',
+            enabled: true,
+            showPaymentButton: true,
+            instructions: '',
+          },
+          {
+            type: 'partial',
+            name: 'Pay deposit',
+            description: 'Pay 50% now.',
+            enabled: true,
+            partialAmount: 4500,
+            showPaymentButton: true,
+            instructions: 'Balance invoice will follow.',
+          },
+          {
+            type: 'manual',
+            manualType: 'invoice',
+            name: 'Pay via invoice',
+            description: 'Receive an invoice.',
+            enabled: true,
+            showPaymentButton: false,
+            instructions: 'Bank details on the invoice.',
+          },
+          {
+            type: 'manual',
+            manualType: 'cash_on_delivery',
+            name: 'Cash on delivery',
+            description: 'Pay on receipt.',
+            enabled: true,
+            showPaymentButton: false,
+            instructions: 'Have payment ready at delivery.',
+          },
+        ],
+        invoiceSettings: {
+          bankDetails: 'Account: 12345678\nSort code: 00-00-00\nBank: Example Bank Plc',
+          dueDays: { enabled: true, days: 30 },
+          additionalInformation: {
+            enabled: true,
+            title: 'Payment terms',
+            message: 'Payment is due within 30 days of invoice date.',
+          },
+        },
+        fees: [
+          {
+            name: 'Card processing',
+            amount: 200,
+            applyToSpecificPaymentMethods: true,
+            paymentMethods: ['card', 'link'],
+            multiplyByQuantity: false,
+            multiplyByTickets: false,
+          },
+          {
+            name: 'Service fee',
+            percentage: 2.5,
+            applyToSpecificPaymentMethods: false,
+            multiplyByQuantity: true,
+            multiplyByTickets: false,
+          },
+        ],
+        funnelSteps: [
+          {
+            type: 'upsell',
+            order: 1,
+            enabled: true,
+            config: { action: 'checkout', pageId: config.testCheckoutPageId },
+          },
+          {
+            type: 'upsell',
+            order: 2,
+            enabled: true,
+            config: {
+              action: 'redirect',
+              redirect: {
+                url: 'https://offers.example.com/post-purchase',
+                path: [{ identifier: 'orderId', key: 'orderId' }],
+                query: [
+                  { identifier: 'orderId', key: 'orderId' },
+                  { fieldKey: 'email-field', key: 'fields', parameter: 'email' },
+                ],
+              },
+            },
+          },
+          {
+            type: 'confirmation',
+            order: 3,
+            enabled: true,
+            config: {
+              action: 'confirmation',
+              customizeCheckoutConfirmation: true,
+              confirmationCheckoutTitle: 'Funnel-scoped confirmation',
+              confirmationCheckoutMessage: '<p>Funnel-step confirmation copy</p>',
+            },
+          },
+        ],
+        fields: [
+          {
+            label: 'Email',
+            element: 'email',
+            type: 'email',
+            required: true,
+            order: 0,
+            description: 'Your email',
+            placeholder: 'you@example.com',
+            reference: 'customer_email',
+            key: 'email-field',
+          },
+          {
+            label: 'Name',
+            element: 'text',
+            type: 'name',
+            required: true,
+            order: 1,
+            description: 'Full name',
+          },
+          {
+            label: 'Phone',
+            element: 'phone',
+            type: 'phone',
+            required: false,
+            order: 2,
+            description: 'Phone',
+            showSelectedDialCode: true,
+            key: 'phone-field',
+          },
+          {
+            label: 'Alt Contact',
+            element: 'text',
+            required: false,
+            order: 3,
+            description: 'Alternate contact',
+          },
+          {
+            label: 'Buyer Type',
+            element: 'select',
+            required: true,
+            order: 4,
+            description: 'Are you buying as an individual or business?',
+            key: 'buyer-type',
+            options: [
+              { label: 'Individual', value: 'individual', key: 'ind' },
+              { label: 'Business', value: 'business', key: 'biz' },
+            ],
+          },
+          {
+            label: 'Company',
+            element: 'text',
+            type: 'company-name',
+            required: true,
+            order: 5,
+            description: 'Company name',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementId: 'buyer-type', elementType: 'field' },
+              value: 'biz',
+            },
+          },
+          {
+            label: 'Tax ID',
+            element: 'tax-id',
+            required: false,
+            order: 6,
+            description: 'Tax/VAT',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementId: 'buyer-type', elementType: 'field' },
+              value: 'biz',
+            },
+          },
+          {
+            label: 'PO Number',
+            element: 'po-number',
+            required: false,
+            order: 7,
+            description: 'PO',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementId: 'buyer-type', elementType: 'field' },
+              value: 'biz',
+            },
+          },
+          {
+            label: 'Country',
+            element: 'country',
+            type: 'address-country',
+            required: true,
+            order: 8,
+            description: 'Shipping country',
+            limitAllowedCountries: {
+              enabled: true,
+              countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR'],
+            },
+          },
+          {
+            label: 'Recipient',
+            element: 'text',
+            type: 'shipping-name',
+            required: true,
+            order: 9,
+            description: 'Recipient name',
+          },
+          {
+            label: 'Address 1',
+            element: 'text',
+            type: 'shipping-address-line1',
+            required: true,
+            order: 10,
+            description: 'Address line 1',
+          },
+          {
+            label: 'Address 2',
+            element: 'text',
+            type: 'shipping-address-line2',
+            required: false,
+            order: 11,
+            description: 'Address line 2',
+          },
+          {
+            label: 'City',
+            element: 'text',
+            type: 'shipping-address-city',
+            required: true,
+            order: 12,
+            description: 'City',
+          },
+          {
+            label: 'State',
+            element: 'text',
+            type: 'shipping-address-state',
+            required: false,
+            order: 13,
+            description: 'State',
+          },
+          {
+            label: 'Postal Code',
+            element: 'text',
+            type: 'shipping-address-postal_code',
+            required: true,
+            order: 14,
+            description: 'Postal code',
+          },
+          {
+            label: 'Gift Wrap',
+            element: 'checkbox',
+            required: false,
+            order: 15,
+            description: 'Gift wrap',
+          },
+          {
+            label: 'Gift Message',
+            element: 'textarea',
+            required: false,
+            order: 16,
+            description: 'Gift message',
+          },
+          {
+            label: 'Delivery Date',
+            element: 'date',
+            required: false,
+            order: 17,
+            description: 'Preferred delivery date',
+          },
+          {
+            label: 'Delivery Time',
+            element: 'time',
+            required: false,
+            order: 18,
+            description: 'Preferred time',
+          },
+          {
+            label: 'Source',
+            element: 'multiple-choice',
+            required: false,
+            order: 19,
+            description: 'How did you hear about us?',
+            key: 'source-mc',
+            options: [
+              { label: 'Search', value: 'search', key: 'src-search' },
+              { label: 'Social', value: 'social', key: 'src-social' },
+              { label: 'Referral', value: 'referral', key: 'src-referral' },
+              { label: 'Conference', value: 'conference', key: 'src-conf' },
+              { label: 'Other', value: 'other', key: 'src-other' },
+            ],
+          },
+          {
+            label: 'Q&A Time',
+            element: 'date-time',
+            required: false,
+            order: 20,
+            description: 'Best time for Q&A',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementId: 'source-mc', elementType: 'field' },
+              value: 'src-referral',
+            },
+          },
+          {
+            label: 'Member Code',
+            element: 'number',
+            required: false,
+            order: 21,
+            description: 'Loyalty member code',
+            minValue: { enabled: true, value: '1000' },
+            maxValue: { enabled: true, value: '9999' },
+          },
+          {
+            label: 'Bonus Quantity',
+            element: 'quantity',
+            required: false,
+            order: 22,
+            description: 'Bonus units',
+          },
+          {
+            label: 'Discovery Notes',
+            element: 'text',
+            required: false,
+            order: 23,
+            description: 'Anything we should know',
+            defaultValue: { enabled: true, value: 'From newsletter' },
+            reference: 'discovery_source',
+          },
+          {
+            label: 'UTM Source',
+            element: 'text',
+            required: false,
+            order: 24,
+            description: 'UTM tracking',
+            hidden: true,
+            reference: 'utm_source',
+          },
+          {
+            label: 'Terms',
+            element: 'checkbox',
+            required: true,
+            order: 25,
+            description: 'Accept terms',
+          },
+        ],
+        productData: {
+          title: 'Artisan Ceramic Teapot',
+          description:
+            '<h2 id="Artisan-Teapot">Hand-thrown Stoneware Teapot</h2><p>A <strong>limited-edition</strong> teapot by independent ceramicists. Each piece is unique. <a href="https://example.com">Read the maker story</a>.</p><ul><li>Food-safe glaze</li><li>Microwave and dishwasher safe</li><li>Holds approx. 750ml</li></ul>',
+          sku: 'TEAPOT-T013B-MAIN',
+          stock: 200,
+          hasUnlimitedStock: false,
+          generateLicenseKeys: true,
+          taxBehavior: 'exclusive',
+          taxCode: 'txcd_99999999',
+          variantsRequired: true,
+          price: {
+            amount: 9900,
+            currency: 'usd',
+            discountedFromPrice: 14900,
+            setupFee: 1000,
+            setupFeeMultipliesWithQuantity: true,
+            pricingType: 'single',
+          },
+          discounts: [
+            { quantityCondition: 'checkout_quantity', minQuantity: 3, percentOff: 5 },
+            { quantityCondition: 'checkout_quantity', minQuantity: 10, percentOff: 15 },
+            {
+              quantityCondition: 'variant_option_quantity',
+              variantOptionIds: [{ key: 'mp-1' }, { key: 'mp-3' }, { key: 'mp-6' }],
+              minQuantity: 2,
+              percentOff: 10,
+            },
+          ],
+          variants: [
+            {
+              name: 'Size',
+              key: 'size-v',
+              order: 0,
+              required: true,
+              status: 'enabled',
+              selectionType: 'single',
+              reference: '550e8400-e29b-41d4-a716-446655440000',
+              preselect: { enabled: true, optionId: 'size-m', quantity: 1 },
+              layout: {
+                variantOptionLayout: 'grid',
+                variantOptionColumns: 3,
+                imageSize: 'medium',
+                spacing: 'comfortable',
+                textAlign: 'left',
+                showVariantName: true,
+                showVariantOptionNames: true,
+                showVariantOptionPrices: true,
+                showVariantOptionPriceSign: true,
+                collapseVariantOptions: false,
+              },
+              options: [
+                {
+                  name: 'Small',
+                  key: 'size-s',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  description: 'Personal size',
+                },
+                {
+                  name: 'Medium',
+                  key: 'size-m',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 500,
+                  discountedFromPrice: 1500,
+                  description: 'Family size',
+                },
+                {
+                  name: 'Large',
+                  key: 'size-l',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 1000,
+                  description: 'Sharing size',
+                },
+              ],
+            },
+            {
+              name: 'Glaze',
+              key: 'glaze-v',
+              order: 1,
+              required: false,
+              status: 'enabled',
+              selectionType: 'single',
+              preselect: { enabled: true, optionId: 'gl-none', quantity: 1 },
+              layout: {
+                variantOptionLayout: 'list',
+                spacing: 'compact',
+                imageSize: 'small',
+                textAlign: 'left',
+                showVariantName: true,
+                showVariantOptionNames: true,
+                showVariantOptionPrices: true,
+              },
+              options: [
+                {
+                  name: 'None',
+                  key: 'gl-none',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  description: 'No glaze',
+                },
+                {
+                  name: 'Matte',
+                  key: 'gl-matte',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  description: 'Matte finish',
+                },
+                {
+                  name: 'Glossy',
+                  key: 'gl-glossy',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 300,
+                  description: 'Glossy finish',
+                },
+                {
+                  name: 'Speckled',
+                  key: 'gl-speckled',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 200,
+                  description: 'Speckled finish',
+                },
+              ],
+            },
+            {
+              name: 'Liner Colour',
+              key: 'liner-v',
+              order: 2,
+              required: false,
+              status: 'enabled',
+              selectionType: 'single',
+              showHideLogic: {
+                enabled: true,
+                comparison: 'is_not',
+                element: { elementId: 'glaze-v' },
+                value: 'gl-none',
+              },
+              layout: { variantOptionLayout: 'list', spacing: 'compact' },
+              options: [
+                {
+                  name: 'Cream',
+                  key: 'liner-cream',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  description: 'Cream',
+                },
+                {
+                  name: 'Sand',
+                  key: 'liner-sand',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 50,
+                  description: 'Sand',
+                },
+                {
+                  name: 'Charcoal',
+                  key: 'liner-char',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 50,
+                  description: 'Charcoal',
+                },
+              ],
+            },
+            {
+              name: 'Add-ons',
+              key: 'addons-v',
+              order: 3,
+              required: false,
+              status: 'enabled',
+              selectionType: 'multiple',
+              useVariantOptionSkus: true,
+              layout: { variantOptionLayout: 'list', spacing: 'compact' },
+              options: [
+                {
+                  name: 'Storage Tin',
+                  key: 'add-tin',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 200,
+                  sku: 'TEAPOT-TIN',
+                  description: 'Tin',
+                },
+                {
+                  name: 'Strainer',
+                  key: 'add-strainer',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 300,
+                  sku: 'TEAPOT-STR',
+                  description: 'Strainer',
+                },
+                {
+                  name: 'Cosy',
+                  key: 'add-cosy',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 500,
+                  sku: 'TEAPOT-COS',
+                  description: 'Wool cosy',
+                },
+                {
+                  name: 'Certificate',
+                  key: 'add-cert',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  sku: 'TEAPOT-CERT',
+                  description: 'Certificate of authenticity',
+                },
+              ],
+            },
+            {
+              name: 'Engraving',
+              key: 'engr-v',
+              order: 4,
+              required: false,
+              status: 'enabled',
+              selectionType: 'single',
+              layout: { variantOptionLayout: 'list', spacing: 'comfortable' },
+              options: [
+                {
+                  name: 'None',
+                  key: 'engr-none',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  description: 'No engraving',
+                },
+                {
+                  name: 'Custom',
+                  key: 'engr-custom',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 1000,
+                  description: 'Custom engraving',
+                },
+              ],
+            },
+            {
+              name: 'Multipack',
+              key: 'multi-v',
+              required: false,
+              status: 'enabled',
+              selectionType: 'quantity',
+              increasesWithQuantity: false,
+              manageVariantOptionStock: true,
+              useVariantOptionSkus: true,
+              layout: { variantOptionLayout: 'list', spacing: 'compact' },
+              options: [
+                {
+                  name: 'Single',
+                  key: 'mp-1',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 0,
+                  stock: 100,
+                  sku: 'TEAPOT-1PK',
+                  description: '1 piece',
+                },
+                {
+                  name: 'Triple',
+                  key: 'mp-3',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 1500,
+                  stock: 50,
+                  sku: 'TEAPOT-3PK',
+                  description: '3 pieces',
+                },
+                {
+                  name: 'Six-pack',
+                  key: 'mp-6',
+                  type: 'one_time',
+                  status: 'enabled',
+                  additionalChargeAmount: 2500,
+                  stock: 20,
+                  sku: 'TEAPOT-6PK',
+                  description: '6 pieces',
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(data.slug).toBe(slug);
+      expect(data.locale).toBe('en-US');
+      expect(data.googleIndex).toBe(false);
+      expect(data.redirectUrlInsideEmbed).toBe(true);
+      expect(data.notifyEmail).toBe('team@example.com,sales@example.com');
+      expect(data.trackingCodes).toContain('GTM-XXXXXX');
+      expect(data.invoiceSettings?.dueDays?.days).toBe(30);
+      expect(data.checkoutAbandonment?.emailReminders?.reminder3?.subject).toBe(
+        'Last chance — your cart expires soon'
+      );
+      expect(data.paymentMethods?.stripe?.multiple?.enabled).toBe(true);
+      expect(data.paymentOptions).toHaveLength(4);
+      expect(data.paymentOptions?.find((option) => option.type === 'partial')).toMatchObject({
+        enabled: true,
+        partialAmount: 4500,
+      });
+      expect(
+        data.paymentOptions?.find(
+          (option) => option.type === 'manual' && option.manualType === 'invoice'
+        )
+      ).toMatchObject({
+        enabled: true,
+        showPaymentButton: true,
+        instructions: 'Bank details on the invoice.',
+      });
+      expect(
+        data.paymentOptions?.find(
+          (option) => option.type === 'manual' && option.manualType === 'cash_on_delivery'
+        )
+      ).toMatchObject({
+        enabled: true,
+        showPaymentButton: true,
+      });
+      expect(data.fees).toHaveLength(2);
+      expect(data.fees?.[0]).toMatchObject({
+        name: 'Card processing',
+        amount: 200,
+        applyToSpecificPaymentMethods: true,
+      });
+      expect(data.funnelSteps).toHaveLength(3);
+      expect(data.funnelSteps?.[0]).toMatchObject({
+        type: 'upsell',
+        order: 1,
+        config: { action: 'checkout', pageId: config.testCheckoutPageId },
+      });
+      expect(data.funnelSteps?.[1]).toMatchObject({
+        type: 'upsell',
+        order: 2,
+        config: {
+          action: 'redirect',
+          redirect: { url: 'https://offers.example.com/post-purchase' },
+        },
+      });
+      expect(data.funnelSteps?.[2]).toMatchObject({
+        type: 'confirmation',
+        order: 3,
+        config: {
+          action: 'confirmation',
+          confirmationCheckoutTitle: 'Funnel-scoped confirmation',
+        },
+      });
+
+      const emailField = data.fields?.find((field) => field.reference === 'customer_email');
+      const buyerTypeField = data.fields?.find((field) => field.label === 'Buyer Type');
+      const sourceField = data.fields?.find((field) => field.label === 'Source');
+      const companyField = data.fields?.find((field) => field.label === 'Company');
+      const qaTimeField = data.fields?.find((field) => field.label === 'Q&A Time');
+      const memberCodeField = data.fields?.find((field) => field.label === 'Member Code');
+      const hiddenUtmField = data.fields?.find((field) => field.reference === 'utm_source');
+
+      expect(emailField?.id).toMatch(/^[0-9a-f]{24}$/);
+      expect(data.redirectUrlPath).toEqual([{ identifier: 'orderId', key: 'orderId' }]);
+      expect(data.redirectUrlQuery).toEqual([
+        { identifier: 'orderId', key: 'orderId' },
+        { identifier: emailField?.id, key: 'fields', parameter: 'email' },
+      ]);
+      // @ts-ignore
+      expect(data.funnelSteps?.[1]?.config?.redirect?.query).toEqual([
+        { identifier: 'orderId', key: 'orderId' },
+        { identifier: emailField?.id, key: 'fields', parameter: 'email' },
+      ]);
+      expect(companyField?.showHideLogic).toMatchObject({
+        enabled: true,
+        comparison: 'is',
+        element: { elementId: buyerTypeField?.id, elementType: 'field' },
+      });
+      expect(qaTimeField?.showHideLogic).toMatchObject({
+        enabled: true,
+        comparison: 'is',
+        element: { elementId: sourceField?.id, elementType: 'field' },
+      });
+      expect(companyField?.showHideLogic?.value).toMatch(/^[0-9a-f]{24}$/);
+      expect(qaTimeField?.showHideLogic?.value).toMatch(/^[0-9a-f]{24}$/);
+      expect(memberCodeField?.minValue).toMatchObject({ enabled: true, value: '1000' });
+      expect(memberCodeField?.maxValue).toMatchObject({ enabled: true, value: '9999' });
+      expect(hiddenUtmField?.hidden).toBe(true);
+
+      expect(data.product?.title).toBe('Artisan Ceramic Teapot');
+      expect(data.product?.sku).toBe('TEAPOT-T013B-MAIN');
+      expect(data.product?.stock).toBe(200);
+      expect(data.product?.generateLicenseKeys).toBe(true);
+      expect(data.product?.taxBehavior).toBe('exclusive');
+      expect(data.product?.taxCode).toBe('txcd_99999999');
+      expect(data.product?.variantsRequired).toBe(true);
+      expect(data.product?.price).toMatchObject({
+        amount: 9900,
+        currency: 'usd',
+        discountedFromPrice: 14900,
+        setupFee: 1000,
+        setupFeeMultipliesWithQuantity: true,
+      });
+      expect(data.product?.discounts).toHaveLength(3);
+      expect(
+        data.product?.discounts?.find(
+          (discount) => discount.quantityCondition === 'variant_option_quantity'
+        )?.variantOptionIds
+      ).toHaveLength(3);
+
+      const sizeVariant = data.product?.variants?.find((variant) => variant.name === 'Size');
+      const glazeVariant = data.product?.variants?.find((variant) => variant.name === 'Glaze');
+      const linerVariant = data.product?.variants?.find(
+        (variant) => variant.name === 'Liner Colour'
+      );
+      const multipackVariant = data.product?.variants?.find(
+        (variant) => variant.name === 'Multipack'
+      );
+
+      expect(data.product?.variants).toHaveLength(6);
+      expect(sizeVariant?.preselect?.enabled).toBe(true);
+      expect(sizeVariant?.preselect?.optionId).toBe(
+        sizeVariant?.options?.find((option) => option.name === 'Medium')?.id
+      );
+      expect(glazeVariant?.preselect?.optionId).toBe(
+        glazeVariant?.options?.find((option) => option.name === 'None')?.id
+      );
+      expect(linerVariant?.showHideLogic?.comparison).toBe('is_not');
+      expect(linerVariant?.showHideLogic?.element?.elementId).toBe(glazeVariant?.id);
+      expect(linerVariant?.showHideLogic?.value).toBe(
+        glazeVariant?.options?.find((option) => option.name === 'None')?.id
+      );
+      expect(multipackVariant?.selectionType).toBe('quantity');
+      expect(multipackVariant?.manageVariantOptionStock).toBe(true);
+      expect(multipackVariant?.useVariantOptionSkus).toBe(true);
+      expect(
+        data.product?.discounts?.find(
+          (discount) => discount.quantityCondition === 'variant_option_quantity'
+        )?.variantOptionIds
+      ).toEqual(multipackVariant?.options?.map((option) => option.id));
+
+      const fetched = await client.checkoutPages.get(data.id);
+      expect(fetched.data.id).toBe(data.id);
+      expect(fetched.data.paymentOptions).toHaveLength(4);
+      expect(fetched.data.fields).toHaveLength(26);
+      expect(fetched.data.funnelSteps).toHaveLength(3);
+      expect(fetched.data.product?.variants).toHaveLength(6);
+      expect(fetched.data.redirectUrlQuery).toEqual(data.redirectUrlQuery);
+    }, 30000);
+
     it('creates a checkout page with funnel steps', async () => {
       const { data } = await createCheckoutPage({
         funnelSteps: [
@@ -1455,6 +2328,65 @@ describe('CheckoutPagesResource integration tests', () => {
           })
         ).rejects.toThrow(ValidationError);
       });
+
+      it.each(['is_empty', 'is_not_empty'] as const)(
+        'allows %s variant showHideLogic without sending a value',
+        async (comparison) => {
+          const sourceVariantName = `Plan ${uniqueSuffix()}`;
+          const dependentVariantName = `Conditional Notes ${uniqueSuffix()}`;
+
+          const { data } = await createCheckoutPage({
+            productData: {
+              title: `Variant Logic Empty Comparison ${uniqueSuffix()}`,
+              price: { amount: 5000, currency: 'usd' },
+              variants: [
+                {
+                  key: 'plan',
+                  name: sourceVariantName,
+                  options: [
+                    { key: 'basic', name: 'Basic' },
+                    { key: 'pro', name: 'Pro' },
+                  ],
+                },
+                {
+                  name: dependentVariantName,
+                  showHideLogic: {
+                    enabled: true,
+                    comparison,
+                    element: { elementId: 'plan' },
+                  },
+                  options: [{ name: 'Option A' }],
+                },
+              ],
+            },
+          });
+
+          const sourceVariant = data.product?.variants?.find((v) => v.name === sourceVariantName);
+          const dependentVariant = data.product?.variants?.find(
+            (v) => v.name === dependentVariantName
+          );
+
+          expect(sourceVariant?.id).toMatch(/^[0-9a-f]{24}$/);
+          expect(dependentVariant?.showHideLogic?.enabled).toBe(true);
+          expect(dependentVariant?.showHideLogic?.comparison).toBe(comparison);
+          expect(dependentVariant?.showHideLogic?.element?.elementId).toBe(sourceVariant?.id);
+          expect(dependentVariant?.showHideLogic?.value).toBeFalsy();
+
+          const fetched = await client.checkoutPages.get(data.id);
+          const fetchedSourceVariant = fetched.data.product?.variants?.find(
+            (v) => v.name === sourceVariantName
+          );
+          const fetchedDependentVariant = fetched.data.product?.variants?.find(
+            (v) => v.name === dependentVariantName
+          );
+
+          expect(fetchedDependentVariant?.showHideLogic?.comparison).toBe(comparison);
+          expect(fetchedDependentVariant?.showHideLogic?.element?.elementId).toBe(
+            fetchedSourceVariant?.id
+          );
+          expect(fetchedDependentVariant?.showHideLogic?.value).toBeFalsy();
+        }
+      );
 
       it('fails when a variant preselect references a non-existent option key', async () => {
         await expect(
