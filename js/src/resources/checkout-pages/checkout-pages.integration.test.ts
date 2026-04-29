@@ -487,6 +487,76 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.tax?.enabled).toBe(true);
     });
 
+    it('creates an invoice-only checkout page with the full default payment option set', async () => {
+      const { data } = await createCheckoutPage({
+        slug: `sdk-invoice-only-${uniqueSuffix()}`,
+        paymentOptions: [
+          {
+            type: 'manual',
+            enabled: true,
+            name: 'Pay by invoice',
+            description: 'We will send an invoice after checkout.',
+            instructions: 'Please pay within 30 days.',
+            showPaymentButton: true,
+            manualType: 'invoice',
+          },
+        ],
+        invoiceSettings: {
+          bankDetails: 'Account 123456',
+          dueDays: {
+            enabled: true,
+            days: 30,
+          },
+          additionalInformation: {
+            enabled: true,
+            title: 'Payment terms',
+            message: 'Payment is due within 30 days of invoice receipt.',
+          },
+        },
+      });
+      expect(data.paymentOptions).toHaveLength(4);
+      expect(data.paymentOptions?.[0]).toMatchObject({
+        type: 'full',
+        enabled: false,
+        name: 'Pay in full',
+        showPaymentButton: true,
+      });
+      expect(data.paymentOptions?.[1]).toMatchObject({
+        type: 'manual',
+        enabled: true,
+        name: 'Pay by invoice',
+        showPaymentButton: true,
+        manualType: 'invoice',
+      });
+      expect(data.paymentOptions?.[2]).toMatchObject({
+        type: 'partial',
+        enabled: false,
+        name: 'Pay a deposit',
+        partialAmount: 5000,
+        showPaymentButton: true,
+      });
+      expect(data.paymentOptions?.[3]).toMatchObject({
+        type: 'manual',
+        enabled: false,
+        name: 'Cash on delivery',
+        showPaymentButton: true,
+        manualType: 'cash_on_delivery',
+      });
+      expect(data.invoiceSettings?.bankDetails).toBe('Account 123456');
+      expect(data.invoiceSettings?.dueDays).toMatchObject({
+        enabled: true,
+        days: 30,
+      });
+      expect(data.invoiceSettings?.additionalInformation).toMatchObject({
+        enabled: true,
+        title: 'Payment terms',
+      });
+
+      // Stripe defaults remain present until callers explicitly disable them.
+      expect(data.paymentMethods?.stripe?.card?.enabled).toBe(true);
+      expect(data.paymentMethods?.stripe?.agpay?.enabled).toBe(true);
+    });
+
     it('creates a checkout page with checkout abandonment email reminders', async () => {
       const { data } = await createCheckoutPage({
         checkoutAbandonment: {
