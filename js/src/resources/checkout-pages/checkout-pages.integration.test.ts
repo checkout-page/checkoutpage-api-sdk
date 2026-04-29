@@ -2138,6 +2138,54 @@ describe('CheckoutPagesResource integration tests', () => {
         expect(pro?.type).toBe('one_time');
       });
 
+      it('rejects pay_what_you_want as an explicit variant option type on create', async () => {
+        await expect(
+          createCheckoutPage({
+            productData: {
+              title: `Invalid PWYW Variant Type ${uniqueSuffix()}`,
+              price: { amount: 1000, currency: 'usd' },
+              variants: [
+                {
+                  name: 'Plan',
+                  options: [
+                    {
+                      name: 'Basic',
+                      additionalChargeAmount: 100,
+                      type: 'pay_what_you_want' as never,
+                    },
+                  ],
+                },
+              ],
+            },
+          })
+        ).rejects.toThrow(ValidationError);
+      });
+
+      it('rejects payWhatYouWant on recurring variant options', async () => {
+        await expect(
+          createCheckoutPage({
+            productData: {
+              title: `Invalid Recurring PWYW Variant ${uniqueSuffix()}`,
+              price: { amount: 1000, currency: 'usd' },
+              variants: [
+                {
+                  name: 'Plan',
+                  options: [
+                    {
+                      name: 'Basic',
+                      type: 'recurring',
+                      additionalChargeAmount: 100,
+                      payWhatYouWant: true,
+                      pwywSuggestedPrice: 500,
+                    },
+                  ],
+                },
+              ],
+            },
+          })
+        ).rejects.toThrow(ValidationError);
+      });
+
       it('persists variantsRequired on the product', async () => {
         const { data } = await createCheckoutPage({
           productData: {
