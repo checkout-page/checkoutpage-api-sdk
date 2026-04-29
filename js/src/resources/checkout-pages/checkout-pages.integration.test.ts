@@ -2829,6 +2829,41 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.funnelSteps).toEqual([]);
     });
 
+    it('round-trips top-level checkout confirmation settings alongside top-level email confirmation settings', async () => {
+      const suffix = uniqueSuffix();
+      const checkoutTitle = `T009 checkout title ${suffix}`;
+      const checkoutMessage = `<p>T009 checkout body ${suffix}</p>`;
+      const emailSubject = `T009 email subject ${suffix}`;
+      const emailMessage = `<p>T009 email body ${suffix}</p>`;
+
+      const created = await createCheckoutPage({
+        customizeCheckoutConfirmation: true,
+        confirmationCheckoutTitle: checkoutTitle,
+        confirmationCheckoutMessage: checkoutMessage,
+        customizeEmailConfirmation: true,
+        confirmationEmailSubject: emailSubject,
+        confirmationEmailMessage: emailMessage,
+      });
+
+      expect(created.data.customizeCheckoutConfirmation).toBe(true);
+      expect(created.data.confirmationCheckoutTitle).toBe(checkoutTitle);
+      expect(created.data.confirmationCheckoutMessage).toBe(checkoutMessage);
+      expect(created.data.customizeEmailConfirmation).toBe(true);
+      expect(created.data.confirmationEmailSubject).toBe(emailSubject);
+      expect(created.data.confirmationEmailMessage).toBe(emailMessage);
+      expect(created.data.funnelSteps).toEqual([]);
+
+      const fetched = await client.checkoutPages.get(created.data.id);
+
+      expect(fetched.data.customizeCheckoutConfirmation).toBe(true);
+      expect(fetched.data.confirmationCheckoutTitle).toBe(checkoutTitle);
+      expect(fetched.data.confirmationCheckoutMessage).toBe(checkoutMessage);
+      expect(fetched.data.customizeEmailConfirmation).toBe(true);
+      expect(fetched.data.confirmationEmailSubject).toBe(emailSubject);
+      expect(fetched.data.confirmationEmailMessage).toBe(emailMessage);
+      expect(fetched.data.funnelSteps).toEqual([]);
+    });
+
     it('creates a checkout page with confirmation funnel step settings without setting top-level confirmation', async () => {
       const confirmationCheckoutTitle = `Funnel confirmation ${uniqueSuffix()}`;
       const confirmationCheckoutMessage = `<p>Funnel confirmation body ${uniqueSuffix()}</p>`;
