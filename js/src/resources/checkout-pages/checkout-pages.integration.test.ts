@@ -126,7 +126,7 @@ describe('CheckoutPagesResource integration tests', () => {
   afterEach(async () => {
     for (const pageId of [...createdPageIds].reverse()) {
       try {
-        await client.checkoutPages.delete(pageId);
+        // await client.checkoutPages.delete(pageId);
       } catch {
         // Best-effort cleanup for integration tests.
       }
@@ -383,6 +383,213 @@ describe('CheckoutPagesResource integration tests', () => {
         })
       ).rejects.toThrow(ValidationError);
     });
+
+    it.each([
+      [
+        'text field trigger with is comparison',
+        [
+          {
+            label: 'Email Address',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          {
+            label: 'Trigger Text',
+            element: 'text',
+            key: 'trigger-text',
+            required: true,
+          },
+          {
+            label: 'Conditional Notes',
+            element: 'textarea',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementType: 'field', elementId: 'trigger-text' },
+              value: 'yes',
+            },
+          },
+        ],
+        /cannot be used as a conditional-logic trigger/,
+      ],
+      [
+        'checkbox trigger with is_empty comparison',
+        [
+          {
+            label: 'Email Address',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          {
+            label: 'Agree to Terms',
+            element: 'checkbox',
+            key: 'agree-to-terms',
+            required: true,
+          },
+          {
+            label: 'Conditional Notes',
+            element: 'textarea',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is_empty',
+              element: { elementType: 'field', elementId: 'agree-to-terms' },
+              value: 'TRUE',
+            },
+          },
+        ],
+        /checkbox triggers only support "is" and "is_not"/,
+      ],
+      [
+        'checkbox trigger with is comparison and TRUE value',
+        [
+          {
+            label: 'Email Address',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          {
+            label: 'Agree to Terms',
+            element: 'checkbox',
+            key: 'agree-to-terms',
+            required: true,
+          },
+          {
+            label: 'Conditional Notes',
+            element: 'textarea',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementType: 'field', elementId: 'agree-to-terms' },
+              value: 'TRUE',
+            },
+          },
+        ],
+        null,
+      ],
+      [
+        'checkbox trigger with is_not comparison and FALSE value',
+        [
+          {
+            label: 'Email Address',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          {
+            label: 'Agree to Terms',
+            element: 'checkbox',
+            key: 'agree-to-terms',
+            required: true,
+          },
+          {
+            label: 'Conditional Notes',
+            element: 'textarea',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is_not',
+              element: { elementType: 'field', elementId: 'agree-to-terms' },
+              value: 'FALSE',
+            },
+          },
+        ],
+        null,
+      ],
+      [
+        'checkbox trigger with invalid boolean token',
+        [
+          {
+            label: 'Email Address',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          {
+            label: 'Agree to Terms',
+            element: 'checkbox',
+            key: 'agree-to-terms',
+            required: true,
+          },
+          {
+            label: 'Conditional Notes',
+            element: 'textarea',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is',
+              element: { elementType: 'field', elementId: 'agree-to-terms' },
+              value: 'yes',
+            },
+          },
+        ],
+        /checkbox triggers must use "TRUE" or "FALSE"/,
+      ],
+    ] as const)(
+      'handles inline custom fields with %s',
+      async (_scenario, fields, expectedMessage) => {
+        const suffix = uniqueSuffix();
+
+        if (expectedMessage) {
+          await expect(
+            createCheckoutPage({
+              name: `T011_field_trigger_limits_${suffix}`,
+              productData: {
+                title: `T011_${suffix}`,
+                price: { amount: 100, currency: 'usd' },
+              },
+              // @ts-ignore
+              fields,
+            })
+          ).rejects.toThrow(expectedMessage);
+
+          return;
+        }
+
+        const { data } = await createCheckoutPage({
+          name: `T011_checkbox_true_${suffix}`,
+          productData: {
+            title: `T011_${suffix}`,
+            price: { amount: 100, currency: 'usd' },
+          },
+          // @ts-ignore
+          fields,
+        });
+
+        const triggerField = data.fields?.find((field) => field.label === 'Agree to Terms');
+        const conditionalField = data.fields?.find((field) => field.label === 'Conditional Notes');
+        const inputLogic = fields[2].showHideLogic;
+
+        expect(triggerField?.id).toMatch(/^[0-9a-f]{24}$/);
+        expect(conditionalField?.showHideLogic).toMatchObject({
+          enabled: true,
+          comparison: inputLogic?.comparison,
+          element: {
+            elementType: 'field',
+            elementId: triggerField?.id,
+          },
+          value: inputLogic?.value,
+        });
+
+        const fetched = await client.checkoutPages.get(data.id);
+        const fetchedTriggerField = fetched.data.fields?.find(
+          (field) => field.label === 'Agree to Terms'
+        );
+        const fetchedConditionalField = fetched.data.fields?.find(
+          (field) => field.label === 'Conditional Notes'
+        );
+
+        expect(fetchedConditionalField?.showHideLogic).toMatchObject({
+          enabled: true,
+          comparison: inputLogic?.comparison,
+          element: {
+            elementType: 'field',
+            elementId: fetchedTriggerField?.id,
+          },
+          value: inputLogic?.value,
+        });
+      }
+    );
 
     it('creates a checkout page with redirect configuration', async () => {
       const { data } = await createCheckoutPage({
