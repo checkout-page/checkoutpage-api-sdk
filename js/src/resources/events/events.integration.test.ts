@@ -414,7 +414,7 @@ describe('EventsResource integration tests', () => {
           },
           {
             type: 'manual',
-            enabled: true,
+            enabled: false,
             name: 'Invoice me',
             description: 'Pay via invoice',
             instructions: 'We will send an invoice.',
@@ -587,9 +587,21 @@ describe('EventsResource integration tests', () => {
       expect(data.paymentMethods?.stripe?.card?.enabled).toBe(true);
       expect(data.paymentMethods?.stripe?.agpay?.mode).toBe('express');
       expect(data.paymentMethods?.stripe?.multiple?.enabled).toBe(true);
-      expect(data.paymentOptions?.some((option) => option.type === 'full')).toBe(true);
-      expect(data.paymentOptions?.some((option) => option.type === 'partial')).toBe(true);
-      expect(data.paymentOptions?.some((option) => option.type === 'manual')).toBe(true);
+      expect(data.paymentOptions?.find((option) => option.type === 'full')).toMatchObject({
+        enabled: true,
+      });
+      expect(data.paymentOptions?.find((option) => option.type === 'partial')).toMatchObject({
+        enabled: true,
+        partialAmount: 1500,
+      });
+      expect(
+        data.paymentOptions?.find(
+          (option) => option.type === 'manual' && option.manualType === 'invoice'
+        )
+      ).toMatchObject({
+        enabled: false,
+        name: 'Invoice me',
+      });
       expect(data.fees?.[0]?.name).toBe('Booking fee');
       expect(data.fees?.[0]?.amount).toBe(125);
       expect(data.showCouponCodeField).toBe(true);
@@ -799,6 +811,34 @@ describe('EventsResource integration tests', () => {
       expect(created.data.type).toBe('event');
       // @ts-ignore
       expect(created.data.more_unknown_fields).toBeUndefined();
+    });
+
+    it('rejects unsupported enabled payment option combinations', async () => {
+      await expect(
+        createEvent({
+          name: `SDK Invalid Event ${uniqueSuffix()}`,
+          title: `SDK Invalid Event ${uniqueSuffix()}`,
+          paymentOptions: [
+            {
+              type: 'full',
+              enabled: true,
+              name: 'Pay in full',
+            },
+            {
+              type: 'manual',
+              enabled: true,
+              name: 'Pay by invoice',
+              manualType: 'invoice',
+            },
+            {
+              type: 'partial',
+              enabled: true,
+              name: 'Pay a deposit',
+              partialAmount: 5000,
+            },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
     });
   });
 
@@ -1048,7 +1088,26 @@ describe('EventsResource integration tests', () => {
       expect(confirmationStep?.config?.action).toBe('redirect');
       expect(result.data.savePaymentMethod).toBe(true);
       expect(result.data.paymentMethods?.stripe?.agpay?.mode).toBe('express');
-      expect(result.data.paymentOptions?.[0]?.type).toBe('manual');
+      expect(result.data.paymentOptions).toHaveLength(4);
+      expect(result.data.paymentOptions?.[0]).toMatchObject({
+        type: 'full',
+        enabled: false,
+      });
+      expect(result.data.paymentOptions?.[1]).toMatchObject({
+        type: 'manual',
+        manualType: 'invoice',
+        enabled: true,
+        showPaymentButton: true,
+      });
+      expect(result.data.paymentOptions?.[2]).toMatchObject({
+        type: 'partial',
+        enabled: false,
+      });
+      expect(result.data.paymentOptions?.[3]).toMatchObject({
+        type: 'manual',
+        manualType: 'cash_on_delivery',
+        enabled: false,
+      });
       expect(result.data.fees?.[0]?.name).toBe('Handling fee');
       expect(result.data.showCouponCodeField).toBe(true);
       expect(result.data.showCouponCodeFieldType).toBe('field');
@@ -1080,6 +1139,34 @@ describe('EventsResource integration tests', () => {
       expect(pageIncludesImage(result.data, imageId)).toBe(true);
       expect(result.data.ticketGroups?.[0]?.name).toBe('General Admission');
       expect(result.data.ticketGroups?.[0]?.ticketTypes?.[0]?.name).toBe('Standard');
+    });
+
+    it('rejects unsupported enabled payment option combinations on update', async () => {
+      const created = await createEvent();
+
+      await expect(
+        client.events.update(created.data.id, {
+          paymentOptions: [
+            {
+              type: 'full',
+              enabled: true,
+              name: 'Pay in full',
+            },
+            {
+              type: 'manual',
+              enabled: true,
+              name: 'Pay by invoice',
+              manualType: 'invoice',
+            },
+            {
+              type: 'partial',
+              enabled: true,
+              name: 'Pay a deposit',
+              partialAmount: 5000,
+            },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
     });
 
     it('rejects an uppercase slug on update', async () => {

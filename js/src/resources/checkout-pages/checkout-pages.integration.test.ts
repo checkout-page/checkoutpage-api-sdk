@@ -1130,7 +1130,7 @@ describe('CheckoutPagesResource integration tests', () => {
           },
           {
             type: 'manual',
-            enabled: true,
+            enabled: false,
             name: 'Invoice me',
             description: 'Pay offline',
             instructions: 'We will send an invoice.',
@@ -1157,13 +1157,53 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(data.paymentMethods?.stripe?.agpay?.mode).toBe('express');
       expect(data.paymentMethods?.stripe?.multiple?.enabled).toBe(true);
-      expect(data.paymentOptions?.some((option) => option.type === 'manual')).toBe(true);
-      expect(data.paymentOptions?.some((option) => option.type === 'partial')).toBe(true);
+      expect(data.paymentOptions?.find((option) => option.type === 'full')).toMatchObject({
+        enabled: true,
+      });
+      expect(data.paymentOptions?.find((option) => option.type === 'partial')).toMatchObject({
+        enabled: true,
+        partialAmount: 1500,
+      });
+      expect(
+        data.paymentOptions?.find(
+          (option) => option.type === 'manual' && option.manualType === 'invoice'
+        )
+      ).toMatchObject({
+        enabled: false,
+        name: 'Invoice me',
+      });
       expect(data.fees?.[0]?.name).toBe('Processing fee');
       expect(data.fees?.[0]?.amount).toBe(125);
 
       expect(data.fees?.[1]?.name).toBe('Percentage processing fee');
       expect(data.fees?.[1]?.percentage).toBe(1);
+    });
+
+    it('rejects unsupported enabled payment option combinations', async () => {
+      await expect(
+        createCheckoutPage({
+          slug: `sdk-invalid-payment-options-${uniqueSuffix()}`,
+          paymentOptions: [
+            {
+              type: 'full',
+              enabled: true,
+              name: 'Pay in full',
+            },
+            {
+              type: 'manual',
+              enabled: true,
+              name: 'Pay by invoice',
+              manualType: 'invoice',
+            },
+            {
+              type: 'partial',
+              enabled: true,
+              name: 'Pay a deposit',
+              partialAmount: 5000,
+            },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
     });
 
     it('creates a large page with many options, fields, variants etc', async () => {
@@ -1265,7 +1305,7 @@ describe('CheckoutPagesResource integration tests', () => {
             manualType: 'invoice',
             name: 'Pay via invoice',
             description: 'Receive an invoice.',
-            enabled: true,
+            enabled: false,
             showPaymentButton: false,
             instructions: 'Bank details on the invoice.',
           },
@@ -1274,7 +1314,7 @@ describe('CheckoutPagesResource integration tests', () => {
             manualType: 'cash_on_delivery',
             name: 'Cash on delivery',
             description: 'Pay on receipt.',
-            enabled: true,
+            enabled: false,
             showPaymentButton: false,
             instructions: 'Have payment ready at delivery.',
           },
@@ -1902,8 +1942,8 @@ describe('CheckoutPagesResource integration tests', () => {
           (option) => option.type === 'manual' && option.manualType === 'invoice'
         )
       ).toMatchObject({
-        enabled: true,
-        showPaymentButton: true,
+        enabled: false,
+        showPaymentButton: false,
         instructions: 'Bank details on the invoice.',
       });
       expect(
@@ -1911,8 +1951,8 @@ describe('CheckoutPagesResource integration tests', () => {
           (option) => option.type === 'manual' && option.manualType === 'cash_on_delivery'
         )
       ).toMatchObject({
-        enabled: true,
-        showPaymentButton: true,
+        enabled: false,
+        showPaymentButton: false,
       });
       expect(data.fees).toHaveLength(2);
       expect(data.fees?.[0]).toMatchObject({
@@ -3014,7 +3054,7 @@ describe('CheckoutPagesResource integration tests', () => {
             type: 'partial',
             name: 'Partial',
             description: 'Partial payment',
-            enabled: true,
+            enabled: false,
             instructions: 'Partially pay things',
             manualType: 'invoice',
             partialAmount: 300,
@@ -3028,6 +3068,9 @@ describe('CheckoutPagesResource integration tests', () => {
           (option) => option.type === 'manual' && option.manualType === 'cash_on_delivery'
         )
       ).toBe(true);
+      expect(data.paymentOptions?.find((option) => option.type === 'partial')).toMatchObject({
+        enabled: false,
+      });
     });
 
     it('creates a payment plan checkout page with trialPeriodDays', async () => {
@@ -3733,8 +3776,55 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       expect(result.data.paymentMethods?.stripe?.agpay?.mode).toBe('express');
-      expect(result.data.paymentOptions?.[0]?.type).toBe('manual');
+      expect(result.data.paymentOptions).toHaveLength(4);
+      expect(result.data.paymentOptions?.[0]).toMatchObject({
+        type: 'full',
+        enabled: false,
+      });
+      expect(result.data.paymentOptions?.[1]).toMatchObject({
+        type: 'manual',
+        manualType: 'invoice',
+        enabled: true,
+        showPaymentButton: true,
+      });
+      expect(result.data.paymentOptions?.[2]).toMatchObject({
+        type: 'partial',
+        enabled: false,
+      });
+      expect(result.data.paymentOptions?.[3]).toMatchObject({
+        type: 'manual',
+        manualType: 'cash_on_delivery',
+        enabled: false,
+      });
       expect(result.data.fees?.[0]?.name).toBe('Handling');
+    });
+
+    it('rejects unsupported enabled payment option combinations on update', async () => {
+      const created = await createCheckoutPage();
+
+      await expect(
+        client.checkoutPages.update(created.data.id, {
+          paymentOptions: [
+            {
+              type: 'full',
+              enabled: true,
+              name: 'Pay in full',
+            },
+            {
+              type: 'manual',
+              enabled: true,
+              name: 'Pay by invoice',
+              manualType: 'invoice',
+            },
+            {
+              type: 'partial',
+              enabled: true,
+              name: 'Pay a deposit',
+              partialAmount: 5000,
+            },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
     });
 
     it('updates funnel steps', async () => {
