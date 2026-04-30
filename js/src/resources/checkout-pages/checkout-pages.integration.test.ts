@@ -126,7 +126,7 @@ describe('CheckoutPagesResource integration tests', () => {
   afterEach(async () => {
     for (const pageId of [...createdPageIds].reverse()) {
       try {
-        // await client.checkoutPages.delete(pageId);
+        await client.checkoutPages.delete(pageId);
       } catch {
         // Best-effort cleanup for integration tests.
       }
@@ -606,6 +606,273 @@ describe('CheckoutPagesResource integration tests', () => {
 
       expect(data.afterPaymentAction).toBe('redirect');
       expect(data.redirectUrl).toBe('https://example.com/thank-you');
+    });
+
+    it('creates a checkout page with field conditional logic', async () => {
+      const { data } = await createCheckoutPage({
+        name: 'T023_is_empty_per_updated_description',
+        productData: {
+          title: 'T023 is_empty per docs',
+          price: { amount: 1000, currency: 'usd' },
+        },
+        fields: [
+          {
+            label: 'Email',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          {
+            label: 'Plan',
+            element: 'select',
+            key: 'plan-trigger',
+            options: [
+              { label: 'Starter', value: 'starter', key: 'opt-starter' },
+              { label: 'Pro', value: 'pro', key: 'opt-pro' },
+            ],
+          },
+          {
+            label: 'Visible when Plan is_empty',
+            element: 'text',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is_empty',
+              element: { elementId: 'plan-trigger', elementType: 'field' },
+            },
+          },
+          {
+            label: 'Visible when Plan is_not_empty',
+            element: 'text',
+            showHideLogic: {
+              enabled: true,
+              comparison: 'is_not_empty',
+              element: { elementId: 'plan-trigger', elementType: 'field' },
+            },
+          },
+        ],
+      });
+
+      expect(data).toEqual({
+        afterPaymentAction: 'confirmation',
+        allowDynamicDescription: false,
+        allowDynamicDiscountedFromPrice: false,
+        allowDynamicPlanIterations: false,
+        allowDynamicPrice: false,
+        allowDynamicRedirectUrl: false,
+        allowDynamicTitle: false,
+        closePopupOnClickOutside: false,
+        confirmationEmailShowLogo: true,
+        confirmationEmailShowStoreName: true,
+        createdAt: expect.any(String),
+        customizeCheckoutConfirmation: false,
+        customizeEmailConfirmation: false,
+        enableFileAccessForInactiveSubscriptions: false,
+        fees: [],
+        fields: [
+          {
+            createdAt: expect.any(String),
+            defaultValue: {
+              enabled: false,
+            },
+            element: 'email',
+            hidden: false,
+            id: expect.any(String),
+            label: 'Email',
+            limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            maxValue: {
+              enabled: false,
+            },
+            minValue: {
+              enabled: false,
+            },
+            options: [],
+            order: 0,
+            required: true,
+            showHideLogic: {
+              comparison: 'is',
+              element: {
+                elementType: 'field',
+              },
+              enabled: false,
+            },
+            type: 'email',
+            updatedAt: expect.any(String),
+          },
+          {
+            createdAt: expect.any(String),
+            defaultValue: {
+              enabled: false,
+            },
+            element: 'select',
+            hidden: false,
+            id: expect.any(String),
+            label: 'Plan',
+            limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            maxValue: {
+              enabled: false,
+            },
+            minValue: {
+              enabled: false,
+            },
+            options: [
+              {
+                id: expect.any(String),
+                label: 'Starter',
+                value: 'starter',
+              },
+              {
+                id: expect.any(String),
+                label: 'Pro',
+                value: 'pro',
+              },
+            ],
+            order: 1,
+            required: false,
+            showHideLogic: {
+              comparison: 'is',
+              element: {
+                elementType: 'field',
+              },
+              enabled: false,
+            },
+            updatedAt: expect.any(String),
+          },
+          {
+            createdAt: expect.any(String),
+            defaultValue: {
+              enabled: false,
+            },
+            element: 'text',
+            hidden: false,
+            id: expect.any(String),
+            label: 'Visible when Plan is_empty',
+            limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            maxValue: {
+              enabled: false,
+            },
+            minValue: {
+              enabled: false,
+            },
+            options: [],
+            order: 2,
+            required: false,
+            showHideLogic: {
+              comparison: 'is_empty',
+              element: {
+                elementId: expect.any(String),
+                elementType: 'field',
+              },
+              enabled: true,
+            },
+            updatedAt: expect.any(String),
+          },
+          {
+            createdAt: expect.any(String),
+            defaultValue: {
+              enabled: false,
+            },
+            element: 'text',
+            hidden: false,
+            id: expect.any(String),
+            label: 'Visible when Plan is_not_empty',
+            limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            maxValue: {
+              enabled: false,
+            },
+            minValue: {
+              enabled: false,
+            },
+            options: [],
+            order: 3,
+            required: false,
+            showHideLogic: {
+              comparison: 'is_not_empty',
+              element: {
+                elementId: expect.any(String),
+                elementType: 'field',
+              },
+              enabled: true,
+            },
+            updatedAt: expect.any(String),
+          },
+        ],
+        funnelSteps: [],
+        googleIndex: true,
+        id: expect.any(String),
+        images: [],
+        locale: 'en-US',
+        name: 'T023_is_empty_per_updated_description',
+        paymentMethods: {
+          stripe: {
+            agpay: {
+              enabled: true,
+            },
+            card: {
+              enabled: true,
+            },
+            multiple: {
+              enabled: false,
+            },
+          },
+        },
+        paymentOptions: [],
+        product: {
+          createdAt: expect.any(String),
+          discounts: [],
+          fileIds: [],
+          hasUnlimitedStock: true,
+          id: expect.any(String),
+          media: [],
+          price: {
+            amount: 1000,
+            currency: 'usd',
+            payWhatYouWant: false,
+            pricingType: 'single',
+            setupFeeMultipliesWithQuantity: false,
+          },
+          stock: 0,
+          taxBehavior: '',
+          taxCode: '',
+          title: 'T023 is_empty per docs',
+          type: 'charge',
+          updatedAt: expect.any(String),
+          variants: [],
+          variantsRequired: false,
+        },
+        redirectUrlInsideEmbed: false,
+        redirectUrlPath: [],
+        redirectUrlQuery: [],
+        savePaymentMethod: false,
+        sellerId: expect.any(String),
+        sendCanceledSubscriptionNotifications: true,
+        sendEmailConfirmation: true,
+        sendPaymentNotification: true,
+        sendRecurringPaymentFailedNotifications: true,
+        sendRecurringPaymentSucceededNotifications: true,
+        showCouponCodeField: false,
+        showCouponCodeFieldType: 'link',
+        slug: expect.any(String),
+        status: 'published',
+        tax: {
+          enabled: true,
+        },
+        type: 'checkout',
+        updatedAt: expect.any(String),
+        url: expect.any(String),
+        visitCount: 0,
+      });
     });
 
     it('creates a checkout page with checkout redirect configuration', async () => {
