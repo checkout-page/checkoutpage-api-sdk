@@ -631,6 +631,60 @@
         ],
         "description": ""
       },
+      "TaxRate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              { "description": "Unique identifier for the tax rate." }
+            ]
+          },
+          "sellerId": {
+            "type": "string",
+            "description": "Unique identifier for the seller that owns this tax rate."
+          },
+          "stripeTaxRateId": {
+            "type": "string",
+            "description": "The corresponding Stripe Tax Rate ID on the merchant's Stripe account."
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices.",
+            "example": "VAT"
+          },
+          "inclusive": {
+            "type": "boolean",
+            "description": "Specifies whether the tax behaviour is inclusive (`true`) or exclusive (`false`).",
+            "example": true
+          },
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Tax rate percentage out of 100.",
+            "example": 20
+          },
+          "default": {
+            "type": "boolean",
+            "description": "Whether this is the default tax rate for the seller.",
+            "example": false
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": [
+          "id",
+          "sellerId",
+          "stripeTaxRateId",
+          "displayName",
+          "inclusive",
+          "percentage",
+          "default",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "SubmissionField": {
         "type": "object",
         "properties": {
@@ -1277,7 +1331,7 @@
               "enabled": { "type": ["boolean", "null"] },
               "comparison": {
                 "type": ["string", "null"],
-                "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"]
+                "enum": ["is", "is_not", "is_empty", "is_not_empty"]
               },
               "value": { "type": ["string", "null"] },
               "element": {
@@ -1658,7 +1712,7 @@
           },
           "showPaymentButton": {
             "type": ["boolean", "null"],
-            "description": "Whether to show the Stripe payment button for this option. Set to `false` for fully offline flows such as invoice or cash on delivery where no card payment is collected at checkout.",
+            "description": "Whether to show this payment option to the customer at checkout. Enabled payment options should set this to `true`.",
             "example": true
           },
           "manualType": {
@@ -2167,12 +2221,12 @@
                     "comparison": {
                       "type": ["string", "null"],
                       "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                      "description": "Comparison operator for the condition. Defaults to `is`.",
+                      "description": "Comparison operator for the condition. Defaults to `is`. Use `value` with `is`, `is_not`, and `contains`. Omit `value` for `is_empty` and `is_not_empty`.",
                       "example": "is"
                     },
                     "value": {
                       "type": ["string", "null"],
-                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`.",
+                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`. Use this with `is`, `is_not`, and `contains`. Omit this field for `is_empty` and `is_not_empty`.",
                       "example": "pro-option"
                     },
                     "element": {
@@ -2652,8 +2706,24 @@
               },
               "tax": {
                 "type": ["object", "null"],
-                "properties": { "enabled": { "type": ["boolean", "null"] } },
-                "description": "Automatic tax calculation settings."
+                "properties": {
+                  "enabled": {
+                    "type": ["boolean", "null"],
+                    "description": "If enabled tax is collected. Method of tax collection depends on `mode`."
+                  },
+                  "mode": {
+                    "type": ["string", "null"],
+                    "enum": ["none", "fixed", "stripe"],
+                    "description": "Mode `none` means no tax is collected. `fixed` means tax is collected at a fixed rate defined in the tax rate. `stripe` means Stripe tax is used to calculate tax."
+                  },
+                  "fixedTaxRateIds": {
+                    "type": ["array", "null"],
+                    "items": { "type": "string" },
+                    "maxItems": 1,
+                    "description": "List of applied tax rate IDs. When mode is `fixed` and this array is empty, no tax rate has been applied. Configure a default tax rate in your Checkout Page dashboard or pass `fixedTaxRateIds` explicitly. Only one tax rate can be applied right now."
+                  }
+                },
+                "description": "Tax configuration for this page."
               },
               "paymentMethods": {
                 "type": ["object", "null"],
@@ -2819,7 +2889,7 @@
               "shipping-address-state",
               "tax-id"
             ],
-            "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+            "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
             "example": "company-name"
           },
           "options": {
@@ -2893,32 +2963,32 @@
               },
               "comparison": {
                 "type": ["string", "null"],
-                "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                "description": "Comparison operator used for conditional visibility checks.",
+                "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                 "example": "is"
               },
               "value": {
                 "type": ["string", "null"],
-                "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                "example": "physical-delivery"
+                "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                "example": "TRUE"
               },
               "element": {
                 "type": ["object", "null"],
                 "properties": {
                   "elementTitle": {
                     "type": ["string", "null"],
-                    "description": "Optional display title of the source field used by the condition.",
+                    "description": "Optional display title of the source trigger field used by the condition.",
                     "example": "Shipping Method"
                   },
                   "elementType": {
                     "type": ["string", "null"],
                     "enum": ["field"],
-                    "description": "Type of source element used in the condition.",
+                    "description": "Type of source trigger element used in the condition.",
                     "example": "field"
                   },
                   "elementId": {
                     "type": ["string", "null"],
-                    "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                    "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                     "example": "shipping-method"
                   }
                 }
@@ -3603,7 +3673,7 @@
           },
           "showPaymentButton": {
             "type": ["boolean", "null"],
-            "description": "Whether to show the Stripe payment button for this option. Set to `false` for fully offline flows such as invoice or cash on delivery where no card payment is collected at checkout.",
+            "description": "Whether to show this payment option to the customer at checkout. Enabled payment options should set this to `true`.",
             "example": true
           },
           "manualType": {
@@ -3614,7 +3684,7 @@
           }
         },
         "required": ["type", "name"],
-        "description": "Configures a single payment option shown at checkout. Multiple options can be combined (e.g. pay in full + pay via invoice) or a single option can be offered alone.\n\n**Option types:**\n- `full` — customer pays the entire amount immediately.\n- `manual` — no payment is collected at checkout. A confirmation with an invoice is sent and the order is marked unpaid. Set `manualType` to `invoice` or `cash_on_delivery`.\n- `partial` — customer pays `partialAmount` now; the remaining balance is due later and the order is marked as partially paid.\n\nDigital files and event tickets are always issued immediately after checkout regardless of which option the customer selects. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+        "description": "Configures a single payment option shown at checkout. Only these enabled combinations are supported: `full`, `invoice`, `partial`, `cash_on_delivery`, `full + invoice`, `full + partial`, or `full + cash_on_delivery`. Multiple options can be combined (e.g. pay in full + pay via invoice) or a single option can be offered alone.\n\n**Option types:**\n- `full` — customer pays the entire amount immediately.\n- `manual` — no payment is collected at checkout. A confirmation with an invoice is sent and the order is marked unpaid. Set `manualType` to `invoice` or `cash_on_delivery`.\n- `partial` — customer pays `partialAmount` now; the remaining balance is due later and the order is marked as partially paid.\n\nDigital files and event tickets are always issued immediately after checkout regardless of which option the customer selects. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
         "example": [
           {
             "type": "full",
@@ -4023,13 +4093,13 @@
                       },
                       "type": {
                         "type": ["string", "null"],
-                        "enum": ["one_time", "recurring", "pay_what_you_want"],
-                        "description": "Type of variant option - one-time purchase, recurring subscription or pay what you want.",
+                        "enum": ["one_time", "recurring"],
+                        "description": "Type of variant option - one-time purchase or recurring subscription. For Pay What You Want options, `type` must be `one_time` and set `payWhatYouWant: true`.",
                         "example": "one_time"
                       },
                       "payWhatYouWant": {
                         "type": ["boolean", "null"],
-                        "description": "If enabled, customers can choose their own price for this variant option. The minimum price is based on the additionalChargeAmount. Defaults to `false`.",
+                        "description": "If enabled, customers can choose their own price for this variant option. The minimum price is based on the additionalChargeAmount. This is only supported for `one_time` options. Defaults to `false`.",
                         "example": false
                       },
                       "pwywSuggestedPrice": {
@@ -4114,12 +4184,12 @@
                     "comparison": {
                       "type": ["string", "null"],
                       "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                      "description": "Comparison operator for the condition. Defaults to `is`.",
+                      "description": "Comparison operator for the condition. Defaults to `is`. Use `value` with `is`, `is_not`, and `contains`. Omit `value` for `is_empty` and `is_not_empty`.",
                       "example": "is"
                     },
                     "value": {
                       "type": ["string", "null"],
-                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`.",
+                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`. Use this with `is`, `is_not`, and `contains`. Omit this field for `is_empty` and `is_not_empty`.",
                       "example": "pro-option"
                     },
                     "element": {
@@ -4625,7 +4695,7 @@
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
-            "description": "Payment options presented to customers at checkout. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+            "description": "Payment options presented to customers at checkout. Only these enabled combinations are supported: `full`, `invoice`, `partial`, `cash_on_delivery`, `full + invoice`, `full + partial`, or `full + cash_on_delivery`. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
             "example": [
               {
                 "type": "full",
@@ -4709,10 +4779,26 @@
           "productData": { "$ref": "#/components/schemas/ProductDetailsInput" },
           "tax": {
             "type": ["object", "null"],
-            "properties": { "enabled": { "type": "boolean" } },
-            "required": ["enabled"],
-            "description": "Enable automatic tax calculation via Stripe Tax. This requires your store to have [Stripe Tax](https://checkoutpage.com/dashboard/settings/stripe-tax) enabled.",
-            "example": { "enabled": true }
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "If enabled mode must be one of `fixed` or `stripe`. If disabled mode must be `none`."
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["none", "fixed", "stripe"],
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+              },
+              "fixedTaxRateIds": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
+                "maxItems": 1,
+                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+              }
+            },
+            "required": ["enabled", "mode"],
+            "description": "Tax configuration for this page.",
+            "example": { "enabled": true, "mode": "fixed" }
           },
           "enableFileAccessForInactiveSubscriptions": {
             "type": ["boolean", "null"],
@@ -5283,7 +5369,7 @@
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
-            "description": "Payment options presented to customers at checkout. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+            "description": "Payment options presented to customers at checkout. Only these enabled combinations are supported: `full`, `invoice`, `partial`, `cash_on_delivery`, `full + invoice`, `full + partial`, or `full + cash_on_delivery`. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
             "example": [
               {
                 "type": "full",
@@ -5411,9 +5497,26 @@
           },
           "tax": {
             "type": ["object", "null"],
-            "properties": { "enabled": { "type": "boolean", "default": true } },
-            "description": "Enable automatic tax calculation via Stripe Tax. This requires your store to have [Stripe Tax](https://checkoutpage.com/dashboard/settings/stripe-tax) enabled.",
-            "example": { "enabled": true }
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "If enabled mode must be one of `fixed` or `stripe`. If disabled mode must be `none`."
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["none", "fixed", "stripe"],
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+              },
+              "fixedTaxRateIds": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
+                "maxItems": 1,
+                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+              }
+            },
+            "required": ["enabled", "mode"],
+            "description": "Tax configuration for this page.",
+            "example": { "enabled": true, "mode": "fixed" }
           },
           "funnelSteps": {
             "type": ["array", "null"],
@@ -6322,8 +6425,24 @@
               },
               "tax": {
                 "type": ["object", "null"],
-                "properties": { "enabled": { "type": ["boolean", "null"] } },
-                "description": "Automatic tax calculation settings."
+                "properties": {
+                  "enabled": {
+                    "type": ["boolean", "null"],
+                    "description": "If enabled tax is collected. Method of tax collection depends on `mode`."
+                  },
+                  "mode": {
+                    "type": ["string", "null"],
+                    "enum": ["none", "fixed", "stripe"],
+                    "description": "Mode `none` means no tax is collected. `fixed` means tax is collected at a fixed rate defined in the tax rate. `stripe` means Stripe tax is used to calculate tax."
+                  },
+                  "fixedTaxRateIds": {
+                    "type": ["array", "null"],
+                    "items": { "type": "string" },
+                    "maxItems": 1,
+                    "description": "List of applied tax rate IDs. When mode is `fixed` and this array is empty, no tax rate has been applied. Configure a default tax rate in your Checkout Page dashboard or pass `fixedTaxRateIds` explicitly. Only one tax rate can be applied right now."
+                  }
+                },
+                "description": "Tax configuration for this page."
               },
               "savePaymentMethod": {
                 "type": ["boolean", "null"],
@@ -7104,7 +7223,7 @@
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
-            "description": "Payment options presented to customers at checkout. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+            "description": "Payment options presented to customers at checkout. Only these enabled combinations are supported: `full`, `invoice`, `partial`, `cash_on_delivery`, `full + invoice`, `full + partial`, or `full + cash_on_delivery`. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
             "example": [
               {
                 "type": "full",
@@ -7198,9 +7317,26 @@
           },
           "tax": {
             "type": ["object", "null"],
-            "properties": { "enabled": { "type": "boolean", "default": true } },
-            "description": "Enable automatic tax calculation via Stripe Tax. This requires your store to have [Stripe Tax](https://checkoutpage.com/dashboard/settings/stripe-tax) enabled.",
-            "example": { "enabled": true }
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "If enabled mode must be one of `fixed` or `stripe`. If disabled mode must be `none`."
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["none", "fixed", "stripe"],
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+              },
+              "fixedTaxRateIds": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
+                "maxItems": 1,
+                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+              }
+            },
+            "required": ["enabled", "mode"],
+            "description": "Tax configuration for this page.",
+            "example": { "enabled": true, "mode": "fixed" }
           },
           "eventDetails": {
             "type": ["object", "null"],
@@ -7597,7 +7733,7 @@
           "paymentOptions": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/PagePaymentOptionInput" },
-            "description": "Payment options presented to customers at checkout. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
+            "description": "Payment options presented to customers at checkout. Only these enabled combinations are supported: `full`, `invoice`, `partial`, `cash_on_delivery`, `full + invoice`, `full + partial`, or `full + cash_on_delivery`. Combine `full` (pay now), `manual` (invoice or cash on delivery), and `partial` (deposit) types to offer flexible payment flows. At least one option should have `enabled: true`. [Learn more](https://checkoutpage.com/docs/articles/manual-payments-pay-in-full-by-invoice-pay-deposit-or-cash-on-delivery)",
             "example": [
               {
                 "type": "full",
@@ -7691,9 +7827,26 @@
           },
           "tax": {
             "type": ["object", "null"],
-            "properties": { "enabled": { "type": "boolean", "default": true } },
-            "description": "Enable automatic tax calculation via Stripe Tax. This requires your store to have [Stripe Tax](https://checkoutpage.com/dashboard/settings/stripe-tax) enabled.",
-            "example": { "enabled": true }
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "If enabled mode must be one of `fixed` or `stripe`. If disabled mode must be `none`."
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["none", "fixed", "stripe"],
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+              },
+              "fixedTaxRateIds": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
+                "maxItems": 1,
+                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+              }
+            },
+            "required": ["enabled", "mode"],
+            "description": "Tax configuration for this page.",
+            "example": { "enabled": true, "mode": "fixed" }
           },
           "showConfirmationEventName": {
             "type": ["boolean", "null"],
@@ -8979,13 +9132,13 @@
                       },
                       "type": {
                         "type": ["string", "null"],
-                        "enum": ["one_time", "recurring", "pay_what_you_want"],
-                        "description": "Type of variant option - one-time purchase, recurring subscription or pay what you want.",
+                        "enum": ["one_time", "recurring"],
+                        "description": "Type of variant option - one-time purchase or recurring subscription. For Pay What You Want options, `type` must be `one_time` and set `payWhatYouWant: true`.",
                         "example": "one_time"
                       },
                       "payWhatYouWant": {
                         "type": ["boolean", "null"],
-                        "description": "If enabled, customers can choose their own price for this variant option. The minimum price is based on the additionalChargeAmount. Defaults to `false`.",
+                        "description": "If enabled, customers can choose their own price for this variant option. The minimum price is based on the additionalChargeAmount. This is only supported for `one_time` options. Defaults to `false`.",
                         "example": false
                       },
                       "pwywSuggestedPrice": {
@@ -9070,12 +9223,12 @@
                     "comparison": {
                       "type": ["string", "null"],
                       "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                      "description": "Comparison operator for the condition. Defaults to `is`.",
+                      "description": "Comparison operator for the condition. Defaults to `is`. Use `value` with `is`, `is_not`, and `contains`. Omit `value` for `is_empty` and `is_not_empty`.",
                       "example": "is"
                     },
                     "value": {
                       "type": ["string", "null"],
-                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`.",
+                      "description": "The `key` of the variant option being referenced. Must match the `key` of an option on the source variant identified by `showHideLogic.element.elementId`. Use this with `is`, `is_not`, and `contains`. Omit this field for `is_empty` and `is_not_empty`.",
                       "example": "pro-option"
                     },
                     "element": {
@@ -10185,6 +10338,239 @@
           },
           "403": {
             "description": "Forbidden - Insufficient permissions or validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tax-rates/": {
+      "get": {
+        "summary": "List tax rates",
+        "description": "Returns all tax rates for the authenticated seller.",
+        "operationId": "tax-rates/list",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Tax Rates"],
+        "responses": {
+          "200": {
+            "description": "Tax rates retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/TaxRate" } }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a tax rate",
+        "description": "Creates a tax rate in Stripe for the authenticated seller and mirrors it into Checkout Page. In addition to Checkout Page rate limits, Stripe rate limits apply when creating tax rates.",
+        "operationId": "tax-rates/create",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Tax Rates"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices.",
+                    "example": "VAT"
+                  },
+                  "inclusive": {
+                    "type": "boolean",
+                    "description": "Specifies whether the tax behaviour is inclusive (`true`) or exclusive (`false`).",
+                    "example": true
+                  },
+                  "percentage": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Tax rate percentage out of 100.",
+                    "example": 20
+                  },
+                  "default": {
+                    "type": "boolean",
+                    "description": "Whether this should be the default fixed rate tax for pages with fixed tax enabled.",
+                    "example": false
+                  }
+                },
+                "required": ["displayName", "inclusive", "percentage"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tax rate created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "data": { "$ref": "#/components/schemas/TaxRate" } },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Seller must connect Stripe before creating tax rates",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tax-rates/:taxRateId": {
+      "patch": {
+        "summary": "Update a tax rate",
+        "description": "Updates a tax rate. Display name changes are synced to Stripe.",
+        "operationId": "tax-rates/update",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Tax Rates"],
+        "parameters": [
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "The unique identifier of the tax rate to update.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            },
+            "required": true,
+            "description": "The unique identifier of the tax rate to update.",
+            "name": "taxRateId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices.",
+                    "example": "VAT"
+                  },
+                  "default": {
+                    "type": "boolean",
+                    "description": "Whether this should be the default fixed rate tax for pages with fixed tax enabled.",
+                    "example": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tax rate updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "data": { "$ref": "#/components/schemas/TaxRate" } },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Seller must connect Stripe before updating tax rates",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Tax rate not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -11865,7 +12251,7 @@
                       "shipping-address-state",
                       "tax-id"
                     ],
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
                     "example": "company-name"
                   },
                   "options": {
@@ -11939,32 +12325,32 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                        "description": "Comparison operator used for conditional visibility checks.",
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                         "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                        "example": "physical-delivery"
+                        "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                        "example": "TRUE"
                       },
                       "element": {
                         "type": ["object", "null"],
                         "properties": {
                           "elementTitle": {
                             "type": ["string", "null"],
-                            "description": "Optional display title of the source field used by the condition.",
+                            "description": "Optional display title of the source trigger field used by the condition.",
                             "example": "Shipping Method"
                           },
                           "elementType": {
                             "type": ["string", "null"],
                             "enum": ["field"],
-                            "description": "Type of source element used in the condition.",
+                            "description": "Type of source trigger element used in the condition.",
                             "example": "field"
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                            "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -12277,7 +12663,7 @@
                       "shipping-address-state",
                       "tax-id"
                     ],
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
                     "example": "company-name"
                   },
                   "options": {
@@ -12351,32 +12737,32 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                        "description": "Comparison operator used for conditional visibility checks.",
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                         "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                        "example": "physical-delivery"
+                        "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                        "example": "TRUE"
                       },
                       "element": {
                         "type": ["object", "null"],
                         "properties": {
                           "elementTitle": {
                             "type": ["string", "null"],
-                            "description": "Optional display title of the source field used by the condition.",
+                            "description": "Optional display title of the source trigger field used by the condition.",
                             "example": "Shipping Method"
                           },
                           "elementType": {
                             "type": ["string", "null"],
                             "enum": ["field"],
-                            "description": "Type of source element used in the condition.",
+                            "description": "Type of source trigger element used in the condition.",
                             "example": "field"
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                            "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -13491,7 +13877,7 @@
                       "shipping-address-state",
                       "tax-id"
                     ],
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
                     "example": "company-name"
                   },
                   "options": {
@@ -13565,32 +13951,32 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                        "description": "Comparison operator used for conditional visibility checks.",
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                         "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                        "example": "physical-delivery"
+                        "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                        "example": "TRUE"
                       },
                       "element": {
                         "type": ["object", "null"],
                         "properties": {
                           "elementTitle": {
                             "type": ["string", "null"],
-                            "description": "Optional display title of the source field used by the condition.",
+                            "description": "Optional display title of the source trigger field used by the condition.",
                             "example": "Shipping Method"
                           },
                           "elementType": {
                             "type": ["string", "null"],
                             "enum": ["field"],
-                            "description": "Type of source element used in the condition.",
+                            "description": "Type of source trigger element used in the condition.",
                             "example": "field"
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                            "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -13903,7 +14289,7 @@
                       "shipping-address-state",
                       "tax-id"
                     ],
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
                     "example": "company-name"
                   },
                   "options": {
@@ -13977,32 +14363,32 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                        "description": "Comparison operator used for conditional visibility checks.",
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                         "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                        "example": "physical-delivery"
+                        "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                        "example": "TRUE"
                       },
                       "element": {
                         "type": ["object", "null"],
                         "properties": {
                           "elementTitle": {
                             "type": ["string", "null"],
-                            "description": "Optional display title of the source field used by the condition.",
+                            "description": "Optional display title of the source trigger field used by the condition.",
                             "example": "Shipping Method"
                           },
                           "elementType": {
                             "type": ["string", "null"],
                             "enum": ["field"],
-                            "description": "Type of source element used in the condition.",
+                            "description": "Type of source trigger element used in the condition.",
                             "example": "field"
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                            "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -14866,7 +15252,7 @@
                       "shipping-address-state",
                       "tax-id"
                     ],
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
                     "example": "company-name"
                   },
                   "options": {
@@ -14940,32 +15326,32 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                        "description": "Comparison operator used for conditional visibility checks.",
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                         "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                        "example": "physical-delivery"
+                        "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                        "example": "TRUE"
                       },
                       "element": {
                         "type": ["object", "null"],
                         "properties": {
                           "elementTitle": {
                             "type": ["string", "null"],
-                            "description": "Optional display title of the source field used by the condition.",
+                            "description": "Optional display title of the source trigger field used by the condition.",
                             "example": "Shipping Method"
                           },
                           "elementType": {
                             "type": ["string", "null"],
                             "enum": ["field"],
-                            "description": "Type of source element used in the condition.",
+                            "description": "Type of source trigger element used in the condition.",
                             "example": "field"
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                            "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
@@ -15278,7 +15664,7 @@
                       "shipping-address-state",
                       "tax-id"
                     ],
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
                     "example": "company-name"
                   },
                   "options": {
@@ -15352,32 +15738,32 @@
                       },
                       "comparison": {
                         "type": ["string", "null"],
-                        "enum": ["is", "is_not", "is_empty", "is_not_empty", "contains"],
-                        "description": "Comparison operator used for conditional visibility checks.",
+                        "enum": ["is", "is_not", "is_empty", "is_not_empty"],
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
                         "example": "is"
                       },
                       "value": {
                         "type": ["string", "null"],
-                        "description": "The `key` or `id` of the source option used by conditional visibility. Must match the `key` or `id` of an option on the source field. During creation you may provide caller-defined keys; persisted responses return database IDs.",
-                        "example": "physical-delivery"
+                        "description": "Value used by conditional visibility when the selected comparison requires one. For `select` and `multiple-choice` trigger fields, this must match the `key` or `id` of an option on the source field. For `checkbox` trigger fields with `is` or `is_not`, this field is required and must be `TRUE` or `FALSE`. During creation you may provide caller-defined keys; persisted responses return database IDs. Omit this field for `is_empty` and `is_not_empty`.",
+                        "example": "TRUE"
                       },
                       "element": {
                         "type": ["object", "null"],
                         "properties": {
                           "elementTitle": {
                             "type": ["string", "null"],
-                            "description": "Optional display title of the source field used by the condition.",
+                            "description": "Optional display title of the source trigger field used by the condition.",
                             "example": "Shipping Method"
                           },
                           "elementType": {
                             "type": ["string", "null"],
                             "enum": ["field"],
-                            "description": "Type of source element used in the condition.",
+                            "description": "Type of source trigger element used in the condition.",
                             "example": "field"
                           },
                           "elementId": {
                             "type": ["string", "null"],
-                            "description": "The `key` or `id` of the source field used in the condition. Must match the `key` or `id` of another field in the same batch. During creation you may provide caller-defined keys; persisted responses return database IDs.",
+                            "description": "The `key` or `id` of the source trigger field used in the condition. Must match the `key` or `id` of another field in the same batch. In the dashboard field editor, only `select`, `multiple-choice`, and `checkbox` fields can be chosen as trigger fields. During creation you may provide caller-defined keys; persisted responses return database IDs.",
                             "example": "shipping-method"
                           }
                         }
