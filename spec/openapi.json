@@ -4787,7 +4787,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
               },
               "fixedTaxRateIds": {
                 "type": "array",
@@ -4796,7 +4796,7 @@
                 "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
               }
             },
-            "required": ["enabled", "mode"],
+            "required": ["enabled"],
             "description": "Tax configuration for this page.",
             "example": { "enabled": true, "mode": "fixed" }
           },
@@ -5505,7 +5505,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
               },
               "fixedTaxRateIds": {
                 "type": "array",
@@ -5514,7 +5514,7 @@
                 "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
               }
             },
-            "required": ["enabled", "mode"],
+            "required": ["enabled"],
             "description": "Tax configuration for this page.",
             "example": { "enabled": true, "mode": "fixed" }
           },
@@ -7325,7 +7325,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
               },
               "fixedTaxRateIds": {
                 "type": "array",
@@ -7334,7 +7334,7 @@
                 "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
               }
             },
-            "required": ["enabled", "mode"],
+            "required": ["enabled"],
             "description": "Tax configuration for this page.",
             "example": { "enabled": true, "mode": "fixed" }
           },
@@ -7835,7 +7835,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully."
+                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
               },
               "fixedTaxRateIds": {
                 "type": "array",
@@ -7844,7 +7844,7 @@
                 "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
               }
             },
-            "required": ["enabled", "mode"],
+            "required": ["enabled"],
             "description": "Tax configuration for this page.",
             "example": { "enabled": true, "mode": "fixed" }
           },

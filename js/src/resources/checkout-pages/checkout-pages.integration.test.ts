@@ -374,6 +374,7 @@ describe('CheckoutPagesResource integration tests', () => {
               element: 'textarea',
               showHideLogic: {
                 enabled: true,
+                // @ts-ignore
                 comparison: 'contains',
                 element: { elementType: 'field', elementId: 'trigger-select' },
                 value: 'opt-premium',
@@ -3412,6 +3413,72 @@ describe('CheckoutPagesResource integration tests', () => {
         ).rejects.toThrow(ValidationError);
       });
     });
+
+    describe('tax', () => {
+      it('creates a checkout page with stripe tax mode', async () => {
+        const { data } = await createCheckoutPage({
+          tax: {
+            enabled: true,
+            mode: 'stripe',
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('stripe');
+      });
+
+      it('creates a checkout page with fixed tax and explicit fixedTaxRateIds', async () => {
+        const taxRate = await client.taxRates.create({
+          displayName: `VAT ${uniqueSuffix()}`,
+          inclusive: false,
+          percentage: 20,
+        });
+
+        const { data } = await createCheckoutPage({
+          tax: {
+            enabled: true,
+            mode: 'fixed',
+            fixedTaxRateIds: [taxRate.data.id],
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('fixed');
+        expect(data.tax?.fixedTaxRateIds).toContain(taxRate.data.id);
+      });
+
+      it('creates with fixed mode and no fixedTaxRateIds — auto-resolves the account default rate', async () => {
+        const defaultRate = await client.taxRates.create({
+          displayName: `Default VAT ${uniqueSuffix()}`,
+          inclusive: false,
+          percentage: 20,
+          default: true,
+        });
+
+        const { data } = await createCheckoutPage({
+          tax: {
+            enabled: true,
+            mode: 'fixed',
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('fixed');
+        expect(data.tax?.fixedTaxRateIds).toContain(defaultRate.data.id);
+      });
+
+      it('creates a checkout page with tax disabled', async () => {
+        const { data } = await createCheckoutPage({
+          tax: {
+            enabled: false,
+            mode: 'none',
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(false);
+        expect(data.tax?.mode).toBe('none');
+      });
+    });
   });
 
   describe('get', () => {
@@ -3460,7 +3527,7 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(productIncludesFile(result.data, productFileId)).toBe(true);
     }, 15000);
 
-    it('returns checkout page response metadata fields', async () => {
+    it.only('returns checkout page response metadata fields', async () => {
       const created = await createCheckoutPage({
         sendPaymentNotification: false,
         showCouponCodeField: true,

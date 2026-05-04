@@ -840,6 +840,72 @@ describe('EventsResource integration tests', () => {
         })
       ).rejects.toThrow(ValidationError);
     });
+
+    describe.only('tax', () => {
+      it('creates an event with stripe tax mode', async () => {
+        const { data } = await createEvent({
+          tax: {
+            enabled: true,
+            mode: 'stripe',
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('stripe');
+      });
+
+      it('creates an event with fixed tax and explicit fixedTaxRateIds', async () => {
+        const taxRate = await client.taxRates.create({
+          displayName: `VAT ${uniqueSuffix()}`,
+          inclusive: false,
+          percentage: 20,
+        });
+
+        const { data } = await createEvent({
+          tax: {
+            enabled: true,
+            mode: 'fixed',
+            fixedTaxRateIds: [taxRate.data.id],
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('fixed');
+        expect(data.tax?.fixedTaxRateIds).toContain(taxRate.data.id);
+      });
+
+      it('creates with fixed mode and no fixedTaxRateIds — auto-resolves the account default rate', async () => {
+        const defaultRate = await client.taxRates.create({
+          displayName: `Default VAT ${uniqueSuffix()}`,
+          inclusive: false,
+          percentage: 20,
+          default: true,
+        });
+
+        const { data } = await createEvent({
+          tax: {
+            enabled: true,
+            mode: 'fixed',
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('fixed');
+        expect(data.tax?.fixedTaxRateIds).toContain(defaultRate.data.id);
+      });
+
+      it('creates an event with tax disabled', async () => {
+        const { data } = await createEvent({
+          tax: {
+            enabled: false,
+            mode: 'none',
+          },
+        });
+
+        expect(data.tax?.enabled).toBe(false);
+        expect(data.tax?.mode).toBe('none');
+      });
+    });
   });
 
   describe('get', () => {

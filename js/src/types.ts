@@ -361,5 +361,22 @@ export type DeleteFileResponse =
 export type DownloadFileResponse =
   operations['files/download']['responses'][200]['content']['application/json'];
 
+// Tax rates
+export type TaxRateList =
+  operations['tax-rates/list']['responses'][200]['content']['application/json'];
+
+export type TaxRate = TaxRateList['data'][number];
+
+export type TaxRateResponse =
+  operations['tax-rates/create']['responses'][201]['content']['application/json'];
+
+export type CreateTaxRateParams = NonNullable<
+  operations['tax-rates/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateTaxRateParams = NonNullable<
+  operations['tax-rates/update']['requestBody']
+>['content']['application/json'];
+
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

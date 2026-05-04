@@ -11,6 +11,7 @@ import { CheckoutPagesResource } from './resources/checkout-pages/checkout-pages
 import { EventsResource } from './resources/events/events';
 import { FormsResource } from './resources/forms/forms';
 import { SubmissionResource } from './resources/submissions/submissions';
+import { TaxRateResource } from './resources/tax-rates/tax-rates';
 
 export class CheckoutPageClient {
   public readonly customers: CustomerResource;
@@ -25,6 +26,7 @@ export class CheckoutPageClient {
   public readonly events: EventsResource;
   public readonly forms: FormsResource;
   public readonly submissions: SubmissionResource;
+  public readonly taxRates: TaxRateResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -41,6 +43,7 @@ export class CheckoutPageClient {
     this.events = new EventsResource(this.client);
     this.forms = new FormsResource(this.client);
     this.submissions = new SubmissionResource(this.client);
+    this.taxRates = new TaxRateResource(this.client);
   }
 }
 
@@ -131,6 +134,11 @@ export type {
   UploadFileParams,
   DeleteFileResponse,
   DownloadFileResponse,
+  TaxRate,
+  TaxRateList,
+  TaxRateResponse,
+  CreateTaxRateParams,
+  UpdateTaxRateParams,
 } from './types';
 export {
   CheckoutPageError,
