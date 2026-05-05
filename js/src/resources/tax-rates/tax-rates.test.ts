@@ -6,7 +6,7 @@ import type { TaxRateList, TaxRateResponse } from '../../types';
 const mockTaxRate = {
   id: '507f1f77bcf86cd799439011',
   sellerId: 'seller123',
-  stripeTaxRateId: 'txr_1ABC',
+  stripeId: 'txr_1ABC',
   displayName: 'VAT',
   inclusive: true,
   percentage: 20,
