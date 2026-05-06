@@ -22,10 +22,6 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
     createdPageIds.push(pageId);
   };
 
-  const forgetPage = (pageId: string) => {
-    createdPageIds = createdPageIds.filter((id) => id !== pageId);
-  };
-
   const defaultEventParams = (suffix: string): CreateEventParams => ({
     name: `SDK Event ${suffix}`,
     title: `SDK Event Title ${suffix}`,

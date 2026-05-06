@@ -802,14 +802,14 @@ describe('EventsResource integration tests', () => {
     it('ignores unknown field', async () => {
       const created = await client.events.create({
         name: 'Invalid type field set',
-        // @ts-ignore
+        // @ts-expect-error unknown field
         type: 'removed',
-        // @ts-ignore
+        // @ts-expect-error unknown field
         more_unknown_fields: 'value',
       });
 
       expect(created.data.type).toBe('event');
-      // @ts-ignore
+      // @ts-expect-error unknown field
       expect(created.data.more_unknown_fields).toBeUndefined();
     });
 
@@ -1428,13 +1428,13 @@ describe('EventsResource integration tests', () => {
 
       const updated = await client.events.update(created.data.id, {
         name: 'updated',
-        // @ts-ignore
+        // @ts-expect-error unknown field
         type: 'unknown field',
-        // @ts-ignore
+        // @ts-expect-error unknown field
         more_unknown_fields: 'value',
       });
 
-      // @ts-ignore
+      // @ts-expect-error unknown field
       expect(created.data.more_unknown_fields).toBeUndefined();
       expect(updated.data.name).toBe('updated');
       expect(updated.data.type).toBe('event');

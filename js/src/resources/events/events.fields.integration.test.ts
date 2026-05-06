@@ -4,7 +4,6 @@ import {
   CheckoutPageClient,
   CreateEventFieldParams,
   NotFoundError,
-  ValidationError,
   createCheckoutPageClient,
 } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';

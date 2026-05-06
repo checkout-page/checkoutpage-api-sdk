@@ -374,7 +374,7 @@ describe('CheckoutPagesResource integration tests', () => {
               element: 'textarea',
               showHideLogic: {
                 enabled: true,
-                // @ts-ignore
+                // @ts-expect-error unknown comparison value
                 comparison: 'contains',
                 element: { elementType: 'field', elementId: 'trigger-select' },
                 value: 'opt-premium',
@@ -539,7 +539,7 @@ describe('CheckoutPagesResource integration tests', () => {
                 title: `T011_${suffix}`,
                 price: { amount: 100, currency: 'usd' },
               },
-              // @ts-ignore
+              // @ts-expect-error unknown field values
               fields,
             })
           ).rejects.toThrow(expectedMessage);
@@ -553,7 +553,7 @@ describe('CheckoutPagesResource integration tests', () => {
             title: `T011_${suffix}`,
             price: { amount: 100, currency: 'usd' },
           },
-          // @ts-ignore
+          // @ts-expect-error unknown field values
           fields,
         });
 
@@ -1998,7 +1998,7 @@ describe('CheckoutPagesResource integration tests', () => {
         { identifier: 'orderId', key: 'orderId' },
         { identifier: emailField?.id, key: 'fields', parameter: 'email' },
       ]);
-      // @ts-ignore
+      // @ts-expect-error skip
       expect(data.funnelSteps?.[1]?.config?.redirect?.query).toEqual([
         { identifier: 'orderId', key: 'orderId' },
         { identifier: emailField?.id, key: 'fields', parameter: 'email' },
