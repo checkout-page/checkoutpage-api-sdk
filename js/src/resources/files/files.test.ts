@@ -49,11 +49,16 @@ describe('FileResource', () => {
         formData: expect.any(FormData),
       });
 
-      // Verify FormData contents
+      // Verify FormData contents — Node 18's undici FormData wraps the
+      // Blob/File when stored, so we can't compare by identity. Check the
+      // observable shape instead.
       const callArgs = vi.mocked(client.request).mock.calls[0][0];
       const formData = callArgs.formData as FormData;
       expect(formData.get('purpose')).toBe('image');
-      expect(formData.get('file')).toBe(mockFile);
+      const storedFile = formData.get('file') as Blob;
+      expect(storedFile).not.toBeNull();
+      expect(storedFile.type).toBe(mockFile.type);
+      expect(storedFile.size).toBe(mockFile.size);
     });
 
     it('should upload a private file', async () => {
@@ -85,11 +90,16 @@ describe('FileResource', () => {
       expect(result.data.purpose).toBe('file');
       expect(result.data.type).toBe('application/pdf');
 
-      // Verify FormData contents
+      // Verify FormData contents — Node 18's undici FormData wraps the
+      // Blob/File when stored, so we can't compare by identity. Check the
+      // observable shape instead.
       const callArgs = vi.mocked(client.request).mock.calls[0][0];
       const formData = callArgs.formData as FormData;
       expect(formData.get('purpose')).toBe('file');
-      expect(formData.get('file')).toBe(mockFile);
+      const storedFile = formData.get('file') as Blob;
+      expect(storedFile).not.toBeNull();
+      expect(storedFile.type).toBe(mockFile.type);
+      expect(storedFile.size).toBe(mockFile.size);
     });
 
     it('should upload using Blob instead of File', async () => {
