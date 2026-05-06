@@ -3,6 +3,7 @@ import { CustomerResource } from './resources/customers/customers';
 import { CouponResource } from './resources/coupons/coupons';
 import { PaymentResource } from './resources/payments/payments';
 import { SubscriptionResource } from './resources/subscriptions/subscriptions';
+import { SubscriptionPaymentResource } from './resources/subscription-payments/subscription-payments';
 import { BookingResource } from './resources/bookings/bookings';
 import { TicketResource } from './resources/tickets/tickets';
 
@@ -11,6 +12,7 @@ export class CheckoutPageClient {
   public readonly coupons: CouponResource;
   public readonly payments: PaymentResource;
   public readonly subscriptions: SubscriptionResource;
+  public readonly subscriptionPayments: SubscriptionPaymentResource;
   public readonly bookings: BookingResource;
   public readonly tickets: TicketResource;
   private readonly client: CheckoutPageApiClient;
@@ -21,6 +23,7 @@ export class CheckoutPageClient {
     this.coupons = new CouponResource(this.client);
     this.payments = new PaymentResource(this.client);
     this.subscriptions = new SubscriptionResource(this.client);
+    this.subscriptionPayments = new SubscriptionPaymentResource(this.client);
     this.bookings = new BookingResource(this.client);
     this.tickets = new TicketResource(this.client);
   }
@@ -42,6 +45,9 @@ export type {
   PaymentList,
   Subscription,
   SubscriptionList,
+  SubscriptionPayment,
+  SubscriptionPaymentList,
+  SubscriptionPaymentListParams,
   ValidateTicketResponse,
   ValidateTicketParams,
 } from './types';
