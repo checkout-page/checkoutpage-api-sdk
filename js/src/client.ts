@@ -17,6 +17,7 @@ export interface RequestOptions {
   path: string;
   body?: unknown;
   query?: Record<string, string | number | boolean | undefined>;
+  formData?: FormData;
 }
 
 export class CheckoutPageApiClient {
@@ -37,16 +38,22 @@ export class CheckoutPageApiClient {
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.apiKey}`,
-      'Content-Type': 'application/json',
       'User-Agent': '@checkoutpage/sdk/0.1.0',
     };
+
+    // Only set Content-Type for JSON requests (FormData sets its own boundary)
+    if (!options.formData) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     const fetchOptions: RequestInit = {
       method: options.method,
       headers,
     };
 
-    if (options.body) {
+    if (options.formData) {
+      fetchOptions.body = options.formData;
+    } else if (options.body) {
       fetchOptions.body = JSON.stringify(options.body);
     }
 

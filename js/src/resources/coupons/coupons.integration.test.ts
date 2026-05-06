@@ -31,6 +31,11 @@ describe('CouponResource Integration Tests', () => {
       expect(result).toHaveProperty('has_more');
       expect(Array.isArray(result.data)).toBe(true);
       expect(typeof result.has_more).toBe('boolean');
+
+      for (const coupon of result.data) {
+        expect(coupon.label).toBeDefined();
+        expect(coupon.deleted).toBeDefined();
+      }
     });
 
     it('should respect limit pagination parameter', async () => {
@@ -141,6 +146,7 @@ describe('CouponResource Integration Tests', () => {
       expect(data.timesRedeemed).toBe(0);
       expect(data.deleted).toBe(false);
       expect(data.sellerId).toBe(config.testSellerId);
+      expect(data.deleted).toBe(false);
       expect(data.stripeCouponId).toBeTypeOf('string');
       const updatedAt = new Date(data.updatedAt);
       expect(updatedAt instanceof Date && !isNaN(updatedAt.getTime())).toBe(true);
@@ -302,6 +308,22 @@ describe('CouponResource Integration Tests', () => {
       expect(data.label).toBe(params.label);
     });
 
+    it('should handle max redemptions constraint being 0', async () => {
+      const params: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Max Redemptions Test',
+        code: `TEST_MAX_REDEEM_${Date.now()}`,
+        amountOff: 1000,
+        currency: 'usd',
+        duration: 'once',
+        maxRedemptions: 0,
+      };
+
+      const { data } = await client.coupons.create(params);
+
+      expect(data.maxRedemptions).toBe(0);
+    });
+
     it('should handle max redemptions constraint', async () => {
       const params: AmountNonRepeating = {
         type: 'amount',
@@ -351,6 +373,40 @@ describe('CouponResource Integration Tests', () => {
       const { data } = await client.coupons.create(params);
 
       expect(data.appliesToSetupFee).toBe(true);
+    });
+
+    it('should fail to create a coupon because the ticketTypeId does not exist in a page', async () => {
+      const params = {
+        type: 'amount' as const,
+        label: 'Ticket Type Coupon',
+        code: `TEST_TICKET_TYPE_${Date.now()}`,
+        amountOff: 500,
+        currency: 'usd',
+        duration: 'once' as const,
+        ticketTypeIds: [config.testTicketTypeId],
+      } as AmountNonRepeating & { ticketTypeIds: string[] };
+      await expect(client.coupons.create(params as any)).rejects.toThrowError(
+        /One or more ticketTypeIds do not belong to the specified pages/
+      );
+    });
+
+    it('should create coupon with multiple ticketTypeIds', async () => {
+      const params = {
+        type: 'amount' as const,
+        label: 'Multi Ticket Type Coupon',
+        code: `TEST_MULTI_TICKET_${Date.now()}`,
+        amountOff: 500,
+        currency: 'usd',
+        duration: 'once' as const,
+        pageIds: [config.testTicketTypePageId],
+        ticketTypeIds: [config.testTicketTypeId],
+      } as AmountNonRepeating & { ticketTypeIds: string[] };
+
+      const { data } = await client.coupons.create(params as any);
+
+      expect((data as any).ticketTypeIds).toHaveLength(1);
+      expect((data as any).ticketTypeIds[0]).toBe(config.testTicketTypeId);
+      expect(data.deleted).toBe(false);
     });
   });
 
@@ -406,6 +462,19 @@ describe('CouponResource Integration Tests', () => {
       };
 
       await expect(client.coupons.create(params)).rejects.toThrow(ValidationError);
+    });
+
+    it('should fail when creating a coupon with $0 off', async () => {
+      const params: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Integration Test Amount Coupon',
+        code: `TEST_AMOUNT_${Date.now()}`,
+        amountOff: 0,
+        currency: 'usd',
+        duration: 'once',
+      };
+
+      await expect(client.coupons.create(params)).rejects.toThrowError(/must be at least 1/);
     });
 
     it('should fail with percentage over 100', async () => {

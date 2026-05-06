@@ -38,6 +38,30 @@ describe('SubscriptionResource Integration Tests', () => {
       }
     });
 
+    it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
+      const result = await client.subscriptions.list({ limit: 25 });
+      const subscriptionWithPaymentMethod = result.data.find(
+        (subscription) => subscription.paymentMethod != null
+      );
+
+      if (!subscriptionWithPaymentMethod?.paymentMethod) {
+        throw new Error(
+          'No subscription with paymentMethod found for payment method expiry field test'
+        );
+      }
+
+      const paymentMethod = subscriptionWithPaymentMethod.paymentMethod as Record<string, unknown>;
+
+      if (paymentMethod.expMonth == null || paymentMethod.expYear == null) {
+        throw new Error('Subscription paymentMethod is missing expMonth/expYear fields');
+      }
+
+      expect(paymentMethod).toHaveProperty('expMonth');
+      expect(paymentMethod).toHaveProperty('expYear');
+      expect(paymentMethod.expMonth).toBe(paymentMethod.exp_month);
+      expect(paymentMethod.expYear).toBe(paymentMethod.exp_year);
+    });
+
     it('should respect limit pagination parameter', async () => {
       const result = await client.subscriptions.list({
         limit: 2,
@@ -96,14 +120,73 @@ describe('SubscriptionResource Integration Tests', () => {
       }
     });
 
-    it('should support searching subscriptions', async () => {
-      const result = await client.subscriptions.list({
-        limit: 1,
+    it('benchmarks subscription search queries', async () => {
+      const baseline = await client.subscriptions.list({
+        limit: 100,
       });
 
-      if (result.data.length > 0 && result.data[0].customerEmail) {
+      const subscriptionWithCustomerEmail = baseline.data.find(
+        (subscription) => subscription.customerEmail
+      );
+
+      if (!subscriptionWithCustomerEmail?.customerEmail) {
+        throw new Error('No subscription with customerEmail found for search benchmark');
+      }
+
+      const searches = [
+        '@gmail.com',
+        'basic',
+        '72602704',
+        'sub_1QcLKnFdCGuDCwTS9kliOclj',
+        'tapkids2',
+        'tapkids2010chihiro',
+        'matt',
+        'john',
+        'sander',
+        'andy',
+      ] as const;
+
+      const results = await Promise.all(
+        searches.map(async (search) => {
+          const startedAt = Date.now();
+
+          const searchResult = await client.subscriptions.list({
+            limit: 10,
+            search,
+          });
+
+          const result = {
+            search,
+            found: searchResult.data.length,
+            total: searchResult.total,
+            timeMs: Date.now() - startedAt,
+          };
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          return result;
+        })
+      );
+
+      for (const result of results) {
+        expect(typeof result.search).toBe('string');
+        expect(typeof result.found).toBe('number');
+        expect(typeof result.total).toBe('number');
+        expect(typeof result.timeMs).toBe('number');
+      }
+    });
+
+    it('should support searching subscriptions', async () => {
+      const result = await client.subscriptions.list({
+        limit: 10,
+      });
+      const subscriptionWithCustomerEmail = result.data.find(
+        (subscription) => subscription.customerEmail
+      );
+
+      if (subscriptionWithCustomerEmail?.customerEmail) {
         const searchResult = await client.subscriptions.list({
-          search: result.data[0].customerEmail,
+          search: subscriptionWithCustomerEmail.customerEmail,
         });
 
         expect(Array.isArray(searchResult.data)).toBe(true);
@@ -143,6 +226,25 @@ describe('SubscriptionResource Integration Tests', () => {
 
       for (const subscription of result.data) {
         expect(subscription.status).toBe('active');
+      }
+    });
+
+    it('should include pageSlug when a page is associated', async () => {
+      const result = await client.subscriptions.list({ limit: 10 });
+
+      const subWithPage = result.data.find((s) => s.pageId != null);
+      if (!subWithPage) return;
+
+      expect(typeof subWithPage.pageSlug === 'string' || subWithPage.pageSlug == null).toBe(true);
+    });
+
+    it('should return clientIp as a string or undefined', async () => {
+      const result = await client.subscriptions.list({ limit: 10 });
+
+      for (const subscription of result.data) {
+        expect(
+          subscription.clientIp === undefined || typeof subscription.clientIp === 'string'
+        ).toBe(true);
       }
     });
   });

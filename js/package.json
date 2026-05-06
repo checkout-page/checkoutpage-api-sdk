@@ -1,6 +1,6 @@
 {
   "name": "@checkoutpage/sdk",
-  "version": "0.1.14",
+  "version": "0.1.2",
   "description": "Official JavaScript SDK for the Checkout Page API",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -19,8 +19,7 @@
     "build": "tsup",
     "test": "vitest run --exclude '**/*.integration.test.ts'",
     "test:unit": "vitest run --exclude '**/*.integration.test.ts'",
-    "test:integration": "NODE_OPTIONS='--use-system-ca' vitest run src/resources/**/*.integration.test.ts",
-    "test:integration:custom": "NODE_OPTIONS='--use-system-ca' vitest run",
+    "test:integration": "sh -c 'target=\"$1\"; if [ -z \"$target\" ]; then NODE_OPTIONS=\"--use-system-ca\" vitest run src/resources/**/*.integration.test.ts; elif [ -f \"$target\" ]; then NODE_OPTIONS=\"--use-system-ca\" vitest run \"$target\"; else name=\"${target%.integration}\"; dir=\"${name%%.*}\"; NODE_OPTIONS=\"--use-system-ca\" vitest run \"src/resources/$dir/$name.integration.test.ts\"; fi' --",
     "test:all": "NODE_OPTIONS='--use-system-ca' vitest run",
     "test:watch": "vitest --exclude '**/*.integration.test.ts'",
     "lint": "eslint src --ext .ts",

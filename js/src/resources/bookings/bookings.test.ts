@@ -3,6 +3,43 @@ import { BookingResource } from './bookings';
 import { CheckoutPageApiClient } from '../../client';
 import type { BookingList } from '../../types';
 
+const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
+const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
+const PAGE_ID = '67fcbdac6a91c25ef2d3534a';
+const CUSTOMER_ID = '507f1f77bcf86cd799439010';
+const CURSOR_1 = '507f1f77bcf86cd799439011';
+const CURSOR_2 = '507f1f77bcf86cd799439012';
+
+const BASE_BOOKING: BookingList['data'][number] = {
+  id: BOOKING_ID_1,
+  amount: 10000,
+  status: 'paid',
+  orderId: 'order_123',
+  customerEmail: 'customer@example.com',
+  customerId: CUSTOMER_ID,
+  sellerId: 'seller_123',
+  pageId: PAGE_ID,
+  currency: 'usd',
+  taxBreakdown: [],
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+};
+
+const DEFAULT_QUERY = {
+  search: undefined,
+  status: undefined,
+  pageId: undefined,
+  customerId: undefined,
+  orderId: undefined,
+  couponCode: undefined,
+  createdAfter: undefined,
+  createdBefore: undefined,
+  abandonmentStatus: undefined,
+  limit: undefined,
+  starting_after: undefined,
+  ending_before: undefined,
+};
+
 describe('BookingResource', () => {
   let client: CheckoutPageApiClient;
   let bookingResource: BookingResource;
@@ -13,345 +50,271 @@ describe('BookingResource', () => {
   });
 
   describe('list', () => {
-    it('should fetch a list of bookings with default parameters', async () => {
+    it('should call the bookings endpoint with all default query params when called with no args', async () => {
+      const mockBookingList: BookingList = { data: [], total: 0, has_more: false };
+      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
+
+      await bookingResource.list();
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: DEFAULT_QUERY,
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should return the response from the client', async () => {
       const mockBookingList: BookingList = {
         data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'customer@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: 'page_123',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-          {
-            id: '6812fe6e9f39b6760576f01d',
-            amount: 15000,
-            status: 'pending',
-            orderId: 'order_124',
-            customerEmail: 'customer2@example.com',
-            customerId: 'cust_124',
-            sellerId: 'seller_123',
-            pageId: 'page_124',
-            currency: 'usd',
-            createdAt: '2024-01-02T00:00:00.000Z',
-            updatedAt: '2024-01-02T00:00:00.000Z',
-            taxBreakdown: [],
-          },
+          BASE_BOOKING,
+          { ...BASE_BOOKING, id: BOOKING_ID_2, amount: 15000, status: 'pending' },
         ],
         total: 2,
         has_more: false,
       };
-
       vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
 
-      const result = await bookingResource.list({});
+      const result = await bookingResource.list();
 
       expect(result).toEqual(mockBookingList);
       expect(result.data).toHaveLength(2);
-      expect(client.request).toHaveBeenCalledWith({
-        method: 'GET',
-        query: {
-          search: undefined,
-          limit: undefined,
-          starting_after: undefined,
-          ending_before: undefined,
-          status: undefined,
-          pageId: undefined,
-        },
-        path: '/v1/bookings/',
-      });
     });
 
-    it('should fetch bookings with cursor-based pagination using starting_after', async () => {
-      const mockBookingList: BookingList = {
-        data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'customer@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: 'page_123',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-        ],
-        has_more: true,
-        total: 100,
-      };
-
+    it('should return empty list when no bookings exist', async () => {
+      const mockBookingList: BookingList = { data: [], total: 0, has_more: false };
       vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
 
-      const result = await bookingResource.list({
-        limit: 10,
-        starting_after: '507f1f77bcf86cd799439011',
-      });
+      const result = await bookingResource.list();
 
-      expect(result).toEqual(mockBookingList);
-      expect(result.has_more).toBe(true);
-      expect(result.total).toBe(100);
-      expect(client.request).toHaveBeenCalledWith({
-        method: 'GET',
-        query: {
-          search: undefined,
-          limit: '10',
-          starting_after: '507f1f77bcf86cd799439011',
-          ending_before: undefined,
-          status: undefined,
-          pageId: undefined,
-        },
-        path: '/v1/bookings/',
-      });
-    });
-
-    it('should fetch bookings with cursor-based pagination using ending_before', async () => {
-      const mockBookingList: BookingList = {
-        data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'customer@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: 'page_123',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-        ],
-        has_more: false,
-        total: 100,
-      };
-
-      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
-
-      const result = await bookingResource.list({
-        limit: 10,
-        ending_before: '507f1f77bcf86cd799439012',
-      });
-
-      expect(result).toEqual(mockBookingList);
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
       expect(result.has_more).toBe(false);
-      expect(result.total).toBe(100);
+    });
+
+    // Pagination
+
+    it('should pass limit as a string', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ limit: 10 });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ query: expect.objectContaining({ limit: '10' }) })
+      );
+    });
+
+    it('should pass starting_after for cursor pagination', async () => {
+      const mockList: BookingList = { data: [BASE_BOOKING], total: 100, has_more: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockList);
+
+      await bookingResource.list({ limit: 10, starting_after: CURSOR_1 });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, limit: '10', starting_after: CURSOR_1 },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass ending_before for cursor pagination', async () => {
+      const mockList: BookingList = { data: [BASE_BOOKING], total: 100, has_more: false };
+      vi.spyOn(client, 'request').mockResolvedValue(mockList);
+
+      await bookingResource.list({ limit: 10, ending_before: CURSOR_2 });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, limit: '10', ending_before: CURSOR_2 },
+        path: '/v1/bookings/',
+      });
+    });
+
+    // Existing filters
+
+    it('should pass search param', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ search: 'searched@example.com' });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          query: expect.objectContaining({ search: 'searched@example.com' }),
+        })
+      );
+    });
+
+    it('should pass status filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ status: 'paid' });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ query: expect.objectContaining({ status: 'paid' }) })
+      );
+    });
+
+    it('should pass pageId filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ pageId: PAGE_ID });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ query: expect.objectContaining({ pageId: PAGE_ID }) })
+      );
+    });
+
+    // New filters
+
+    it('should pass customerId filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ customerId: CUSTOMER_ID });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, customerId: CUSTOMER_ID },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass orderId filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ orderId: 'ORD-9182' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, orderId: 'ORD-9182' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass couponCode filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ couponCode: 'SUMMER20' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, couponCode: 'SUMMER20' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass createdAfter filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ createdAfter: '2025-01-01T00:00:00Z' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, createdAfter: '2025-01-01T00:00:00Z' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass createdBefore filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ createdBefore: '2025-01-31T23:59:59Z' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, createdBefore: '2025-01-31T23:59:59Z' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass both createdAfter and createdBefore for a date range', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({
+        createdAfter: '2025-01-01T00:00:00Z',
+        createdBefore: '2025-01-31T23:59:59Z',
+      });
+
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         query: {
-          search: undefined,
-          limit: '10',
-          starting_after: undefined,
-          ending_before: '507f1f77bcf86cd799439012',
-          status: undefined,
-          pageId: undefined,
+          ...DEFAULT_QUERY,
+          createdAfter: '2025-01-01T00:00:00Z',
+          createdBefore: '2025-01-31T23:59:59Z',
         },
         path: '/v1/bookings/',
       });
     });
 
-    it('should fetch bookings with search parameter', async () => {
-      const mockBookingList: BookingList = {
-        data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'searched@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: 'page_123',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-        ],
-        total: 1,
-        has_more: false,
-      };
+    it('should pass abandonmentStatus=abandoned', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
 
-      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
+      await bookingResource.list({ abandonmentStatus: 'abandoned' });
 
-      const result = await bookingResource.list({
-        search: 'searched@example.com',
-        limit: 10,
-      });
-
-      expect(result).toEqual(mockBookingList);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
-        query: {
-          search: 'searched@example.com',
-          limit: '10',
-          starting_after: undefined,
-          ending_before: undefined,
-          status: undefined,
-          pageId: undefined,
-        },
+        query: { ...DEFAULT_QUERY, abandonmentStatus: 'abandoned' },
         path: '/v1/bookings/',
       });
     });
 
-    it('should fetch bookings filtered by status', async () => {
-      const mockBookingList: BookingList = {
-        data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'customer@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: 'page_123',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-        ],
-        total: 50,
-        has_more: true,
-      };
+    it('should pass abandonmentStatus=recovered', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
 
-      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
+      await bookingResource.list({ abandonmentStatus: 'recovered' });
 
-      const result = await bookingResource.list({
-        status: 'paid',
-        limit: 1,
-      });
-
-      expect(result.data[0].status).toBe('paid');
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
-        query: {
-          search: undefined,
-          limit: '1',
-          starting_after: undefined,
-          ending_before: undefined,
-          status: 'paid',
-          pageId: undefined,
-        },
+        query: { ...DEFAULT_QUERY, abandonmentStatus: 'recovered' },
         path: '/v1/bookings/',
       });
     });
 
-    it('should fetch bookings filtered by pageId', async () => {
-      const mockBookingList: BookingList = {
-        data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'customer@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: '67fcbdac6a91c25ef2d3534a',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-        ],
-        total: 20,
-        has_more: false,
+    it('should not include productId (payments-only field) in the query', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ customerId: CUSTOMER_ID });
+
+      const callArgs = vi.mocked(client.request).mock.calls[0][0] as {
+        query: Record<string, unknown>;
       };
-
-      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
-
-      const result = await bookingResource.list({
-        pageId: '67fcbdac6a91c25ef2d3534a',
-      });
-
-      expect(result.data[0].pageId).toBe('67fcbdac6a91c25ef2d3534a');
-      expect(client.request).toHaveBeenCalledWith({
-        method: 'GET',
-        query: {
-          search: undefined,
-          limit: undefined,
-          starting_after: undefined,
-          ending_before: undefined,
-          status: undefined,
-          pageId: '67fcbdac6a91c25ef2d3534a',
-        },
-        path: '/v1/bookings/',
-      });
+      expect(callArgs.query).not.toHaveProperty('productId');
     });
 
-    it('should fetch bookings with multiple filters combined', async () => {
-      const mockBookingList: BookingList = {
-        data: [
-          {
-            id: '6812fe6e9f39b6760576f01c',
-            amount: 10000,
-            status: 'paid',
-            orderId: 'order_123',
-            customerEmail: 'customer@example.com',
-            customerId: 'cust_123',
-            sellerId: 'seller_123',
-            pageId: '67fcbdac6a91c25ef2d3534a',
-            currency: 'usd',
-            createdAt: '2024-01-01T00:00:00.000Z',
-            updatedAt: '2024-01-01T00:00:00.000Z',
-            taxBreakdown: [],
-          },
-        ],
-        total: 5,
-        has_more: false,
-      };
+    it('should pass all supported filters together', async () => {
+      const mockList: BookingList = { data: [BASE_BOOKING], total: 1, has_more: false };
+      vi.spyOn(client, 'request').mockResolvedValue(mockList);
 
-      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
-
-      const result = await bookingResource.list({
-        status: 'paid',
-        pageId: '67fcbdac6a91c25ef2d3534a',
+      await bookingResource.list({
         search: 'customer@example.com',
+        status: 'paid',
+        pageId: PAGE_ID,
+        customerId: CUSTOMER_ID,
+        orderId: 'ORD-9182',
+        couponCode: 'SUMMER20',
+        createdAfter: '2025-01-01T00:00:00Z',
+        createdBefore: '2025-01-31T23:59:59Z',
+        abandonmentStatus: 'abandoned',
         limit: 20,
+        starting_after: CURSOR_1,
       });
 
-      expect(result).toEqual(mockBookingList);
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         query: {
           search: 'customer@example.com',
-          limit: '20',
-          starting_after: undefined,
-          ending_before: undefined,
           status: 'paid',
-          pageId: '67fcbdac6a91c25ef2d3534a',
+          pageId: PAGE_ID,
+          customerId: CUSTOMER_ID,
+          orderId: 'ORD-9182',
+          couponCode: 'SUMMER20',
+          createdAfter: '2025-01-01T00:00:00Z',
+          createdBefore: '2025-01-31T23:59:59Z',
+          abandonmentStatus: 'abandoned',
+          limit: '20',
+          starting_after: CURSOR_1,
+          ending_before: undefined,
         },
         path: '/v1/bookings/',
       });
-    });
-
-    it('should return empty list when no bookings exist', async () => {
-      const mockBookingList: BookingList = {
-        data: [],
-        total: 0,
-        has_more: false,
-      };
-
-      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
-
-      const result = await bookingResource.list({});
-
-      expect(result).toEqual(mockBookingList);
-      expect(result.data).toHaveLength(0);
-      expect(result.has_more).toBe(false);
     });
   });
 });

@@ -41,6 +41,9 @@ export class CouponResource {
     if (params.pageIds !== undefined) {
       body.pageIds = params.pageIds;
     }
+    if (params.ticketTypeIds !== undefined) {
+      body.ticketTypeIds = params.ticketTypeIds;
+    }
     if (params.maxRedemptions !== undefined) {
       body.maxRedemptions = params.maxRedemptions;
     }
