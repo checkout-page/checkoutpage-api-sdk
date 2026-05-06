@@ -1,6 +1,9 @@
 {
   "openapi": "3.1.0",
-  "info": { "title": "Checkout Page API v1", "version": "1.0.0" },
+  "info": {
+    "title": "Checkout Page API v1",
+    "version": "1.0.0"
+  },
   "components": {
     "securitySchemes": {
       "api_key_auth": {
@@ -14,39 +17,91 @@
       "NotFoundResponse": {
         "description": "Resource not found",
         "content": {
-          "application/json": { "schema": { "$ref": "#/components/schemas/NotFoundResponse" } }
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotFoundResponse"
+            }
+          }
         }
       },
       "Ticket": {
         "description": "Resource not found",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ticket" } } }
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Ticket"
+            }
+          }
+        }
       }
     },
     "schemas": {
       "NotFoundResponse": {
         "type": "object",
-        "properties": { "message": { "type": "string" } },
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
         "required": ["message"],
         "title": "NotFoundResponse"
       },
-      "Ticket": { "type": "object", "title": "Ticket" },
-      "PageId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "TicketId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "CustomerId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "SellerId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "ChargeId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "SubscriptionId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "SubscriptionPaymentId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
-      "ApiKeyId": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
+      "Ticket": {
+        "type": "object",
+        "title": "Ticket"
+      },
+      "PageId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "TicketId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "CustomerId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "SellerId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "ChargeId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "SubscriptionId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "SubscriptionPaymentId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
+      "ApiKeyId": {
+        "type": "string",
+        "example": "6812fe6e9f39b6760576f01c"
+      },
       "TicketCheckIn[]": {
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
-            "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-            "checkedInAt": { "type": "string", "format": "date-time" },
-            "checkedInByUserId": { "type": "string" },
-            "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] }
+            "method": {
+              "type": "string",
+              "enum": ["QRSCAN", "MANUAL"]
+            },
+            "checkedInAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "checkedInByUserId": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["UNCHECKEDIN", "CHECKEDIN"]
+            }
           },
           "required": ["method", "checkedInAt", "checkedInByUserId", "status"]
         },
@@ -55,10 +110,21 @@
       "TicketLatestCheckIn": {
         "type": "object",
         "properties": {
-          "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-          "checkedInAt": { "type": "string", "format": "date-time" },
-          "checkedInByUserId": { "type": "string" },
-          "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] }
+          "method": {
+            "type": "string",
+            "enum": ["QRSCAN", "MANUAL"]
+          },
+          "checkedInAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checkedInByUserId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["UNCHECKEDIN", "CHECKEDIN"]
+          }
         },
         "required": ["method", "checkedInAt", "checkedInByUserId", "status"],
         "description": "The latest check-in information for the ticket"
@@ -66,43 +132,106 @@
       "TicketModel": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "sellerId": { "type": "string" },
-          "chargeId": { "type": "string" },
-          "pageId": { "type": "string" },
-          "status": { "type": "string", "enum": ["PAID", "CANCELED"] },
-          "orderId": { "type": "string" },
-          "customerName": { "type": "string" },
-          "customerEmail": { "type": "string" },
-          "ticketTypeId": { "type": "string" },
-          "checkIns": { "$ref": "#/components/schemas/TicketCheckIn[]" },
-          "latestCheckIn": { "$ref": "#/components/schemas/TicketLatestCheckIn" },
-          "ticketShortId": { "type": "string" },
-          "checkInStatus": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] },
-          "originalPrice": { "type": "number" },
-          "discountAmount": { "type": "number" },
-          "feeAmount": { "type": "number" },
-          "taxAmount": { "type": "number" },
-          "couponAmount": { "type": "number" },
-          "revenue": { "type": "number" },
-          "currency": { "type": "string" },
-          "livemode": { "type": "boolean" },
+          "id": {
+            "type": "string"
+          },
+          "sellerId": {
+            "type": "string"
+          },
+          "chargeId": {
+            "type": "string"
+          },
+          "pageId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PAID", "CANCELED"]
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "customerEmail": {
+            "type": "string"
+          },
+          "ticketTypeId": {
+            "type": "string"
+          },
+          "checkIns": {
+            "$ref": "#/components/schemas/TicketCheckIn[]"
+          },
+          "latestCheckIn": {
+            "$ref": "#/components/schemas/TicketLatestCheckIn"
+          },
+          "ticketShortId": {
+            "type": "string"
+          },
+          "checkInStatus": {
+            "type": "string",
+            "enum": ["UNCHECKEDIN", "CHECKEDIN"]
+          },
+          "originalPrice": {
+            "type": "number"
+          },
+          "discountAmount": {
+            "type": "number"
+          },
+          "feeAmount": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
+          "couponAmount": {
+            "type": "number"
+          },
+          "revenue": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "livemode": {
+            "type": "boolean"
+          },
           "metadata": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "key": { "type": "string" },
-                "value": { "type": "string" },
-                "addedAt": { "type": "string", "format": "date-time" }
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "addedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
               },
               "required": ["key", "value", "addedAt"]
             }
           },
-          "orderedAt": { "type": "string", "format": "date-time" },
-          "canceledAt": { "type": "string", "format": "date-time" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "orderedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         },
         "required": [
           "id",
@@ -131,14 +260,30 @@
       "Booking": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "orderId": { "type": "string" },
-          "orderStatus": { "type": "string" },
-          "customerEmail": { "type": "string" },
-          "customerId": { "type": "string" },
-          "sellerId": { "type": "string" },
-          "pageId": { "type": "string" },
-          "currency": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "orderStatus": {
+            "type": "string"
+          },
+          "customerEmail": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "sellerId": {
+            "type": "string"
+          },
+          "pageId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
           "amount": {
             "type": "number",
             "description": "The total amount intended to be collected."
@@ -151,61 +296,117 @@
             "type": "number",
             "description": "The outstanding amount of money to be paid."
           },
-          "amountUsd": { "type": "number" },
-          "amountExcludingTax": { "type": "number" },
-          "taxAmount": { "type": "number" },
+          "amountUsd": {
+            "type": "number"
+          },
+          "amountExcludingTax": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
           "taxBreakdown": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "taxType": { "type": "string" },
-                "taxabilityReason": { "type": "string" },
-                "taxableAmount": { "type": "number" },
-                "taxAmount": { "type": "number" },
+                "taxType": {
+                  "type": "string"
+                },
+                "taxabilityReason": {
+                  "type": "string"
+                },
+                "taxableAmount": {
+                  "type": "number"
+                },
+                "taxAmount": {
+                  "type": "number"
+                },
                 "taxRateDetails": {
                   "type": "object",
                   "properties": {
-                    "country": { "type": "string" },
-                    "percentageDecimal": { "type": "number" },
-                    "state": { "type": "string" },
-                    "taxType": { "type": "string" }
+                    "country": {
+                      "type": "string"
+                    },
+                    "percentageDecimal": {
+                      "type": "number"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "taxType": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
-          "stripeTaxCalculationId": { "type": "string" },
-          "stripeTaxTransactionId": { "type": "string" },
-          "dynamicPrice": { "type": "number" },
+          "stripeTaxCalculationId": {
+            "type": "string"
+          },
+          "stripeTaxTransactionId": {
+            "type": "string"
+          },
+          "dynamicPrice": {
+            "type": "number"
+          },
           "fees": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "amount": { "type": "number" },
-                "percentage": { "type": "number" }
+                "name": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
               }
             }
           },
           "billing": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "companyName": { "type": "string" },
-              "email": { "type": "string" },
-              "billingEmail": { "type": "string" },
-              "phone": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "companyName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "billingEmail": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
               "address": {
                 "type": "object",
                 "properties": {
-                  "line1": { "type": "string" },
-                  "line2": { "type": "string" },
-                  "city": { "type": "string" },
-                  "state": { "type": "string" },
-                  "postalCode": { "type": "string" },
-                  "country": { "type": "string" }
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -213,17 +414,33 @@
           "shipping": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "phone": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
               "address": {
                 "type": "object",
                 "properties": {
-                  "line1": { "type": "string" },
-                  "line2": { "type": "string" },
-                  "city": { "type": "string" },
-                  "state": { "type": "string" },
-                  "postalCode": { "type": "string" },
-                  "country": { "type": "string" }
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -233,9 +450,15 @@
             "items": {
               "type": "object",
               "properties": {
-                "fieldId": { "type": "string" },
-                "label": { "type": "string" },
-                "value": { "type": "string" },
+                "fieldId": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
                 "element": {
                   "type": "string",
                   "enum": [
@@ -285,33 +508,61 @@
                     "tax-id"
                   ]
                 },
-                "meta": { "type": "string" },
-                "reference": { "type": "string" }
+                "meta": {
+                  "type": "string"
+                },
+                "reference": {
+                  "type": "string"
+                }
               }
             }
           },
           "coupon": {
             "type": "object",
             "properties": {
-              "id": { "type": "string" },
-              "label": { "type": "string" },
-              "code": { "type": "string" },
-              "amountOff": { "type": "number" },
-              "percentOff": { "type": "number" },
-              "discount": { "type": "number" }
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "amountOff": {
+                "type": "number"
+              },
+              "percentOff": {
+                "type": "number"
+              },
+              "discount": {
+                "type": "number"
+              }
             }
           },
           "discount": {
             "type": "object",
             "properties": {
-              "minQuantity": { "type": "number" },
-              "maxQuantity": { "type": "number" },
-              "percentOff": { "type": "number" },
-              "amountOff": { "type": "number" },
-              "amount": { "type": "number" }
+              "minQuantity": {
+                "type": "number"
+              },
+              "maxQuantity": {
+                "type": "number"
+              },
+              "percentOff": {
+                "type": "number"
+              },
+              "amountOff": {
+                "type": "number"
+              },
+              "amount": {
+                "type": "number"
+              }
             }
           },
-          "livemode": { "type": "boolean" },
+          "livemode": {
+            "type": "boolean"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -328,55 +579,137 @@
               "draft_expired"
             ]
           },
-          "paymentError": { "type": "string" },
+          "paymentError": {
+            "type": "string"
+          },
           "paymentMethod": {
             "type": "object",
             "properties": {
-              "gateway": { "type": "string", "enum": ["stripe", "paypal", "manual"] },
-              "method": { "type": "string" },
-              "wallet": { "type": "string" },
-              "mode": { "type": "string", "enum": ["default", "express"] },
-              "brand": { "type": "string" },
-              "last4": { "type": "string" },
-              "country": { "type": "string" },
-              "exp_month": { "type": "number" },
-              "exp_year": { "type": "number" },
-              "funding": { "type": "string" }
+              "gateway": {
+                "type": "string",
+                "enum": ["stripe", "paypal", "manual"]
+              },
+              "method": {
+                "type": "string"
+              },
+              "wallet": {
+                "type": "string"
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["default", "express"]
+              },
+              "brand": {
+                "type": "string"
+              },
+              "last4": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "exp_month": {
+                "type": "number"
+              },
+              "exp_year": {
+                "type": "number"
+              },
+              "funding": {
+                "type": "string"
+              }
             }
           },
           "paymentOption": {
             "type": "object",
             "properties": {
-              "type": { "type": "string", "enum": ["manual", "partial", "full"] },
-              "name": { "type": "string" },
-              "description": { "type": "string" },
-              "instructions": { "type": "string" },
-              "partialAmount": { "type": "number" },
-              "manualType": { "type": "string", "enum": ["invoice", "cash_on_delivery"] }
+              "type": {
+                "type": "string",
+                "enum": ["manual", "partial", "full"]
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "instructions": {
+                "type": "string"
+              },
+              "partialAmount": {
+                "type": "number"
+              },
+              "manualType": {
+                "type": "string",
+                "enum": ["invoice", "cash_on_delivery"]
+              }
             }
           },
-          "locale": { "type": "string" },
-          "sessionId": { "type": "string" },
-          "userAgent": { "type": "string" },
-          "screenWidth": { "type": "number" },
-          "visitId": { "type": "string" },
-          "queryParameters": { "type": "object", "additionalProperties": { "type": "string" } },
-          "stripePaymentIntentId": { "type": "string" },
-          "stripePaymentIntentClientSecret": { "type": "string" },
-          "stripeChargeId": { "type": "string" },
-          "upsell": { "type": "boolean" },
-          "upsellPageId": { "type": "string" },
-          "upsellChargeId": { "type": "string" },
-          "upsellSubscriptionId": { "type": "string" },
-          "invoiceId": { "type": "string" },
-          "transactionIds": { "type": "array", "items": { "type": "string" } },
-          "canceledAt": { "type": "string", "description": "The date this was canceled." },
+          "locale": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "screenWidth": {
+            "type": "number"
+          },
+          "visitId": {
+            "type": "string"
+          },
+          "queryParameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "stripePaymentIntentId": {
+            "type": "string"
+          },
+          "stripePaymentIntentClientSecret": {
+            "type": "string"
+          },
+          "stripeChargeId": {
+            "type": "string"
+          },
+          "upsell": {
+            "type": "boolean"
+          },
+          "upsellPageId": {
+            "type": "string"
+          },
+          "upsellChargeId": {
+            "type": "string"
+          },
+          "upsellSubscriptionId": {
+            "type": "string"
+          },
+          "invoiceId": {
+            "type": "string"
+          },
+          "transactionIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canceledAt": {
+            "type": "string",
+            "description": "The date this was canceled."
+          },
           "canceledBy": {
             "type": "string",
             "description": "The userId that canceled this. If this is a booking, tickets were canceled in addition."
           },
-          "canceledReason": { "type": "string", "description": "The reason for the cancellation" },
-          "isAbandoned": { "type": "boolean" },
+          "canceledReason": {
+            "type": "string",
+            "description": "The reason for the cancellation"
+          },
+          "isAbandoned": {
+            "type": "boolean"
+          },
           "recoveredAt": {
             "type": "string",
             "format": "date-time",
@@ -386,34 +719,77 @@
             "type": "string",
             "enum": ["pending", "first_sent", "second_sent", "third_sent", "skipped"]
           },
-          "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" },
+          "abandonedCartEmailSentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "tickets": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "ticketTypeId": { "type": "string" },
-                "capacity": { "type": "number" },
-                "reference": { "type": "string" },
-                "ticketGroupId": { "type": "string" },
-                "ticketGroupName": { "type": "string" },
-                "ticketGroupCapacity": { "type": "number" },
-                "ticketGroupReference": { "type": "string" },
-                "quantity": { "type": "number" },
-                "price": { "type": "number" },
-                "originalPrice": { "type": "number" },
-                "bookingFeeAmount": { "type": "number" },
+                "name": {
+                  "type": "string"
+                },
+                "ticketTypeId": {
+                  "type": "string"
+                },
+                "capacity": {
+                  "type": "number"
+                },
+                "reference": {
+                  "type": "string"
+                },
+                "ticketGroupId": {
+                  "type": "string"
+                },
+                "ticketGroupName": {
+                  "type": "string"
+                },
+                "ticketGroupCapacity": {
+                  "type": "number"
+                },
+                "ticketGroupReference": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "number"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "originalPrice": {
+                  "type": "number"
+                },
+                "bookingFeeAmount": {
+                  "type": "number"
+                },
                 "discount": {
                   "type": "object",
                   "properties": {
-                    "minQuantity": { "type": "number" },
-                    "maxQuantity": { "type": "number" },
-                    "percentOff": { "type": "number" },
-                    "amountOff": { "type": "number" },
-                    "amount": { "type": "number" }
+                    "minQuantity": {
+                      "type": "number"
+                    },
+                    "maxQuantity": {
+                      "type": "number"
+                    },
+                    "percentOff": {
+                      "type": "number"
+                    },
+                    "amountOff": {
+                      "type": "number"
+                    },
+                    "amount": {
+                      "type": "number"
+                    }
                   }
                 }
               }
@@ -426,47 +802,101 @@
       "Customer": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string" },
-          "companyName": { "type": "string" },
-          "email": { "type": "string" },
-          "phone": { "type": "string" },
-          "billingEmail": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "billingEmail": {
+            "type": "string"
+          },
           "address": {
             "type": "object",
             "properties": {
-              "line1": { "type": "string" },
-              "line2": { "type": "string" },
-              "city": { "type": "string" },
-              "state": { "type": "string" },
-              "postalCode": { "type": "string" },
-              "country": { "type": "string" }
+              "line1": {
+                "type": "string"
+              },
+              "line2": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              }
             }
           },
           "shipping": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "phone": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
               "address": {
                 "type": "object",
                 "properties": {
-                  "line1": { "type": "string" },
-                  "line2": { "type": "string" },
-                  "city": { "type": "string" },
-                  "state": { "type": "string" },
-                  "postalCode": { "type": "string" },
-                  "country": { "type": "string" }
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  }
                 }
               }
             }
           },
-          "taxId": { "type": "string" },
-          "taxIdType": { "type": "string" },
-          "sellerId": { "type": "string" },
-          "stripeCustomerId": { "type": "string" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "taxId": {
+            "type": "string"
+          },
+          "taxIdType": {
+            "type": "string"
+          },
+          "sellerId": {
+            "type": "string"
+          },
+          "stripeCustomerId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         },
         "required": ["id", "email", "sellerId", "createdAt", "updatedAt"],
         "description": ""
@@ -474,7 +904,10 @@
       "Coupon": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "description": "Unique identifier for the object." },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the object."
+          },
           "label": {
             "type": "string",
             "description": "Internal name for the coupon.",
@@ -528,14 +961,27 @@
             "description": "If true, the coupon will no longer be usable.",
             "example": false
           },
-          "sellerId": { "type": "string" },
-          "pageIds": { "type": "array", "items": { "type": "string" } },
+          "sellerId": {
+            "type": "string"
+          },
+          "pageIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "stripeCouponId": {
             "type": "string",
             "description": "The unique identifier of the stripe coupon that was created with this coupon."
           },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         },
         "required": [
           "id",
@@ -553,14 +999,30 @@
       "Payment": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "orderId": { "type": "string" },
-          "orderStatus": { "type": "string" },
-          "customerEmail": { "type": "string" },
-          "customerId": { "type": "string" },
-          "sellerId": { "type": "string" },
-          "pageId": { "type": "string" },
-          "currency": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "orderStatus": {
+            "type": "string"
+          },
+          "customerEmail": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "sellerId": {
+            "type": "string"
+          },
+          "pageId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
           "amount": {
             "type": "number",
             "description": "The total amount intended to be collected."
@@ -573,61 +1035,117 @@
             "type": "number",
             "description": "The outstanding amount of money to be paid."
           },
-          "amountUsd": { "type": "number" },
-          "amountExcludingTax": { "type": "number" },
-          "taxAmount": { "type": "number" },
+          "amountUsd": {
+            "type": "number"
+          },
+          "amountExcludingTax": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
           "taxBreakdown": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "taxType": { "type": "string" },
-                "taxabilityReason": { "type": "string" },
-                "taxableAmount": { "type": "number" },
-                "taxAmount": { "type": "number" },
+                "taxType": {
+                  "type": "string"
+                },
+                "taxabilityReason": {
+                  "type": "string"
+                },
+                "taxableAmount": {
+                  "type": "number"
+                },
+                "taxAmount": {
+                  "type": "number"
+                },
                 "taxRateDetails": {
                   "type": "object",
                   "properties": {
-                    "country": { "type": "string" },
-                    "percentageDecimal": { "type": "number" },
-                    "state": { "type": "string" },
-                    "taxType": { "type": "string" }
+                    "country": {
+                      "type": "string"
+                    },
+                    "percentageDecimal": {
+                      "type": "number"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "taxType": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           },
-          "stripeTaxCalculationId": { "type": "string" },
-          "stripeTaxTransactionId": { "type": "string" },
-          "dynamicPrice": { "type": "number" },
+          "stripeTaxCalculationId": {
+            "type": "string"
+          },
+          "stripeTaxTransactionId": {
+            "type": "string"
+          },
+          "dynamicPrice": {
+            "type": "number"
+          },
           "fees": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "amount": { "type": "number" },
-                "percentage": { "type": "number" }
+                "name": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                },
+                "percentage": {
+                  "type": "number"
+                }
               }
             }
           },
           "billing": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "companyName": { "type": "string" },
-              "email": { "type": "string" },
-              "billingEmail": { "type": "string" },
-              "phone": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "companyName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "billingEmail": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
               "address": {
                 "type": "object",
                 "properties": {
-                  "line1": { "type": "string" },
-                  "line2": { "type": "string" },
-                  "city": { "type": "string" },
-                  "state": { "type": "string" },
-                  "postalCode": { "type": "string" },
-                  "country": { "type": "string" }
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -635,17 +1153,33 @@
           "shipping": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "phone": { "type": "string" },
+              "name": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
               "address": {
                 "type": "object",
                 "properties": {
-                  "line1": { "type": "string" },
-                  "line2": { "type": "string" },
-                  "city": { "type": "string" },
-                  "state": { "type": "string" },
-                  "postalCode": { "type": "string" },
-                  "country": { "type": "string" }
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -655,9 +1189,15 @@
             "items": {
               "type": "object",
               "properties": {
-                "fieldId": { "type": "string" },
-                "label": { "type": "string" },
-                "value": { "type": "string" },
+                "fieldId": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
                 "element": {
                   "type": "string",
                   "enum": [
@@ -707,33 +1247,61 @@
                     "tax-id"
                   ]
                 },
-                "meta": { "type": "string" },
-                "reference": { "type": "string" }
+                "meta": {
+                  "type": "string"
+                },
+                "reference": {
+                  "type": "string"
+                }
               }
             }
           },
           "coupon": {
             "type": "object",
             "properties": {
-              "id": { "type": "string" },
-              "label": { "type": "string" },
-              "code": { "type": "string" },
-              "amountOff": { "type": "number" },
-              "percentOff": { "type": "number" },
-              "discount": { "type": "number" }
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "amountOff": {
+                "type": "number"
+              },
+              "percentOff": {
+                "type": "number"
+              },
+              "discount": {
+                "type": "number"
+              }
             }
           },
           "discount": {
             "type": "object",
             "properties": {
-              "minQuantity": { "type": "number" },
-              "maxQuantity": { "type": "number" },
-              "percentOff": { "type": "number" },
-              "amountOff": { "type": "number" },
-              "amount": { "type": "number" }
+              "minQuantity": {
+                "type": "number"
+              },
+              "maxQuantity": {
+                "type": "number"
+              },
+              "percentOff": {
+                "type": "number"
+              },
+              "amountOff": {
+                "type": "number"
+              },
+              "amount": {
+                "type": "number"
+              }
             }
           },
-          "livemode": { "type": "boolean" },
+          "livemode": {
+            "type": "boolean"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -750,55 +1318,137 @@
               "draft_expired"
             ]
           },
-          "paymentError": { "type": "string" },
+          "paymentError": {
+            "type": "string"
+          },
           "paymentMethod": {
             "type": "object",
             "properties": {
-              "gateway": { "type": "string", "enum": ["stripe", "paypal", "manual"] },
-              "method": { "type": "string" },
-              "wallet": { "type": "string" },
-              "mode": { "type": "string", "enum": ["default", "express"] },
-              "brand": { "type": "string" },
-              "last4": { "type": "string" },
-              "country": { "type": "string" },
-              "exp_month": { "type": "number" },
-              "exp_year": { "type": "number" },
-              "funding": { "type": "string" }
+              "gateway": {
+                "type": "string",
+                "enum": ["stripe", "paypal", "manual"]
+              },
+              "method": {
+                "type": "string"
+              },
+              "wallet": {
+                "type": "string"
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["default", "express"]
+              },
+              "brand": {
+                "type": "string"
+              },
+              "last4": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "exp_month": {
+                "type": "number"
+              },
+              "exp_year": {
+                "type": "number"
+              },
+              "funding": {
+                "type": "string"
+              }
             }
           },
           "paymentOption": {
             "type": "object",
             "properties": {
-              "type": { "type": "string", "enum": ["manual", "partial", "full"] },
-              "name": { "type": "string" },
-              "description": { "type": "string" },
-              "instructions": { "type": "string" },
-              "partialAmount": { "type": "number" },
-              "manualType": { "type": "string", "enum": ["invoice", "cash_on_delivery"] }
+              "type": {
+                "type": "string",
+                "enum": ["manual", "partial", "full"]
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "instructions": {
+                "type": "string"
+              },
+              "partialAmount": {
+                "type": "number"
+              },
+              "manualType": {
+                "type": "string",
+                "enum": ["invoice", "cash_on_delivery"]
+              }
             }
           },
-          "locale": { "type": "string" },
-          "sessionId": { "type": "string" },
-          "userAgent": { "type": "string" },
-          "screenWidth": { "type": "number" },
-          "visitId": { "type": "string" },
-          "queryParameters": { "type": "object", "additionalProperties": { "type": "string" } },
-          "stripePaymentIntentId": { "type": "string" },
-          "stripePaymentIntentClientSecret": { "type": "string" },
-          "stripeChargeId": { "type": "string" },
-          "upsell": { "type": "boolean" },
-          "upsellPageId": { "type": "string" },
-          "upsellChargeId": { "type": "string" },
-          "upsellSubscriptionId": { "type": "string" },
-          "invoiceId": { "type": "string" },
-          "transactionIds": { "type": "array", "items": { "type": "string" } },
-          "canceledAt": { "type": "string", "description": "The date this was canceled." },
+          "locale": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "screenWidth": {
+            "type": "number"
+          },
+          "visitId": {
+            "type": "string"
+          },
+          "queryParameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "stripePaymentIntentId": {
+            "type": "string"
+          },
+          "stripePaymentIntentClientSecret": {
+            "type": "string"
+          },
+          "stripeChargeId": {
+            "type": "string"
+          },
+          "upsell": {
+            "type": "boolean"
+          },
+          "upsellPageId": {
+            "type": "string"
+          },
+          "upsellChargeId": {
+            "type": "string"
+          },
+          "upsellSubscriptionId": {
+            "type": "string"
+          },
+          "invoiceId": {
+            "type": "string"
+          },
+          "transactionIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canceledAt": {
+            "type": "string",
+            "description": "The date this was canceled."
+          },
           "canceledBy": {
             "type": "string",
             "description": "The userId that canceled this. If this is a booking, tickets were canceled in addition."
           },
-          "canceledReason": { "type": "string", "description": "The reason for the cancellation" },
-          "isAbandoned": { "type": "boolean" },
+          "canceledReason": {
+            "type": "string",
+            "description": "The reason for the cancellation"
+          },
+          "isAbandoned": {
+            "type": "boolean"
+          },
           "recoveredAt": {
             "type": "string",
             "format": "date-time",
@@ -808,44 +1458,98 @@
             "type": "string",
             "enum": ["pending", "first_sent", "second_sent", "third_sent", "skipped"]
           },
-          "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" },
-          "productId": { "type": "string" },
-          "productPrice": { "type": "number" },
-          "payWhatYouWantPrice": { "type": "number" },
-          "discountedFromPrice": { "type": "number" },
-          "setupFee": { "type": "number" },
-          "quantity": { "type": "number" },
-          "sku": { "type": "string" },
+          "abandonedCartEmailSentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "productPrice": {
+            "type": "number"
+          },
+          "payWhatYouWantPrice": {
+            "type": "number"
+          },
+          "discountedFromPrice": {
+            "type": "number"
+          },
+          "setupFee": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "sku": {
+            "type": "string"
+          },
           "variants": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "variantId": { "type": "string" },
-                "reference": { "type": "string" },
-                "selectionType": { "type": "string", "enum": ["single", "multiple", "quantity"] },
+                "name": {
+                  "type": "string"
+                },
+                "variantId": {
+                  "type": "string"
+                },
+                "reference": {
+                  "type": "string"
+                },
+                "selectionType": {
+                  "type": "string",
+                  "enum": ["single", "multiple", "quantity"]
+                },
                 "selectedOptions": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "optionId": { "type": "string" },
-                      "optionName": { "type": "string" },
-                      "sku": { "type": "string" },
-                      "quantity": { "type": "number" },
-                      "additionalChargeAmount": { "type": "number" },
-                      "originalAdditionalChargeAmount": { "type": "number" },
+                      "optionId": {
+                        "type": "string"
+                      },
+                      "optionName": {
+                        "type": "string"
+                      },
+                      "sku": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "type": "number"
+                      },
+                      "additionalChargeAmount": {
+                        "type": "number"
+                      },
+                      "originalAdditionalChargeAmount": {
+                        "type": "number"
+                      },
                       "discount": {
                         "type": "object",
                         "properties": {
-                          "minQuantity": { "type": "number" },
-                          "maxQuantity": { "type": "number" },
-                          "percentOff": { "type": "number" },
-                          "amountOff": { "type": "number" },
-                          "amount": { "type": "number" }
+                          "minQuantity": {
+                            "type": "number"
+                          },
+                          "maxQuantity": {
+                            "type": "number"
+                          },
+                          "percentOff": {
+                            "type": "number"
+                          },
+                          "amountOff": {
+                            "type": "number"
+                          },
+                          "amount": {
+                            "type": "number"
+                          }
                         }
                       }
                     }
@@ -854,7 +1558,9 @@
               }
             }
           },
-          "licenseKeyId": { "type": "string" }
+          "licenseKeyId": {
+            "type": "string"
+          }
         },
         "required": ["id", "amount", "taxBreakdown", "status", "createdAt", "updatedAt"],
         "description": ""
@@ -862,49 +1568,65 @@
     },
     "parameters": {
       "PageId": {
-        "schema": { "$ref": "#/components/schemas/PageId" },
+        "schema": {
+          "$ref": "#/components/schemas/PageId"
+        },
         "required": true,
         "name": "pageId",
         "in": "path"
       },
       "TicketId": {
-        "schema": { "$ref": "#/components/schemas/TicketId" },
+        "schema": {
+          "$ref": "#/components/schemas/TicketId"
+        },
         "required": true,
         "name": "ticketId",
         "in": "path"
       },
       "CustomerId": {
-        "schema": { "$ref": "#/components/schemas/CustomerId" },
+        "schema": {
+          "$ref": "#/components/schemas/CustomerId"
+        },
         "required": true,
         "name": "customerId",
         "in": "path"
       },
       "SellerId": {
-        "schema": { "$ref": "#/components/schemas/SellerId" },
+        "schema": {
+          "$ref": "#/components/schemas/SellerId"
+        },
         "required": true,
         "name": "sellerId",
         "in": "path"
       },
       "ChargeId": {
-        "schema": { "$ref": "#/components/schemas/ChargeId" },
+        "schema": {
+          "$ref": "#/components/schemas/ChargeId"
+        },
         "required": true,
         "name": "chargeId",
         "in": "path"
       },
       "SubscriptionId": {
-        "schema": { "$ref": "#/components/schemas/SubscriptionId" },
+        "schema": {
+          "$ref": "#/components/schemas/SubscriptionId"
+        },
         "required": true,
         "name": "subscriptionId",
         "in": "path"
       },
       "SubscriptionPaymentId": {
-        "schema": { "$ref": "#/components/schemas/SubscriptionPaymentId" },
+        "schema": {
+          "$ref": "#/components/schemas/SubscriptionPaymentId"
+        },
         "required": true,
         "name": "subscriptionPaymentId",
         "in": "path"
       },
       "ApiKeyId": {
-        "schema": { "$ref": "#/components/schemas/ApiKeyId" },
+        "schema": {
+          "$ref": "#/components/schemas/ApiKeyId"
+        },
         "required": true,
         "name": "apiKeyId",
         "in": "path"
@@ -917,11 +1639,18 @@
         "summary": "Validate ticket",
         "description": "Validates a ticket using its QR code. Scan the QR code and pass the data and optionally manages metadata entries",
         "operationId": "tickets/validate",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Events"],
         "parameters": [
           {
-            "schema": { "type": "string", "minLength": 1 },
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
             "required": true,
             "name": "qrCode",
             "in": "path"
@@ -938,8 +1667,15 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "key": { "type": "string", "minLength": 1, "maxLength": 50 },
-                        "value": { "type": ["string", "null"], "maxLength": 100 }
+                        "key": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 50
+                        },
+                        "value": {
+                          "type": ["string", "null"],
+                          "maxLength": 100
+                        }
                       },
                       "required": ["key", "value"]
                     }
@@ -960,9 +1696,15 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "success": { "type": "boolean" },
-                        "ticket": { "$ref": "#/components/schemas/TicketModel" },
-                        "message": { "type": "string" }
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "ticket": {
+                          "$ref": "#/components/schemas/TicketModel"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
                       },
                       "required": ["success", "ticket"]
                     }
@@ -972,14 +1714,24 @@
               }
             }
           },
-          "400": { "description": "Bad request - Invalid QR code" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "404": { "description": "Not found - Ticket not found or not accessible" },
+          "400": {
+            "description": "Bad request - Invalid QR code"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "description": "Not found - Ticket not found or not accessible"
+          },
           "422": {
             "description": "Unprocessable entity - Ticket status is $STATUS, expected PAID"
           },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." }
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          }
         }
       }
     },
@@ -988,7 +1740,11 @@
         "summary": "List all bookings",
         "description": "Returns a paginated list of your event bookings. The bookings are sorted in order, with the most recent bookings appearing first.",
         "operationId": "bookings/list",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Events"],
         "parameters": [
           {
@@ -1058,7 +1814,10 @@
             "in": "query"
           },
           {
-            "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
             "required": false,
             "name": "pageId",
             "in": "query"
@@ -1084,7 +1843,9 @@
                     },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Booking" },
+                      "items": {
+                        "$ref": "#/components/schemas/Booking"
+                      },
                       "description": "Array of results for this page"
                     }
                   },
@@ -1093,11 +1854,21 @@
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     },
@@ -1106,7 +1877,11 @@
         "summary": "List all customers",
         "description": "Returns a paginated list of your customers. The customers are sorted in order, with the most recent customers appearing first.",
         "operationId": "customers/list",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Customers"],
         "parameters": [
           {
@@ -1144,7 +1919,14 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" }
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "search",
+            "in": "query"
+          }
         ],
         "responses": {
           "200": {
@@ -1166,7 +1948,9 @@
                     },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Customer" },
+                      "items": {
+                        "$ref": "#/components/schemas/Customer"
+                      },
                       "description": "Array of results for this page"
                     }
                   },
@@ -1175,11 +1959,21 @@
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     },
@@ -1188,11 +1982,18 @@
         "summary": "Get customer details",
         "description": "Returns detailed information for a specific customer.",
         "operationId": "customers/get",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Customers"],
         "parameters": [
           {
-            "schema": { "type": "string", "example": "6812fe6e9f39b6760576f01c" },
+            "schema": {
+              "type": "string",
+              "example": "6812fe6e9f39b6760576f01c"
+            },
             "required": true,
             "name": "customerId",
             "in": "path"
@@ -1205,18 +2006,34 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": { "data": { "$ref": "#/components/schemas/Customer" } },
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Customer"
+                    }
+                  },
                   "required": ["data"]
                 }
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "404": { "description": "Customer not found" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "description": "Customer not found"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     },
@@ -1225,7 +2042,11 @@
         "summary": "Create a coupon",
         "description": "Creates a coupon. A coupon has either an amountOff and currency or percentOff. The coupon created will be automatically synchronized with Stripe if you have a connected stripe account. If you are not connected the endpoint will throw an error.",
         "operationId": "coupons/create",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Coupons"],
         "requestBody": {
           "content": {
@@ -1284,7 +2105,10 @@
                     "description": "Three-letter ISO code for the currency of the amountOff parameter (required if `amountOff` is passed).",
                     "example": "usd"
                   },
-                  "duration": { "type": "string", "enum": ["once", "repeating", "forever"] },
+                  "duration": {
+                    "type": "string",
+                    "enum": ["once", "repeating", "forever"]
+                  },
                   "durationInMonths": {
                     "type": "number",
                     "exclusiveMinimum": 0,
@@ -1304,7 +2128,9 @@
                   },
                   "pageIds": {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "A list of pageIds that this coupon can be used within.",
                     "example": ["67ee075004de439ab0b675b6", "67fcbdac6a91c25ef2d3534a"]
                   },
@@ -1333,25 +2159,45 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": { "data": { "$ref": "#/components/schemas/Coupon" } },
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Coupon"
+                    }
+                  },
                   "required": ["data"]
                 }
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "409": { "description": "Conflict - Coupon code already exists" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "409": {
+            "description": "Conflict - Coupon code already exists"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       },
       "get": {
         "summary": "List all coupons",
         "description": "Returns a paginated list of your coupons. The coupons are sorted in order, with the most recent coupons appearing first.",
         "operationId": "coupons/list",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Coupons"],
         "parameters": [
           {
@@ -1420,7 +2266,9 @@
                     },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Coupon" },
+                      "items": {
+                        "$ref": "#/components/schemas/Coupon"
+                      },
                       "description": "Array of results for this page"
                     }
                   },
@@ -1429,11 +2277,21 @@
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     },
@@ -1442,7 +2300,11 @@
         "summary": "List all subscriptions",
         "description": "Returns a paginated list of your subscriptions. The subscriptions are sorted in order, with the most recent subscriptions appearing first.",
         "operationId": "subscriptions/list",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Subscriptions"],
         "parameters": [
           {
@@ -1480,14 +2342,31 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
           {
-            "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
             "required": false,
             "name": "pageId",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "status", "in": "query" }
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          }
         ],
         "responses": {
           "200": {
@@ -1512,69 +2391,151 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "id": { "type": "string" },
-                          "orderId": { "type": "string" },
-                          "stripeSubscriptionId": { "type": "string" },
-                          "stripeCustomerId": { "type": "string" },
-                          "customerEmail": { "type": "string" },
-                          "currency": { "type": "string" },
-                          "amount": { "type": "number" },
-                          "amountUsd": { "type": "number" },
-                          "interval": { "type": "string" },
-                          "intervalCount": { "type": "number" },
-                          "planIterations": { "type": "number" },
+                          "id": {
+                            "type": "string"
+                          },
+                          "orderId": {
+                            "type": "string"
+                          },
+                          "stripeSubscriptionId": {
+                            "type": "string"
+                          },
+                          "stripeCustomerId": {
+                            "type": "string"
+                          },
+                          "customerEmail": {
+                            "type": "string"
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          },
+                          "amountUsd": {
+                            "type": "number"
+                          },
+                          "interval": {
+                            "type": "string"
+                          },
+                          "intervalCount": {
+                            "type": "number"
+                          },
+                          "planIterations": {
+                            "type": "number"
+                          },
                           "fees": {
                             "type": "array",
                             "items": {
                               "type": "object",
                               "properties": {
-                                "name": { "type": "string" },
-                                "amount": { "type": "number" },
-                                "percentage": { "type": "number" },
-                                "stripeProductId": { "type": "string" }
+                                "name": {
+                                  "type": "string"
+                                },
+                                "amount": {
+                                  "type": "number"
+                                },
+                                "percentage": {
+                                  "type": "number"
+                                },
+                                "stripeProductId": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
-                          "setupFee": { "type": "number" },
-                          "setupFeeDiscountAmount": { "type": "number" },
+                          "setupFee": {
+                            "type": "number"
+                          },
+                          "setupFeeDiscountAmount": {
+                            "type": "number"
+                          },
                           "setupFeeFees": {
                             "type": "array",
                             "items": {
                               "type": "object",
                               "properties": {
-                                "name": { "type": "string" },
-                                "amount": { "type": "number" },
-                                "percentage": { "type": "number" },
-                                "stripeInvoiceItemId": { "type": "string" }
+                                "name": {
+                                  "type": "string"
+                                },
+                                "amount": {
+                                  "type": "number"
+                                },
+                                "percentage": {
+                                  "type": "number"
+                                },
+                                "stripeInvoiceItemId": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
-                          "setupFeeTotal": { "type": "number" },
-                          "setupFeeUsd": { "type": "number" },
-                          "setupFeeInvoiceItemId": { "type": "string" },
-                          "setupFeeInvoiceItemPaid": { "type": "boolean" },
-                          "quantity": { "type": "number" },
-                          "productPrice": { "type": "number" },
-                          "dynamicPrice": { "type": "number" },
-                          "discountedFromPrice": { "type": "number" },
-                          "sku": { "type": "string" },
+                          "setupFeeTotal": {
+                            "type": "number"
+                          },
+                          "setupFeeUsd": {
+                            "type": "number"
+                          },
+                          "setupFeeInvoiceItemId": {
+                            "type": "string"
+                          },
+                          "setupFeeInvoiceItemPaid": {
+                            "type": "boolean"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "productPrice": {
+                            "type": "number"
+                          },
+                          "dynamicPrice": {
+                            "type": "number"
+                          },
+                          "discountedFromPrice": {
+                            "type": "number"
+                          },
+                          "sku": {
+                            "type": "string"
+                          },
                           "billing": {
                             "type": "object",
                             "properties": {
-                              "name": { "type": "string" },
-                              "companyName": { "type": "string" },
-                              "email": { "type": "string" },
-                              "billingEmail": { "type": "string" },
-                              "phone": { "type": "string" },
+                              "name": {
+                                "type": "string"
+                              },
+                              "companyName": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "billingEmail": {
+                                "type": "string"
+                              },
+                              "phone": {
+                                "type": "string"
+                              },
                               "address": {
                                 "type": "object",
                                 "properties": {
-                                  "line1": { "type": "string" },
-                                  "line2": { "type": "string" },
-                                  "city": { "type": "string" },
-                                  "state": { "type": "string" },
-                                  "postalCode": { "type": "string" },
-                                  "country": { "type": "string" }
+                                  "line1": {
+                                    "type": "string"
+                                  },
+                                  "line2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "postalCode": {
+                                    "type": "string"
+                                  },
+                                  "country": {
+                                    "type": "string"
+                                  }
                                 }
                               }
                             }
@@ -1582,17 +2543,33 @@
                           "shipping": {
                             "type": "object",
                             "properties": {
-                              "name": { "type": "string" },
-                              "phone": { "type": "string" },
+                              "name": {
+                                "type": "string"
+                              },
+                              "phone": {
+                                "type": "string"
+                              },
                               "address": {
                                 "type": "object",
                                 "properties": {
-                                  "line1": { "type": "string" },
-                                  "line2": { "type": "string" },
-                                  "city": { "type": "string" },
-                                  "state": { "type": "string" },
-                                  "postalCode": { "type": "string" },
-                                  "country": { "type": "string" }
+                                  "line1": {
+                                    "type": "string"
+                                  },
+                                  "line2": {
+                                    "type": "string"
+                                  },
+                                  "city": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  },
+                                  "postalCode": {
+                                    "type": "string"
+                                  },
+                                  "country": {
+                                    "type": "string"
+                                  }
                                 }
                               }
                             }
@@ -1602,9 +2579,15 @@
                             "items": {
                               "type": "object",
                               "properties": {
-                                "fieldId": { "type": "string" },
-                                "label": { "type": "string" },
-                                "value": { "type": "string" },
+                                "fieldId": {
+                                  "type": "string"
+                                },
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
                                 "element": {
                                   "type": "string",
                                   "enum": [
@@ -1654,7 +2637,9 @@
                                     "tax-id"
                                   ]
                                 },
-                                "reference": { "type": "string" }
+                                "reference": {
+                                  "type": "string"
+                                }
                               }
                             }
                           },
@@ -1663,9 +2648,15 @@
                             "items": {
                               "type": "object",
                               "properties": {
-                                "name": { "type": "string" },
-                                "variantId": { "type": "string" },
-                                "reference": { "type": "string" },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "variantId": {
+                                  "type": "string"
+                                },
+                                "reference": {
+                                  "type": "string"
+                                },
                                 "selectionType": {
                                   "type": "string",
                                   "enum": ["single", "multiple", "quantity"]
@@ -1675,34 +2666,66 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
-                                      "optionId": { "type": "string" },
+                                      "optionId": {
+                                        "type": "string"
+                                      },
                                       "optionType": {
                                         "type": "string",
                                         "enum": ["one_time", "recurring"]
                                       },
-                                      "optionName": { "type": "string" },
-                                      "sku": { "type": "string" },
-                                      "quantity": { "type": "number" },
-                                      "additionalChargeAmount": { "type": "number" },
-                                      "discountAmount": { "type": "number" },
+                                      "optionName": {
+                                        "type": "string"
+                                      },
+                                      "sku": {
+                                        "type": "string"
+                                      },
+                                      "quantity": {
+                                        "type": "number"
+                                      },
+                                      "additionalChargeAmount": {
+                                        "type": "number"
+                                      },
+                                      "discountAmount": {
+                                        "type": "number"
+                                      },
                                       "fees": {
                                         "type": "array",
                                         "items": {
                                           "type": "object",
                                           "properties": {
-                                            "name": { "type": "string" },
-                                            "amount": { "type": "number" },
-                                            "percentage": { "type": "number" },
-                                            "stripeInvoiceItemId": { "type": "string" }
+                                            "name": {
+                                              "type": "string"
+                                            },
+                                            "amount": {
+                                              "type": "number"
+                                            },
+                                            "percentage": {
+                                              "type": "number"
+                                            },
+                                            "stripeInvoiceItemId": {
+                                              "type": "string"
+                                            }
                                           }
                                         }
                                       },
-                                      "additionalChargeAmountTotal": { "type": "number" },
-                                      "additionalChargeAmountUsd": { "type": "number" },
-                                      "optionStripePriceId": { "type": "string" },
-                                      "optionStripeProductId": { "type": "string" },
-                                      "optionInvoiceItemId": { "type": "string" },
-                                      "optionInvoiceItemPaid": { "type": "boolean" }
+                                      "additionalChargeAmountTotal": {
+                                        "type": "number"
+                                      },
+                                      "additionalChargeAmountUsd": {
+                                        "type": "number"
+                                      },
+                                      "optionStripePriceId": {
+                                        "type": "string"
+                                      },
+                                      "optionStripeProductId": {
+                                        "type": "string"
+                                      },
+                                      "optionInvoiceItemId": {
+                                        "type": "string"
+                                      },
+                                      "optionInvoiceItemPaid": {
+                                        "type": "boolean"
+                                      }
                                     }
                                   }
                                 },
@@ -1711,19 +2734,33 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
-                                      "name": { "type": "string" },
-                                      "amount": { "type": "number" },
-                                      "percentage": { "type": "number" },
-                                      "stripeInvoiceItemId": { "type": "string" }
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "amount": {
+                                        "type": "number"
+                                      },
+                                      "percentage": {
+                                        "type": "number"
+                                      },
+                                      "stripeInvoiceItemId": {
+                                        "type": "string"
+                                      }
                                     }
                                   }
                                 }
                               }
                             }
                           },
-                          "couponId": { "type": "string" },
-                          "licenseKeyId": { "type": "string" },
-                          "livemode": { "type": "boolean" },
+                          "couponId": {
+                            "type": "string"
+                          },
+                          "licenseKeyId": {
+                            "type": "string"
+                          },
+                          "livemode": {
+                            "type": "boolean"
+                          },
                           "status": {
                             "type": "string",
                             "enum": [
@@ -1759,7 +2796,9 @@
                               "succeeded"
                             ]
                           },
-                          "paymentError": { "type": "string" },
+                          "paymentError": {
+                            "type": "string"
+                          },
                           "paymentMethod": {
                             "type": "object",
                             "properties": {
@@ -1767,49 +2806,134 @@
                                 "type": "string",
                                 "enum": ["stripe", "paypal", "manual"]
                               },
-                              "method": { "type": "string" },
-                              "wallet": { "type": "string" },
-                              "mode": { "type": "string", "enum": ["default", "express"] },
-                              "brand": { "type": "string" },
-                              "last4": { "type": "string" },
-                              "country": { "type": "string" },
-                              "exp_month": { "type": "number" },
-                              "exp_year": { "type": "number" },
-                              "funding": { "type": "string" }
+                              "method": {
+                                "type": "string"
+                              },
+                              "wallet": {
+                                "type": "string"
+                              },
+                              "mode": {
+                                "type": "string",
+                                "enum": ["default", "express"]
+                              },
+                              "brand": {
+                                "type": "string"
+                              },
+                              "last4": {
+                                "type": "string"
+                              },
+                              "country": {
+                                "type": "string"
+                              },
+                              "exp_month": {
+                                "type": "number"
+                              },
+                              "exp_year": {
+                                "type": "number"
+                              },
+                              "funding": {
+                                "type": "string"
+                              }
                             }
                           },
-                          "locale": { "type": "string" },
-                          "sessionId": { "type": "string" },
-                          "userAgent": { "type": "string" },
-                          "screenWidth": { "type": "number" },
-                          "visitId": { "type": "string" },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "sessionId": {
+                            "type": "string"
+                          },
+                          "userAgent": {
+                            "type": "string"
+                          },
+                          "screenWidth": {
+                            "type": "number"
+                          },
+                          "visitId": {
+                            "type": "string"
+                          },
                           "queryParameters": {
                             "type": "object",
-                            "additionalProperties": { "type": "string" }
+                            "additionalProperties": {
+                              "type": "string"
+                            }
                           },
-                          "stripePaymentIntentId": { "type": "string" },
-                          "stripePaymentIntentClientSecret": { "type": "string" },
-                          "stripeSetupIntentId": { "type": "string" },
-                          "startDate": { "type": "string", "format": "date-time" },
-                          "trialEnd": { "type": "string", "format": "date-time" },
-                          "trialStart": { "type": "string", "format": "date-time" },
-                          "cancelAt": { "type": "string", "format": "date-time" },
-                          "cancelAtPeriodEnd": { "type": "boolean" },
-                          "currentPeriodStart": { "type": "string", "format": "date-time" },
-                          "currentPeriodEnd": { "type": "string", "format": "date-time" },
-                          "upsell": { "type": "boolean" },
-                          "upsellPageId": { "type": "string" },
-                          "upsellChargeId": { "type": "string" },
-                          "upsellSubscriptionId": { "type": "string" },
-                          "sellerId": { "type": "string" },
-                          "customerId": { "type": "string" },
-                          "pageId": { "type": "string" },
-                          "productId": { "type": "string" },
-                          "canceledAt": { "type": "string", "format": "date-time" },
-                          "canceledBy": { "type": "string" },
-                          "reason": { "type": "string" },
-                          "isAbandoned": { "type": "boolean" },
-                          "recoveredAt": { "type": "string", "format": "date-time" },
+                          "stripePaymentIntentId": {
+                            "type": "string"
+                          },
+                          "stripePaymentIntentClientSecret": {
+                            "type": "string"
+                          },
+                          "stripeSetupIntentId": {
+                            "type": "string"
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "trialEnd": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "trialStart": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "cancelAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "cancelAtPeriodEnd": {
+                            "type": "boolean"
+                          },
+                          "currentPeriodStart": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "currentPeriodEnd": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "upsell": {
+                            "type": "boolean"
+                          },
+                          "upsellPageId": {
+                            "type": "string"
+                          },
+                          "upsellChargeId": {
+                            "type": "string"
+                          },
+                          "upsellSubscriptionId": {
+                            "type": "string"
+                          },
+                          "sellerId": {
+                            "type": "string"
+                          },
+                          "customerId": {
+                            "type": "string"
+                          },
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "productId": {
+                            "type": "string"
+                          },
+                          "canceledAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "canceledBy": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "isAbandoned": {
+                            "type": "boolean"
+                          },
+                          "recoveredAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
                           "abandonedCartEmailStatus": {
                             "type": "string",
                             "enum": [
@@ -1821,9 +2945,18 @@
                               "skipped"
                             ]
                           },
-                          "abandonedCartEmailSentAt": { "type": "string", "format": "date-time" },
-                          "createdAt": { "type": "string", "format": "date-time" },
-                          "updatedAt": { "type": "string", "format": "date-time" }
+                          "abandonedCartEmailSentAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
                         },
                         "required": ["id", "amount", "createdAt", "updatedAt"]
                       },
@@ -1835,11 +2968,326 @@
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/v1/subscription-payments/": {
+      "get": {
+        "summary": "List all subscription payments",
+        "description": "Returns a paginated list of subscription payment records. Each record represents a single Stripe invoice charge against a subscription. Sorted newest-first.",
+        "operationId": "subscription_payments/list",
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "tags": ["Subscription Payments"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
+            "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "507f1f77bcf86cd799439011",
+              "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`."
+            },
+            "required": false,
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "name": "starting_after",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "507f1f77bcf86cd799439012",
+              "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`."
+            },
+            "required": false,
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "name": "ending_before",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "required": false,
+            "name": "subscriptionId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "required": false,
+            "name": "customerId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "required": false,
+            "name": "pageId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["succeeded", "pending", "failed", "incomplete"]
+            },
+            "required": false,
+            "name": "paymentStatus",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "required": false,
+            "name": "paid",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "required": false,
+            "name": "refunded",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "subscription_create",
+                "subscription_cycle",
+                "subscription_threshold",
+                "subscription_update",
+                "upcoming"
+              ]
+            },
+            "required": false,
+            "name": "billingReason",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "name": "createdBefore",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription payments retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether there are more results available beyond this page",
+                      "example": true
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of results matching the query (across all pages)",
+                      "example": 42
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "subscriptionId": {
+                            "type": "string"
+                          },
+                          "customerId": {
+                            "type": "string"
+                          },
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "productId": {
+                            "type": "string"
+                          },
+                          "sellerId": {
+                            "type": "string"
+                          },
+                          "customerEmail": {
+                            "type": "string"
+                          },
+                          "customerName": {
+                            "type": "string"
+                          },
+                          "productTitle": {
+                            "type": "string"
+                          },
+                          "pageSlug": {
+                            "type": "string"
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          },
+                          "amountUsd": {
+                            "type": "number"
+                          },
+                          "livemode": {
+                            "type": "boolean"
+                          },
+                          "paymentStatus": {
+                            "type": "string",
+                            "enum": ["succeeded", "pending", "failed", "incomplete"]
+                          },
+                          "invoiceStatus": {
+                            "type": "string",
+                            "enum": ["draft", "open", "paid", "uncollectible", "void"]
+                          },
+                          "paid": {
+                            "type": "boolean"
+                          },
+                          "refunded": {
+                            "type": "boolean"
+                          },
+                          "partiallyRefunded": {
+                            "type": "boolean"
+                          },
+                          "billingReason": {
+                            "type": "string",
+                            "enum": [
+                              "manual",
+                              "subscription_create",
+                              "subscription_cycle",
+                              "subscription_threshold",
+                              "subscription_update",
+                              "upcoming"
+                            ]
+                          },
+                          "paymentMethod": {
+                            "type": "object",
+                            "properties": {
+                              "gateway": {
+                                "type": "string",
+                                "enum": ["stripe", "paypal", "manual"]
+                              },
+                              "method": {
+                                "type": "string"
+                              },
+                              "wallet": {
+                                "type": "string"
+                              },
+                              "mode": {
+                                "type": "string",
+                                "enum": ["default", "express"]
+                              },
+                              "brand": {
+                                "type": "string"
+                              },
+                              "last4": {
+                                "type": "string"
+                              },
+                              "country": {
+                                "type": "string"
+                              },
+                              "exp_month": {
+                                "type": "number"
+                              },
+                              "exp_year": {
+                                "type": "number"
+                              },
+                              "funding": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "stripeSubscriptionId": {
+                            "type": "string"
+                          },
+                          "stripePaymentId": {
+                            "type": "string"
+                          },
+                          "stripePaymentIntentId": {
+                            "type": "string"
+                          },
+                          "stripeInvoiceId": {
+                            "type": "string"
+                          },
+                          "stripeInvoicePdf": {
+                            "type": "string"
+                          },
+                          "stripeRefundInvoicePdf": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": ["id", "amount", "createdAt", "updatedAt"]
+                      }
+                    }
+                  },
+                  "required": ["data", "has_more", "total"]
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1848,7 +3296,11 @@
         "summary": "List all payments",
         "description": "Returns a paginated list of your payments. The payments are sorted in order, with the most recent payments appearing first.",
         "operationId": "payments/list",
-        "security": [{ "api_key_auth": [] }],
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
         "tags": ["Payments"],
         "parameters": [
           {
@@ -1918,7 +3370,10 @@
             "in": "query"
           },
           {
-            "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
             "required": false,
             "name": "pageId",
             "in": "query"
@@ -1944,7 +3399,9 @@
                     },
                     "data": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Payment" },
+                      "items": {
+                        "$ref": "#/components/schemas/Payment"
+                      },
                       "description": "Array of results for this page"
                     }
                   },
@@ -1953,11 +3410,21 @@
               }
             }
           },
-          "400": { "description": "Bad request - Invalid request parameters" },
-          "401": { "description": "Unauthorized - Missing or invalid API key" },
-          "403": { "description": "Forbidden - Insufficient permissions or validation error" },
-          "429": { "description": "Rate Limit Exceeded - Please try again later." },
-          "500": { "description": "Internal server error" }
+          "400": {
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     }
@@ -1974,16 +3441,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["customer.created"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["customer.created"]
+                  },
                   "data": {
                     "type": "object",
-                    "properties": { "customer": { "$ref": "#/components/schemas/Customer" } },
+                    "properties": {
+                      "customer": {
+                        "$ref": "#/components/schemas/Customer"
+                      }
+                    },
                     "required": ["customer"]
                   }
                 },
@@ -2010,16 +3489,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["customer.updated"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["customer.updated"]
+                  },
                   "data": {
                     "type": "object",
-                    "properties": { "customer": { "$ref": "#/components/schemas/Customer" } },
+                    "properties": {
+                      "customer": {
+                        "$ref": "#/components/schemas/Customer"
+                      }
+                    },
                     "required": ["customer"]
                   }
                 },
@@ -2046,16 +3537,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["payment.created"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["payment.created"]
+                  },
                   "data": {
                     "type": "object",
-                    "properties": { "payment": { "$ref": "#/components/schemas/Payment" } },
+                    "properties": {
+                      "payment": {
+                        "$ref": "#/components/schemas/Payment"
+                      }
+                    },
                     "required": ["payment"]
                   }
                 },
@@ -2082,16 +3585,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["payment.paid"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["payment.paid"]
+                  },
                   "data": {
                     "type": "object",
-                    "properties": { "payment": { "$ref": "#/components/schemas/Payment" } },
+                    "properties": {
+                      "payment": {
+                        "$ref": "#/components/schemas/Payment"
+                      }
+                    },
                     "required": ["payment"]
                   }
                 },
@@ -2118,16 +3633,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["booking.created"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["booking.created"]
+                  },
                   "data": {
                     "type": "object",
-                    "properties": { "booking": { "$ref": "#/components/schemas/Payment" } },
+                    "properties": {
+                      "booking": {
+                        "$ref": "#/components/schemas/Payment"
+                      }
+                    },
                     "required": ["booking"]
                   }
                 },
@@ -2154,16 +3681,28 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["booking.paid"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["booking.paid"]
+                  },
                   "data": {
                     "type": "object",
-                    "properties": { "booking": { "$ref": "#/components/schemas/Payment" } },
+                    "properties": {
+                      "booking": {
+                        "$ref": "#/components/schemas/Payment"
+                      }
+                    },
                     "required": ["booking"]
                   }
                 },
@@ -2190,35 +3729,76 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "seller_id": { "type": "string" },
-                  "timestamp": { "type": "string", "format": "date-time" },
+                  "seller_id": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "event_id": {
                     "type": "string",
                     "description": "Unique identifier for idempotency"
                   },
-                  "event": { "type": "string", "enum": ["ticket.created"] },
+                  "event": {
+                    "type": "string",
+                    "enum": ["ticket.created"]
+                  },
                   "data": {
                     "type": "object",
                     "properties": {
                       "ticket": {
                         "type": "object",
                         "properties": {
-                          "id": { "type": "string" },
-                          "seller": { "type": "string" },
-                          "charge": { "type": "string" },
-                          "orderId": { "type": "string" },
-                          "page": { "type": "string" },
-                          "ticketType": { "type": "string" },
-                          "originalPrice": { "type": "number" },
-                          "discountAmount": { "type": "number" },
-                          "feeAmount": { "type": "number" },
-                          "taxAmount": { "type": "number" },
-                          "couponAmount": { "type": "number" },
-                          "revenue": { "type": "number" },
-                          "currency": { "type": "string" },
-                          "customer": { "type": "string" },
-                          "ticketShortId": { "type": "string" },
-                          "status": { "type": "string", "enum": ["PAID", "CANCELED"] },
+                          "id": {
+                            "type": "string"
+                          },
+                          "seller": {
+                            "type": "string"
+                          },
+                          "charge": {
+                            "type": "string"
+                          },
+                          "orderId": {
+                            "type": "string"
+                          },
+                          "page": {
+                            "type": "string"
+                          },
+                          "ticketType": {
+                            "type": "string"
+                          },
+                          "originalPrice": {
+                            "type": "number"
+                          },
+                          "discountAmount": {
+                            "type": "number"
+                          },
+                          "feeAmount": {
+                            "type": "number"
+                          },
+                          "taxAmount": {
+                            "type": "number"
+                          },
+                          "couponAmount": {
+                            "type": "number"
+                          },
+                          "revenue": {
+                            "type": "number"
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "customer": {
+                            "type": "string"
+                          },
+                          "ticketShortId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": ["PAID", "CANCELED"]
+                          },
                           "checkIns": {
                             "type": "array",
                             "items": {
@@ -2228,9 +3808,17 @@
                                   "type": "string",
                                   "enum": ["UNCHECKEDIN", "CHECKEDIN"]
                                 },
-                                "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-                                "checkedInBy": { "type": "string" },
-                                "checkedInAt": { "type": "string", "format": "date-time" }
+                                "method": {
+                                  "type": "string",
+                                  "enum": ["QRSCAN", "MANUAL"]
+                                },
+                                "checkedInBy": {
+                                  "type": "string"
+                                },
+                                "checkedInAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
                               },
                               "required": ["status", "method", "checkedInBy", "checkedInAt"]
                             }
@@ -2238,31 +3826,65 @@
                           "latestCheckIn": {
                             "type": "object",
                             "properties": {
-                              "status": { "type": "string", "enum": ["UNCHECKEDIN", "CHECKEDIN"] },
-                              "method": { "type": "string", "enum": ["QRSCAN", "MANUAL"] },
-                              "checkedInBy": { "type": "string" },
-                              "checkedInAt": { "type": "string", "format": "date-time" }
+                              "status": {
+                                "type": "string",
+                                "enum": ["UNCHECKEDIN", "CHECKEDIN"]
+                              },
+                              "method": {
+                                "type": "string",
+                                "enum": ["QRSCAN", "MANUAL"]
+                              },
+                              "checkedInBy": {
+                                "type": "string"
+                              },
+                              "checkedInAt": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
                             },
                             "required": ["status", "method", "checkedInBy", "checkedInAt"]
                           },
-                          "customerName": { "type": "string" },
-                          "customerEmail": { "type": "string" },
-                          "orderedAt": { "type": "string", "format": "date-time" },
-                          "canceledAt": { "type": "string", "format": "date-time" },
+                          "customerName": {
+                            "type": "string"
+                          },
+                          "customerEmail": {
+                            "type": "string"
+                          },
+                          "orderedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "canceledAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
                           "metadata": {
                             "type": "array",
                             "items": {
                               "type": "object",
                               "properties": {
-                                "key": { "type": "string" },
-                                "value": { "type": "string" },
-                                "addedAt": { "type": "string", "format": "date-time" }
+                                "key": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "addedAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                }
                               },
                               "required": ["key", "value", "addedAt"]
                             }
                           },
-                          "createdAt": { "type": "string", "format": "date-time" },
-                          "updatedAt": { "type": "string", "format": "date-time" }
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
                         },
                         "required": [
                           "id",
@@ -2306,8 +3928,17 @@
     }
   },
   "servers": [
-    { "url": "https://api.checkoutpage.com", "description": "Production" },
-    { "url": "https://checkoutpageapi-staging.onrender.com", "description": "Staging" },
-    { "url": "https://api.checkoutpage.dev", "description": "Localhost" }
+    {
+      "url": "https://api.checkoutpage.com",
+      "description": "Production"
+    },
+    {
+      "url": "https://checkoutpageapi-staging.onrender.com",
+      "description": "Staging"
+    },
+    {
+      "url": "https://api.checkoutpage.dev",
+      "description": "Localhost"
+    }
   ]
 }
