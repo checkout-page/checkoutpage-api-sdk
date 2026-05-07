@@ -37,10 +37,35 @@ npx ts-node get-customer.ts
 - `create-coupon.ts` - Create a coupon
 - `get-customer.ts` - Retrieve a customer by ID
 - `get-customers.ts` - List all customers
+
+### Coupons
+
 - `get-coupons.ts` - List all coupons
+- `create-coupon.ts` - Create a coupon
+
+### Payments & Subscriptions
+
 - `get-payments.ts` - List all payments
-- `subscription-payment-list.ts` - List recent subscription payments
-- `subscription-payments-by-subscription.ts` - List payments for a single subscription
+- `get-subscriptions.ts` - List all subscriptions
+
+### Pages
+
+- `get-pages.ts` - List all pages
+- `create-page.ts` - Create a checkout page
+- `create-event-page.ts` - Create an event page with ticket groups
+- `add-page-field.ts` - Add a custom field to a page
+
+### Products
+
+- `update-product.ts` - Update product details
+
+### Files
+
+- `files-upload.ts` - Upload images and files for products
+
+### Bookings
+
+- `get-bookings.ts` - List all bookings
 
 ## Getting Your API Key
 

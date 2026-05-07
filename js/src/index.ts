@@ -6,6 +6,13 @@ import { SubscriptionResource } from './resources/subscriptions/subscriptions';
 import { SubscriptionPaymentResource } from './resources/subscription-payments/subscription-payments';
 import { BookingResource } from './resources/bookings/bookings';
 import { TicketResource } from './resources/tickets/tickets';
+import { ProductResource } from './resources/products/products';
+import { FileResource } from './resources/files/files';
+import { CheckoutPagesResource } from './resources/checkout-pages/checkout-pages';
+import { EventsResource } from './resources/events/events';
+import { FormsResource } from './resources/forms/forms';
+import { SubmissionResource } from './resources/submissions/submissions';
+import { TaxRateResource } from './resources/tax-rates/tax-rates';
 
 export class CheckoutPageClient {
   public readonly customers: CustomerResource;
@@ -15,6 +22,13 @@ export class CheckoutPageClient {
   public readonly subscriptionPayments: SubscriptionPaymentResource;
   public readonly bookings: BookingResource;
   public readonly tickets: TicketResource;
+  public readonly products: ProductResource;
+  public readonly files: FileResource;
+  public readonly checkoutPages: CheckoutPagesResource;
+  public readonly events: EventsResource;
+  public readonly forms: FormsResource;
+  public readonly submissions: SubmissionResource;
+  public readonly taxRates: TaxRateResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -26,6 +40,13 @@ export class CheckoutPageClient {
     this.subscriptionPayments = new SubscriptionPaymentResource(this.client);
     this.bookings = new BookingResource(this.client);
     this.tickets = new TicketResource(this.client);
+    this.products = new ProductResource(this.client);
+    this.files = new FileResource(this.client);
+    this.checkoutPages = new CheckoutPagesResource(this.client);
+    this.events = new EventsResource(this.client);
+    this.forms = new FormsResource(this.client);
+    this.submissions = new SubmissionResource(this.client);
+    this.taxRates = new TaxRateResource(this.client);
   }
 }
 
@@ -37,6 +58,10 @@ export const createCheckoutPageClient = (options: CheckoutPageApiClientOptions) 
 export type { CheckoutPageApiClientOptions } from './client';
 export type {
   Customer,
+  Submission,
+  SubmissionResponse,
+  SubmissionList,
+  SubmissionListParams,
   Address,
   Shipping,
   Coupon,
@@ -50,6 +75,76 @@ export type {
   SubscriptionPaymentListParams,
   ValidateTicketResponse,
   ValidateTicketParams,
+  Product,
+  UpdateProductParams,
+  Event,
+  EventList,
+  EventListParams,
+  CreateEventParams,
+  CreateEventResponse,
+  EventResponse,
+  UpdateEventParams,
+  UpdateEventResponse,
+  DeleteEventResponse,
+  EventTicketGroup,
+  EventTicketGroupList,
+  EventTicketGroupResponse,
+  CreateEventTicketGroupParams,
+  CreateEventTicketGroupResponse,
+  UpdateEventTicketGroupParams,
+  UpdateEventTicketGroupResponse,
+  DeleteEventTicketGroupResponse,
+  EventTicketType,
+  EventTicketTypeList,
+  EventTicketTypeResponse,
+  CreateEventTicketTypeParams,
+  CreateEventTicketTypeResponse,
+  UpdateEventTicketTypeParams,
+  UpdateEventTicketTypeResponse,
+  DeleteEventTicketTypeResponse,
+  EventField,
+  EventFieldList,
+  CreateEventFieldParams,
+  UpdateEventFieldParams,
+  EventFieldResponse,
+  EventFieldDeleteResponse,
+  Form,
+  FormList,
+  FormListParams,
+  CreateFormParams,
+  CreateFormResponse,
+  FormResponse,
+  UpdateFormParams,
+  UpdateFormResponse,
+  DeleteFormResponse,
+  FormField,
+  FormFieldList,
+  CreateFormFieldParams,
+  UpdateFormFieldParams,
+  FormFieldDeleteResponse,
+  CheckoutPage,
+  CheckoutPageList,
+  CheckoutPageListParams,
+  CreateCheckoutPageParams,
+  CreateCheckoutPageResponse,
+  CheckoutPageResponse,
+  UpdateCheckoutPageParams,
+  UpdateCheckoutPageResponse,
+  DeleteCheckoutPageResponse,
+  CheckoutPageField,
+  CheckoutPageFieldList,
+  CreateCheckoutPageFieldParams,
+  UpdateCheckoutPageFieldParams,
+  CheckoutPageFieldDeleteResponse,
+  UploadFileResponse,
+  UploadFileParams,
+  DeleteFileResponse,
+  DownloadFileResponse,
+  TaxRate,
+  TaxRateList,
+  TaxRateResponse,
+  CreateTaxRateParams,
+  UpdateTaxRateParams,
 } from './types';
 export {
   CheckoutPageError,

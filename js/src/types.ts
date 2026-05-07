@@ -27,6 +27,21 @@ export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit'> & 
 export type Address = NonNullable<Customer['data']['address']>;
 export type Shipping = NonNullable<Customer['data']['shipping']>;
 
+// Submissions
+export type SubmissionResponse =
+  operations['submissions/get']['responses'][200]['content']['application/json'];
+
+export type Submission = SubmissionResponse['data'];
+
+export type SubmissionList =
+  operations['submissions/list']['responses'][200]['content']['application/json'];
+
+export type SubmissionListArgs = operations['submissions/list']['parameters']['query'];
+
+export type SubmissionListParams = Omit<NonNullable<SubmissionListArgs>, 'limit'> & {
+  limit?: number;
+};
+
 // Coupons
 export type CouponList =
   operations['coupons/list']['responses'][200]['content']['application/json'];
@@ -130,9 +145,254 @@ export type SubscriptionPayment = SubscriptionPaymentList['data'][number];
 export type SubscriptionPaymentListArgs =
   operations['subscription_payments/list']['parameters']['query'];
 
-export type SubscriptionPaymentListParams = Omit<NonNullable<SubscriptionPaymentListArgs>, 'limit'> & {
+export type SubscriptionPaymentListParams = Omit<
+  NonNullable<SubscriptionPaymentListArgs>,
+  'limit'
+> & {
   limit?: number;
 };
+
+// Products
+export type Product = operations['products/get']['responses'][200]['content']['application/json'];
+
+export type UpdateProductParams = NonNullable<
+  operations['products/update']['requestBody']
+>['content']['application/json'];
+
+// Events
+export type EventList = operations['events/list']['responses'][200]['content']['application/json'];
+
+export type Event = EventList['data'][number];
+
+export type EventListArgs = operations['events/list']['parameters']['query'];
+
+export type EventListParams = Omit<NonNullable<EventListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateEventParams = NonNullable<
+  operations['events/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateEventResponse =
+  operations['events/create']['responses'][201]['content']['application/json'];
+
+export type EventResponse =
+  operations['events/get']['responses'][200]['content']['application/json'];
+
+export type UpdateEventParams = NonNullable<
+  operations['events/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventResponse =
+  operations['events/update']['responses'][200]['content']['application/json'];
+
+export type DeleteEventResponse =
+  operations['events/delete']['responses'][200]['content']['application/json'];
+
+export type EventTicketGroupList =
+  operations['events/ticket-groups/list']['responses'][200]['content']['application/json'];
+
+export type EventTicketGroup = EventTicketGroupList['data'][number];
+
+export type EventTicketGroupResponse =
+  operations['events/ticket-groups/get']['responses'][200]['content']['application/json'];
+
+export type CreateEventTicketGroupParams = NonNullable<
+  operations['events/ticket-groups/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateEventTicketGroupResponse =
+  operations['events/ticket-groups/create']['responses'][201]['content']['application/json'];
+
+export type UpdateEventTicketGroupParams = NonNullable<
+  operations['events/ticket-groups/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventTicketGroupResponse =
+  operations['events/ticket-groups/update']['responses'][200]['content']['application/json'];
+
+export type DeleteEventTicketGroupResponse =
+  operations['events/ticket-groups/delete']['responses'][200]['content']['application/json'];
+
+export type EventTicketTypeList =
+  operations['events/ticket-groups/ticket-types/list']['responses'][200]['content']['application/json'];
+
+export type EventTicketType = EventTicketTypeList['data'][number];
+
+export type EventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/get']['responses'][200]['content']['application/json'];
+
+export type CreateEventTicketTypeParams = NonNullable<
+  operations['events/ticket-groups/ticket-types/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateEventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/create']['responses'][201]['content']['application/json'];
+
+export type UpdateEventTicketTypeParams = NonNullable<
+  operations['events/ticket-groups/ticket-types/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/update']['responses'][200]['content']['application/json'];
+
+export type DeleteEventTicketTypeResponse =
+  operations['events/ticket-groups/ticket-types/delete']['responses'][200]['content']['application/json'];
+
+// Forms
+export type FormList = operations['forms/list']['responses'][200]['content']['application/json'];
+
+export type Form = FormList['data'][number];
+
+export type FormListArgs = operations['forms/list']['parameters']['query'];
+
+export type FormListParams = Omit<NonNullable<FormListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateFormParams = NonNullable<
+  operations['forms/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateFormResponse =
+  operations['forms/create']['responses'][201]['content']['application/json'];
+
+export type FormResponse = operations['forms/get']['responses'][200]['content']['application/json'];
+
+export type UpdateFormParams = NonNullable<
+  operations['forms/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateFormResponse =
+  operations['forms/update']['responses'][200]['content']['application/json'];
+
+export type DeleteFormResponse =
+  operations['forms/delete']['responses'][200]['content']['application/json'];
+
+// Form fields
+export type FormFieldList =
+  operations['forms/fields/list']['responses'][200]['content']['application/json'];
+
+export type FormField = FormFieldList['data'][number];
+
+export type FormFieldResponse =
+  operations['forms/fields/get']['responses'][200]['content']['application/json'];
+
+export type CreateFormFieldParams = NonNullable<
+  operations['forms/fields/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateFormFieldParams = NonNullable<
+  operations['forms/fields/update']['requestBody']
+>['content']['application/json'];
+
+export type FormFieldDeleteResponse =
+  operations['forms/fields/delete']['responses'][200]['content']['application/json'];
+
+// Checkout pages
+export type CheckoutPageList =
+  operations['checkout-pages/list']['responses'][200]['content']['application/json'];
+
+export type CheckoutPage = CheckoutPageList['data'][number];
+
+export type CheckoutPageListArgs = operations['checkout-pages/list']['parameters']['query'];
+
+export type CheckoutPageListParams = Omit<NonNullable<CheckoutPageListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateCheckoutPageParams = NonNullable<
+  operations['checkout-pages/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateCheckoutPageResponse =
+  operations['checkout-pages/create']['responses'][201]['content']['application/json'];
+
+export type CheckoutPageResponse =
+  operations['checkout-pages/get']['responses'][200]['content']['application/json'];
+
+export type UpdateCheckoutPageParams = NonNullable<
+  operations['checkout-pages/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateCheckoutPageResponse =
+  operations['checkout-pages/update']['responses'][200]['content']['application/json'];
+
+export type DeleteCheckoutPageResponse =
+  operations['checkout-pages/delete']['responses'][200]['content']['application/json'];
+
+// Checkout page fields
+export type CheckoutPageFieldList =
+  operations['checkout-pages/fields/list']['responses'][200]['content']['application/json'];
+
+export type CheckoutPageField = CheckoutPageFieldList['data'][number];
+
+export type CheckoutPageFieldResponse =
+  operations['checkout-pages/fields/get']['responses'][200]['content']['application/json'];
+
+export type CreateCheckoutPageFieldParams = NonNullable<
+  operations['checkout-pages/fields/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateCheckoutPageFieldParams = NonNullable<
+  operations['checkout-pages/fields/update']['requestBody']
+>['content']['application/json'];
+
+export type CheckoutPageFieldDeleteResponse =
+  operations['checkout-pages/fields/delete']['responses'][200]['content']['application/json'];
+
+// Event fields
+export type EventFieldList =
+  operations['events/fields/list']['responses'][200]['content']['application/json'];
+
+export type EventField = EventFieldList['data'][number];
+
+export type EventFieldResponse =
+  operations['events/fields/get']['responses'][200]['content']['application/json'];
+
+export type CreateEventFieldParams = NonNullable<
+  operations['events/fields/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateEventFieldParams = NonNullable<
+  operations['events/fields/update']['requestBody']
+>['content']['application/json'];
+
+export type EventFieldDeleteResponse =
+  operations['events/fields/delete']['responses'][200]['content']['application/json'];
+
+// Files
+export type UploadFileResponse =
+  operations['files/upload']['responses']['201']['content']['application/json'];
+
+export type UploadFileParams = {
+  file: File | Blob;
+  purpose: 'image' | 'file';
+};
+
+export type DeleteFileResponse =
+  operations['files/delete']['responses'][200]['content']['application/json'];
+
+export type DownloadFileResponse =
+  operations['files/download']['responses'][200]['content']['application/json'];
+
+// Tax rates
+export type TaxRateList =
+  operations['tax-rates/list']['responses'][200]['content']['application/json'];
+
+export type TaxRate = TaxRateList['data'][number];
+
+export type TaxRateResponse =
+  operations['tax-rates/create']['responses'][201]['content']['application/json'];
+
+export type CreateTaxRateParams = NonNullable<
+  operations['tax-rates/create']['requestBody']
+>['content']['application/json'];
+
+export type UpdateTaxRateParams = NonNullable<
+  operations['tax-rates/update']['requestBody']
+>['content']['application/json'];
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

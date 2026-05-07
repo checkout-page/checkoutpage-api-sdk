@@ -229,6 +229,54 @@ const pageBookings = await checkoutpage.bookings.list({
 });
 ```
 
+### Products
+
+#### Get a product
+
+```typescript
+const product = await checkoutpage.products.get('product_id');
+```
+
+#### Update a product
+
+```typescript
+const updated = await checkoutpage.products.update('product_id', {
+  title: 'Updated Product Title',
+  description: 'Updated description',
+  price: 5900, // $59.00 in cents
+  stock: 100,
+  hasUnlimitedStock: false,
+});
+```
+
+### Files
+
+#### Upload an image
+
+```typescript
+const imageFile = new File([blob], 'product-image.jpg', { type: 'image/jpeg' });
+
+const result = await checkoutpage.files.upload({
+  file: imageFile,
+  purpose: 'image',
+});
+
+console.log('Image uploaded:', result.data.id, result.data.location);
+```
+
+#### Upload a file
+
+```typescript
+const pdfFile = new File([blob], 'ebook.pdf', { type: 'application/pdf' });
+
+const result = await checkoutpage.files.upload({
+  file: pdfFile,
+  purpose: 'file',
+});
+
+console.log('File uploaded:', result.data.id);
+```
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:
