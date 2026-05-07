@@ -3,6 +3,7 @@ import { CustomerResource } from './resources/customers/customers';
 import { CouponResource } from './resources/coupons/coupons';
 import { PaymentResource } from './resources/payments/payments';
 import { SubscriptionResource } from './resources/subscriptions/subscriptions';
+import { SubscriptionPaymentResource } from './resources/subscription-payments/subscription-payments';
 import { BookingResource } from './resources/bookings/bookings';
 import { TicketResource } from './resources/tickets/tickets';
 import { ProductResource } from './resources/products/products';
@@ -18,6 +19,7 @@ export class CheckoutPageClient {
   public readonly coupons: CouponResource;
   public readonly payments: PaymentResource;
   public readonly subscriptions: SubscriptionResource;
+  public readonly subscriptionPayments: SubscriptionPaymentResource;
   public readonly bookings: BookingResource;
   public readonly tickets: TicketResource;
   public readonly products: ProductResource;
@@ -35,6 +37,7 @@ export class CheckoutPageClient {
     this.coupons = new CouponResource(this.client);
     this.payments = new PaymentResource(this.client);
     this.subscriptions = new SubscriptionResource(this.client);
+    this.subscriptionPayments = new SubscriptionPaymentResource(this.client);
     this.bookings = new BookingResource(this.client);
     this.tickets = new TicketResource(this.client);
     this.products = new ProductResource(this.client);
@@ -67,6 +70,9 @@ export type {
   PaymentList,
   Subscription,
   SubscriptionList,
+  SubscriptionPayment,
+  SubscriptionPaymentList,
+  SubscriptionPaymentListParams,
   ValidateTicketResponse,
   ValidateTicketParams,
   Product,

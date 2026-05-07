@@ -150,6 +150,36 @@ const previousPage = await checkoutpage.subscriptions.list({
 });
 ```
 
+### Subscription Payments
+
+Per-payment records for subscriptions — one record per Stripe invoice charge. Use this for billing history, refund inspection, and "when was I charged?" questions.
+
+#### List subscription payments
+
+```typescript
+const result = await checkoutpage.subscriptionPayments.list({
+  limit: 10,
+});
+console.log(`Total: ${result.total}, has more: ${result.has_more}`);
+```
+
+#### List payments for a single subscription
+
+```typescript
+const result = await checkoutpage.subscriptionPayments.list({
+  subscriptionId: 'sub_id',
+});
+```
+
+#### Filter failed/unpaid payments
+
+```typescript
+const failed = await checkoutpage.subscriptionPayments.list({
+  paymentStatus: 'failed',
+});
+const unpaid = await checkoutpage.subscriptionPayments.list({ paid: 'false' });
+```
+
 ### Payments
 
 #### List payments

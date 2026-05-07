@@ -685,6 +685,162 @@
           "updatedAt"
         ]
       },
+      "SubscriptionPaymentDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              {
+                "description": "Unique identifier for the subscription payment",
+                "example": "507f1f77bcf86cd799439011"
+              }
+            ]
+          },
+          "subscriptionId": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              { "description": "ID of the subscription this payment belongs to" }
+            ]
+          },
+          "customerId": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              { "description": "ID of the customer" }
+            ]
+          },
+          "pageId": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              { "description": "ID of the checkout page" }
+            ]
+          },
+          "productId": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              { "description": "ID of the product" }
+            ]
+          },
+          "sellerId": {
+            "allOf": [
+              { "$ref": "#/components/schemas/UniqueIdentifier" },
+              { "description": "ID of the seller" }
+            ]
+          },
+          "transactionIds": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
+            "description": "IDs of the transactions associated with this payment"
+          },
+          "customerEmail": {
+            "type": "string",
+            "description": "Email of the customer at time of payment"
+          },
+          "customerName": {
+            "type": "string",
+            "description": "Name of the customer at time of payment"
+          },
+          "productTitle": {
+            "type": "string",
+            "description": "Title of the product at time of payment"
+          },
+          "pageSlug": { "type": "string", "description": "Slug of the page at time of payment" },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency code (lowercase)",
+            "example": "usd"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount in the smallest unit of the currency"
+          },
+          "amountUsd": {
+            "type": "number",
+            "description": "Amount converted to USD (smallest unit)"
+          },
+          "livemode": {
+            "type": "boolean",
+            "description": "true for live charges, false for test mode"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": ["succeeded", "pending", "failed", "incomplete"]
+          },
+          "invoiceStatus": {
+            "type": "string",
+            "enum": ["draft", "open", "paid", "uncollectible", "void"]
+          },
+          "paid": { "type": "boolean" },
+          "refunded": { "type": "boolean" },
+          "partiallyRefunded": { "type": "boolean" },
+          "billingReason": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "subscription_create",
+              "subscription_cycle",
+              "subscription_threshold",
+              "subscription_update",
+              "upcoming"
+            ]
+          },
+          "paymentMethod": {
+            "type": "object",
+            "properties": {
+              "gateway": { "type": "string", "enum": ["stripe", "paypal", "manual"] },
+              "method": { "type": "string" },
+              "wallet": { "type": "string" },
+              "mode": { "type": "string", "enum": ["default", "express"] },
+              "brand": { "type": "string" },
+              "last4": { "type": "string" },
+              "country": { "type": "string" },
+              "exp_month": {
+                "type": "number",
+                "description": "Card expiration month.",
+                "deprecated": true
+              },
+              "exp_year": {
+                "type": "number",
+                "description": "Card expiration year.",
+                "deprecated": true
+              },
+              "expMonth": { "type": "number", "description": "Card expiration month." },
+              "expYear": { "type": "number", "description": "Card expiration year." },
+              "funding": { "type": "string" }
+            }
+          },
+          "stripeSubscriptionId": { "type": "string" },
+          "stripePaymentId": { "type": "string" },
+          "stripePaymentIntentId": { "type": "string" },
+          "stripeInvoiceId": { "type": "string" },
+          "stripeInvoicePdf": { "type": "string" },
+          "stripeRefundInvoicePdf": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "amount", "createdAt", "updatedAt"]
+      },
+      "SubscriptionPaymentsListResponse": {
+        "type": "object",
+        "properties": {
+          "has_more": {
+            "type": "boolean",
+            "description": "Whether there are more results available beyond this page",
+            "example": true
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of results matching the query (across all pages)",
+            "example": 42
+          },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubscriptionPaymentDetail" },
+            "description": "Array of results for this page"
+          }
+        },
+        "required": ["has_more", "total", "data"]
+      },
       "SubmissionField": {
         "type": "object",
         "properties": {
@@ -10366,7 +10522,7 @@
     "/v1/tax-rates/": {
       "get": {
         "summary": "List tax rates",
-        "description": "Returns all tax rates for the authenticated seller.",
+        "description": "Returns all tax rates. Tax rates are sorted in order, with the most recent tax rates appearing first.",
         "operationId": "tax-rates/list",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Tax Rates"],
@@ -10389,7 +10545,7 @@
       },
       "post": {
         "summary": "Create a tax rate",
-        "description": "Creates a tax rate in Stripe for the authenticated seller and mirrors it into Checkout Page. In addition to Checkout Page rate limits, Stripe rate limits apply when creating tax rates.",
+        "description": "Creates a tax rate in Checkout Page and is automatically synchronized with Stripe. In addition to Checkout Page rate limits, Stripe [rate limits](https://docs.stripe.com/rate-limits) apply when creating tax rates.",
         "operationId": "tax-rates/create",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Tax Rates"],
@@ -10488,7 +10644,7 @@
     "/v1/tax-rates/:taxRateId": {
       "patch": {
         "summary": "Update a tax rate",
-        "description": "Updates a tax rate. Display name changes are synced to Stripe.",
+        "description": "Updates a tax rate. In addition to Checkout Page rate limits, Stripe [rate limits](https://docs.stripe.com/rate-limits) apply when updating `displayName`. Display name changes are synced to Stripe.",
         "operationId": "tax-rates/update",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Tax Rates"],
@@ -10563,6 +10719,92 @@
           },
           "403": {
             "description": "Forbidden - Seller must connect Stripe before updating tax rates",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Tax rate not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a tax rate",
+        "description": "Soft-deletes a tax rate. The rate is removed from any pages that reference it; those pages keep working but tax is no longer applied to them. The Stripe tax rate object is left intact for historical record.",
+        "operationId": "tax-rates/delete",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Tax Rates"],
+        "parameters": [
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "The unique identifier of the tax rate to delete.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            },
+            "required": true,
+            "description": "The unique identifier of the tax rate to delete.",
+            "name": "taxRateId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tax rate deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "data": { "$ref": "#/components/schemas/TaxRate" } },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -11107,6 +11349,178 @@
                   },
                   "required": ["has_more", "total", "data"]
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/subscription-payments/": {
+      "get": {
+        "summary": "List all subscription payments",
+        "description": "Returns a paginated list of your subscription payments. The subscription payments are sorted in order, with the most recent payments appearing first.",
+        "operationId": "subscription_payments/list",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Subscription Payments"],
+        "parameters": [
+          {
+            "schema": { "$ref": "#/components/schemas/UniqueIdentifier" },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "subscriptionId",
+            "in": "query"
+          },
+          {
+            "schema": { "$ref": "#/components/schemas/UniqueIdentifier" },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "customerId",
+            "in": "query"
+          },
+          {
+            "schema": { "$ref": "#/components/schemas/UniqueIdentifier" },
+            "required": false,
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "name": "pageId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["succeeded", "pending", "failed", "incomplete"]
+            },
+            "required": false,
+            "name": "paymentStatus",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "enum": ["true", "false"] },
+            "required": false,
+            "name": "paid",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "enum": ["true", "false"] },
+            "required": false,
+            "name": "refunded",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "subscription_create",
+                "subscription_cycle",
+                "subscription_threshold",
+                "subscription_update",
+                "upcoming"
+              ]
+            },
+            "required": false,
+            "name": "billingReason",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": { "type": "string", "format": "date-time" },
+            "required": false,
+            "name": "createdBefore",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
+            "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            },
+            "required": false,
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "name": "starting_after",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            },
+            "required": false,
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "name": "ending_before",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription payments retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubscriptionPaymentsListResponse" }
               }
             }
           },
