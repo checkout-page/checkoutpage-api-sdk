@@ -34,7 +34,8 @@ npx ts-node get-customer.ts
 
 ## Available Examples
 
-- `create-coupon.ts` - Create a coupon
+### Customers
+
 - `get-customer.ts` - Retrieve a customer by ID
 - `get-customers.ts` - List all customers
 
