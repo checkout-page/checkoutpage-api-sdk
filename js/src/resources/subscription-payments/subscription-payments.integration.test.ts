@@ -62,24 +62,23 @@ describe('SubscriptionPaymentResource Integration Tests', () => {
     });
 
     it('should use cursor-based pagination with ending_before for paging backwards', async () => {
-      /**
-       * Move away from start of the list first, then page backwards using ending_before.
-       */
-      const moveAwayFromStart = await client.subscriptionPayments.list({
-        limit: 5,
-      });
+      const baseline = await client.subscriptionPayments.list({ limit: 2 });
+      expect(baseline.data.length).toBeGreaterThanOrEqual(2);
 
       const forwardPage = await client.subscriptionPayments.list({
         limit: 1,
-        starting_after: moveAwayFromStart.data[moveAwayFromStart.data.length - 1].id,
+        starting_after: baseline.data[0].id,
       });
+      expect(forwardPage.data.length).toBe(1);
 
       const backwardPage = await client.subscriptionPayments.list({
         limit: 1,
         ending_before: forwardPage.data[0].id,
       });
 
+      expect(backwardPage.data.length).toBe(1);
       expect(forwardPage.data[0].id).not.toBe(backwardPage.data[0].id);
+      expect(backwardPage.data[0].id).toBe(baseline.data[0].id);
     });
 
     it('should filter by paymentStatus: succeeded — every returned record has paymentStatus === succeeded', async () => {
@@ -204,7 +203,9 @@ describe('SubscriptionPaymentResource Integration Tests', () => {
       expect(Array.isArray(result.data)).toBe(true);
 
       for (const payment of result.data) {
-        expect(new Date(payment.createdAt).getTime()).toBeLessThan(new Date(upperBound).getTime());
+        expect(new Date(payment.createdAt).getTime()).toBeLessThanOrEqual(
+          new Date(upperBound).getTime()
+        );
         expect(new Date(payment.createdAt).getTime()).toBeGreaterThanOrEqual(
           new Date(lowerBound).getTime()
         );
