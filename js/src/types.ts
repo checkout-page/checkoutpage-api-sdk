@@ -394,5 +394,18 @@ export type UpdateTaxRateParams = NonNullable<
   operations['tax-rates/update']['requestBody']
 >['content']['application/json'];
 
+// Invoices
+export type Invoice =
+  operations['invoices/list']['responses'][200]['content']['application/json']['data'][number];
+
+export type InvoiceList =
+  operations['invoices/list']['responses'][200]['content']['application/json'];
+
+export type InvoiceListArgs = operations['invoices/list']['parameters']['query'];
+
+export type InvoiceListParams = Omit<NonNullable<InvoiceListArgs>, 'limit'> & {
+  limit?: number;
+};
+
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';
