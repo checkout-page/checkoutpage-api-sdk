@@ -8,6 +8,7 @@ describe('InvoiceResource.list', () => {
     fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
+      headers: { get: () => 'application/json' },
       json: async () => ({ data: [], has_more: false, total: 0 }),
     });
     vi.stubGlobal('fetch', fetchMock);
@@ -50,6 +51,7 @@ describe('InvoiceResource.list', () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       status: 200,
+      headers: { get: () => 'application/json' },
       json: async () => ({ data: [{ id: 'inv_1' }], has_more: true, total: 42 }),
     });
     const client = new CheckoutPageApiClient({ apiKey: 'k' });
