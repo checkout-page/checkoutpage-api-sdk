@@ -1,11 +1,19 @@
-import { describe, it, expect } from 'vitest';
-import { CheckoutPageApiClient } from '../../client';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
-const apiKey = process.env.API_KEY;
-const baseUrl = process.env.BASE_URL ?? 'https://api.checkoutpage.dev';
+describe('InvoiceResource (integration)', () => {
+  let client: CheckoutPageClient;
+  let config: ReturnType<typeof loadIntegrationConfig>;
 
-describe.skipIf(!apiKey)('InvoiceResource (integration)', () => {
-  const client = new CheckoutPageApiClient({ apiKey: apiKey ?? 'placeholder', baseUrl });
+  beforeAll(() => {
+    config = loadIntegrationConfig();
+
+    client = createCheckoutPageClient({
+      apiKey: config.apiKey,
+      baseUrl: config.baseUrl,
+    });
+  });
 
   it('returns the wrapped envelope', async () => {
     const result = await client.invoices.list({ limit: 5 });
