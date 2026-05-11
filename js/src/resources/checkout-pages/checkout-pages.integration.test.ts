@@ -126,7 +126,7 @@ describe('CheckoutPagesResource integration tests', () => {
   afterEach(async () => {
     for (const pageId of [...createdPageIds].reverse()) {
       try {
-        // await client.checkoutPages.delete(pageId);
+        await client.checkoutPages.delete(pageId);
       } catch {
         // Best-effort cleanup for integration tests.
       }
