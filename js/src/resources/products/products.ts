@@ -67,6 +67,9 @@ export class ProductResource {
     if (params.generateLicenseKeys !== undefined) {
       body.generateLicenseKeys = params.generateLicenseKeys;
     }
+    if (params.fixedTaxRateIds !== undefined) {
+      body.fixedTaxRateIds = params.fixedTaxRateIds;
+    }
 
     return this.client.request<Product>({
       method: 'PATCH',
