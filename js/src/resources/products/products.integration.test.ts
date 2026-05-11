@@ -310,11 +310,6 @@ describe('ProductResource Integration Tests', () => {
     });
 
     it('omitting fixedTaxRateIds preserves existing', async () => {
-      if (!testProductId) {
-        console.log('Skipping: No test product ID available');
-        return;
-      }
-
       const taxRate = await client.taxRates.create({
         displayName: `VAT ${uniqueSuffix()}`,
         inclusive: false,

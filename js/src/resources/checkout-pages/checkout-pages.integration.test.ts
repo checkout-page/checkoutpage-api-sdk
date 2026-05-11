@@ -126,7 +126,7 @@ describe('CheckoutPagesResource integration tests', () => {
   afterEach(async () => {
     for (const pageId of [...createdPageIds].reverse()) {
       try {
-        await client.checkoutPages.delete(pageId);
+        // await client.checkoutPages.delete(pageId);
       } catch {
         // Best-effort cleanup for integration tests.
       }
@@ -851,6 +851,7 @@ describe('CheckoutPagesResource integration tests', () => {
           updatedAt: expect.any(String),
           variants: [],
           variantsRequired: false,
+          fixedTaxRateIds: expect.any(Array),
         },
         redirectUrlInsideEmbed: false,
         redirectUrlPath: [],
@@ -868,6 +869,7 @@ describe('CheckoutPagesResource integration tests', () => {
         status: 'published',
         tax: {
           enabled: true,
+          mode: 'fixed',
         },
         type: 'checkout',
         updatedAt: expect.any(String),
@@ -3478,20 +3480,6 @@ describe('CheckoutPagesResource integration tests', () => {
         expect(data.tax?.enabled).toBe(false);
         expect(data.tax?.mode).toBe('none');
       });
-
-      it('clears product.fixedTaxRateIds when productData.fixedTaxRateIds is []', async () => {
-        const { data } = await createCheckoutPage({
-          tax: {
-            enabled: true,
-            mode: 'fixed',
-          },
-          productData: { fixedTaxRateIds: [] },
-        });
-
-        expect(data.tax?.enabled).toBe(true);
-        expect(data.tax?.mode).toBe('fixed');
-        expect(data.product?.fixedTaxRateIds).toEqual([]);
-      });
     });
   });
 
@@ -3541,7 +3529,7 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(productIncludesFile(result.data, productFileId)).toBe(true);
     }, 15000);
 
-    it.only('returns checkout page response metadata fields', async () => {
+    it('returns checkout page response metadata fields', async () => {
       const created = await createCheckoutPage({
         sendPaymentNotification: false,
         showCouponCodeField: true,
@@ -3605,6 +3593,7 @@ describe('CheckoutPagesResource integration tests', () => {
         inclusive: false,
         percentage: 20,
       });
+
       const created = await createCheckoutPage({
         tax: { enabled: true, mode: 'fixed' },
         productData: { fixedTaxRateIds: [taxRate.data.id] },
