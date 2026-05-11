@@ -2140,6 +2140,12 @@
             "example": "exclusive"
           },
           "taxCode": { "type": ["string", "null"], "description": "Stripe tax code." },
+          "fixedTaxRateIds": {
+            "type": ["array", "null"],
+            "items": { "type": "string" },
+            "maxItems": 1,
+            "description": "Applied MerchantTaxRate IDs for this product. Max 1 in v1."
+          },
           "media": {
             "type": ["array", "null"],
             "items": {
@@ -2871,12 +2877,6 @@
                     "type": ["string", "null"],
                     "enum": ["none", "fixed", "stripe"],
                     "description": "Mode `none` means no tax is collected. `fixed` means tax is collected at a fixed rate defined in the tax rate. `stripe` means Stripe tax is used to calculate tax."
-                  },
-                  "fixedTaxRateIds": {
-                    "type": ["array", "null"],
-                    "items": { "type": "string" },
-                    "maxItems": 1,
-                    "description": "List of applied tax rate IDs. When mode is `fixed` and this array is empty, no tax rate has been applied. Configure a default tax rate in your Checkout Page dashboard or pass `fixedTaxRateIds` explicitly. Only one tax rate can be applied right now."
                   }
                 },
                 "description": "Tax configuration for this page."
@@ -4156,6 +4156,13 @@
             "type": ["string", "null"],
             "description": "If Stripe Tax is enabled, determines the tax code used when calculating tax. Defaults to your Stripe Tax settings."
           },
+          "fixedTaxRateIds": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+            "maxItems": 1,
+            "nullable": true,
+            "description": "List of MerchantTaxRate IDs applied to this product. Max 1 in v1. When the page's tax.mode is 'fixed' and this is omitted on create, the seller default rate is applied."
+          },
           "imageIds": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
@@ -4943,13 +4950,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
-              },
-              "fixedTaxRateIds": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
-                "maxItems": 1,
-                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+                "description": "Use mode `fixed` for a fixed tax rate at checkout (configure the rate ID on `productData.fixedTaxRateIds`). `none` collects no tax. Defaults to `stripe` when `enabled` is `true`."
               }
             },
             "required": ["enabled"],
@@ -5661,13 +5662,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
-              },
-              "fixedTaxRateIds": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
-                "maxItems": 1,
-                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+                "description": "Use mode `fixed` for a fixed tax rate at checkout (configure the rate ID on `productData.fixedTaxRateIds`). `none` collects no tax. Defaults to `stripe` when `enabled` is `true`."
               }
             },
             "required": ["enabled"],
@@ -6512,6 +6507,12 @@
                     "type": ["string", "null"],
                     "description": "Stripe tax code for this event."
                   },
+                  "fixedTaxRateIds": {
+                    "type": ["array", "null"],
+                    "items": { "type": "string" },
+                    "maxItems": 1,
+                    "description": "Applied MerchantTaxRate IDs for this event. Max 1 in v1."
+                  },
                   "pdfTicketsEnabled": {
                     "type": ["boolean", "null"],
                     "description": "Whether PDF tickets are generated and sent to attendees after purchase."
@@ -6590,12 +6591,6 @@
                     "type": ["string", "null"],
                     "enum": ["none", "fixed", "stripe"],
                     "description": "Mode `none` means no tax is collected. `fixed` means tax is collected at a fixed rate defined in the tax rate. `stripe` means Stripe tax is used to calculate tax."
-                  },
-                  "fixedTaxRateIds": {
-                    "type": ["array", "null"],
-                    "items": { "type": "string" },
-                    "maxItems": 1,
-                    "description": "List of applied tax rate IDs. When mode is `fixed` and this array is empty, no tax rate has been applied. Configure a default tax rate in your Checkout Page dashboard or pass `fixedTaxRateIds` explicitly. Only one tax rate can be applied right now."
                   }
                 },
                 "description": "Tax configuration for this page."
@@ -7481,13 +7476,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
-              },
-              "fixedTaxRateIds": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
-                "maxItems": 1,
-                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+                "description": "Use mode `fixed` for a fixed tax rate (configure the rate ID on `eventDetails.fixedTaxRateIds`). `none` collects no tax. Defaults to `stripe` when `enabled` is `true`."
               }
             },
             "required": ["enabled"],
@@ -7570,6 +7559,13 @@
                 "type": ["string", "null"],
                 "description": "Stripe tax code for this event.",
                 "example": "txcd_10000000"
+              },
+              "fixedTaxRateIds": {
+                "type": "array",
+                "items": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+                "maxItems": 1,
+                "nullable": true,
+                "description": "List of MerchantTaxRate IDs applied to this event. Max 1 in v1. When the page's tax.mode is 'fixed' and this is omitted on create, the seller default rate is applied."
               },
               "pdfTicketsEnabled": {
                 "type": ["boolean", "null"],
@@ -7991,13 +7987,7 @@
               "mode": {
                 "type": "string",
                 "enum": ["none", "fixed", "stripe"],
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` along with `fixedTaxRateIds` for a fixed tax rate at checkout. Create a tax rate using the `create tax rate` API. Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`."
-              },
-              "fixedTaxRateIds": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
-                "maxItems": 1,
-                "description": "List of tax rate IDs. Currently only one tax rate is supported. If omitted or empty when mode is `fixed`, the account's default tax rate is used automatically. If no default rate is configured, the page will be created with fixed tax mode but no rate applied — configure a default tax rate in your Checkout Page dashboard."
+                "description": "Use mode `fixed` for a fixed tax rate (configure the rate ID on `eventDetails.fixedTaxRateIds`). `none` collects no tax. Defaults to `stripe` when `enabled` is `true`."
               }
             },
             "required": ["enabled"],
@@ -8110,6 +8100,13 @@
                 "type": ["string", "null"],
                 "description": "Stripe tax code for this event.",
                 "example": "txcd_10000000"
+              },
+              "fixedTaxRateIds": {
+                "type": "array",
+                "items": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+                "maxItems": 1,
+                "nullable": true,
+                "description": "List of MerchantTaxRate IDs applied to this event. Max 1 in v1. When the page's tax.mode is 'fixed' and this is omitted on create, the seller default rate is applied."
               },
               "pdfTicketsEnabled": {
                 "type": ["boolean", "null"],
@@ -9199,6 +9196,13 @@
             "example": ""
           },
           "taxCode": { "type": ["string", "null"] },
+          "fixedTaxRateIds": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+            "maxItems": 1,
+            "nullable": true,
+            "description": "List of MerchantTaxRate IDs applied to this product. Max 1 in v1. When the page's tax.mode is 'fixed' and this is omitted on create, the seller default rate is applied."
+          },
           "imageIds": {
             "type": ["array", "null"],
             "items": { "$ref": "#/components/schemas/UniqueIdentifier" },
