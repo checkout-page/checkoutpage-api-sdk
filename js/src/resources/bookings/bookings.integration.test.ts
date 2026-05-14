@@ -287,5 +287,40 @@ describe('BookingResource Integration Tests', () => {
         expect(booking.clientIp === undefined || typeof booking.clientIp === 'string').toBe(true);
       }
     });
+
+    it('should expose taxSource on bookings when set', async () => {
+      const result = await client.bookings.list({ limit: 25 });
+      const bookingWithTaxSource = result.data.find(
+        (booking) => (booking as Record<string, unknown>).taxSource != null
+      );
+
+      const taxSource = (bookingWithTaxSource as Record<string, unknown>).taxSource;
+      expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+    });
+
+    it('should expose a structured taxRates snapshot when fixed_tax_rate is used', async () => {
+      const result = await client.bookings.list({ limit: 50 });
+
+      const bookingWithFixedTaxRates = result.data.find((booking) => {
+        const b = booking as Record<string, unknown>;
+        const taxRates = b.taxRates as unknown[] | undefined;
+        return b.taxSource === 'fixed_tax_rate' && Array.isArray(taxRates) && taxRates.length > 0;
+      });
+
+      const taxRates = (bookingWithFixedTaxRates as Record<string, unknown>).taxRates as Record<
+        string,
+        unknown
+      >[];
+      expect(Array.isArray(taxRates)).toBe(true);
+      expect(taxRates.length).toBeGreaterThan(0);
+
+      for (const snapshot of taxRates) {
+        expect(typeof snapshot.taxRate).toBe('string');
+        expect(typeof snapshot.stripeId).toBe('string');
+        expect(typeof snapshot.displayName).toBe('string');
+        expect(typeof snapshot.inclusive).toBe('boolean');
+        expect(typeof snapshot.percentage).toBe('number');
+      }
+    });
   });
 });

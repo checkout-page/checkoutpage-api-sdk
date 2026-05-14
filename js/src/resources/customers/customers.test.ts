@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CustomerResource } from './customers';
 import { CheckoutPageApiClient } from '../../client';
-import type { Customer, CustomerList } from '../../types';
+import type { Customer, CustomerList, UpdateCustomerResponse } from '../../types';
 
 describe('CustomerResource', () => {
   let client: CheckoutPageApiClient;
@@ -308,6 +308,104 @@ describe('CustomerResource', () => {
       expect(result.data[0].companyName).toBe('Test Company');
       expect(result.data[0].address?.line2).toBe('Suite 100');
       expect(result.data[0].shipping?.address?.city).toBe('Los Angeles');
+    });
+  });
+
+  describe('update', () => {
+    const customerId = '6812fe6e9f39b6760576f01c';
+    const mockResponse: UpdateCustomerResponse = {
+      data: {
+        id: customerId,
+        email: 'updated@example.com',
+        name: 'Updated Name',
+        sellerId: 'seller123',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-02-01T00:00:00.000Z',
+      },
+    };
+
+    it('throws when customerId is missing', async () => {
+      await expect(customerResource.update('', { name: 'X' })).rejects.toThrow(
+        'Customer ID is required',
+      );
+    });
+
+    it('sends a PATCH to /v1/customers/:id with only the provided fields', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await customerResource.update(customerId, {
+        name: 'Updated Name',
+        companyName: 'New Co',
+      });
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/customers/${customerId}`,
+        body: {
+          name: 'Updated Name',
+          companyName: 'New Co',
+        },
+      });
+    });
+
+    it('omits undefined fields from the request body', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await customerResource.update(customerId, {
+        name: 'Only Name',
+        companyName: undefined,
+        phone: undefined,
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/customers/${customerId}`,
+        body: { name: 'Only Name' },
+      });
+    });
+
+    it('passes nested address and shipping subdocuments through unchanged', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const address = {
+        line1: '500 Update Ave',
+        city: 'Austin',
+        state: 'TX',
+        postalCode: '78701',
+        country: 'US',
+      };
+      const shipping = {
+        name: 'Ship-To',
+        phone: '+15555550000',
+        address: {
+          line1: '1 Shipping Way',
+          city: 'Seattle',
+          state: 'WA',
+          postalCode: '98101',
+          country: 'US',
+        },
+      };
+
+      await customerResource.update(customerId, { address, shipping });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/customers/${customerId}`,
+        body: { address, shipping },
+      });
+    });
+
+    it('sends an empty body when no fields are provided', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await customerResource.update(customerId, {});
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/customers/${customerId}`,
+        body: {},
+      });
     });
   });
 });

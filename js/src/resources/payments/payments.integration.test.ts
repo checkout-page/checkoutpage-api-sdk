@@ -342,5 +342,43 @@ describe('PaymentResource Integration Tests', () => {
         expect(payment.clientIp === undefined || typeof payment.clientIp === 'string').toBe(true);
       }
     });
+
+    it('should expose taxSource on payments when set', async () => {
+      const result = await listPayments({ limit: 25 });
+      if (!result) return;
+
+      const paymentWithTaxSource = result.data.find(
+        (payment) => (payment as Record<string, unknown>).taxSource != null
+      );
+
+      const taxSource = (paymentWithTaxSource as Record<string, unknown>).taxSource;
+      expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+    });
+
+    it('should expose a structured taxRates snapshot when fixed_tax_rate is used', async () => {
+      const result = await listPayments({ limit: 50 });
+      if (!result) return;
+
+      const paymentWithFixedTaxRates = result.data.find((payment) => {
+        const p = payment as Record<string, unknown>;
+        const taxRates = p.taxRates as unknown[] | undefined;
+        return p.taxSource === 'fixed_tax_rate' && Array.isArray(taxRates) && taxRates.length > 0;
+      });
+
+      const taxRates = (paymentWithFixedTaxRates as Record<string, unknown>).taxRates as Record<
+        string,
+        unknown
+      >[];
+      expect(Array.isArray(taxRates)).toBe(true);
+      expect(taxRates.length).toBeGreaterThan(0);
+
+      for (const snapshot of taxRates) {
+        expect(typeof snapshot.taxRate).toBe('string');
+        expect(typeof snapshot.stripeId).toBe('string');
+        expect(typeof snapshot.displayName).toBe('string');
+        expect(typeof snapshot.inclusive).toBe('boolean');
+        expect(typeof snapshot.percentage).toBe('number');
+      }
+    });
   });
 });
