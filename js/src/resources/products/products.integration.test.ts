@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
+import { uniqueSuffix } from '../../test-helpers/test-lib';
 
 describe('ProductResource Integration Tests', () => {
   let client: CheckoutPageClient;
@@ -260,6 +261,94 @@ describe('ProductResource Integration Tests', () => {
       expect(updated.stock).toBe(50);
       expect(updated.hasUnlimitedStock).toBe(false);
       expect(updated.sku).toBe('MULTI-UPDATE-001');
+    });
+  });
+
+  describe('fixedTaxRateIds', () => {
+    it('sets fixedTaxRateIds on update', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+
+      const { data: updated } = await client.products.update(testProductId, {
+        fixedTaxRateIds: [taxRate.data.id],
+      });
+
+      expect(updated.id).toBe(testProductId);
+      expect(updated.fixedTaxRateIds).toContain(taxRate.data.id);
+    });
+
+    it('clears fixedTaxRateIds with []', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+
+      await client.products.update(testProductId, {
+        fixedTaxRateIds: [taxRate.data.id],
+      });
+
+      const { data: cleared } = await client.products.update(testProductId, {
+        fixedTaxRateIds: [],
+      });
+
+      expect(cleared.id).toBe(testProductId);
+      expect(cleared.fixedTaxRateIds).toEqual([]);
+    });
+
+    it('omitting fixedTaxRateIds preserves existing', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+
+      await client.products.update(testProductId, {
+        fixedTaxRateIds: [taxRate.data.id],
+      });
+
+      await client.products.update(testProductId, {
+        title: `Preserve Rate Test ${uniqueSuffix()}`,
+      });
+
+      const { data: fetched } = await client.products.get(testProductId);
+
+      expect(fetched.fixedTaxRateIds).toContain(taxRate.data.id);
+    });
+
+    it('returns fixedTaxRateIds in the get response', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+
+      await client.products.update(testProductId, {
+        fixedTaxRateIds: [taxRate.data.id],
+      });
+
+      const { data: fetched } = await client.products.get(testProductId);
+
+      expect(fetched.id).toBe(testProductId);
+      expect(fetched.fixedTaxRateIds).toContain(taxRate.data.id);
     });
   });
 });

@@ -851,6 +851,7 @@ describe('CheckoutPagesResource integration tests', () => {
           updatedAt: expect.any(String),
           variants: [],
           variantsRequired: false,
+          fixedTaxRateIds: expect.any(Array),
         },
         redirectUrlInsideEmbed: false,
         redirectUrlPath: [],
@@ -868,6 +869,7 @@ describe('CheckoutPagesResource integration tests', () => {
         status: 'published',
         tax: {
           enabled: true,
+          mode: 'fixed',
         },
         type: 'checkout',
         updatedAt: expect.any(String),
@@ -3438,13 +3440,13 @@ describe('CheckoutPagesResource integration tests', () => {
           tax: {
             enabled: true,
             mode: 'fixed',
-            fixedTaxRateIds: [taxRate.data.id],
           },
+          productData: { fixedTaxRateIds: [taxRate.data.id] },
         });
 
         expect(data.tax?.enabled).toBe(true);
         expect(data.tax?.mode).toBe('fixed');
-        expect(data.tax?.fixedTaxRateIds).toContain(taxRate.data.id);
+        expect(data.product?.fixedTaxRateIds).toContain(taxRate.data.id);
       });
 
       it('creates with fixed mode and no fixedTaxRateIds — auto-resolves the account default rate', async () => {
@@ -3464,7 +3466,7 @@ describe('CheckoutPagesResource integration tests', () => {
 
         expect(data.tax?.enabled).toBe(true);
         expect(data.tax?.mode).toBe('fixed');
-        expect(data.tax?.fixedTaxRateIds).toContain(defaultRate.data.id);
+        expect(data.product?.fixedTaxRateIds).toContain(defaultRate.data.id);
       });
 
       it('creates a checkout page with tax disabled', async () => {
@@ -3527,7 +3529,7 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(productIncludesFile(result.data, productFileId)).toBe(true);
     }, 15000);
 
-    it.only('returns checkout page response metadata fields', async () => {
+    it('returns checkout page response metadata fields', async () => {
       const created = await createCheckoutPage({
         sendPaymentNotification: false,
         showCouponCodeField: true,
@@ -3583,6 +3585,22 @@ describe('CheckoutPagesResource integration tests', () => {
           confirmationCheckoutMessage: funnelMessage,
         },
       });
+    });
+
+    it('returns product.fixedTaxRateIds in the get response', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+
+      const created = await createCheckoutPage({
+        tax: { enabled: true, mode: 'fixed' },
+        productData: { fixedTaxRateIds: [taxRate.data.id] },
+      });
+      const result = await client.checkoutPages.get(created.data.id);
+
+      expect(result.data.product?.fixedTaxRateIds).toContain(taxRate.data.id);
     });
 
     it('fails for an unknown checkout page id', async () => {
@@ -4160,6 +4178,28 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.product?.description).toBeTypeOf('string');
       expect(data.product?.description).toContain('<p>');
       expect(data.product?.description).not.toContain('"root"');
+    });
+
+    it('rate updates flow through products.update, not checkout-pages.update', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+      const created = await createCheckoutPage({
+        tax: { enabled: true, mode: 'fixed' },
+      });
+      const productId = created.data.product?.id;
+      if (!productId) {
+        console.log('Skipping: No product ID on created page');
+        return;
+      }
+
+      const updated = await client.products.update(productId, {
+        fixedTaxRateIds: [taxRate.data.id],
+      });
+
+      expect(updated.data.fixedTaxRateIds).toContain(taxRate.data.id);
     });
   });
 });

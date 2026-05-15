@@ -6,6 +6,7 @@ import {
   RateLimitError,
   ValidationError,
 } from './errors';
+import { InvoiceResource } from './resources/invoices/invoices';
 
 export interface CheckoutPageApiClientOptions {
   apiKey: string;
@@ -23,6 +24,7 @@ export interface RequestOptions {
 export class CheckoutPageApiClient {
   private readonly apiKey: string;
   private readonly baseUrl: string;
+  public readonly invoices: InvoiceResource;
 
   constructor(options: CheckoutPageApiClientOptions) {
     if (!options.apiKey) {
@@ -31,6 +33,7 @@ export class CheckoutPageApiClient {
 
     this.apiKey = options.apiKey;
     this.baseUrl = options.baseUrl || 'https://api.checkoutpage.com';
+    this.invoices = new InvoiceResource(this);
   }
 
   async request<T>(options: RequestOptions): Promise<T> {

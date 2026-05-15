@@ -13,6 +13,7 @@ import { EventsResource } from './resources/events/events';
 import { FormsResource } from './resources/forms/forms';
 import { SubmissionResource } from './resources/submissions/submissions';
 import { TaxRateResource } from './resources/tax-rates/tax-rates';
+import { InvoiceResource } from './resources/invoices/invoices';
 
 export class CheckoutPageClient {
   public readonly customers: CustomerResource;
@@ -29,6 +30,7 @@ export class CheckoutPageClient {
   public readonly forms: FormsResource;
   public readonly submissions: SubmissionResource;
   public readonly taxRates: TaxRateResource;
+  public readonly invoices: InvoiceResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -47,6 +49,7 @@ export class CheckoutPageClient {
     this.forms = new FormsResource(this.client);
     this.submissions = new SubmissionResource(this.client);
     this.taxRates = new TaxRateResource(this.client);
+    this.invoices = new InvoiceResource(this.client);
   }
 }
 
@@ -145,6 +148,9 @@ export type {
   TaxRateResponse,
   CreateTaxRateParams,
   UpdateTaxRateParams,
+  Invoice,
+  InvoiceList,
+  InvoiceListParams,
 } from './types';
 export {
   CheckoutPageError,

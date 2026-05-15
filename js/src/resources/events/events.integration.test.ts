@@ -841,7 +841,7 @@ describe('EventsResource integration tests', () => {
       ).rejects.toThrow(ValidationError);
     });
 
-    describe.only('tax', () => {
+    describe('tax', () => {
       it('creates an event with stripe tax mode', async () => {
         const { data } = await createEvent({
           tax: {
@@ -866,9 +866,7 @@ describe('EventsResource integration tests', () => {
             enabled: true,
             mode: 'fixed',
           },
-          eventDetails: {
-            fixedTaxRateIds: [taxRate.data.id],
-          },
+          eventDetails: { fixedTaxRateIds: [taxRate.data.id] },
         });
 
         expect(data.tax?.enabled).toBe(true);
@@ -906,6 +904,17 @@ describe('EventsResource integration tests', () => {
 
         expect(data.tax?.enabled).toBe(false);
         expect(data.tax?.mode).toBe('none');
+      });
+
+      it('clears eventDetails.fixedTaxRateIds when set to []', async () => {
+        const { data } = await createEvent({
+          tax: { enabled: true, mode: 'fixed' },
+          eventDetails: { fixedTaxRateIds: [] },
+        });
+
+        expect(data.tax?.enabled).toBe(true);
+        expect(data.tax?.mode).toBe('fixed');
+        expect(data.eventDetails?.fixedTaxRateIds).toEqual([]);
       });
     });
   });
@@ -966,6 +975,21 @@ describe('EventsResource integration tests', () => {
       expect(response.status).toBe(404);
       expect(response.headers.get('content-type')).toContain('application/json');
       expectErrorEnvelope(payload, `Event ${eventId} not found`);
+    });
+
+    it('returns eventDetails.fixedTaxRateIds in the get response', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+      const created = await createEvent({
+        tax: { enabled: true, mode: 'fixed' },
+        eventDetails: { fixedTaxRateIds: [taxRate.data.id] },
+      });
+      const result = await client.events.get(created.data.id);
+
+      expect(result.data.eventDetails?.fixedTaxRateIds).toContain(taxRate.data.id);
     });
 
     it('fails for a malformed event id', async () => {
@@ -1446,6 +1470,59 @@ describe('EventsResource integration tests', () => {
       await expect(
         client.events.update('not-a-valid-id', { name: 'Malformed update' })
       ).rejects.toThrow(ValidationError);
+    });
+
+    it('updates eventDetails.fixedTaxRateIds on an existing event', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+      const created = await createEvent({
+        tax: { enabled: true, mode: 'fixed' },
+      });
+
+      const result = await client.events.update(created.data.id, {
+        eventDetails: { fixedTaxRateIds: [taxRate.data.id] },
+      });
+
+      expect(result.data.eventDetails?.fixedTaxRateIds).toContain(taxRate.data.id);
+    });
+
+    it('clears eventDetails.fixedTaxRateIds by passing []', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+      const created = await createEvent({
+        tax: { enabled: true, mode: 'fixed' },
+        eventDetails: { fixedTaxRateIds: [taxRate.data.id] },
+      });
+
+      const result = await client.events.update(created.data.id, {
+        eventDetails: { fixedTaxRateIds: [] },
+      });
+
+      expect(result.data.eventDetails?.fixedTaxRateIds).toEqual([]);
+    });
+
+    it('omitting eventDetails.fixedTaxRateIds preserves existing rate', async () => {
+      const taxRate = await client.taxRates.create({
+        displayName: `VAT ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 20,
+      });
+      const created = await createEvent({
+        tax: { enabled: true, mode: 'fixed' },
+        eventDetails: { fixedTaxRateIds: [taxRate.data.id] },
+      });
+
+      const result = await client.events.update(created.data.id, {
+        name: `Updated Name ${uniqueSuffix()}`,
+      });
+
+      expect(result.data.eventDetails?.fixedTaxRateIds).toContain(taxRate.data.id);
     });
   });
 
