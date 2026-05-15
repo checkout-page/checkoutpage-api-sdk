@@ -516,6 +516,8 @@
             "description": "The name of the tax rate. Used in the checkout and invoice.",
             "example": "VAT"
           },
+          "default": { "type": "boolean" },
+          "active": { "type": "boolean" },
           "inclusive": { "type": "boolean", "description": "Whether the tax rate is inclusive." },
           "percentage": {
             "type": "number",
@@ -523,8 +525,8 @@
             "maximum": 100,
             "description": "The percentage of the tax rate."
           },
-          "createdAt": { "type": ["string", "null"], "format": "date-time" },
-          "updatedAt": { "type": ["string", "null"], "format": "date-time" }
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
         },
         "required": ["taxRate", "stripeId", "displayName", "inclusive", "percentage"],
         "description": "Tax rate values captured at the time of the transaction."
@@ -730,23 +732,20 @@
       "SubscriptionPaymentsListResponse": {
         "type": "object",
         "properties": {
-          "has_more": {
-            "type": "boolean",
-            "description": "Whether there are more results available beyond this page",
-            "example": true
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SubscriptionPaymentDetail" }
           },
           "total": {
             "type": "number",
-            "description": "Total number of results matching the query (across all pages)",
-            "example": 42
+            "description": "Total number of records matching the query across all pages."
           },
-          "data": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SubscriptionPaymentDetail" },
-            "description": "Array of results for this page"
+          "has_more": {
+            "type": "boolean",
+            "description": "Whether more records exist beyond the current page."
           }
         },
-        "required": ["has_more", "total", "data"]
+        "required": ["data", "total", "has_more"]
       },
       "SubscriptionPaymentDetail": {
         "type": "object",
@@ -10303,23 +10302,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Booking" }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Booking" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -10416,7 +10412,16 @@
             "name": "ending_before",
             "in": "query"
           },
-          { "schema": { "type": "string" }, "required": false, "name": "search", "in": "query" },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Case-insensitive search matched against customer name and email."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against customer name and email.",
+            "name": "search",
+            "in": "query"
+          },
           {
             "schema": { "type": "string", "format": "date-time" },
             "required": false,
@@ -10438,23 +10443,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Customer" }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Customer" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -10966,23 +10968,617 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "data": { "type": "array", "items": { "$ref": "#/components/schemas/Coupon" } },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of records matching the query across all pages."
+                    },
                     "has_more": {
                       "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                      "description": "Whether more records exist beyond the current page."
+                    }
+                  },
+                  "required": ["data", "total", "has_more"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invoices/": {
+      "get": {
+        "summary": "List all invoices",
+        "description": "Returns a paginated list of invoices. Invoices belong to payments and bookings only. Filter by `chargeId` to retrieve the invoice(s) for a specific payment or booking. Sorted with the most recent invoices first.",
+        "operationId": "invoices/list",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Invoices"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": 20,
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20."
+            },
+            "required": false,
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            },
+            "required": false,
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "name": "starting_after",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            },
+            "required": false,
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "name": "ending_before",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `invoiceNumber`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; identifier-like inputs (`INV-1234`) match `invoiceNumber`; multi-word inputs match `customerName` and `productTitle`. Best default when the user gives an ambiguous query. A customer may have multiple invoice records — always review all matches, not just the first."
+            },
+            "required": false,
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `invoiceNumber`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; identifier-like inputs (`INV-1234`) match `invoiceNumber`; multi-word inputs match `customerName` and `productTitle`. Best default when the user gives an ambiguous query. A customer may have multiple invoice records — always review all matches, not just the first.",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "open",
+                "paid",
+                "uncollectible",
+                "refunded",
+                "partially_refunded",
+                "void"
+              ],
+              "description": "Filter by invoice status. Only one status per call. Valid values: draft, open, paid, uncollectible, refunded, partially_refunded, void. Use \"paid\" for completed invoices, \"open\" for outstanding, \"refunded\" or \"partially_refunded\" for refund history, \"void\" for cancelled. Filter by status when counting a category — an unfiltered total includes drafts and voids."
+            },
+            "required": false,
+            "description": "Filter by invoice status. Only one status per call. Valid values: draft, open, paid, uncollectible, refunded, partially_refunded, void. Use \"paid\" for completed invoices, \"open\" for outstanding, \"refunded\" or \"partially_refunded\" for refund history, \"void\" for cancelled. Filter by status when counting a category — an unfiltered total includes drafts and voids.",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Return all invoices for a specific customer. Useful when you already have the customer record (e.g. from get_customer or list_customers)."
+                }
+              ]
+            },
+            "required": false,
+            "description": "Return all invoices for a specific customer. Useful when you already have the customer record (e.g. from get_customer or list_customers).",
+            "name": "customerId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                {
+                  "description": "Return invoices for a specific payment (Charge). Use when a customer asks for a copy of their invoice and you already have the originating payment ID. Most charges have one invoice."
+                }
+              ]
+            },
+            "required": false,
+            "description": "Return invoices for a specific payment (Charge). Use when a customer asks for a copy of their invoice and you already have the originating payment ID. Most charges have one invoice.",
+            "name": "chargeId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Exact match on the invoice PO number. Use for \"find the invoice for PO-5678\"."
+            },
+            "required": false,
+            "description": "Exact match on the invoice PO number. Use for \"find the invoice for PO-5678\".",
+            "name": "poNumber",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Inclusive lower bound on invoice createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-01-01T00:00:00Z`). Never use a local timezone offset — invoices are stored and compared in UTC."
+            },
+            "required": false,
+            "description": "Inclusive lower bound on invoice createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-01-01T00:00:00Z`). Never use a local timezone offset — invoices are stored and compared in UTC.",
+            "name": "createdAfter",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Inclusive upper bound on invoice createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-12-31T23:59:59Z`). Never use a local timezone offset — invoices are stored and compared in UTC."
+            },
+            "required": false,
+            "description": "Inclusive upper bound on invoice createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-12-31T23:59:59Z`). Never use a local timezone offset — invoices are stored and compared in UTC.",
+            "name": "createdBefore",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoices retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              { "description": "Unique identifier for the invoice." }
+                            ]
+                          },
+                          "sellerId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              { "description": "Seller account that owns this invoice." }
+                            ]
+                          },
+                          "customerId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Customer record this invoice belongs to. For full customer profile fields (company, phone, tax ID), call get_customer with this id."
+                              }
+                            ]
+                          },
+                          "chargeId": {
+                            "allOf": [
+                              { "$ref": "#/components/schemas/UniqueIdentifier" },
+                              {
+                                "description": "Originating payment (Charge) that generated this invoice. For refund details (amountRefunded, lastRefundAt, lastRefundReason) look up the Charge via list_payments — the invoice itself does not carry refund metadata."
+                              }
+                            ]
+                          },
+                          "livemode": {
+                            "type": "boolean",
+                            "description": "True for live-mode invoices; false for test-mode invoices. Test- and live-mode data are isolated."
+                          },
+                          "currency": {
+                            "type": "string",
+                            "description": "ISO 4217 currency code (lowercase, e.g. \"usd\", \"gbp\", \"eur\")."
+                          },
+                          "amount": {
+                            "type": "number",
+                            "description": "Total invoice amount in the smallest currency unit (e.g. 10661 USD = $106.61, 500 JPY = ¥500). Divide by 100 before displaying, except for zero-decimal currencies like JPY."
+                          },
+                          "amountRefunded": {
+                            "type": "number",
+                            "description": "Amount refunded against this invoice in the smallest currency unit. Refund metadata lives on the originating Charge — query list_payments by chargeId for full refund history."
+                          },
+                          "amountUsd": {
+                            "type": "number",
+                            "description": "Total amount converted to USD at the time of the invoice, in the smallest currency unit (cents)."
+                          },
+                          "amountPaid": {
+                            "type": "number",
+                            "description": "Amount paid in the smallest currency unit. Equal to `amount` when status is \"paid\"."
+                          },
+                          "amountDue": {
+                            "type": "number",
+                            "description": "Outstanding amount in the smallest currency unit. Non-zero only on \"open\" or \"uncollectible\" invoices."
+                          },
+                          "amountExcludingTax": {
+                            "type": "number",
+                            "description": "Subtotal of the invoice excluding tax, in the smallest currency unit."
+                          },
+                          "taxAmount": {
+                            "type": "number",
+                            "description": "Total tax amount on the invoice in the smallest currency unit."
+                          },
+                          "taxBreakdown": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "taxType": {
+                                  "type": "string",
+                                  "description": "Tax classification for this line of the breakdown (e.g. \"vat\", \"sales_tax\")."
+                                },
+                                "taxabilityReason": {
+                                  "type": "string",
+                                  "description": "Why the line was treated as taxable or not (e.g. \"standard_rated\", \"zero_rated\", \"not_collecting\")."
+                                },
+                                "taxableAmount": {
+                                  "type": "number",
+                                  "description": "Amount subject to tax for this line, in the smallest currency unit."
+                                },
+                                "taxAmount": {
+                                  "type": "number",
+                                  "description": "Tax collected for this line, in the smallest currency unit."
+                                },
+                                "taxRateDetails": {
+                                  "type": ["object", "null"],
+                                  "properties": {
+                                    "country": {
+                                      "type": ["string", "null"],
+                                      "description": "ISO 3166-1 alpha-2 country code the tax rate applies to."
+                                    },
+                                    "percentageDecimal": {
+                                      "type": ["number", "null"],
+                                      "description": "Tax percentage as a decimal (e.g. 0.2 for 20%)."
+                                    },
+                                    "state": {
+                                      "type": ["string", "null"],
+                                      "description": "Subdivision the tax rate applies to (e.g. US state code)."
+                                    },
+                                    "taxType": {
+                                      "type": ["string", "null"],
+                                      "description": "Tax classification (e.g. \"vat\", \"sales_tax\")."
+                                    }
+                                  },
+                                  "description": "Detail of the tax rate applied to this line (country/state/type/percentage)."
+                                }
+                              }
+                            },
+                            "description": "Per-line-item tax breakdown. Use this when a customer asks how tax was calculated."
+                          },
+                          "taxSource": {
+                            "type": ["string", "null"],
+                            "enum": ["fixed_tax_rate", "stripe_tax", null],
+                            "description": "How tax was calculated: \"stripe_tax\" (Stripe Tax service) or \"fixed_tax_rate\" (merchant-defined rates). Null when the invoice has no tax."
+                          },
+                          "taxRates": {
+                            "type": "array",
+                            "items": { "$ref": "#/components/schemas/HistoricalTaxRateSnapshot" },
+                            "description": "Historical snapshot of the merchant tax rates that applied at the time of the invoice. Preserved even if the merchant later edits or deletes the rate."
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "draft",
+                              "open",
+                              "paid",
+                              "uncollectible",
+                              "refunded",
+                              "partially_refunded",
+                              "void"
+                            ],
+                            "description": "Invoice status. \"paid\" — payment was collected. \"open\" — outstanding. \"uncollectible\" — payment failed and was abandoned. \"refunded\" — fully refunded. \"partially_refunded\" — partial refund issued. \"void\" — cancelled. \"draft\" — not yet finalised."
+                          },
+                          "lineItems": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": ["string", "null"],
+                                  "enum": ["product", "setupFee", "variantOption", "ticket", null],
+                                  "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket."
+                                },
+                                "name": {
+                                  "type": ["string", "null"],
+                                  "description": "Display name for the line item (typically the product title or variant label)."
+                                },
+                                "quantity": {
+                                  "type": ["number", "null"],
+                                  "description": "Quantity purchased for this line."
+                                },
+                                "unitPrice": {
+                                  "type": ["number", "null"],
+                                  "description": "Per-unit price in the smallest currency unit, before discount."
+                                },
+                                "amount": {
+                                  "type": ["number", "null"],
+                                  "description": "Line total (quantity × unitPrice) in the smallest currency unit, before discount."
+                                },
+                                "bulkDiscountAmount": {
+                                  "type": ["number", "null"],
+                                  "description": "Bulk-discount amount applied to this line, in the smallest currency unit."
+                                },
+                                "couponDiscountAmount": {
+                                  "type": ["number", "null"],
+                                  "description": "Coupon-discount amount applied to this line, in the smallest currency unit."
+                                },
+                                "couponCode": {
+                                  "type": ["string", "null"],
+                                  "description": "Code of the coupon that produced `couponDiscountAmount`, if any."
+                                }
+                              }
+                            },
+                            "description": "Itemised list of products, variants, setup fees, and tickets on the invoice. Use when a customer asks what they were charged for."
+                          },
+                          "subtotal": {
+                            "type": "number",
+                            "description": "Sum of line items before discount and tax, in the smallest currency unit."
+                          },
+                          "subtotalAfterDiscount": {
+                            "type": "number",
+                            "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit."
+                          },
+                          "bulkDiscount": {
+                            "type": "object",
+                            "properties": {
+                              "minQuantity": {
+                                "type": "number",
+                                "description": "Minimum quantity at which this discount tier activates."
+                              },
+                              "maxQuantity": {
+                                "type": "number",
+                                "description": "Maximum quantity covered by this discount tier (omit for open-ended)."
+                              },
+                              "percentOff": {
+                                "type": "number",
+                                "description": "Percentage off per unit (0-100). Mutually exclusive with `amountOff`."
+                              },
+                              "amountOff": {
+                                "type": "number",
+                                "description": "Fixed amount off per unit, in the smallest currency unit. Mutually exclusive with `percentOff`."
+                              },
+                              "amount": {
+                                "type": "number",
+                                "description": "Resolved total discount applied to the invoice, in the smallest currency unit."
+                              }
+                            },
+                            "description": "Quantity-based discount applied to the invoice, when one was in effect."
+                          },
+                          "fees": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "Display name for the fee (e.g. \"Shipping\", \"Processing\")."
+                                },
+                                "amount": {
+                                  "type": "number",
+                                  "description": "Fee amount in the smallest currency unit."
+                                },
+                                "percentage": {
+                                  "type": "number",
+                                  "description": "Fee as a percentage of the subtotal (0-100), when defined that way."
+                                }
+                              }
+                            },
+                            "description": "Additional fees on the invoice (e.g. shipping, processing)."
+                          },
+                          "coupon": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "allOf": [
+                                  { "$ref": "#/components/schemas/UniqueIdentifier" },
+                                  {
+                                    "description": "Coupon record id. Resolve full coupon details by id if needed."
+                                  }
+                                ]
+                              },
+                              "label": {
+                                "type": "string",
+                                "description": "Customer-facing label for the coupon."
+                              },
+                              "code": {
+                                "type": "string",
+                                "description": "Coupon code redeemed on the invoice (case-sensitive as stored)."
+                              },
+                              "amountOff": {
+                                "type": "number",
+                                "description": "Fixed amount off the invoice, in the smallest currency unit. Mutually exclusive with `percentOff`."
+                              },
+                              "percentOff": {
+                                "type": "number",
+                                "description": "Percentage off the invoice (0-100). Mutually exclusive with `amountOff`."
+                              },
+                              "discount": {
+                                "type": "number",
+                                "description": "Resolved discount applied to the invoice, in the smallest currency unit."
+                              }
+                            },
+                            "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount."
+                          },
+                          "poNumber": {
+                            "type": ["string", "null"],
+                            "description": "Customer-supplied purchase-order number. Filterable via the `poNumber` query param."
+                          },
+                          "poNumberLabel": {
+                            "type": ["string", "null"],
+                            "description": "Merchant-defined label for the PO number field (e.g. \"Purchase Order\", \"Reference\")."
+                          },
+                          "invoiceUuid": {
+                            "type": "string",
+                            "description": "Stable UUID for the invoice, used in invoice URLs."
+                          },
+                          "invoiceNumber": {
+                            "type": "string",
+                            "description": "Human-readable invoice number (e.g. \"INV-0001\"). Use when a customer asks for their invoice number."
+                          },
+                          "invoiceUrl": {
+                            "type": "string",
+                            "description": "Hosted URL for the invoice PDF/page."
+                          },
+                          "billing": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "Buyer name captured at checkout."
+                              },
+                              "email": {
+                                "type": "string",
+                                "description": "Buyer email captured at checkout. Lowercased."
+                              },
+                              "phone": {
+                                "type": "string",
+                                "description": "Buyer phone captured at checkout, free-form."
+                              },
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "line1": { "type": "string" },
+                                  "line2": { "type": "string" },
+                                  "city": { "type": "string" },
+                                  "state": { "type": "string" },
+                                  "postalCode": { "type": "string" },
+                                  "country": { "type": "string" }
+                                },
+                                "description": "Buyer billing address captured at checkout."
+                              },
+                              "taxId": {
+                                "type": "string",
+                                "description": "Buyer tax ID (e.g. VAT/GST number) captured at checkout."
+                              },
+                              "taxIdType": {
+                                "type": "string",
+                                "description": "Type/jurisdiction of the buyer tax ID (e.g. \"eu_vat\", \"us_ein\")."
+                              }
+                            },
+                            "description": "Buyer billing details captured at checkout (name, email, phone, address, tax ID). May be empty for digital products."
+                          },
+                          "sellerBilling": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "description": "Seller legal/display name on the invoice."
+                              },
+                              "email": {
+                                "type": "string",
+                                "description": "Seller support/billing email on the invoice."
+                              },
+                              "taxId": {
+                                "type": "string",
+                                "description": "Seller tax registration ID printed on the invoice."
+                              },
+                              "address": {
+                                "type": "object",
+                                "properties": {
+                                  "line1": { "type": "string" },
+                                  "line2": { "type": "string" },
+                                  "city": { "type": "string" },
+                                  "state": { "type": "string" },
+                                  "postalCode": { "type": "string" },
+                                  "country": { "type": "string" }
+                                },
+                                "description": "Seller registration address printed on the invoice."
+                              }
+                            },
+                            "description": "Seller registration details on the invoice (name, email, tax ID, address). Use when a customer asks about the seller's tax registration."
+                          },
+                          "customerName": {
+                            "type": "string",
+                            "description": "Customer name on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerName` or `search` query params."
+                          },
+                          "customerEmail": {
+                            "type": "string",
+                            "description": "Customer email on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerEmail` or `search` query params."
+                          },
+                          "productTitle": {
+                            "type": "string",
+                            "description": "Title of the first product line item on the invoice. Denormalised for search and filtering."
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "ISO-8601 UTC timestamp the invoice was created."
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "ISO-8601 UTC timestamp the invoice was last updated."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "sellerId",
+                          "livemode",
+                          "currency",
+                          "amount",
+                          "status",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "description": "Invoice generated from a payment (Charge) on the Checkout Page account. Read-only."
+                      }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Coupon" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -11483,16 +12079,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
-                    },
-                    "total": {
-                      "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
-                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -11883,11 +12469,18 @@
                           "updatedAt": { "type": "string", "format": "date-time" }
                         },
                         "required": ["id", "amount", "createdAt", "updatedAt"]
-                      },
-                      "description": "Array of results for this page"
+                      }
+                    },
+                    "total": {
+                      "type": "number",
+                      "description": "Total number of records matching the query across all pages."
+                    },
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -12531,23 +13124,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Payment" }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Payment" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -12674,23 +13264,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/CheckoutPageResponse" }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/CheckoutPageResponse" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -14206,23 +14793,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/FormPageResponse" }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/FormPageResponse" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }
@@ -16009,23 +16593,20 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "has_more": {
-                      "type": "boolean",
-                      "description": "Whether there are more results available beyond this page",
-                      "example": true
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/EventPageResponse" }
                     },
                     "total": {
                       "type": "number",
-                      "description": "Total number of results matching the query (across all pages)",
-                      "example": 42
+                      "description": "Total number of records matching the query across all pages."
                     },
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/EventPageResponse" },
-                      "description": "Array of results for this page"
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "Whether more records exist beyond the current page."
                     }
                   },
-                  "required": ["has_more", "total", "data"]
+                  "required": ["data", "total", "has_more"]
                 }
               }
             }

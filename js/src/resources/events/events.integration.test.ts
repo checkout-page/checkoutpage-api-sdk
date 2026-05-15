@@ -865,13 +865,15 @@ describe('EventsResource integration tests', () => {
           tax: {
             enabled: true,
             mode: 'fixed',
+          },
+          eventDetails: {
             fixedTaxRateIds: [taxRate.data.id],
           },
         });
 
         expect(data.tax?.enabled).toBe(true);
         expect(data.tax?.mode).toBe('fixed');
-        expect(data.tax?.fixedTaxRateIds).toContain(taxRate.data.id);
+        expect(data.eventDetails?.fixedTaxRateIds).toContain(taxRate.data.id);
       });
 
       it('creates with fixed mode and no fixedTaxRateIds — auto-resolves the account default rate', async () => {
@@ -891,7 +893,7 @@ describe('EventsResource integration tests', () => {
 
         expect(data.tax?.enabled).toBe(true);
         expect(data.tax?.mode).toBe('fixed');
-        expect(data.tax?.fixedTaxRateIds).toContain(defaultRate.data.id);
+        expect(data.eventDetails?.fixedTaxRateIds).toContain(defaultRate.data.id);
       });
 
       it('creates an event with tax disabled', async () => {
