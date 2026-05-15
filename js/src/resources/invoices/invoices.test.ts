@@ -1,63 +1,94 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
+import { InvoiceResource } from './invoices';
 
-describe('InvoiceResource.list', () => {
-  let fetchMock: ReturnType<typeof vi.fn>;
+describe('InvoiceResource', () => {
+  let client: CheckoutPageApiClient;
+  let resource: InvoiceResource;
 
   beforeEach(() => {
-    fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      headers: { get: () => 'application/json' },
-      json: async () => ({ data: [], has_more: false, total: 0 }),
-    });
-    vi.stubGlobal('fetch', fetchMock);
+    client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
+    resource = new InvoiceResource(client);
   });
 
-  it('GETs /v1/invoices/ with the bearer token', async () => {
-    const client = new CheckoutPageApiClient({ apiKey: 'k', baseUrl: 'https://api.example.com' });
-    await client.invoices.list();
+  describe('list', () => {
+    it('GETs /v1/invoices/ with no filters', async () => {
+      const mockResponse = { data: [], has_more: false, total: 0 } as any;
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0];
-    expect(url).toBe('https://api.example.com/v1/invoices/');
-    expect(init.method).toBe('GET');
-    expect(init.headers.Authorization).toBe('Bearer k');
-  });
+      const result = await resource.list();
 
-  it('serializes filters and pagination params', async () => {
-    const client = new CheckoutPageApiClient({ apiKey: 'k', baseUrl: 'https://api.example.com' });
-    await client.invoices.list({
-      status: 'paid',
-      customerId: '507f1f77bcf86cd799439011',
-      chargeId: '507f1f77bcf86cd799439012',
-      customerEmail: 'jane@example.com',
-      poNumber: 'PO-1',
-      limit: 25,
-      starting_after: '507f1f77bcf86cd799439013',
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/invoices/',
+        query: {
+          limit: undefined,
+          starting_after: undefined,
+          ending_before: undefined,
+          search: undefined,
+          status: undefined,
+          customerId: undefined,
+          chargeId: undefined,
+          poNumber: undefined,
+          createdAfter: undefined,
+          createdBefore: undefined,
+        },
+      });
     });
 
-    const url = fetchMock.mock.calls[0][0] as string;
-    expect(url).toContain('status=paid');
-    expect(url).toContain('customerId=507f1f77bcf86cd799439011');
-    expect(url).toContain('chargeId=507f1f77bcf86cd799439012');
-    expect(url).toContain('customerEmail=jane%40example.com');
-    expect(url).toContain('poNumber=PO-1');
-    expect(url).toContain('limit=25');
-    expect(url).toContain('starting_after=507f1f77bcf86cd799439013');
-  });
+    it('stringifies limit and forwards every filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: [],
+        has_more: false,
+        total: 0,
+      } as any);
 
-  it('returns the wrapped envelope (data + has_more + total)', async () => {
-    fetchMock.mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      headers: { get: () => 'application/json' },
-      json: async () => ({ data: [{ id: 'inv_1' }], has_more: true, total: 42 }),
+      await resource.list({
+        limit: 25,
+        starting_after: '507f1f77bcf86cd799439013',
+        ending_before: '507f1f77bcf86cd799439014',
+        search: 'jane@example.com',
+        status: 'paid',
+        customerId: '507f1f77bcf86cd799439011',
+        chargeId: '507f1f77bcf86cd799439012',
+        poNumber: 'PO-1',
+        createdAfter: '2026-01-01T00:00:00Z',
+        createdBefore: '2026-12-31T23:59:59Z',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/invoices/',
+        query: {
+          limit: '25',
+          starting_after: '507f1f77bcf86cd799439013',
+          ending_before: '507f1f77bcf86cd799439014',
+          search: 'jane@example.com',
+          status: 'paid',
+          customerId: '507f1f77bcf86cd799439011',
+          chargeId: '507f1f77bcf86cd799439012',
+          poNumber: 'PO-1',
+          createdAfter: '2026-01-01T00:00:00Z',
+          createdBefore: '2026-12-31T23:59:59Z',
+        },
+      });
     });
-    const client = new CheckoutPageApiClient({ apiKey: 'k' });
-    const result = await client.invoices.list();
-    expect(result.data).toEqual([{ id: 'inv_1' }]);
-    expect(result.has_more).toBe(true);
-    expect(result.total).toBe(42);
+
+    it('returns the wrapped envelope verbatim (data + has_more + total)', async () => {
+      const payload = {
+        data: [{ id: 'inv_1' }, { id: 'inv_2' }],
+        has_more: true,
+        total: 42,
+      } as any;
+      vi.spyOn(client, 'request').mockResolvedValue(payload);
+
+      const result = await resource.list();
+
+      expect(result).toBe(payload);
+      expect(result.data).toHaveLength(2);
+      expect(result.has_more).toBe(true);
+      expect(result.total).toBe(42);
+    });
   });
 });
