@@ -247,5 +247,38 @@ describe('SubscriptionResource Integration Tests', () => {
         ).toBe(true);
       }
     });
+
+    it('should expose taxSource on subscriptions when set', async () => {
+      const result = await client.subscriptions.list({ limit: 25 });
+      const subscriptionWithTaxSource = result.data.find(
+        (subscription) => (subscription as Record<string, unknown>).taxSource != null
+      );
+
+      const taxSource = (subscriptionWithTaxSource as Record<string, unknown>).taxSource;
+      expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+    });
+
+    it('should expose a structured taxRates snapshot when fixed_tax_rate is used', async () => {
+      const result = await client.subscriptions.list({ limit: 50 });
+
+      const subscriptionWithFixedTaxRates = result.data.find((subscription) => {
+        const s = subscription as Record<string, unknown>;
+        const taxRates = s.taxRates as unknown[] | undefined;
+        return s.taxSource === 'fixed_tax_rate' && Array.isArray(taxRates) && taxRates.length > 0;
+      });
+
+      const taxRates = (subscriptionWithFixedTaxRates as Record<string, unknown>)
+        .taxRates as Record<string, unknown>[];
+      expect(Array.isArray(taxRates)).toBe(true);
+      expect(taxRates.length).toBeGreaterThan(0);
+
+      for (const snapshot of taxRates) {
+        expect(typeof snapshot.taxRate).toBe('string');
+        expect(typeof snapshot.stripeId).toBe('string');
+        expect(typeof snapshot.displayName).toBe('string');
+        expect(typeof snapshot.inclusive).toBe('boolean');
+        expect(typeof snapshot.percentage).toBe('number');
+      }
+    });
   });
 });

@@ -1,5 +1,11 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { Customer, CustomerList, CustomerListParams } from '../../types';
+import type {
+  Customer,
+  CustomerList,
+  CustomerListParams,
+  UpdateCustomerParams,
+  UpdateCustomerResponse,
+} from '../../types';
 
 export class CustomerResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -27,6 +33,45 @@ export class CustomerResource {
       method: 'GET',
       query,
       path: '/v1/customers/',
+    });
+  }
+
+  async update(
+    customerId: string,
+    params: UpdateCustomerParams,
+  ): Promise<UpdateCustomerResponse> {
+    if (!customerId) {
+      throw new Error('Customer ID is required');
+    }
+
+    const body: Record<string, unknown> = {};
+
+    if (params.name !== undefined) {
+      body.name = params.name;
+    }
+    if (params.companyName !== undefined) {
+      body.companyName = params.companyName;
+    }
+    if (params.email !== undefined) {
+      body.email = params.email;
+    }
+    if (params.phone !== undefined) {
+      body.phone = params.phone;
+    }
+    if (params.billingEmail !== undefined) {
+      body.billingEmail = params.billingEmail;
+    }
+    if (params.address !== undefined) {
+      body.address = params.address;
+    }
+    if (params.shipping !== undefined) {
+      body.shipping = params.shipping;
+    }
+
+    return this.client.request<UpdateCustomerResponse>({
+      method: 'PATCH',
+      path: `/v1/customers/${customerId}`,
+      body,
     });
   }
 }

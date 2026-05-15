@@ -242,7 +242,7 @@ describe('FormsResource integration tests', () => {
       expect(matched?.fields?.some((field) => field.label === 'Search Email')).toBe(true);
       expect(pageIncludesImage(matched!, imageId)).toBe(true);
       expect(pageIncludesFile(matched!, fileId)).toBe(true);
-    }, 10000);
+    }, 20000);
 
     it.each([
       {

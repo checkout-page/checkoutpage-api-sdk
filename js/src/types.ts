@@ -27,6 +27,13 @@ export type CustomerListParams = Omit<NonNullable<CustomerListArgs>, 'limit'> & 
 export type Address = NonNullable<Customer['data']['address']>;
 export type Shipping = NonNullable<Customer['data']['shipping']>;
 
+export type UpdateCustomerParams = NonNullable<
+  operations['customers/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateCustomerResponse =
+  operations['customers/update']['responses'][200]['content']['application/json'];
+
 // Submissions
 export type SubmissionResponse =
   operations['submissions/get']['responses'][200]['content']['application/json'];
