@@ -101,7 +101,9 @@ describe('InvoiceResource.regenerate', () => {
       ok: true,
       status: 200,
       headers: { get: () => 'application/json' },
-      json: async () => ({ id: '507f1f77bcf86cd799439011', invoiceUrl: 'https://x.example/y.pdf' }),
+      json: async () => ({
+        data: { id: '507f1f77bcf86cd799439011', invoiceUrl: 'https://x.example/y.pdf' },
+      }),
     });
     vi.stubGlobal('fetch', fetchMock);
   });

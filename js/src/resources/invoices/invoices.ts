@@ -26,9 +26,10 @@ export class InvoiceResource {
   }
 
   async regenerate(id: string): Promise<Invoice> {
-    return this.client.request<Invoice>({
+    const response = await this.client.request<{ data: Invoice }>({
       method: 'POST',
       path: `/v1/invoices/${id}/regenerate`,
     });
+    return response.data;
   }
 }
