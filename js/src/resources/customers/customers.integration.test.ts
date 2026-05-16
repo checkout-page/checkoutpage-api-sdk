@@ -144,20 +144,41 @@ describe('CustomerResource Integration Tests', () => {
      */
     let initialCustomer: Awaited<ReturnType<typeof client.customers.get>>['data'];
 
+    /**
+     * `null` clears an optional field on the API (the API rejects empty strings —
+     * only `null` is a valid clear signal). The generated SDK type still models
+     * these as `string | undefined`; regenerate once the updated OpenAPI ships.
+     * Until then, send nullable bodies via this widened type.
+     */
+    type SdkUpdateBody = Parameters<typeof client.customers.update>[1];
+    type NullableUpdateBody = Omit<
+      SdkUpdateBody,
+      'name' | 'companyName' | 'phone' | 'billingEmail' | 'address' | 'shipping'
+    > & {
+      name?: string | null;
+      companyName?: string | null;
+      phone?: string | null;
+      billingEmail?: string | null;
+      address?: NonNullable<SdkUpdateBody>['address'] | null;
+      shipping?: NonNullable<SdkUpdateBody>['shipping'] | null;
+    };
+    const sendUpdate = (body: NullableUpdateBody) =>
+      client.customers.update(config.testCustomerId, body as SdkUpdateBody);
+
     beforeAll(async () => {
       ({ data: initialCustomer } = await client.customers.get(config.testCustomerId));
     });
 
     afterEach(async () => {
       if (!initialCustomer) return;
-      await client.customers.update(config.testCustomerId, {
-        name: initialCustomer.name ?? '',
-        companyName: initialCustomer.companyName ?? '',
+      await sendUpdate({
+        name: initialCustomer.name ?? null,
+        companyName: initialCustomer.companyName ?? null,
         email: initialCustomer.email,
-        phone: initialCustomer.phone ?? '',
-        billingEmail: initialCustomer.billingEmail ?? '',
-        ...(initialCustomer.address ? { address: initialCustomer.address } : {}),
-        ...(initialCustomer.shipping ? { shipping: initialCustomer.shipping } : {}),
+        phone: initialCustomer.phone ?? null,
+        billingEmail: initialCustomer.billingEmail ?? null,
+        address: initialCustomer.address ?? null,
+        shipping: initialCustomer.shipping ?? null,
       });
     });
 
@@ -229,7 +250,7 @@ describe('CustomerResource Integration Tests', () => {
       );
     });
 
-    it('replaces the address subdocument in full when a partial address is supplied', async () => {
+    it('patches only the address subfields supplied — sibling subfields are preserved', async () => {
       // Seed a fully-populated address first.
       await client.customers.update(config.testCustomerId, {
         address: {
@@ -242,7 +263,7 @@ describe('CustomerResource Integration Tests', () => {
         },
       });
 
-      // Now patch with a partial address — server should REPLACE, not merge.
+      // Patch with a partial address — only line1 and city should change.
       const { data: after } = await client.customers.update(config.testCustomerId, {
         address: {
           line1: '200 New St',
@@ -252,10 +273,11 @@ describe('CustomerResource Integration Tests', () => {
 
       expect(after.address?.line1).toBe('200 New St');
       expect(after.address?.city).toBe('New City');
-      expect(after.address?.line2).toBeUndefined();
-      expect(after.address?.state).toBeUndefined();
-      expect(after.address?.postalCode).toBeUndefined();
-      expect(after.address?.country).toBeUndefined();
+      // Unspecified subfields stay as they were.
+      expect(after.address?.line2).toBe('Suite 1');
+      expect(after.address?.state).toBe('CA');
+      expect(after.address?.postalCode).toBe('94000');
+      expect(after.address?.country).toBe('US');
     });
 
     it('updates the nested shipping address subdocument', async () => {
@@ -277,6 +299,94 @@ describe('CustomerResource Integration Tests', () => {
       expect(after.shipping?.phone).toBe('+15555550200');
       expect(after.shipping?.address?.line1).toBe('1 Shipping Way');
       expect(after.shipping?.address?.city).toBe('Seattle');
+    });
+
+    it('patches a single shipping.address subfield without wiping shipping.name or shipping.phone', async () => {
+      // Seed full shipping first.
+      await client.customers.update(config.testCustomerId, {
+        shipping: {
+          name: 'Original Ship',
+          phone: '+15555550100',
+          address: {
+            line1: '1 Shipping Way',
+            city: 'Seattle',
+            state: 'WA',
+            postalCode: '98101',
+            country: 'US',
+          },
+        },
+      });
+
+      // Partial shipping.address — should preserve shipping.name, shipping.phone,
+      // and the other address subfields.
+      const { data: after } = await client.customers.update(config.testCustomerId, {
+        shipping: { address: { city: 'Portland' } },
+      });
+
+      expect(after.shipping?.name).toBe('Original Ship');
+      expect(after.shipping?.phone).toBe('+15555550100');
+      expect(after.shipping?.address?.city).toBe('Portland');
+      expect(after.shipping?.address?.line1).toBe('1 Shipping Way');
+      expect(after.shipping?.address?.state).toBe('WA');
+      expect(after.shipping?.address?.postalCode).toBe('98101');
+      expect(after.shipping?.address?.country).toBe('US');
+    });
+
+    it('clears a top-level optional field when sent as null', async () => {
+      // Seed a companyName so we can observe the clear.
+      await client.customers.update(config.testCustomerId, { companyName: 'Clear Me Co' });
+
+      const { data: after } = await sendUpdate({ companyName: null });
+
+      expect(after.companyName).toBeUndefined();
+    });
+
+    it('clears billingEmail when sent as null (resolves the "permanently set" footgun)', async () => {
+      await client.customers.update(config.testCustomerId, {
+        billingEmail: `clearme+${Date.now()}@example.com`,
+      });
+
+      const { data: after } = await sendUpdate({ billingEmail: null });
+
+      expect(after.billingEmail).toBeUndefined();
+    });
+
+    it('clears the whole address subdocument when address: null is sent', async () => {
+      await client.customers.update(config.testCustomerId, {
+        address: { line1: '1 Clear St', city: 'Clearville', country: 'US' },
+      });
+
+      const { data: after } = await sendUpdate({ address: null });
+
+      expect(after.address).toBeUndefined();
+    });
+
+    it('rejects an empty string for a clearable field (use null to clear)', async () => {
+      await expect(
+        client.customers.update(config.testCustomerId, { phone: '' }),
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('rejects null on the primary email — it cannot be cleared via PATCH', async () => {
+      await expect(sendUpdate({ email: null as unknown as string })).rejects.toThrow(
+        ValidationError,
+      );
+    });
+
+    it('rejects unknown address subfields like `zip` (the conventional US name) — use `postalCode`', async () => {
+      await expect(
+        client.customers.update(config.testCustomerId, {
+          address: { line1: '1 Strict St', zip: '10601' } as NonNullable<SdkUpdateBody>['address'],
+        }),
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('rejects unknown shipping subfields with a validation error', async () => {
+      await expect(
+        client.customers.update(config.testCustomerId, {
+          shipping: { nickname: 'Home' } as NonNullable<SdkUpdateBody>['shipping'],
+        }),
+      ).rejects.toThrow(ValidationError);
     });
 
     it('bumps updatedAt on every successful update', async () => {
