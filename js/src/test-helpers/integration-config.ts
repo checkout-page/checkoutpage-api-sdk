@@ -11,6 +11,8 @@ export interface IntegrationConfig {
   testTicketTypeId: string;
   testTicketTypePageId: string;
   testCheckoutPageId: string;
+  testInvoiceId: string;
+  testInvoiceChargeId: string;
 }
 
 export function loadIntegrationConfig(): IntegrationConfig {
@@ -26,6 +28,8 @@ export function loadIntegrationConfig(): IntegrationConfig {
   const testTicketTypeId = process.env.TEST_TICKET_TYPE_ID || '';
   const testTicketTypePageId = process.env.TEST_TICKET_TYPE_PAGE_ID || '';
   const testCheckoutPageId = process.env.TEST_CHECKOUT_PAGE_ID || '';
+  const testInvoiceId = process.env.TEST_INVOICE_ID || '';
+  const testInvoiceChargeId = process.env.TEST_INVOICE_CHARGE_ID || '';
 
   if (!apiKey) {
     throw new Error(
@@ -47,5 +51,7 @@ export function loadIntegrationConfig(): IntegrationConfig {
     testTicketTypeId,
     testTicketTypePageId,
     testCheckoutPageId,
+    testInvoiceId,
+    testInvoiceChargeId,
   };
 }
