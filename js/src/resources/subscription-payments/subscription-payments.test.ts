@@ -521,5 +521,33 @@ describe('SubscriptionPaymentResource', () => {
       expect(result.total).toBe(0);
       expect(result.has_more).toBe(false);
     });
+
+    /**
+     * Demonstrates how a consumer drives forward/backward pagination
+     * through the SDK: walk forward with `starting_after`, walk back with
+     * `ending_before`. The server returns pages newest-first.
+     */
+    it('demonstrates a forward and backward pagination flow', async () => {
+      const stub = (id: string) => ({ id, amount: 1000, createdAt: '', updatedAt: '' });
+      const PAGE_1: SubscriptionPaymentList = { data: [stub('p5'), stub('p4')], has_more: true, total: 5 };
+      const PAGE_2: SubscriptionPaymentList = { data: [stub('p3'), stub('p2')], has_more: true, total: 5 };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValueOnce(PAGE_1)
+        .mockResolvedValueOnce(PAGE_2)
+        .mockResolvedValueOnce({ ...PAGE_1, has_more: false });
+
+      await subscriptionPaymentResource.list({ limit: 2 });
+      await subscriptionPaymentResource.list({ limit: 2, starting_after: PAGE_1.data[1].id });
+      await subscriptionPaymentResource.list({ limit: 2, ending_before: PAGE_2.data[0].id });
+
+      expect(spy.mock.calls[0][0].query.starting_after).toBeUndefined();
+      expect(spy.mock.calls[0][0].query.ending_before).toBeUndefined();
+      expect(spy.mock.calls[1][0].query).toMatchObject({ limit: '2', starting_after: 'p4' });
+      expect(spy.mock.calls[1][0].query.ending_before).toBeUndefined();
+      expect(spy.mock.calls[2][0].query).toMatchObject({ limit: '2', ending_before: 'p3' });
+      expect(spy.mock.calls[2][0].query.starting_after).toBeUndefined();
+    });
   });
 });

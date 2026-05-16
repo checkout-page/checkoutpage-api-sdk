@@ -53,6 +53,47 @@ describe('EventsResource', () => {
         },
       });
     });
+
+    /**
+     * Demonstrates how a consumer drives forward/backward pagination
+     * through the SDK: walk forward with `starting_after`, walk back with
+     * `ending_before`. The server returns pages newest-first.
+     */
+    it('demonstrates a forward and backward pagination flow', async () => {
+      const PAGE_1 = {
+        data: [
+          { id: 'e5', name: 'e5', type: 'event', status: 'published', slug: '/e5', createdAt: '', updatedAt: '' },
+          { id: 'e4', name: 'e4', type: 'event', status: 'published', slug: '/e4', createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const PAGE_2 = {
+        data: [
+          { id: 'e3', name: 'e3', type: 'event', status: 'published', slug: '/e3', createdAt: '', updatedAt: '' },
+          { id: 'e2', name: 'e2', type: 'event', status: 'published', slug: '/e2', createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValueOnce(PAGE_1 as any)
+        .mockResolvedValueOnce(PAGE_2 as any)
+        .mockResolvedValueOnce({ ...PAGE_1, has_more: false } as any);
+
+      await eventsResource.list({ limit: 2 });
+      await eventsResource.list({ limit: 2, starting_after: PAGE_1.data[1].id });
+      await eventsResource.list({ limit: 2, ending_before: PAGE_2.data[0].id });
+
+      expect(spy.mock.calls[0][0].query.starting_after).toBeUndefined();
+      expect(spy.mock.calls[0][0].query.ending_before).toBeUndefined();
+      expect(spy.mock.calls[1][0].query).toMatchObject({ limit: '2', starting_after: 'e4' });
+      expect(spy.mock.calls[1][0].query.ending_before).toBeUndefined();
+      expect(spy.mock.calls[2][0].query).toMatchObject({ limit: '2', ending_before: 'e3' });
+      expect(spy.mock.calls[2][0].query.starting_after).toBeUndefined();
+    });
   });
 
   describe('create', () => {

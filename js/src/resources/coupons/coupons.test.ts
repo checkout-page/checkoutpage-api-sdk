@@ -261,6 +261,65 @@ describe('CouponResource', () => {
       expect(result.total).toBe(0);
       expect(result.has_more).toBe(false);
     });
+
+    /**
+     * Demonstrates how a consumer drives forward/backward pagination
+     * through the SDK: walk forward with `starting_after`, walk back with
+     * `ending_before`. The server returns pages newest-first.
+     */
+    it('demonstrates a forward and backward pagination flow', async () => {
+      const stub = (id: string) => ({
+        id,
+        label: id,
+        code: id.toUpperCase(),
+        amountOff: null,
+        percentOff: 10,
+        appliesToSetupFee: false,
+        duration: 'once' as const,
+        timesRedeemed: 0,
+        deleted: false,
+        sellerId: 's',
+        createdAt: '',
+        updatedAt: '',
+      });
+      const PAGE_1: CouponList = {
+        data: [stub('c5'), stub('c4')] as any,
+        has_more: true,
+        total: 5,
+      };
+      const PAGE_2: CouponList = {
+        data: [stub('c3'), stub('c2')] as any,
+        has_more: true,
+        total: 5,
+      };
+      const BACK_TO_PAGE_1: CouponList = { ...PAGE_1, has_more: false };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValueOnce(PAGE_1)
+        .mockResolvedValueOnce(PAGE_2)
+        .mockResolvedValueOnce(BACK_TO_PAGE_1);
+
+      await couponResource.list({ limit: 2 });
+      await couponResource.list({ limit: 2, starting_after: PAGE_1.data[1].id });
+      await couponResource.list({ limit: 2, ending_before: PAGE_2.data[0].id });
+
+      expect(spy.mock.calls[0][0].query).toMatchObject({
+        limit: '2',
+        starting_after: undefined,
+        ending_before: undefined,
+      });
+      expect(spy.mock.calls[1][0].query).toMatchObject({
+        limit: '2',
+        starting_after: 'c4',
+        ending_before: undefined,
+      });
+      expect(spy.mock.calls[2][0].query).toMatchObject({
+        limit: '2',
+        starting_after: undefined,
+        ending_before: 'c3',
+      });
+    });
   });
 
   describe('create', () => {
