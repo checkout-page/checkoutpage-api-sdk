@@ -198,4 +198,19 @@ describe('InvoiceResource integration tests', () => {
       expect(target.invoiceUrl).toMatch(/^https?:\/\//);
     });
   });
+
+  it('regenerates a real invoice end-to-end', async () => {
+    const { data } = await client.invoices.list({ limit: 1 });
+    if (data.length === 0) {
+      console.warn('No invoices found for integration test; skipping');
+      return;
+    }
+    const target = data[0];
+
+    const updated = await client.invoices.regenerate(target.id);
+
+    expect(updated.id).toBe(target.id);
+    expect(updated.invoiceUrl).toMatch(/^https?:\/\//);
+    expect(updated.invoiceUrl).not.toBe(target.invoiceUrl);
+  });
 });

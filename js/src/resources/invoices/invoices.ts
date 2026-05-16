@@ -1,5 +1,5 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { InvoiceList, InvoiceListParams } from '../../types';
+import type { Invoice, InvoiceList, InvoiceListParams } from '../../types';
 
 export class InvoiceResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -23,5 +23,13 @@ export class InvoiceResource {
       path: '/v1/invoices/',
       query,
     });
+  }
+
+  async regenerate(id: string): Promise<Invoice> {
+    const response = await this.client.request<{ data: Invoice }>({
+      method: 'POST',
+      path: `/v1/invoices/${id}/regenerate`,
+    });
+    return response.data;
   }
 }

@@ -92,3 +92,37 @@ describe('InvoiceResource', () => {
     });
   });
 });
+
+describe('InvoiceResource.regenerate', () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({
+        data: { id: '507f1f77bcf86cd799439011', invoiceUrl: 'https://x.example/y.pdf' },
+      }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+  });
+
+  it('POSTs to /v1/invoices/:id/regenerate with the bearer token', async () => {
+    const client = new CheckoutPageApiClient({ apiKey: 'k', baseUrl: 'https://api.example.com' });
+    await client.invoices.regenerate('507f1f77bcf86cd799439011');
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://api.example.com/v1/invoices/507f1f77bcf86cd799439011/regenerate');
+    expect(init.method).toBe('POST');
+    expect(init.headers.Authorization).toBe('Bearer k');
+  });
+
+  it('returns the parsed invoice', async () => {
+    const client = new CheckoutPageApiClient({ apiKey: 'k' });
+    const result = await client.invoices.regenerate('507f1f77bcf86cd799439011');
+    expect(result.id).toBe('507f1f77bcf86cd799439011');
+    expect(result.invoiceUrl).toBe('https://x.example/y.pdf');
+  });
+});
