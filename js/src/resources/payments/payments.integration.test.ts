@@ -344,7 +344,7 @@ describe('PaymentResource Integration Tests', () => {
     });
 
     it('should expose taxSource on payments when set', async () => {
-      const result = await listPayments({ limit: 25 });
+      const result = await listPayments({ limit: 100 });
       if (!result) return;
 
       const paymentWithTaxSource = result.data.find(

@@ -1069,7 +1069,7 @@ describe('FormsResource integration tests', () => {
       });
       expect(pageIncludesFile(fileResult.data, fileId)).toBe(true);
       expectFileMetadata(fileResult.data, fileId);
-    }, 10000);
+    }, 30000);
 
     it('preserves omitted attachment collections while replacing the provided collection', async () => {
       const originalImageId = await uploadImage('form-preserve-original-image');

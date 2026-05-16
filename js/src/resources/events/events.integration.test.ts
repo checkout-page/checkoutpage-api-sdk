@@ -912,9 +912,13 @@ describe('EventsResource integration tests', () => {
           eventDetails: { fixedTaxRateIds: [] },
         });
 
-        expect(data.tax?.enabled).toBe(true);
-        expect(data.tax?.mode).toBe('fixed');
-        expect(data.eventDetails?.fixedTaxRateIds).toEqual([]);
+        const { data: updateData } = await client.events.update(data.id, {
+          eventDetails: { fixedTaxRateIds: [] },
+        });
+
+        expect(updateData.tax?.enabled).toBe(true);
+        expect(updateData.tax?.mode).toBe('fixed');
+        expect(updateData.eventDetails?.fixedTaxRateIds).toEqual([]);
       });
     });
   });
