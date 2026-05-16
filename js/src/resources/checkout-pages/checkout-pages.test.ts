@@ -53,6 +53,51 @@ describe('CheckoutPagesResource', () => {
         },
       });
     });
+
+    /**
+     * Demonstrates how a consumer drives forward/backward pagination
+     * through the SDK: walk forward with `starting_after`, walk back with
+     * `ending_before`. The server returns pages newest-first.
+     */
+    it('demonstrates a forward and backward pagination flow', async () => {
+      const PAGE_1 = {
+        data: [
+          { id: 'p5', name: 'p5', type: 'checkout', status: 'published', slug: '/p5', createdAt: '', updatedAt: '' },
+          { id: 'p4', name: 'p4', type: 'checkout', status: 'published', slug: '/p4', createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const PAGE_2 = {
+        data: [
+          { id: 'p3', name: 'p3', type: 'checkout', status: 'published', slug: '/p3', createdAt: '', updatedAt: '' },
+          { id: 'p2', name: 'p2', type: 'checkout', status: 'published', slug: '/p2', createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const BACK_TO_PAGE_1 = { ...PAGE_1, has_more: false };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValueOnce(PAGE_1 as any)
+        .mockResolvedValueOnce(PAGE_2 as any)
+        .mockResolvedValueOnce(BACK_TO_PAGE_1 as any);
+
+      await checkoutPagesResource.list({ limit: 2 });
+      await checkoutPagesResource.list({ limit: 2, starting_after: PAGE_1.data[1].id });
+      await checkoutPagesResource.list({ limit: 2, ending_before: PAGE_2.data[0].id });
+
+      expect(spy.mock.calls[0][0].query).toMatchObject({ limit: '2' });
+      expect(spy.mock.calls[0][0].query.starting_after).toBeUndefined();
+      expect(spy.mock.calls[0][0].query.ending_before).toBeUndefined();
+
+      expect(spy.mock.calls[1][0].query).toMatchObject({ limit: '2', starting_after: 'p4' });
+      expect(spy.mock.calls[1][0].query.ending_before).toBeUndefined();
+
+      expect(spy.mock.calls[2][0].query).toMatchObject({ limit: '2', ending_before: 'p3' });
+      expect(spy.mock.calls[2][0].query.starting_after).toBeUndefined();
+    });
   });
 
   describe('create', () => {

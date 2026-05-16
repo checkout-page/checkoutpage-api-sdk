@@ -305,5 +305,57 @@ describe('SubscriptionResource', () => {
       expect(result.total).toBe(0);
       expect(result.has_more).toBe(false);
     });
+
+    /**
+     * Demonstrates how a consumer drives forward/backward pagination
+     * through the SDK: walk forward with `starting_after`, walk back with
+     * `ending_before`, with the server responsible for returning the page
+     * immediately newer than the cursor in newest-first order.
+     */
+    it('demonstrates a forward and backward pagination flow', async () => {
+      const PAGE_1: SubscriptionList = {
+        data: [
+          { id: 's5', amount: 100, createdAt: '', updatedAt: '' },
+          { id: 's4', amount: 100, createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const PAGE_2: SubscriptionList = {
+        data: [
+          { id: 's3', amount: 100, createdAt: '', updatedAt: '' },
+          { id: 's2', amount: 100, createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const BACK_TO_PAGE_1: SubscriptionList = { ...PAGE_1, has_more: false };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValueOnce(PAGE_1)
+        .mockResolvedValueOnce(PAGE_2)
+        .mockResolvedValueOnce(BACK_TO_PAGE_1);
+
+      await subscriptionResource.list({ limit: 2 });
+      await subscriptionResource.list({ limit: 2, starting_after: PAGE_1.data[1].id });
+      await subscriptionResource.list({ limit: 2, ending_before: PAGE_2.data[0].id });
+
+      expect(spy.mock.calls[0][0].query).toMatchObject({
+        limit: '2',
+        starting_after: undefined,
+        ending_before: undefined,
+      });
+      expect(spy.mock.calls[1][0].query).toMatchObject({
+        limit: '2',
+        starting_after: 's4',
+        ending_before: undefined,
+      });
+      expect(spy.mock.calls[2][0].query).toMatchObject({
+        limit: '2',
+        starting_after: undefined,
+        ending_before: 's3',
+      });
+    });
   });
 });

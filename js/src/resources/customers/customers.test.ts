@@ -309,6 +309,60 @@ describe('CustomerResource', () => {
       expect(result.data[0].address?.line2).toBe('Suite 100');
       expect(result.data[0].shipping?.address?.city).toBe('Los Angeles');
     });
+
+    /**
+     * Demonstrates how a consumer drives forward/backward pagination
+     * through the SDK: walk forward with `starting_after`, walk back with
+     * `ending_before`. The server returns pages newest-first; with
+     * `ending_before`, the server is responsible for fetching the page
+     * immediately newer than the cursor and returning it in the same
+     * newest-first order.
+     */
+    it('demonstrates a forward and backward pagination flow', async () => {
+      const PAGE_1: CustomerList = {
+        data: [
+          { id: 'c5', email: 'c5@example.com', sellerId: 's', createdAt: '', updatedAt: '' },
+          { id: 'c4', email: 'c4@example.com', sellerId: 's', createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const PAGE_2: CustomerList = {
+        data: [
+          { id: 'c3', email: 'c3@example.com', sellerId: 's', createdAt: '', updatedAt: '' },
+          { id: 'c2', email: 'c2@example.com', sellerId: 's', createdAt: '', updatedAt: '' },
+        ],
+        has_more: true,
+        total: 5,
+      };
+      const BACK_TO_PAGE_1: CustomerList = { ...PAGE_1, has_more: false };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValueOnce(PAGE_1)
+        .mockResolvedValueOnce(PAGE_2)
+        .mockResolvedValueOnce(BACK_TO_PAGE_1);
+
+      await customerResource.list({ limit: 2 });
+      await customerResource.list({ limit: 2, starting_after: PAGE_1.data[1].id });
+      await customerResource.list({ limit: 2, ending_before: PAGE_2.data[0].id });
+
+      expect(spy.mock.calls[0][0].query).toMatchObject({
+        limit: '2',
+        starting_after: undefined,
+        ending_before: undefined,
+      });
+      expect(spy.mock.calls[1][0].query).toMatchObject({
+        limit: '2',
+        starting_after: 'c4',
+        ending_before: undefined,
+      });
+      expect(spy.mock.calls[2][0].query).toMatchObject({
+        limit: '2',
+        starting_after: undefined,
+        ending_before: 'c3',
+      });
+    });
   });
 
   describe('update', () => {
