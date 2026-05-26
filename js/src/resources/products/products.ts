@@ -70,6 +70,12 @@ export class ProductResource {
     if (params.fixedTaxRateIds !== undefined) {
       body.fixedTaxRateIds = params.fixedTaxRateIds;
     }
+    if (params.prices !== undefined) {
+      body.prices = params.prices;
+    }
+    if (params.defaultPriceId !== undefined) {
+      body.defaultPriceId = params.defaultPriceId;
+    }
 
     return this.client.request<Product>({
       method: 'PATCH',
