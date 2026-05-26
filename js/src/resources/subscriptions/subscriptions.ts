@@ -1,5 +1,10 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { SubscriptionList, SubscriptionListParams } from '../../types';
+import type {
+  SubscriptionCancelParams,
+  SubscriptionCancelResponse,
+  SubscriptionList,
+  SubscriptionListParams,
+} from '../../types';
 
 export class SubscriptionResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -18,6 +23,17 @@ export class SubscriptionResource {
       method: 'GET',
       query,
       path: '/v1/subscriptions/',
+    });
+  }
+
+  async cancel(
+    subscriptionId: string,
+    params: SubscriptionCancelParams = {},
+  ): Promise<SubscriptionCancelResponse> {
+    return this.client.request<SubscriptionCancelResponse>({
+      method: 'POST',
+      path: `/v1/subscriptions/${subscriptionId}/cancel`,
+      body: params,
     });
   }
 }

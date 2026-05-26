@@ -281,4 +281,21 @@ describe('SubscriptionResource Integration Tests', () => {
       }
     });
   });
+
+  describe('cancel', () => {
+    /**
+     * Cancellation is one-way (Stripe subscriptions can't be uncanceled), so
+     * we don't snapshot-restore like the customer update tests. Instead, the
+     * integration coverage exercises the error path against a non-existent
+     * id — this proves the SDK's path construction, auth header, and error
+     * response parsing all wire through to the live API correctly without
+     * needing to destroy a real subscription.
+     */
+    it('rejects a cancel against a non-existent subscription with a 404', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
+      await expect(
+        client.subscriptions.cancel(fakeId, { cancelImmediately: true }),
+      ).rejects.toThrow(/not found/i);
+    });
+  });
 });

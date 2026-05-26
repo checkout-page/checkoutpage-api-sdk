@@ -121,6 +121,13 @@ export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'li
   limit?: number;
 };
 
+export type SubscriptionCancelParams = NonNullable<
+  operations['subscriptions/cancel']['requestBody']
+>['content']['application/json'];
+
+export type SubscriptionCancelResponse =
+  operations['subscriptions/cancel']['responses'][200]['content']['application/json'];
+
 // Bookings
 export type BookingList =
   operations['bookings/list']['responses'][200]['content']['application/json'];

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SubscriptionResource } from './subscriptions';
 import { CheckoutPageApiClient } from '../../client';
-import type { SubscriptionList } from '../../types';
+import type { SubscriptionCancelResponse, SubscriptionList } from '../../types';
 
 describe('SubscriptionResource', () => {
   let client: CheckoutPageApiClient;
@@ -355,6 +355,77 @@ describe('SubscriptionResource', () => {
         limit: '2',
         starting_after: undefined,
         ending_before: 's3',
+      });
+    });
+  });
+
+  describe('cancel', () => {
+    it('cancels a subscription with no body when no params are passed', async () => {
+      const mockResponse: SubscriptionCancelResponse = { success: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await subscriptionResource.cancel('6812fe6e9f39b6760576f01c');
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: {},
+      });
+    });
+
+    it('forwards cancelImmediately + reason in the body', async () => {
+      const mockResponse: SubscriptionCancelResponse = { success: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
+        cancelImmediately: true,
+        reason: 'Customer requested',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: {
+          cancelImmediately: true,
+          reason: 'Customer requested',
+        },
+      });
+    });
+
+    it('forwards cancelAtPeriodEnd + sendCancellationEmail', async () => {
+      const mockResponse: SubscriptionCancelResponse = { success: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01d', {
+        cancelAtPeriodEnd: true,
+        sendCancellationEmail: true,
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01d/cancel',
+        body: {
+          cancelAtPeriodEnd: true,
+          sendCancellationEmail: true,
+        },
+      });
+    });
+
+    it('forwards a scheduled cancelAt ISO timestamp', async () => {
+      const mockResponse: SubscriptionCancelResponse = { success: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01e', {
+        cancelAt: '2026-12-31T23:59:59.000Z',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01e/cancel',
+        body: {
+          cancelAt: '2026-12-31T23:59:59.000Z',
+        },
       });
     });
   });
