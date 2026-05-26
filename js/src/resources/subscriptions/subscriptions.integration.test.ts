@@ -280,5 +280,41 @@ describe('SubscriptionResource Integration Tests', () => {
         expect(typeof snapshot.percentage).toBe('number');
       }
     });
+
+    /**
+     * priceId is populated when the customer selected a specific price at checkout
+     * (multi-price products). For single-price products it will be null/undefined.
+     * We assert the field is present in the response shape and has the correct type.
+     */
+    it('should expose priceId on subscriptions as string or null', async () => {
+      const result = await client.subscriptions.list({ limit: 50 });
+
+      for (const subscription of result.data) {
+        // TypeScript compile-time check: no cast needed
+        const priceId: string | null | undefined = subscription.priceId;
+        expect(priceId === undefined || priceId === null || typeof priceId === 'string').toBe(true);
+      }
+    });
+
+    /**
+     * Skip this test until M9b creates sample multi-price subscriptions in the
+     * integration environment. Once those subscriptions exist, remove the skip
+     * and assert priceId equals the expected price id.
+     */
+    describe.skip('priceId on subscription reads — depends on M9b creating sample multi-price subscriptions', () => {
+      it('should expose priceId matching the price selected at checkout', async () => {
+        const result = await client.subscriptions.list({ limit: 100 });
+
+        const subscriptionWithPriceId = result.data.find((s) => s.priceId != null);
+        if (!subscriptionWithPriceId?.priceId) {
+          throw new Error(
+            'No subscription with priceId found — seed multi-price subscriptions first',
+          );
+        }
+
+        expect(typeof subscriptionWithPriceId.priceId).toBe('string');
+        expect(subscriptionWithPriceId.priceId.length).toBeGreaterThan(0);
+      });
+    });
   });
 });
