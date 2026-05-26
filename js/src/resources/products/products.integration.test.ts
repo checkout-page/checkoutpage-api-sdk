@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import type { Price } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { uniqueSuffix } from '../../test-helpers/test-lib';
 
@@ -349,6 +350,49 @@ describe('ProductResource Integration Tests', () => {
 
       expect(fetched.id).toBe(testProductId);
       expect(fetched.fixedTaxRateIds).toContain(taxRate.data.id);
+    });
+  });
+
+  // Depends on M6 write-shape support (seller API endpoint to create/update
+  // prices[] on a product). Unskip after M6 ships.
+  describe.skip('multi-price read path', () => {
+    it('creates a product with prices[] and reads them back', async () => {
+      // Once M6 ships, the update endpoint will accept a `prices` array.
+      // For now we assert the read types are correct via the unit tests above.
+      // When M6 is available:
+      // 1. Create a checkout page with a product
+      // 2. Update the product with multiple Price objects via the new write API
+      // 3. Fetch the product and assert prices[] shape
+      const { data: product } = await client.products.get(testProductId);
+
+      // prices[] may be null/empty on a legacy product – just assert the field exists
+      expect('prices' in product).toBe(true);
+      expect('defaultPriceId' in product).toBe(true);
+    });
+
+    it('reads prices[].billingType correctly', async () => {
+      const { data: product } = await client.products.get(testProductId);
+
+      if (product.prices && product.prices.length > 0) {
+        const price: Price = product.prices[0];
+        expect(['one_time', 'recurring']).toContain(price.billingType);
+        expect(typeof price.amount).toBe('number');
+        expect(typeof price.currency).toBe('string');
+        expect(typeof price.enabled).toBe('boolean');
+        expect(typeof price.isDefault).toBe('boolean');
+      }
+    });
+
+    it('reads variant priceIds scoping', async () => {
+      const { data: product } = await client.products.get(testProductId);
+
+      if (product.variants && product.variants.length > 0) {
+        const firstVariant = product.variants[0];
+        // priceIds is optional – assert the field is either present or absent gracefully
+        if (firstVariant.priceIds) {
+          expect(Array.isArray(firstVariant.priceIds)).toBe(true);
+        }
+      }
     });
   });
 });

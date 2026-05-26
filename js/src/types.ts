@@ -162,6 +162,14 @@ export type SubscriptionPaymentListParams = Omit<
 // Products
 export type Product = operations['products/get']['responses'][200]['content']['application/json'];
 
+export type ProductData = Product['data'];
+
+/** A single price option on a product (multi-price feature). */
+export type Price = components['schemas']['Price'];
+
+/** A variant group within a product (may have `priceIds` scoping it to a subset of prices). */
+export type ProductVariant = NonNullable<NonNullable<NonNullable<ProductData>['variants']>[number]>;
+
 export type UpdateProductParams = NonNullable<
   operations['products/update']['requestBody']
 >['content']['application/json'];

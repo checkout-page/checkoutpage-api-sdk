@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ProductResource } from './products';
 import { CheckoutPageApiClient } from '../../client';
-import type { Product, UpdateProductParams } from '../../types';
+import type { Product, ProductData, Price, ProductVariant, UpdateProductParams } from '../../types';
 
 describe('ProductResource', () => {
   let client: CheckoutPageApiClient;
@@ -41,6 +41,117 @@ describe('ProductResource', () => {
 
     it('should throw error for missing product id', async () => {
       await expect(productResource.get('')).rejects.toThrow('Product ID is required');
+    });
+
+    it('should include prices[] and defaultPriceId in the response', async () => {
+      const monthlyPrice: Price = {
+        id: 'price_monthly',
+        label: 'Monthly',
+        order: 0,
+        enabled: true,
+        isDefault: true,
+        billingType: 'recurring',
+        amount: 2900,
+        currency: 'usd',
+        recurring: {
+          interval: 'month',
+          intervalCount: 1,
+          trialPeriodDays: null,
+          planIterations: null,
+          billingCycleAnchorConfig: null,
+          startDate: null,
+        },
+      };
+
+      const annualPrice: Price = {
+        id: 'price_annual',
+        label: 'Annual',
+        order: 1,
+        enabled: true,
+        isDefault: false,
+        billingType: 'recurring',
+        amount: 29000,
+        currency: 'usd',
+        recurring: {
+          interval: 'year',
+          intervalCount: 1,
+          trialPeriodDays: null,
+          planIterations: null,
+          billingCycleAnchorConfig: null,
+          startDate: null,
+        },
+      };
+
+      const mockProduct: Product = {
+        data: {
+          id: 'product_multi',
+          title: 'Multi-Price Product',
+          type: 'subscription',
+          price: {
+            amount: 2900,
+            currency: 'usd',
+          },
+          prices: [monthlyPrice, annualPrice],
+          defaultPriceId: 'price_monthly',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockProduct);
+
+      const result = await productResource.get('product_multi');
+
+      expect(result).toEqual(mockProduct);
+
+      // Type-level assertions: these must compile (no cast needed)
+      const product: ProductData = result.data;
+      const prices: Price[] | null | undefined = product?.prices;
+      const defaultPriceId: string | null | undefined = product?.defaultPriceId;
+
+      expect(prices).toHaveLength(2);
+      expect(defaultPriceId).toBe('price_monthly');
+
+      const first = prices![0];
+      // billingType is the key distinguishing field on Price
+      expect(first.billingType).toBe('recurring');
+      expect(first.amount).toBe(2900);
+      expect(first.currency).toBe('usd');
+      expect(first.recurring?.interval).toBe('month');
+    });
+
+    it('should include variant priceIds in the response', async () => {
+      const mockVariant: ProductVariant = {
+        id: 'variant_plan',
+        name: 'Plan',
+        priceIds: ['price_monthly', 'price_annual'],
+      };
+
+      const mockProduct: Product = {
+        data: {
+          id: 'product_variants',
+          title: 'Product with Variant Price Scoping',
+          type: 'subscription',
+          price: {
+            amount: 2900,
+            currency: 'usd',
+          },
+          prices: [],
+          defaultPriceId: null,
+          variants: [mockVariant],
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockProduct);
+
+      const result = await productResource.get('product_variants');
+
+      const variant: ProductVariant = result.data!.variants![0];
+      const priceIds: string[] | null | undefined = variant.priceIds;
+
+      expect(priceIds).toEqual(['price_monthly', 'price_annual']);
     });
   });
 
