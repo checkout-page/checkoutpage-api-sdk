@@ -297,5 +297,28 @@ describe('SubscriptionResource Integration Tests', () => {
         client.subscriptions.cancel(fakeId, { cancelImmediately: true }),
       ).rejects.toThrow(/not found/i);
     });
+
+    /**
+     * Server-side XOR enforcement on the timing fields. The SDK forwards
+     * the body verbatim and the API rejects with a 400 when zero or more
+     * than one of cancelImmediately / cancelAtPeriodEnd / cancelAt are
+     * truthy. Both error paths share a non-existent subscriptionId so the
+     * request can't accidentally cancel a real subscription if the XOR
+     * check were ever removed.
+     */
+    it('rejects a body with no timing field (server XOR — at least one required)', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
+      await expect(client.subscriptions.cancel(fakeId)).rejects.toThrow();
+    });
+
+    it('rejects a body with multiple timing fields (server XOR — only one allowed)', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
+      await expect(
+        client.subscriptions.cancel(fakeId, {
+          cancelImmediately: true,
+          cancelAtPeriodEnd: true,
+        }),
+      ).rejects.toThrow();
+    });
   });
 });

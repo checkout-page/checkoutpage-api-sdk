@@ -428,5 +428,47 @@ describe('SubscriptionResource', () => {
         },
       });
     });
+
+    /**
+     * The seller API rejects bodies with zero or multiple timing fields
+     * (cancelImmediately / cancelAtPeriodEnd / cancelAt — exactly one must
+     * be set). The SDK does NOT enforce this client-side; it forwards the
+     * body verbatim and lets the server return a 400. The two tests below
+     * lock in that pass-through behavior so refactors don't accidentally
+     * start dropping fields.
+     */
+    it('forwards an empty body unchanged (server enforces the at-least-one rule)', async () => {
+      const mockResponse: SubscriptionCancelResponse = { success: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c');
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: {},
+      });
+    });
+
+    it('forwards multiple timing fields unchanged (server enforces the only-one rule)', async () => {
+      const mockResponse: SubscriptionCancelResponse = { success: true };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      // The TS type lets the caller pass any combination of optional fields.
+      // The XOR is enforced by the server's zod superRefine, not the SDK.
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
+        cancelImmediately: true,
+        cancelAtPeriodEnd: true,
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: {
+          cancelImmediately: true,
+          cancelAtPeriodEnd: true,
+        },
+      });
+    });
   });
 });
