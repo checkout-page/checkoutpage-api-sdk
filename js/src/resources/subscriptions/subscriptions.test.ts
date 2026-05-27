@@ -360,29 +360,17 @@ describe('SubscriptionResource', () => {
   });
 
   describe('cancel', () => {
-    it('cancels a subscription with no body when no params are passed', async () => {
-      const mockResponse: SubscriptionCancelResponse = { success: true };
-      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
-
-      const result = await subscriptionResource.cancel('6812fe6e9f39b6760576f01c');
-
-      expect(result).toEqual(mockResponse);
-      expect(client.request).toHaveBeenCalledWith({
-        method: 'POST',
-        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
-        body: {},
-      });
-    });
+    const mockResponse: SubscriptionCancelResponse = { data: { success: true } };
 
     it('forwards cancelImmediately + reason in the body', async () => {
-      const mockResponse: SubscriptionCancelResponse = { success: true };
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
-      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
+      const result = await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
         cancelImmediately: true,
         reason: 'Customer requested',
       });
 
+      expect(result).toEqual(mockResponse);
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
@@ -394,7 +382,6 @@ describe('SubscriptionResource', () => {
     });
 
     it('forwards cancelAtPeriodEnd + sendCancellationEmail', async () => {
-      const mockResponse: SubscriptionCancelResponse = { success: true };
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
       await subscriptionResource.cancel('6812fe6e9f39b6760576f01d', {
@@ -413,7 +400,6 @@ describe('SubscriptionResource', () => {
     });
 
     it('forwards a scheduled cancelAt ISO timestamp', async () => {
-      const mockResponse: SubscriptionCancelResponse = { success: true };
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
       await subscriptionResource.cancel('6812fe6e9f39b6760576f01e', {
@@ -430,36 +416,21 @@ describe('SubscriptionResource', () => {
     });
 
     /**
-     * The seller API rejects bodies with zero or multiple timing fields
-     * (cancelImmediately / cancelAtPeriodEnd / cancelAt — exactly one must
-     * be set). The SDK does NOT enforce this client-side; it forwards the
-     * body verbatim and lets the server return a 400. The two tests below
-     * lock in that pass-through behavior so refactors don't accidentally
-     * start dropping fields.
+     * The SDK's discriminated-union type prevents passing zero or multiple
+     * timing fields at compile time. The test below uses `as never` to
+     * defeat the type and verify that the SDK still forwards the body
+     * verbatim — the server's zod XOR enforces the rule at the wire level,
+     * so this lock-in catches refactors that might accidentally start
+     * dropping fields if a misbehaving consumer manages to construct an
+     * invalid body (e.g. via type-defeating dynamic input).
      */
-    it('forwards an empty body unchanged (server enforces the at-least-one rule)', async () => {
-      const mockResponse: SubscriptionCancelResponse = { success: true };
+    it('forwards multiple timing fields verbatim when the type is defeated', async () => {
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
-      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c');
-
-      expect(client.request).toHaveBeenCalledWith({
-        method: 'POST',
-        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
-        body: {},
-      });
-    });
-
-    it('forwards multiple timing fields unchanged (server enforces the only-one rule)', async () => {
-      const mockResponse: SubscriptionCancelResponse = { success: true };
-      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
-
-      // The TS type lets the caller pass any combination of optional fields.
-      // The XOR is enforced by the server's zod superRefine, not the SDK.
       await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
         cancelImmediately: true,
         cancelAtPeriodEnd: true,
-      });
+      } as never);
 
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',

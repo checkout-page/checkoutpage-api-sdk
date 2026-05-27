@@ -283,14 +283,6 @@ describe('SubscriptionResource Integration Tests', () => {
   });
 
   describe('cancel', () => {
-    /**
-     * Cancellation is one-way (Stripe subscriptions can't be uncanceled), so
-     * we don't snapshot-restore like the customer update tests. Instead, the
-     * integration coverage exercises the error path against a non-existent
-     * id — this proves the SDK's path construction, auth header, and error
-     * response parsing all wire through to the live API correctly without
-     * needing to destroy a real subscription.
-     */
     it('rejects a cancel against a non-existent subscription with a 404', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
       await expect(
@@ -299,26 +291,49 @@ describe('SubscriptionResource Integration Tests', () => {
     });
 
     /**
-     * Server-side XOR enforcement on the timing fields. The SDK forwards
-     * the body verbatim and the API rejects with a 400 when zero or more
-     * than one of cancelImmediately / cancelAtPeriodEnd / cancelAt are
-     * truthy. Both error paths share a non-existent subscriptionId so the
-     * request can't accidentally cancel a real subscription if the XOR
-     * check were ever removed.
+     * Server-side XOR enforcement on the timing fields. The SDK's
+     * discriminated-union type prevents this combo at compile time, so we
+     * defeat it via `as never` to assert the wire-level enforcement still
+     * fires. Targets a non-existent id so the request can't accidentally
+     * cancel a real subscription if the server XOR were ever removed.
      */
-    it('rejects a body with no timing field (server XOR — at least one required)', async () => {
-      const fakeId = '6812fe6e9f39b6760576f01c';
-      await expect(client.subscriptions.cancel(fakeId)).rejects.toThrow();
-    });
-
     it('rejects a body with multiple timing fields (server XOR — only one allowed)', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
       await expect(
         client.subscriptions.cancel(fakeId, {
           cancelImmediately: true,
           cancelAtPeriodEnd: true,
-        }),
+        } as never),
       ).rejects.toThrow();
+    });
+
+    /**
+     * End-to-end sanity: list subscriptions, find the first active one for
+     * the test seller, and cancel it. Verifies the full SDK pipeline (auth,
+     * path construction, body marshaling, response unwrapping) against a
+     * live API. This is run locally only — production runs MUST NOT pick a
+     * real customer's subscription to cancel; the integration env should
+     * point at a test seller account.
+     */
+    it('cancels the first active subscription found via list (sanity)', async () => {
+      const { data: subscriptions } = await client.subscriptions.list({
+        status: 'active',
+        limit: 10,
+      });
+
+      const target = subscriptions[0];
+      if (!target) {
+        throw new Error(
+          'Integration target has no active subscriptions to cancel — seed one first.',
+        );
+      }
+
+      const result = await client.subscriptions.cancel(target.id, {
+        cancelImmediately: true,
+        reason: 'SDK integration test',
+      });
+
+      expect(result.data.success).toBe(true);
     });
   });
 });

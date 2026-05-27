@@ -121,9 +121,36 @@ export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'li
   limit?: number;
 };
 
-export type SubscriptionCancelParams = NonNullable<
+/**
+ * Raw wire-shape from the OpenAPI spec — every field optional. Not exported
+ * because the public `SubscriptionCancelParams` below tightens this into a
+ * discriminated union that prevents zero/multiple timing fields at compile
+ * time.
+ */
+type RawSubscriptionCancelBody = NonNullable<
   operations['subscriptions/cancel']['requestBody']
 >['content']['application/json'];
+
+type SubscriptionCancelOptions = Pick<
+  RawSubscriptionCancelBody,
+  'reason' | 'sendCancellationEmail'
+>;
+
+/**
+ * Cancellation timing — exactly one of `cancelImmediately`,
+ * `cancelAtPeriodEnd`, or `cancelAt` must be set. The `?: never` on the
+ * unused fields makes the discriminator-without-tag pattern reject combos
+ * like `{ cancelImmediately: true, cancelAtPeriodEnd: true }` at the type
+ * level (which the server's zod `superRefine` also rejects at the wire
+ * level — see CancelSubscriptionRequestBodyValidationSchema in
+ * @repo/schemas).
+ */
+export type SubscriptionCancelTiming =
+  | { cancelImmediately: true; cancelAtPeriodEnd?: never; cancelAt?: never }
+  | { cancelImmediately?: never; cancelAtPeriodEnd: true; cancelAt?: never }
+  | { cancelImmediately?: never; cancelAtPeriodEnd?: never; cancelAt: string };
+
+export type SubscriptionCancelParams = SubscriptionCancelTiming & SubscriptionCancelOptions;
 
 export type SubscriptionCancelResponse =
   operations['subscriptions/cancel']['responses'][200]['content']['application/json'];

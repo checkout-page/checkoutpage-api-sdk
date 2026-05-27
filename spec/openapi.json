@@ -13098,12 +13098,18 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "description": "Always `true` when the cancellation request succeeded."
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "description": "Always `true` when the cancellation request succeeded."
+                        }
+                      },
+                      "required": ["success"]
                     }
                   },
-                  "required": ["success"]
+                  "required": ["data"]
                 }
               }
             }
