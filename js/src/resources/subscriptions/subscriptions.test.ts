@@ -362,22 +362,30 @@ describe('SubscriptionResource', () => {
   describe('cancel', () => {
     const mockResponse: SubscriptionCancelResponse = { data: { success: true } };
 
-    it('forwards cancelImmediately + reason in the body', async () => {
+    it('cancels immediately with an empty body when no params are passed', async () => {
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
-      const result = await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
-        cancelImmediately: true,
-        reason: 'Customer requested',
-      });
+      const result = await subscriptionResource.cancel('6812fe6e9f39b6760576f01c');
 
       expect(result).toEqual(mockResponse);
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
-        body: {
-          cancelImmediately: true,
-          reason: 'Customer requested',
-        },
+        body: {},
+      });
+    });
+
+    it('forwards reason in the body for an immediate cancel', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
+        reason: 'Customer requested',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: { reason: 'Customer requested' },
       });
     });
 
@@ -424,11 +432,11 @@ describe('SubscriptionResource', () => {
      * dropping fields if a misbehaving consumer manages to construct an
      * invalid body (e.g. via type-defeating dynamic input).
      */
-    it('forwards multiple timing fields verbatim when the type is defeated', async () => {
+    it('forwards both timing fields verbatim when the type is defeated', async () => {
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
       await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
-        cancelImmediately: true,
+        cancelAt: '2026-12-31T23:59:59.000Z',
         cancelAtPeriodEnd: true,
       } as never);
 
@@ -436,7 +444,7 @@ describe('SubscriptionResource', () => {
         method: 'POST',
         path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
         body: {
-          cancelImmediately: true,
+          cancelAt: '2026-12-31T23:59:59.000Z',
           cancelAtPeriodEnd: true,
         },
       });

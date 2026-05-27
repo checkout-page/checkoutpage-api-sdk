@@ -27,20 +27,23 @@ export class SubscriptionResource {
   }
 
   /**
-   * Cancel a subscription. `params` is required — exactly one of
-   * `cancelImmediately`, `cancelAtPeriodEnd`, or `cancelAt` must be set
-   * (enforced both at the type level via the {@link SubscriptionCancelParams}
-   * discriminated union and at the server via zod). Cancellation is
-   * one-way; a canceled Stripe subscription cannot be un-canceled.
+   * Cancel a subscription. Cancels immediately by default; pass
+   * `cancelAtPeriodEnd: true` to defer until the end of the current billing
+   * period, or `cancelAt: <ISO timestamp>` to schedule a specific future
+   * moment. The two timing fields are mutually exclusive — enforced at the
+   * type level via the {@link SubscriptionCancelParams} discriminated union
+   * and at the server via zod. Cancellation is one-way; a canceled Stripe
+   * subscription cannot be un-canceled.
    *
    * @example
-   * await client.subscriptions.cancel(id, { cancelImmediately: true });
-   * await client.subscriptions.cancel(id, { cancelAtPeriodEnd: true, sendCancellationEmail: true });
+   * await client.subscriptions.cancel(id);                                  // immediate (default)
+   * await client.subscriptions.cancel(id, { reason: 'Customer requested' }); // immediate + note
+   * await client.subscriptions.cancel(id, { cancelAtPeriodEnd: true });
    * await client.subscriptions.cancel(id, { cancelAt: '2026-12-31T23:59:59.000Z' });
    */
   async cancel(
     subscriptionId: string,
-    params: SubscriptionCancelParams,
+    params: SubscriptionCancelParams = {},
   ): Promise<SubscriptionCancelResponse> {
     return this.client.request<SubscriptionCancelResponse>({
       method: 'POST',

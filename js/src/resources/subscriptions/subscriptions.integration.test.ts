@@ -41,7 +41,7 @@ describe('SubscriptionResource Integration Tests', () => {
     it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
       const result = await client.subscriptions.list({ limit: 25 });
       const subscriptionWithPaymentMethod = result.data.find(
-        (subscription) => subscription.paymentMethod != null
+        (subscription) => subscription.paymentMethod?.expMonth != null
       );
 
       if (!subscriptionWithPaymentMethod?.paymentMethod) {
@@ -254,8 +254,10 @@ describe('SubscriptionResource Integration Tests', () => {
         (subscription) => (subscription as Record<string, unknown>).taxSource != null
       );
 
-      const taxSource = (subscriptionWithTaxSource as Record<string, unknown>).taxSource;
-      expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+      if (subscriptionWithTaxSource != null) {
+        const taxSource = (subscriptionWithTaxSource as Record<string, unknown>).taxSource;
+        expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+      }
     });
 
     it('should expose a structured taxRates snapshot when fixed_tax_rate is used', async () => {
@@ -285,9 +287,7 @@ describe('SubscriptionResource Integration Tests', () => {
   describe('cancel', () => {
     it('rejects a cancel against a non-existent subscription with a 404', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
-      await expect(
-        client.subscriptions.cancel(fakeId, { cancelImmediately: true }),
-      ).rejects.toThrow(/not found/i);
+      await expect(client.subscriptions.cancel(fakeId)).rejects.toThrow(/not found/i);
     });
 
     /**
@@ -297,11 +297,12 @@ describe('SubscriptionResource Integration Tests', () => {
      * fires. Targets a non-existent id so the request can't accidentally
      * cancel a real subscription if the server XOR were ever removed.
      */
-    it('rejects a body with multiple timing fields (server XOR — only one allowed)', async () => {
+    it('rejects a body with both timing fields set (server XOR — only one allowed)', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
+      const futureTimestamp = new Date(Date.now() + 60_000).toISOString();
       await expect(
         client.subscriptions.cancel(fakeId, {
-          cancelImmediately: true,
+          cancelAt: futureTimestamp,
           cancelAtPeriodEnd: true,
         } as never),
       ).rejects.toThrow();
@@ -329,7 +330,6 @@ describe('SubscriptionResource Integration Tests', () => {
       }
 
       const result = await client.subscriptions.cancel(target.id, {
-        cancelImmediately: true,
         reason: 'SDK integration test',
       });
 

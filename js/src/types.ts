@@ -137,18 +137,19 @@ type SubscriptionCancelOptions = Pick<
 >;
 
 /**
- * Cancellation timing — exactly one of `cancelImmediately`,
- * `cancelAtPeriodEnd`, or `cancelAt` must be set. The `?: never` on the
- * unused fields makes the discriminator-without-tag pattern reject combos
- * like `{ cancelImmediately: true, cancelAtPeriodEnd: true }` at the type
- * level (which the server's zod `superRefine` also rejects at the wire
- * level — see CancelSubscriptionRequestBodyValidationSchema in
- * @repo/schemas).
+ * Cancellation timing. Matching Stripe's semantic, the immediate-cancel
+ * mode is the default (omit both fields). `cancelAtPeriodEnd: true` defers
+ * to the end of the current billing period; `cancelAt: <ISO timestamp>`
+ * schedules a specific future moment. The `?: never` on the unused fields
+ * makes the discriminator reject combos like
+ * `{ cancelAt: '…', cancelAtPeriodEnd: true }` at the type level (the
+ * server's zod `superRefine` rejects the same combos at the wire level
+ * — see CancelSubscriptionRequestBodyValidationSchema in @repo/schemas).
  */
 export type SubscriptionCancelTiming =
-  | { cancelImmediately: true; cancelAtPeriodEnd?: never; cancelAt?: never }
-  | { cancelImmediately?: never; cancelAtPeriodEnd: true; cancelAt?: never }
-  | { cancelImmediately?: never; cancelAtPeriodEnd?: never; cancelAt: string };
+  | { cancelAtPeriodEnd: true; cancelAt?: never }
+  | { cancelAtPeriodEnd?: never; cancelAt: string }
+  | { cancelAtPeriodEnd?: never; cancelAt?: never };
 
 export type SubscriptionCancelParams = SubscriptionCancelTiming & SubscriptionCancelOptions;
 

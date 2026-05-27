@@ -13065,20 +13065,19 @@
                 "properties": {
                   "reason": {
                     "type": "string",
-                    "description": "Free-form note describing why the subscription is being canceled. Stored on the subscription record."
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "description": "Free-form note (1–500 chars after trim) describing why the subscription is being canceled. Stored on the subscription record."
                   },
                   "cancelAt": {
                     "type": "string",
                     "format": "date-time",
-                    "description": "ISO 8601 timestamp for a scheduled future cancellation. Mutually exclusive with `cancelImmediately` and `cancelAtPeriodEnd`."
-                  },
-                  "cancelImmediately": {
-                    "type": "boolean",
-                    "description": "When `true`, the subscription is canceled immediately. Mutually exclusive with `cancelAt` and `cancelAtPeriodEnd`."
+                    "description": "ISO 8601 timestamp for a scheduled future cancellation. Mutually exclusive with `cancelAtPeriodEnd`. Omit both timing fields to cancel immediately (matches Stripe — immediate is the default cancellation mode)."
                   },
                   "cancelAtPeriodEnd": {
                     "type": "boolean",
-                    "description": "When `true`, the subscription is set to cancel at the end of the current billing period. Mutually exclusive with `cancelAt` and `cancelImmediately`."
+                    "enum": [true],
+                    "description": "When `true`, the subscription is set to cancel at the end of the current billing period. Mutually exclusive with `cancelAt`. Omit both timing fields to cancel immediately."
                   },
                   "sendCancellationEmail": {
                     "type": "boolean",
