@@ -308,7 +308,7 @@ describe('SubscriptionResource Integration Tests', () => {
         const subscriptionWithPriceId = result.data.find((s) => s.priceId != null);
         if (!subscriptionWithPriceId?.priceId) {
           throw new Error(
-            'No subscription with priceId found — seed multi-price subscriptions first',
+            'No subscription with priceId found — seed multi-price subscriptions first'
           );
         }
 
