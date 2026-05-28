@@ -288,18 +288,10 @@ describe('SubscriptionResource Integration Tests', () => {
     it('rejects a cancel against a non-existent subscription with a 404', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
       await expect(
-        client.subscriptions.cancel(fakeId, { cancelImmediately: true }),
+        client.subscriptions.cancel(fakeId, { cancelImmediately: true })
       ).rejects.toThrow(/not found/i);
     });
 
-    /**
-     * Server-side XOR enforcement on the timing fields. The SDK's
-     * discriminated-union type prevents zero or multiple timing fields at
-     * compile time, so we defeat it via `as never` to assert the wire-level
-     * enforcement still fires. Both tests target a non-existent id so the
-     * request can't accidentally cancel a real subscription if the server
-     * XOR were ever removed.
-     */
     it('rejects a body with no timing field (server XOR — at least one required)', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
       await expect(client.subscriptions.cancel(fakeId, {} as never)).rejects.toThrow();
@@ -311,37 +303,81 @@ describe('SubscriptionResource Integration Tests', () => {
         client.subscriptions.cancel(fakeId, {
           cancelImmediately: true,
           cancelAtPeriodEnd: true,
-        } as never),
+        } as never)
       ).rejects.toThrow();
     });
 
-    /**
-     * End-to-end sanity: list subscriptions, find the first active one for
-     * the test seller, and cancel it. Verifies the full SDK pipeline (auth,
-     * path construction, body marshaling, response unwrapping) against a
-     * live API. This is run locally only — production runs MUST NOT pick a
-     * real customer's subscription to cancel; the integration env should
-     * point at a test seller account.
-     */
-    it('cancels the first active subscription found via list (sanity)', async () => {
-      const { data: subscriptions } = await client.subscriptions.list({
-        status: 'active',
-        limit: 10,
-      });
-
-      const target = subscriptions[0];
+    const findFreshActiveSubscription = async () => {
+      const { data } = await client.subscriptions.list({ status: 'active', limit: 100 });
+      const target = data.find(
+        (s) => s.cancelAt == null && s.stripeSubscriptionId != null && s.customerEmail != null
+      );
       if (!target) {
         throw new Error(
-          'Integration target has no active subscriptions to cancel — seed one first.',
+          'No fresh active subscription (cancelAt unset, has stripeSubscriptionId + ' +
+            'customerEmail) available to cancel — seed one on the test seller first.'
         );
       }
+      return target;
+    };
+
+    const refetchById = async (id: string, customerEmail: string) => {
+      const { data } = await client.subscriptions.list({ search: customerEmail, limit: 100 });
+      const found = data.find((s) => s.id === id);
+      if (!found) {
+        throw new Error(`Could not re-fetch subscription ${id} after cancel`);
+      }
+      return found;
+    };
+
+    it('schedules cancellation at period end — cancelAt becomes a future date', async () => {
+      const target = await findFreshActiveSubscription();
 
       const result = await client.subscriptions.cancel(target.id, {
-        cancelImmediately: true,
-        reason: 'SDK integration test',
+        cancelAtPeriodEnd: true,
+        reason: 'SDK integration test — cancelAtPeriodEnd',
       });
-
       expect(result.data.success).toBe(true);
+
+      const refetched = await refetchById(target.id, target.customerEmail!);
+
+      expect(refetched.cancelAt).toBeTruthy();
+      expect(new Date(refetched.cancelAt!).getTime()).toBeGreaterThan(Date.now());
+    });
+
+    it('schedules cancellation at an explicit future cancelAt', async () => {
+      const target = await findFreshActiveSubscription();
+
+      const requested = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+      requested.setMilliseconds(0);
+      const cancelAt = requested.toISOString();
+
+      const result = await client.subscriptions.cancel(target.id, {
+        cancelAt,
+        reason: 'SDK integration test — cancelAt',
+      });
+      expect(result.data.success).toBe(true);
+
+      const refetched = await refetchById(target.id, target.customerEmail!);
+
+      expect(refetched.cancelAt).toBeTruthy();
+      const actualMs = new Date(refetched.cancelAt!).getTime();
+      expect(actualMs).toBeGreaterThan(Date.now());
+      expect(Math.abs(actualMs - requested.getTime())).toBeLessThan(2000);
+    });
+
+    it('Cancel immediately', async () => {
+      const target = await findFreshActiveSubscription();
+
+      const date = new Date();
+      const result = await client.subscriptions.cancel(target.id, {
+        cancelImmediately: true,
+        reason: 'SDK integration test — cancelAt',
+      });
+      expect(result.data.success).toBe(true);
+
+      const refetched = await refetchById(target.id, target.customerEmail!);
+      expect(date.getTime()).toBeGreaterThan(new Date(refetched.canceledAt ?? '').getTime());
     });
   });
 });
