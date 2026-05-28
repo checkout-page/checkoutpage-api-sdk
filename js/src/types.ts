@@ -121,6 +121,40 @@ export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'li
   limit?: number;
 };
 
+/**
+ * Raw wire-shape from the OpenAPI spec — every field optional. Not exported
+ * because the public `SubscriptionCancelParams` below tightens this into a
+ * discriminated union that prevents zero/multiple timing fields at compile
+ * time.
+ */
+type RawSubscriptionCancelBody = NonNullable<
+  operations['subscriptions/cancel']['requestBody']
+>['content']['application/json'];
+
+type SubscriptionCancelOptions = Pick<
+  RawSubscriptionCancelBody,
+  'reason' | 'sendCancellationEmail'
+>;
+
+/**
+ * Cancellation timing — exactly one of `cancelImmediately`,
+ * `cancelAtPeriodEnd`, or `cancelAt` must be set. Cancellation is a
+ * significant action, so timing is explicit at the API boundary (the
+ * server enforces this via zod's `superRefine`; this discriminator
+ * mirrors the rule at compile time via the `?: never` trick on the
+ * unused fields — see CancelSubscriptionRequestBodyValidationSchema in
+ * @repo/schemas).
+ */
+export type SubscriptionCancelTiming =
+  | { cancelImmediately: true; cancelAtPeriodEnd?: never; cancelAt?: never }
+  | { cancelImmediately?: never; cancelAtPeriodEnd: true; cancelAt?: never }
+  | { cancelImmediately?: never; cancelAtPeriodEnd?: never; cancelAt: string };
+
+export type SubscriptionCancelParams = SubscriptionCancelTiming & SubscriptionCancelOptions;
+
+export type SubscriptionCancelResponse =
+  operations['subscriptions/cancel']['responses'][200]['content']['application/json'];
+
 // Bookings
 export type BookingList =
   operations['bookings/list']['responses'][200]['content']['application/json'];

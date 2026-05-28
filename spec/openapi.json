@@ -10584,7 +10584,7 @@
       },
       "patch": {
         "summary": "Update a customer",
-        "description": "Updates the editable details of a customer. Only the top-level fields you supply are changed; omitted top-level fields are left as-is. The `address` and `shipping` subdocuments are replaced **in full** when supplied — to change a single sub-field, send the complete object you want stored. Requests with an empty body are rejected.",
+        "description": "Updates the editable details of a customer. Only the fields you supply are changed; omitted fields are left as-is. The `address` and `shipping` subdocuments follow patch semantics — supply only the sub-fields you want to change, and the rest are preserved. Send `null` for any optional field (or for a whole subdocument) to clear it. The primary `email` field cannot be cleared. Requests with an empty body are rejected.",
         "operationId": "customers/update",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Customers"],
@@ -10602,19 +10602,33 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string", "description": "Customer full name." },
-                  "companyName": { "type": "string", "description": "Customer company name." },
+                  "name": {
+                    "type": ["string", "null"],
+                    "minLength": 1,
+                    "description": "Customer full name. Send `null` to clear."
+                  },
+                  "companyName": {
+                    "type": ["string", "null"],
+                    "minLength": 1,
+                    "description": "Customer company name. Send `null` to clear."
+                  },
                   "email": {
                     "type": "string",
-                    "description": "Primary customer email address. Trimmed and lowercased before storage."
+                    "format": "email",
+                    "description": "Primary customer email address. Trimmed and lowercased before storage. Cannot be cleared via this endpoint."
                   },
-                  "phone": { "type": "string", "description": "Customer phone number." },
+                  "phone": {
+                    "type": ["string", "null"],
+                    "minLength": 1,
+                    "description": "Customer phone number. Send `null` to clear."
+                  },
                   "billingEmail": {
-                    "type": "string",
-                    "description": "Billing email address. Can be different from the primary email. Trimmed and lowercased before storage."
+                    "type": ["string", "null"],
+                    "format": "email",
+                    "description": "Billing email address. Can be different from the primary email. Trimmed and lowercased before storage. Send `null` to clear."
                   },
                   "address": {
-                    "type": "object",
+                    "type": ["object", "null"],
                     "properties": {
                       "line1": { "type": "string" },
                       "line2": { "type": "string" },
@@ -10623,15 +10637,24 @@
                       "postalCode": { "type": "string" },
                       "country": { "type": "string" }
                     },
-                    "description": "Billing address. Setting this replaces the existing billing address subdocument in full."
+                    "additionalProperties": false,
+                    "description": "Billing address. Patch semantics — only the subfields you supply are changed. Send `null` to clear the whole subdocument."
                   },
                   "shipping": {
-                    "type": "object",
+                    "type": ["object", "null"],
                     "properties": {
-                      "name": { "type": "string", "description": "Shipping recipient name." },
-                      "phone": { "type": "string", "description": "Shipping phone number." },
+                      "name": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "description": "Shipping recipient name. Send `null` to clear."
+                      },
+                      "phone": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "description": "Shipping phone number. Send `null` to clear."
+                      },
                       "address": {
-                        "type": "object",
+                        "type": ["object", "null"],
                         "properties": {
                           "line1": { "type": "string" },
                           "line2": { "type": "string" },
@@ -10640,10 +10663,12 @@
                           "postalCode": { "type": "string" },
                           "country": { "type": "string" }
                         },
-                        "description": "Shipping address. Separate from the top-level billing address."
+                        "additionalProperties": false,
+                        "description": "Shipping address. Patch semantics — only the subfields you supply are changed. Send `null` to clear the whole subdocument."
                       }
                     },
-                    "description": "Shipping details, including recipient name, phone, and shipping address. Setting this replaces the existing shipping subdocument in full."
+                    "additionalProperties": false,
+                    "description": "Shipping details. Patch semantics — only the fields you supply are changed (including nested `shipping.address` subfields). Send `null` to clear the whole subdocument."
                   }
                 },
                 "additionalProperties": false
@@ -11078,11 +11103,12 @@
           {
             "schema": {
               "type": "string",
+              "minLength": 1,
               "maxLength": 200,
-              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `invoiceNumber`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; identifier-like inputs (`INV-1234`) match `invoiceNumber`; multi-word inputs match `customerName` and `productTitle`. Best default when the user gives an ambiguous query. A customer may have multiple invoice records — always review all matches, not just the first."
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `invoiceNumber`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; identifier-like inputs containing a digit/underscore/hyphen (`2026-000010`) match `invoiceNumber`; multi-word inputs match `customerName` and `productTitle`; any other single bare word falls back to a broad case-insensitive substring match across `customerName`, `customerEmail` and `productTitle`. Best default when the user gives an ambiguous query. A customer may have multiple invoice records — always review all matches, not just the first."
             },
             "required": false,
-            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `invoiceNumber`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; identifier-like inputs (`INV-1234`) match `invoiceNumber`; multi-word inputs match `customerName` and `productTitle`. Best default when the user gives an ambiguous query. A customer may have multiple invoice records — always review all matches, not just the first.",
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `productTitle` and `invoiceNumber`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; identifier-like inputs containing a digit/underscore/hyphen (`2026-000010`) match `invoiceNumber`; multi-word inputs match `customerName` and `productTitle`; any other single bare word falls back to a broad case-insensitive substring match across `customerName`, `customerEmail` and `productTitle`. Best default when the user gives an ambiguous query. A customer may have multiple invoice records — always review all matches, not just the first.",
             "name": "search",
             "in": "query"
           },
@@ -11136,6 +11162,7 @@
           {
             "schema": {
               "type": "string",
+              "minLength": 1,
               "maxLength": 200,
               "description": "Exact match on the invoice PO number. Use for \"find the invoice for PO-5678\"."
             },
@@ -11193,20 +11220,16 @@
                             ]
                           },
                           "customerId": {
-                            "allOf": [
-                              { "$ref": "#/components/schemas/UniqueIdentifier" },
-                              {
-                                "description": "Customer record this invoice belongs to. For full customer profile fields (company, phone, tax ID), call get_customer with this id."
-                              }
-                            ]
+                            "type": ["string", "null"],
+                            "pattern": "^[0-9a-fA-F]{24}$",
+                            "description": "Customer record this invoice belongs to. For full customer profile fields (company, phone, tax ID), call get_customer with this id.",
+                            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           },
                           "chargeId": {
-                            "allOf": [
-                              { "$ref": "#/components/schemas/UniqueIdentifier" },
-                              {
-                                "description": "Originating payment (Charge) that generated this invoice. For refund details (amountRefunded, lastRefundAt, lastRefundReason) look up the Charge via list_payments — the invoice itself does not carry refund metadata."
-                              }
-                            ]
+                            "type": ["string", "null"],
+                            "pattern": "^[0-9a-fA-F]{24}$",
+                            "description": "Originating payment (Charge) that generated this invoice. For refund details (amountRefunded, lastRefundAt, lastRefundReason) look up the Charge via list_payments — the invoice itself does not carry refund metadata.",
+                            "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                           },
                           "livemode": {
                             "type": "boolean",
@@ -11221,48 +11244,48 @@
                             "description": "Total invoice amount in the smallest currency unit (e.g. 10661 USD = $106.61, 500 JPY = ¥500). Divide by 100 before displaying, except for zero-decimal currencies like JPY."
                           },
                           "amountRefunded": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Amount refunded against this invoice in the smallest currency unit. Refund metadata lives on the originating Charge — query list_payments by chargeId for full refund history."
                           },
                           "amountUsd": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Total amount converted to USD at the time of the invoice, in the smallest currency unit (cents)."
                           },
                           "amountPaid": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Amount paid in the smallest currency unit. Equal to `amount` when status is \"paid\"."
                           },
                           "amountDue": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Outstanding amount in the smallest currency unit. Non-zero only on \"open\" or \"uncollectible\" invoices."
                           },
                           "amountExcludingTax": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Subtotal of the invoice excluding tax, in the smallest currency unit."
                           },
                           "taxAmount": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Total tax amount on the invoice in the smallest currency unit."
                           },
                           "taxBreakdown": {
-                            "type": "array",
+                            "type": ["array", "null"],
                             "items": {
                               "type": "object",
                               "properties": {
                                 "taxType": {
-                                  "type": "string",
+                                  "type": ["string", "null"],
                                   "description": "Tax classification for this line of the breakdown (e.g. \"vat\", \"sales_tax\")."
                                 },
                                 "taxabilityReason": {
-                                  "type": "string",
+                                  "type": ["string", "null"],
                                   "description": "Why the line was treated as taxable or not (e.g. \"standard_rated\", \"zero_rated\", \"not_collecting\")."
                                 },
                                 "taxableAmount": {
-                                  "type": "number",
+                                  "type": ["number", "null"],
                                   "description": "Amount subject to tax for this line, in the smallest currency unit."
                                 },
                                 "taxAmount": {
-                                  "type": "number",
+                                  "type": ["number", "null"],
                                   "description": "Tax collected for this line, in the smallest currency unit."
                                 },
                                 "taxRateDetails": {
@@ -11297,7 +11320,7 @@
                             "description": "How tax was calculated: \"stripe_tax\" (Stripe Tax service) or \"fixed_tax_rate\" (merchant-defined rates). Null when the invoice has no tax."
                           },
                           "taxRates": {
-                            "type": "array",
+                            "type": ["array", "null"],
                             "items": { "$ref": "#/components/schemas/HistoricalTaxRateSnapshot" },
                             "description": "Historical snapshot of the merchant tax rates that applied at the time of the invoice. Preserved even if the merchant later edits or deletes the rate."
                           },
@@ -11315,7 +11338,7 @@
                             "description": "Invoice status. \"paid\" — payment was collected. \"open\" — outstanding. \"uncollectible\" — payment failed and was abandoned. \"refunded\" — fully refunded. \"partially_refunded\" — partial refund issued. \"void\" — cancelled. \"draft\" — not yet finalised."
                           },
                           "lineItems": {
-                            "type": "array",
+                            "type": ["array", "null"],
                             "items": {
                               "type": "object",
                               "properties": {
@@ -11357,54 +11380,54 @@
                             "description": "Itemised list of products, variants, setup fees, and tickets on the invoice. Use when a customer asks what they were charged for."
                           },
                           "subtotal": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Sum of line items before discount and tax, in the smallest currency unit."
                           },
                           "subtotalAfterDiscount": {
-                            "type": "number",
+                            "type": ["number", "null"],
                             "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit."
                           },
                           "bulkDiscount": {
-                            "type": "object",
+                            "type": ["object", "null"],
                             "properties": {
                               "minQuantity": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Minimum quantity at which this discount tier activates."
                               },
                               "maxQuantity": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Maximum quantity covered by this discount tier (omit for open-ended)."
                               },
                               "percentOff": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Percentage off per unit (0-100). Mutually exclusive with `amountOff`."
                               },
                               "amountOff": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Fixed amount off per unit, in the smallest currency unit. Mutually exclusive with `percentOff`."
                               },
                               "amount": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Resolved total discount applied to the invoice, in the smallest currency unit."
                               }
                             },
                             "description": "Quantity-based discount applied to the invoice, when one was in effect."
                           },
                           "fees": {
-                            "type": "array",
+                            "type": ["array", "null"],
                             "items": {
                               "type": "object",
                               "properties": {
                                 "name": {
-                                  "type": "string",
+                                  "type": ["string", "null"],
                                   "description": "Display name for the fee (e.g. \"Shipping\", \"Processing\")."
                                 },
                                 "amount": {
-                                  "type": "number",
+                                  "type": ["number", "null"],
                                   "description": "Fee amount in the smallest currency unit."
                                 },
                                 "percentage": {
-                                  "type": "number",
+                                  "type": ["number", "null"],
                                   "description": "Fee as a percentage of the subtotal (0-100), when defined that way."
                                 }
                               }
@@ -11412,34 +11435,32 @@
                             "description": "Additional fees on the invoice (e.g. shipping, processing)."
                           },
                           "coupon": {
-                            "type": "object",
+                            "type": ["object", "null"],
                             "properties": {
                               "id": {
-                                "allOf": [
-                                  { "$ref": "#/components/schemas/UniqueIdentifier" },
-                                  {
-                                    "description": "Coupon record id. Resolve full coupon details by id if needed."
-                                  }
-                                ]
+                                "type": ["string", "null"],
+                                "pattern": "^[0-9a-fA-F]{24}$",
+                                "description": "Coupon record id. Resolve full coupon details by id if needed.",
+                                "example": "65f4a1c2e4a9f3d2b1c0a9e8"
                               },
                               "label": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Customer-facing label for the coupon."
                               },
                               "code": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Coupon code redeemed on the invoice (case-sensitive as stored)."
                               },
                               "amountOff": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Fixed amount off the invoice, in the smallest currency unit. Mutually exclusive with `percentOff`."
                               },
                               "percentOff": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Percentage off the invoice (0-100). Mutually exclusive with `amountOff`."
                               },
                               "discount": {
-                                "type": "number",
+                                "type": ["number", "null"],
                                 "description": "Resolved discount applied to the invoice, in the smallest currency unit."
                               }
                             },
@@ -11454,34 +11475,34 @@
                             "description": "Merchant-defined label for the PO number field (e.g. \"Purchase Order\", \"Reference\")."
                           },
                           "invoiceUuid": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": "Stable UUID for the invoice, used in invoice URLs."
                           },
                           "invoiceNumber": {
-                            "type": "string",
-                            "description": "Human-readable invoice number (e.g. \"INV-0001\"). Use when a customer asks for their invoice number."
+                            "type": ["string", "null"],
+                            "description": "Human-readable invoice number (e.g. \"2026-000010\"). Use when a customer asks for their invoice number."
                           },
                           "invoiceUrl": {
-                            "type": "string",
-                            "description": "Hosted URL for the invoice PDF/page."
+                            "type": ["string", "null"],
+                            "description": "Presigned hosted URL for the invoice PDF, safe to share with the buyer. Expires 1 hour after the response is generated — re-list or re-fetch the invoice to obtain a fresh URL. Absent for invoices that have no generated PDF (e.g. drafts)."
                           },
                           "billing": {
-                            "type": "object",
+                            "type": ["object", "null"],
                             "properties": {
                               "name": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Buyer name captured at checkout."
                               },
                               "email": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Buyer email captured at checkout. Lowercased."
                               },
                               "phone": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Buyer phone captured at checkout, free-form."
                               },
                               "address": {
-                                "type": "object",
+                                "type": ["object", "null"],
                                 "properties": {
                                   "line1": { "type": "string" },
                                   "line2": { "type": "string" },
@@ -11493,33 +11514,33 @@
                                 "description": "Buyer billing address captured at checkout."
                               },
                               "taxId": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Buyer tax ID (e.g. VAT/GST number) captured at checkout."
                               },
                               "taxIdType": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Type/jurisdiction of the buyer tax ID (e.g. \"eu_vat\", \"us_ein\")."
                               }
                             },
                             "description": "Buyer billing details captured at checkout (name, email, phone, address, tax ID). May be empty for digital products."
                           },
                           "sellerBilling": {
-                            "type": "object",
+                            "type": ["object", "null"],
                             "properties": {
                               "name": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Seller legal/display name on the invoice."
                               },
                               "email": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Seller support/billing email on the invoice."
                               },
                               "taxId": {
-                                "type": "string",
+                                "type": ["string", "null"],
                                 "description": "Seller tax registration ID printed on the invoice."
                               },
                               "address": {
-                                "type": "object",
+                                "type": ["object", "null"],
                                 "properties": {
                                   "line1": { "type": "string" },
                                   "line2": { "type": "string" },
@@ -11534,15 +11555,15 @@
                             "description": "Seller registration details on the invoice (name, email, tax ID, address). Use when a customer asks about the seller's tax registration."
                           },
                           "customerName": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": "Customer name on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerName` or `search` query params."
                           },
                           "customerEmail": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": "Customer email on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerEmail` or `search` query params."
                           },
                           "productTitle": {
-                            "type": "string",
+                            "type": ["string", "null"],
                             "description": "Title of the first product line item on the invoice. Denormalised for search and filtering."
                           },
                           "createdAt": {
@@ -11579,6 +11600,481 @@
                     }
                   },
                   "required": ["data", "total", "has_more"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invoices/:id/regenerate": {
+      "post": {
+        "summary": "Regenerate an invoice PDF",
+        "description": "Regenerates the PDF for an invoice and returns the updated invoice and PDF. Refreshes billing details, PO number, and the denormalized customer / product fields from the source Charge. Preserves line items, amounts, taxes, fees, and status. The previous PDF is overwritten in place; the returned `invoiceUrl` is a freshly signed link.",
+        "operationId": "invoices/regenerate",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Invoices"],
+        "parameters": [
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                { "description": "The ID of the invoice to regenerate." }
+              ]
+            },
+            "required": true,
+            "description": "The ID of the invoice to regenerate.",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false,
+                "description": "Empty body. The regeneration operation is parameter-less; the new PDF reflects current billing details on the source charge."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invoice regenerated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "allOf": [
+                            { "$ref": "#/components/schemas/UniqueIdentifier" },
+                            { "description": "Unique identifier for the invoice." }
+                          ]
+                        },
+                        "sellerId": {
+                          "allOf": [
+                            { "$ref": "#/components/schemas/UniqueIdentifier" },
+                            { "description": "Seller account that owns this invoice." }
+                          ]
+                        },
+                        "customerId": {
+                          "type": ["string", "null"],
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "description": "Customer record this invoice belongs to. For full customer profile fields (company, phone, tax ID), call get_customer with this id.",
+                          "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                        },
+                        "chargeId": {
+                          "type": ["string", "null"],
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "description": "Originating payment (Charge) that generated this invoice. For refund details (amountRefunded, lastRefundAt, lastRefundReason) look up the Charge via list_payments — the invoice itself does not carry refund metadata.",
+                          "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                        },
+                        "livemode": {
+                          "type": "boolean",
+                          "description": "True for live-mode invoices; false for test-mode invoices. Test- and live-mode data are isolated."
+                        },
+                        "currency": {
+                          "type": "string",
+                          "description": "ISO 4217 currency code (lowercase, e.g. \"usd\", \"gbp\", \"eur\")."
+                        },
+                        "amount": {
+                          "type": "number",
+                          "description": "Total invoice amount in the smallest currency unit (e.g. 10661 USD = $106.61, 500 JPY = ¥500). Divide by 100 before displaying, except for zero-decimal currencies like JPY."
+                        },
+                        "amountRefunded": {
+                          "type": ["number", "null"],
+                          "description": "Amount refunded against this invoice in the smallest currency unit. Refund metadata lives on the originating Charge — query list_payments by chargeId for full refund history."
+                        },
+                        "amountUsd": {
+                          "type": ["number", "null"],
+                          "description": "Total amount converted to USD at the time of the invoice, in the smallest currency unit (cents)."
+                        },
+                        "amountPaid": {
+                          "type": ["number", "null"],
+                          "description": "Amount paid in the smallest currency unit. Equal to `amount` when status is \"paid\"."
+                        },
+                        "amountDue": {
+                          "type": ["number", "null"],
+                          "description": "Outstanding amount in the smallest currency unit. Non-zero only on \"open\" or \"uncollectible\" invoices."
+                        },
+                        "amountExcludingTax": {
+                          "type": ["number", "null"],
+                          "description": "Subtotal of the invoice excluding tax, in the smallest currency unit."
+                        },
+                        "taxAmount": {
+                          "type": ["number", "null"],
+                          "description": "Total tax amount on the invoice in the smallest currency unit."
+                        },
+                        "taxBreakdown": {
+                          "type": ["array", "null"],
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "taxType": {
+                                "type": ["string", "null"],
+                                "description": "Tax classification for this line of the breakdown (e.g. \"vat\", \"sales_tax\")."
+                              },
+                              "taxabilityReason": {
+                                "type": ["string", "null"],
+                                "description": "Why the line was treated as taxable or not (e.g. \"standard_rated\", \"zero_rated\", \"not_collecting\")."
+                              },
+                              "taxableAmount": {
+                                "type": ["number", "null"],
+                                "description": "Amount subject to tax for this line, in the smallest currency unit."
+                              },
+                              "taxAmount": {
+                                "type": ["number", "null"],
+                                "description": "Tax collected for this line, in the smallest currency unit."
+                              },
+                              "taxRateDetails": {
+                                "type": ["object", "null"],
+                                "properties": {
+                                  "country": {
+                                    "type": ["string", "null"],
+                                    "description": "ISO 3166-1 alpha-2 country code the tax rate applies to."
+                                  },
+                                  "percentageDecimal": {
+                                    "type": ["number", "null"],
+                                    "description": "Tax percentage as a decimal (e.g. 0.2 for 20%)."
+                                  },
+                                  "state": {
+                                    "type": ["string", "null"],
+                                    "description": "Subdivision the tax rate applies to (e.g. US state code)."
+                                  },
+                                  "taxType": {
+                                    "type": ["string", "null"],
+                                    "description": "Tax classification (e.g. \"vat\", \"sales_tax\")."
+                                  }
+                                },
+                                "description": "Detail of the tax rate applied to this line (country/state/type/percentage)."
+                              }
+                            }
+                          },
+                          "description": "Per-line-item tax breakdown. Use this when a customer asks how tax was calculated."
+                        },
+                        "taxSource": {
+                          "type": ["string", "null"],
+                          "enum": ["fixed_tax_rate", "stripe_tax", null],
+                          "description": "How tax was calculated: \"stripe_tax\" (Stripe Tax service) or \"fixed_tax_rate\" (merchant-defined rates). Null when the invoice has no tax."
+                        },
+                        "taxRates": {
+                          "type": ["array", "null"],
+                          "items": { "$ref": "#/components/schemas/HistoricalTaxRateSnapshot" },
+                          "description": "Historical snapshot of the merchant tax rates that applied at the time of the invoice. Preserved even if the merchant later edits or deletes the rate."
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "draft",
+                            "open",
+                            "paid",
+                            "uncollectible",
+                            "refunded",
+                            "partially_refunded",
+                            "void"
+                          ],
+                          "description": "Invoice status. \"paid\" — payment was collected. \"open\" — outstanding. \"uncollectible\" — payment failed and was abandoned. \"refunded\" — fully refunded. \"partially_refunded\" — partial refund issued. \"void\" — cancelled. \"draft\" — not yet finalised."
+                        },
+                        "lineItems": {
+                          "type": ["array", "null"],
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": ["string", "null"],
+                                "enum": ["product", "setupFee", "variantOption", "ticket", null],
+                                "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket."
+                              },
+                              "name": {
+                                "type": ["string", "null"],
+                                "description": "Display name for the line item (typically the product title or variant label)."
+                              },
+                              "quantity": {
+                                "type": ["number", "null"],
+                                "description": "Quantity purchased for this line."
+                              },
+                              "unitPrice": {
+                                "type": ["number", "null"],
+                                "description": "Per-unit price in the smallest currency unit, before discount."
+                              },
+                              "amount": {
+                                "type": ["number", "null"],
+                                "description": "Line total (quantity × unitPrice) in the smallest currency unit, before discount."
+                              },
+                              "bulkDiscountAmount": {
+                                "type": ["number", "null"],
+                                "description": "Bulk-discount amount applied to this line, in the smallest currency unit."
+                              },
+                              "couponDiscountAmount": {
+                                "type": ["number", "null"],
+                                "description": "Coupon-discount amount applied to this line, in the smallest currency unit."
+                              },
+                              "couponCode": {
+                                "type": ["string", "null"],
+                                "description": "Code of the coupon that produced `couponDiscountAmount`, if any."
+                              }
+                            }
+                          },
+                          "description": "Itemised list of products, variants, setup fees, and tickets on the invoice. Use when a customer asks what they were charged for."
+                        },
+                        "subtotal": {
+                          "type": ["number", "null"],
+                          "description": "Sum of line items before discount and tax, in the smallest currency unit."
+                        },
+                        "subtotalAfterDiscount": {
+                          "type": ["number", "null"],
+                          "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit."
+                        },
+                        "bulkDiscount": {
+                          "type": ["object", "null"],
+                          "properties": {
+                            "minQuantity": {
+                              "type": ["number", "null"],
+                              "description": "Minimum quantity at which this discount tier activates."
+                            },
+                            "maxQuantity": {
+                              "type": ["number", "null"],
+                              "description": "Maximum quantity covered by this discount tier (omit for open-ended)."
+                            },
+                            "percentOff": {
+                              "type": ["number", "null"],
+                              "description": "Percentage off per unit (0-100). Mutually exclusive with `amountOff`."
+                            },
+                            "amountOff": {
+                              "type": ["number", "null"],
+                              "description": "Fixed amount off per unit, in the smallest currency unit. Mutually exclusive with `percentOff`."
+                            },
+                            "amount": {
+                              "type": ["number", "null"],
+                              "description": "Resolved total discount applied to the invoice, in the smallest currency unit."
+                            }
+                          },
+                          "description": "Quantity-based discount applied to the invoice, when one was in effect."
+                        },
+                        "fees": {
+                          "type": ["array", "null"],
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": ["string", "null"],
+                                "description": "Display name for the fee (e.g. \"Shipping\", \"Processing\")."
+                              },
+                              "amount": {
+                                "type": ["number", "null"],
+                                "description": "Fee amount in the smallest currency unit."
+                              },
+                              "percentage": {
+                                "type": ["number", "null"],
+                                "description": "Fee as a percentage of the subtotal (0-100), when defined that way."
+                              }
+                            }
+                          },
+                          "description": "Additional fees on the invoice (e.g. shipping, processing)."
+                        },
+                        "coupon": {
+                          "type": ["object", "null"],
+                          "properties": {
+                            "id": {
+                              "type": ["string", "null"],
+                              "pattern": "^[0-9a-fA-F]{24}$",
+                              "description": "Coupon record id. Resolve full coupon details by id if needed.",
+                              "example": "65f4a1c2e4a9f3d2b1c0a9e8"
+                            },
+                            "label": {
+                              "type": ["string", "null"],
+                              "description": "Customer-facing label for the coupon."
+                            },
+                            "code": {
+                              "type": ["string", "null"],
+                              "description": "Coupon code redeemed on the invoice (case-sensitive as stored)."
+                            },
+                            "amountOff": {
+                              "type": ["number", "null"],
+                              "description": "Fixed amount off the invoice, in the smallest currency unit. Mutually exclusive with `percentOff`."
+                            },
+                            "percentOff": {
+                              "type": ["number", "null"],
+                              "description": "Percentage off the invoice (0-100). Mutually exclusive with `amountOff`."
+                            },
+                            "discount": {
+                              "type": ["number", "null"],
+                              "description": "Resolved discount applied to the invoice, in the smallest currency unit."
+                            }
+                          },
+                          "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount."
+                        },
+                        "poNumber": {
+                          "type": ["string", "null"],
+                          "description": "Customer-supplied purchase-order number. Filterable via the `poNumber` query param."
+                        },
+                        "poNumberLabel": {
+                          "type": ["string", "null"],
+                          "description": "Merchant-defined label for the PO number field (e.g. \"Purchase Order\", \"Reference\")."
+                        },
+                        "invoiceUuid": {
+                          "type": ["string", "null"],
+                          "description": "Stable UUID for the invoice, used in invoice URLs."
+                        },
+                        "invoiceNumber": {
+                          "type": ["string", "null"],
+                          "description": "Human-readable invoice number (e.g. \"2026-000010\"). Use when a customer asks for their invoice number."
+                        },
+                        "invoiceUrl": {
+                          "type": ["string", "null"],
+                          "description": "Presigned hosted URL for the invoice PDF, safe to share with the buyer. Expires 1 hour after the response is generated — re-list or re-fetch the invoice to obtain a fresh URL. Absent for invoices that have no generated PDF (e.g. drafts)."
+                        },
+                        "billing": {
+                          "type": ["object", "null"],
+                          "properties": {
+                            "name": {
+                              "type": ["string", "null"],
+                              "description": "Buyer name captured at checkout."
+                            },
+                            "email": {
+                              "type": ["string", "null"],
+                              "description": "Buyer email captured at checkout. Lowercased."
+                            },
+                            "phone": {
+                              "type": ["string", "null"],
+                              "description": "Buyer phone captured at checkout, free-form."
+                            },
+                            "address": {
+                              "type": ["object", "null"],
+                              "properties": {
+                                "line1": { "type": "string" },
+                                "line2": { "type": "string" },
+                                "city": { "type": "string" },
+                                "state": { "type": "string" },
+                                "postalCode": { "type": "string" },
+                                "country": { "type": "string" }
+                              },
+                              "description": "Buyer billing address captured at checkout."
+                            },
+                            "taxId": {
+                              "type": ["string", "null"],
+                              "description": "Buyer tax ID (e.g. VAT/GST number) captured at checkout."
+                            },
+                            "taxIdType": {
+                              "type": ["string", "null"],
+                              "description": "Type/jurisdiction of the buyer tax ID (e.g. \"eu_vat\", \"us_ein\")."
+                            }
+                          },
+                          "description": "Buyer billing details captured at checkout (name, email, phone, address, tax ID). May be empty for digital products."
+                        },
+                        "sellerBilling": {
+                          "type": ["object", "null"],
+                          "properties": {
+                            "name": {
+                              "type": ["string", "null"],
+                              "description": "Seller legal/display name on the invoice."
+                            },
+                            "email": {
+                              "type": ["string", "null"],
+                              "description": "Seller support/billing email on the invoice."
+                            },
+                            "taxId": {
+                              "type": ["string", "null"],
+                              "description": "Seller tax registration ID printed on the invoice."
+                            },
+                            "address": {
+                              "type": ["object", "null"],
+                              "properties": {
+                                "line1": { "type": "string" },
+                                "line2": { "type": "string" },
+                                "city": { "type": "string" },
+                                "state": { "type": "string" },
+                                "postalCode": { "type": "string" },
+                                "country": { "type": "string" }
+                              },
+                              "description": "Seller registration address printed on the invoice."
+                            }
+                          },
+                          "description": "Seller registration details on the invoice (name, email, tax ID, address). Use when a customer asks about the seller's tax registration."
+                        },
+                        "customerName": {
+                          "type": ["string", "null"],
+                          "description": "Customer name on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerName` or `search` query params."
+                        },
+                        "customerEmail": {
+                          "type": ["string", "null"],
+                          "description": "Customer email on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerEmail` or `search` query params."
+                        },
+                        "productTitle": {
+                          "type": ["string", "null"],
+                          "description": "Title of the first product line item on the invoice. Denormalised for search and filtering."
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "ISO-8601 UTC timestamp the invoice was created."
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "ISO-8601 UTC timestamp the invoice was last updated."
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "sellerId",
+                        "livemode",
+                        "currency",
+                        "amount",
+                        "status",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "description": "Invoice generated from a payment (Charge) on the Checkout Page account. Read-only."
+                    }
+                  },
+                  "required": ["data"]
                 }
               }
             }
@@ -12444,6 +12940,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -12503,6 +13011,139 @@
           },
           "403": {
             "description": "Forbidden - Insufficient permissions or validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded - Please try again later.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/subscriptions/:subscriptionId/cancel": {
+      "post": {
+        "summary": "Cancel a subscription",
+        "description": "Cancels a customer's subscription. Provide exactly one of `cancelImmediately`, `cancelAtPeriodEnd`, or `cancelAt` to control the cancellation timing. The three timing fields are mutually exclusive — omitting all of them returns 400 (timing must be explicit). Optional `reason` is stored on the subscription; optional `sendCancellationEmail` triggers a customer email.",
+        "operationId": "subscriptions/cancel",
+        "security": [{ "api_key_auth": [] }],
+        "tags": ["Subscriptions"],
+        "parameters": [
+          {
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/UniqueIdentifier" },
+                { "description": "The ID of the subscription to cancel." }
+              ]
+            },
+            "required": true,
+            "description": "The ID of the subscription to cancel.",
+            "name": "subscriptionId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500,
+                    "description": "Free-form note (1–500 chars after trim) describing why the subscription is being canceled. Stored on the subscription record."
+                  },
+                  "cancelImmediately": {
+                    "type": "boolean",
+                    "enum": [true],
+                    "description": "When `true`, the subscription is canceled immediately. Mutually exclusive with `cancelAtPeriodEnd` and `cancelAt`."
+                  },
+                  "cancelAtPeriodEnd": {
+                    "type": "boolean",
+                    "enum": [true],
+                    "description": "When `true`, the subscription is set to cancel at the end of the current billing period. Mutually exclusive with `cancelImmediately` and `cancelAt`."
+                  },
+                  "cancelAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO 8601 timestamp for a scheduled future cancellation. Mutually exclusive with `cancelImmediately` and `cancelAtPeriodEnd`."
+                  },
+                  "sendCancellationEmail": {
+                    "type": "boolean",
+                    "description": "When `true`, sends a cancellation notification email to the customer."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription cancellation initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "description": "Always `true` when the cancellation request succeeded."
+                        }
+                      },
+                      "required": ["success"]
+                    }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Insufficient permissions or validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SellerApiErrorResponse" }
@@ -20267,6 +20908,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -20716,6 +21369,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -21165,6 +21830,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -21614,6 +22291,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -22063,6 +22752,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -22512,6 +23213,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },
@@ -22961,6 +23674,18 @@
                           "lastRefundReasonNote": { "type": "string" },
                           "canceledAt": { "type": "string", "format": "date-time" },
                           "canceledBy": { "type": "string" },
+                          "canceledByApiKey": {
+                            "type": "string",
+                            "description": "ID of the API key that canceled the subscription, when cancellation was initiated via the seller API. Best-effort reference — the underlying ApiKey document may be hard-deleted, in which case `canceledByApiKeyName` and `canceledByApiKeyPreview` are the durable audit trail."
+                          },
+                          "canceledByApiKeyName": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's human-readable name at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
+                          "canceledByApiKeyPreview": {
+                            "type": "string",
+                            "description": "Snapshot of the API key's 10-character public preview (e.g. `sk_live_aB`) at the time of cancellation. Survives a later hard-delete of the ApiKey document."
+                          },
                           "reason": { "type": "string" },
                           "isAbandoned": { "type": "boolean" },
                           "recoveredAt": { "type": "string", "format": "date-time" },

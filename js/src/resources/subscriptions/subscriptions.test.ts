@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SubscriptionResource } from './subscriptions';
 import { CheckoutPageApiClient } from '../../client';
-import type { SubscriptionList } from '../../types';
+import type { SubscriptionCancelResponse, SubscriptionList } from '../../types';
 
 describe('SubscriptionResource', () => {
   let client: CheckoutPageApiClient;
@@ -355,6 +355,87 @@ describe('SubscriptionResource', () => {
         limit: '2',
         starting_after: undefined,
         ending_before: 's3',
+      });
+    });
+  });
+
+  describe('cancel', () => {
+    const mockResponse: SubscriptionCancelResponse = { data: { success: true } };
+
+    it('forwards cancelImmediately + reason in the body', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
+        cancelImmediately: true,
+        reason: 'Customer requested',
+      });
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: { cancelImmediately: true, reason: 'Customer requested' },
+      });
+    });
+
+    it('forwards cancelAtPeriodEnd + sendCancellationEmail', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01d', {
+        cancelAtPeriodEnd: true,
+        sendCancellationEmail: true,
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01d/cancel',
+        body: {
+          cancelAtPeriodEnd: true,
+          sendCancellationEmail: true,
+        },
+      });
+    });
+
+    it('forwards a scheduled cancelAt ISO timestamp', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01e', {
+        cancelAt: '2026-12-31T23:59:59.000Z',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01e/cancel',
+        body: {
+          cancelAt: '2026-12-31T23:59:59.000Z',
+        },
+      });
+    });
+
+    /**
+     * The SDK's discriminated-union type prevents passing zero or multiple
+     * timing fields at compile time. The test below uses `as never` to
+     * defeat the type and verify that the SDK still forwards the body
+     * verbatim — the server's zod XOR enforces the rule at the wire level,
+     * so this lock-in catches refactors that might accidentally start
+     * dropping fields if a misbehaving consumer manages to construct an
+     * invalid body (e.g. via type-defeating dynamic input).
+     */
+    it('forwards multiple timing fields verbatim when the type is defeated', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      await subscriptionResource.cancel('6812fe6e9f39b6760576f01c', {
+        cancelImmediately: true,
+        cancelAtPeriodEnd: true,
+      } as never);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c/cancel',
+        body: {
+          cancelImmediately: true,
+          cancelAtPeriodEnd: true,
+        },
       });
     });
   });
