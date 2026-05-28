@@ -13039,7 +13039,7 @@
     "/v1/subscriptions/:subscriptionId/cancel": {
       "post": {
         "summary": "Cancel a subscription",
-        "description": "Cancels a customer's subscription. Provide exactly one of `cancelImmediately`, `cancelAtPeriodEnd`, or `cancelAt` to control the cancellation timing. Optional `reason` is stored on the subscription; optional `sendCancellationEmail` triggers a best-effort customer email.",
+        "description": "Cancels a customer's subscription. Provide exactly one of `cancelImmediately`, `cancelAtPeriodEnd`, or `cancelAt` to control the cancellation timing. The three timing fields are mutually exclusive — omitting all of them returns 400 (timing must be explicit). Optional `reason` is stored on the subscription; optional `sendCancellationEmail` triggers a customer email.",
         "operationId": "subscriptions/cancel",
         "security": [{ "api_key_auth": [] }],
         "tags": ["Subscriptions"],
@@ -13069,15 +13069,20 @@
                     "maxLength": 500,
                     "description": "Free-form note (1–500 chars after trim) describing why the subscription is being canceled. Stored on the subscription record."
                   },
-                  "cancelAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "ISO 8601 timestamp for a scheduled future cancellation. Mutually exclusive with `cancelAtPeriodEnd`. Omit both timing fields to cancel immediately (matches Stripe — immediate is the default cancellation mode)."
+                  "cancelImmediately": {
+                    "type": "boolean",
+                    "enum": [true],
+                    "description": "When `true`, the subscription is canceled immediately. Mutually exclusive with `cancelAtPeriodEnd` and `cancelAt`."
                   },
                   "cancelAtPeriodEnd": {
                     "type": "boolean",
                     "enum": [true],
-                    "description": "When `true`, the subscription is set to cancel at the end of the current billing period. Mutually exclusive with `cancelAt`. Omit both timing fields to cancel immediately."
+                    "description": "When `true`, the subscription is set to cancel at the end of the current billing period. Mutually exclusive with `cancelImmediately` and `cancelAt`."
+                  },
+                  "cancelAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO 8601 timestamp for a scheduled future cancellation. Mutually exclusive with `cancelImmediately` and `cancelAtPeriodEnd`."
                   },
                   "sendCancellationEmail": {
                     "type": "boolean",

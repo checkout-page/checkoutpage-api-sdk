@@ -287,22 +287,29 @@ describe('SubscriptionResource Integration Tests', () => {
   describe('cancel', () => {
     it('rejects a cancel against a non-existent subscription with a 404', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
-      await expect(client.subscriptions.cancel(fakeId)).rejects.toThrow(/not found/i);
+      await expect(
+        client.subscriptions.cancel(fakeId, { cancelImmediately: true }),
+      ).rejects.toThrow(/not found/i);
     });
 
     /**
      * Server-side XOR enforcement on the timing fields. The SDK's
-     * discriminated-union type prevents this combo at compile time, so we
-     * defeat it via `as never` to assert the wire-level enforcement still
-     * fires. Targets a non-existent id so the request can't accidentally
-     * cancel a real subscription if the server XOR were ever removed.
+     * discriminated-union type prevents zero or multiple timing fields at
+     * compile time, so we defeat it via `as never` to assert the wire-level
+     * enforcement still fires. Both tests target a non-existent id so the
+     * request can't accidentally cancel a real subscription if the server
+     * XOR were ever removed.
      */
-    it('rejects a body with both timing fields set (server XOR — only one allowed)', async () => {
+    it('rejects a body with no timing field (server XOR — at least one required)', async () => {
       const fakeId = '6812fe6e9f39b6760576f01c';
-      const futureTimestamp = new Date(Date.now() + 60_000).toISOString();
+      await expect(client.subscriptions.cancel(fakeId, {} as never)).rejects.toThrow();
+    });
+
+    it('rejects a body with multiple timing fields (server XOR — only one allowed)', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
       await expect(
         client.subscriptions.cancel(fakeId, {
-          cancelAt: futureTimestamp,
+          cancelImmediately: true,
           cancelAtPeriodEnd: true,
         } as never),
       ).rejects.toThrow();
@@ -330,6 +337,7 @@ describe('SubscriptionResource Integration Tests', () => {
       }
 
       const result = await client.subscriptions.cancel(target.id, {
+        cancelImmediately: true,
         reason: 'SDK integration test',
       });
 
