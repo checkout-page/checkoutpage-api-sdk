@@ -2348,6 +2348,69 @@ describe('EventsResource integration tests', () => {
     });
   });
 
+  describe('availabilityBehavior promotion and inline ordering (create_event regressions)', () => {
+    it('promotes a ticket type to date_time_based when a sale date is set without an explicit behavior', async () => {
+      const { data } = await createEvent({
+        ticketGroups: [
+          {
+            name: 'Group',
+            ticketTypes: [
+              {
+                name: 'Early Bird',
+                pricing: 'paid',
+                price: 500,
+                // saleEndOn supplied, availabilityBehavior intentionally omitted.
+                saleEndOn: '2026-09-23T18:00:00Z',
+              },
+            ],
+          },
+        ],
+      });
+
+      const group = getTicketGroupByName(data, 'Group');
+      const ticket = getTicketTypeByName(group, 'Early Bird');
+      // Without promotion the model defaults to always_available, which makes
+      // the checkout sale-window check ignore saleEndOn entirely.
+      expect(ticket.availabilityBehavior).toBe('date_time_based');
+      expect(ticket.saleEndOn).toBe('2026-09-23T18:00:00.000Z');
+    });
+
+    it('promotes a ticket group to date_time_based when a sale date is set without an explicit behavior', async () => {
+      const { data } = await createEvent({
+        ticketGroups: [
+          {
+            name: 'Windowed Group',
+            saleEndOn: '2026-09-23T18:00:00Z',
+            ticketTypes: [{ name: 'GA', pricing: 'paid', price: 500 }],
+          },
+        ],
+      });
+
+      const group = getTicketGroupByName(data, 'Windowed Group');
+      expect(group.availabilityBehavior).toBe('date_time_based');
+      expect(group.saleEndOn).toBe('2026-09-23T18:00:00.000Z');
+    });
+
+    it('preserves inline ticket type submission order', async () => {
+      const { data } = await createEvent({
+        ticketGroups: [
+          {
+            name: 'Ordered Group',
+            ticketTypes: [
+              { name: 'Early Bird', pricing: 'paid', price: 1000 },
+              { name: 'General Admission', pricing: 'paid', price: 2000 },
+              { name: 'VIP', pricing: 'paid', price: 5000 },
+            ],
+          },
+        ],
+      });
+
+      const group = getTicketGroupByName(data, 'Ordered Group');
+      const names = group.ticketTypes?.map((ticket) => ticket.name);
+      expect(names).toEqual(['Early Bird', 'General Admission', 'VIP']);
+    });
+  });
+
   describe('eventDetails.discounts key linking', () => {
     it('total_quantity discounts are stored with empty ticketTypeIds array', async () => {
       const { data } = await client.events.create({
