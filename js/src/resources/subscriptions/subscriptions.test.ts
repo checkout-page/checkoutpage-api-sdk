@@ -367,6 +367,38 @@ describe('SubscriptionResource', () => {
       expect(result.data[0].priceId).toBe(PRICE_ID);
     });
 
+    it('should return the priceSnapshot from the client', async () => {
+      const priceSnapshot = {
+        priceId: 'price_def456',
+        reference: 'pro-monthly',
+        label: 'Pro',
+        billingType: 'recurring',
+        amount: 9999,
+        currency: 'usd',
+        interval: 'month',
+        intervalCount: 1,
+      };
+      const mockSubscriptionList: SubscriptionList = {
+        data: [
+          {
+            id: '6812fe6e9f39b6760576f01c',
+            amount: 9999,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+            priceSnapshot,
+          },
+        ],
+        total: 1,
+        has_more: false,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockSubscriptionList);
+
+      const result = await subscriptionResource.list();
+
+      expect(result.data[0].priceSnapshot).toEqual(priceSnapshot);
+    });
+
     /**
      * Demonstrates how a consumer drives forward/backward pagination
      * through the SDK: walk forward with `starting_after`, walk back with

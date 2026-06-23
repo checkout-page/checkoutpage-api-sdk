@@ -380,5 +380,26 @@ describe('PaymentResource', () => {
 
       expect(result.data[0].priceId).toBe(PRICE_ID);
     });
+
+    it('should return the priceSnapshot from the client', async () => {
+      const priceSnapshot = {
+        priceId: 'price_abc123',
+        reference: 'pro-monthly',
+        label: 'Pro',
+        billingType: 'one_time',
+        amount: 10000,
+        currency: 'usd',
+      };
+      const mockList: PaymentList = {
+        data: [{ ...BASE_PAYMENT, priceSnapshot }],
+        total: 1,
+        has_more: false,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockList);
+
+      const result = await paymentResource.list();
+
+      expect(result.data[0].priceSnapshot).toEqual(priceSnapshot);
+    });
   });
 });
