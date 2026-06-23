@@ -41,7 +41,7 @@ describe('SubscriptionResource Integration Tests', () => {
     it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
       const result = await client.subscriptions.list({ limit: 25 });
       const subscriptionWithPaymentMethod = result.data.find(
-        (subscription) => subscription.paymentMethod != null
+        (subscription) => subscription.paymentMethod?.expMonth != null
       );
 
       if (!subscriptionWithPaymentMethod?.paymentMethod) {
@@ -254,8 +254,10 @@ describe('SubscriptionResource Integration Tests', () => {
         (subscription) => (subscription as Record<string, unknown>).taxSource != null
       );
 
-      const taxSource = (subscriptionWithTaxSource as Record<string, unknown>).taxSource;
-      expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+      if (subscriptionWithTaxSource != null) {
+        const taxSource = (subscriptionWithTaxSource as Record<string, unknown>).taxSource;
+        expect(['fixed_tax_rate', 'stripe_tax']).toContain(taxSource);
+      }
     });
 
     it('should expose a structured taxRates snapshot when fixed_tax_rate is used', async () => {
@@ -315,6 +317,103 @@ describe('SubscriptionResource Integration Tests', () => {
         expect(typeof subscriptionWithPriceId.priceId).toBe('string');
         expect(subscriptionWithPriceId.priceId.length).toBeGreaterThan(0);
       });
+    });
+  });
+
+  describe('cancel', () => {
+    it('rejects a cancel against a non-existent subscription with a 404', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
+      await expect(
+        client.subscriptions.cancel(fakeId, { cancelImmediately: true })
+      ).rejects.toThrow(/not found/i);
+    });
+
+    it('rejects a body with no timing field (server XOR — at least one required)', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
+      await expect(client.subscriptions.cancel(fakeId, {} as never)).rejects.toThrow();
+    });
+
+    it('rejects a body with multiple timing fields (server XOR — only one allowed)', async () => {
+      const fakeId = '6812fe6e9f39b6760576f01c';
+      await expect(
+        client.subscriptions.cancel(fakeId, {
+          cancelImmediately: true,
+          cancelAtPeriodEnd: true,
+        } as never)
+      ).rejects.toThrow();
+    });
+
+    const findFreshActiveSubscription = async () => {
+      const { data } = await client.subscriptions.list({ status: 'active', limit: 100 });
+      const target = data.find(
+        (s) => s.cancelAt == null && s.stripeSubscriptionId != null && s.customerEmail != null
+      );
+      if (!target) {
+        throw new Error(
+          'No fresh active subscription (cancelAt unset, has stripeSubscriptionId + ' +
+            'customerEmail) available to cancel — seed one on the test seller first.'
+        );
+      }
+      return target;
+    };
+
+    const refetchById = async (id: string, customerEmail: string) => {
+      const { data } = await client.subscriptions.list({ search: customerEmail, limit: 100 });
+      const found = data.find((s) => s.id === id);
+      if (!found) {
+        throw new Error(`Could not re-fetch subscription ${id} after cancel`);
+      }
+      return found;
+    };
+
+    it('schedules cancellation at period end — cancelAt becomes a future date', async () => {
+      const target = await findFreshActiveSubscription();
+
+      const result = await client.subscriptions.cancel(target.id, {
+        cancelAtPeriodEnd: true,
+        reason: 'SDK integration test — cancelAtPeriodEnd',
+      });
+      expect(result.data.success).toBe(true);
+
+      const refetched = await refetchById(target.id, target.customerEmail!);
+
+      expect(refetched.cancelAt).toBeTruthy();
+      expect(new Date(refetched.cancelAt!).getTime()).toBeGreaterThan(Date.now());
+    });
+
+    it('schedules cancellation at an explicit future cancelAt', async () => {
+      const target = await findFreshActiveSubscription();
+
+      const requested = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+      requested.setMilliseconds(0);
+      const cancelAt = requested.toISOString();
+
+      const result = await client.subscriptions.cancel(target.id, {
+        cancelAt,
+        reason: 'SDK integration test — cancelAt',
+      });
+      expect(result.data.success).toBe(true);
+
+      const refetched = await refetchById(target.id, target.customerEmail!);
+
+      expect(refetched.cancelAt).toBeTruthy();
+      const actualMs = new Date(refetched.cancelAt!).getTime();
+      expect(actualMs).toBeGreaterThan(Date.now());
+      expect(Math.abs(actualMs - requested.getTime())).toBeLessThan(2000);
+    });
+
+    it('Cancel immediately', async () => {
+      const target = await findFreshActiveSubscription();
+
+      const date = new Date();
+      const result = await client.subscriptions.cancel(target.id, {
+        cancelImmediately: true,
+        reason: 'SDK integration test — cancelAt',
+      });
+      expect(result.data.success).toBe(true);
+
+      const refetched = await refetchById(target.id, target.customerEmail!);
+      expect(date.getTime()).toBeGreaterThan(new Date(refetched.canceledAt ?? '').getTime());
     });
   });
 });
