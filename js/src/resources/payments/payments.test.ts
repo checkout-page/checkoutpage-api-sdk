@@ -339,5 +339,67 @@ describe('PaymentResource', () => {
         path: '/v1/payments/',
       });
     });
+
+    // priceId field
+
+    it('Payment.priceId is typed as string | null | undefined and accessible without a cast', () => {
+      const payment: PaymentList['data'][number] = {
+        ...BASE_PAYMENT,
+        priceId: 'price_abc123',
+      };
+      // TypeScript would error here if priceId were not on the type.
+      const priceId: string | null | undefined = payment.priceId;
+      expect(priceId).toBe('price_abc123');
+    });
+
+    it('Payment.priceId accepts null without a cast', () => {
+      const payment: PaymentList['data'][number] = {
+        ...BASE_PAYMENT,
+        priceId: null,
+      };
+      const priceId: string | null | undefined = payment.priceId;
+      expect(priceId).toBeNull();
+    });
+
+    it('Payment.priceId is undefined when absent', () => {
+      const payment: PaymentList['data'][number] = { ...BASE_PAYMENT };
+      const priceId: string | null | undefined = payment.priceId;
+      expect(priceId).toBeUndefined();
+    });
+
+    it('should return payment with priceId from the client', async () => {
+      const PRICE_ID = 'price_abc123';
+      const mockList: PaymentList = {
+        data: [{ ...BASE_PAYMENT, priceId: PRICE_ID }],
+        total: 1,
+        has_more: false,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockList);
+
+      const result = await paymentResource.list();
+
+      expect(result.data[0].priceId).toBe(PRICE_ID);
+    });
+
+    it('should return the priceSnapshot from the client', async () => {
+      const priceSnapshot = {
+        priceId: 'price_abc123',
+        reference: 'pro-monthly',
+        label: 'Pro',
+        billingType: 'one_time',
+        amount: 10000,
+        currency: 'usd',
+      };
+      const mockList: PaymentList = {
+        data: [{ ...BASE_PAYMENT, priceSnapshot }],
+        total: 1,
+        has_more: false,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockList);
+
+      const result = await paymentResource.list();
+
+      expect(result.data[0].priceSnapshot).toEqual(priceSnapshot);
+    });
   });
 });
