@@ -103,6 +103,9 @@ export type PaymentList =
 
 export type Payment = PaymentList['data'][number];
 
+/** Frozen snapshot of the purchased price captured at the point of purchase. */
+export type PriceSnapshot = NonNullable<Payment['priceSnapshot']>;
+
 export type PaymentListArgs = operations['payments/list']['parameters']['query'];
 
 export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit'> & {
@@ -196,9 +199,38 @@ export type SubscriptionPaymentListParams = Omit<
 // Products
 export type Product = operations['products/get']['responses'][200]['content']['application/json'];
 
-export type UpdateProductParams = NonNullable<
+export type ProductData = Product['data'];
+
+/** A single price option on a product (multi-price feature) — read/response shape. */
+export type Price = components['schemas']['Price'];
+
+/**
+ * Input shape for a price when creating a product via
+ * `CreateCheckoutPageParams.productData.prices[]`.
+ */
+export type PriceInput = components['schemas']['PriceInput'];
+
+/** A variant group within a product (may have `priceIds` scoping it to a subset of prices). */
+export type ProductVariant = NonNullable<NonNullable<NonNullable<ProductData>['variants']>[number]>;
+
+type UpdateProductRequestBase = NonNullable<
   operations['products/update']['requestBody']
 >['content']['application/json'];
+
+/**
+ * Parameters for updating a product. Extends the base schema with multi-price
+ * fields (`prices[]`, `defaultPriceId`) that are accepted by the API.
+ */
+export type UpdateProductParams = UpdateProductRequestBase & {
+  /**
+   * Multi-price configuration for this product. When provided, replaces the
+   * existing prices. All prices must share the same currency. Locked fields on
+   * a purchased price cannot be changed.
+   */
+  prices?: PriceInput[];
+  /** Id of the price to use as the default. */
+  defaultPriceId?: string | null;
+};
 
 // Events
 export type EventList = operations['events/list']['responses'][200]['content']['application/json'];

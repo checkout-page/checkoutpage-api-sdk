@@ -306,6 +306,99 @@ describe('SubscriptionResource', () => {
       expect(result.has_more).toBe(false);
     });
 
+    // priceId field
+
+    it('Subscription.priceId is typed as string | null | undefined and accessible without a cast', () => {
+      const subscription: SubscriptionList['data'][number] = {
+        id: '6812fe6e9f39b6760576f01c',
+        amount: 9999,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+        priceId: 'price_abc123',
+      };
+      // TypeScript would error here if priceId were not on the type.
+      const priceId: string | null | undefined = subscription.priceId;
+      expect(priceId).toBe('price_abc123');
+    });
+
+    it('Subscription.priceId accepts null without a cast', () => {
+      const subscription: SubscriptionList['data'][number] = {
+        id: '6812fe6e9f39b6760576f01c',
+        amount: 9999,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+        priceId: null,
+      };
+      const priceId: string | null | undefined = subscription.priceId;
+      expect(priceId).toBeNull();
+    });
+
+    it('Subscription.priceId is undefined when absent', () => {
+      const subscription: SubscriptionList['data'][number] = {
+        id: '6812fe6e9f39b6760576f01c',
+        amount: 9999,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      };
+      const priceId: string | null | undefined = subscription.priceId;
+      expect(priceId).toBeUndefined();
+    });
+
+    it('should return subscription with priceId from the client', async () => {
+      const PRICE_ID = 'price_def456';
+      const mockSubscriptionList: SubscriptionList = {
+        data: [
+          {
+            id: '6812fe6e9f39b6760576f01c',
+            amount: 9999,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+            priceId: PRICE_ID,
+          },
+        ],
+        total: 1,
+        has_more: false,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockSubscriptionList);
+
+      const result = await subscriptionResource.list();
+
+      expect(result.data[0].priceId).toBe(PRICE_ID);
+    });
+
+    it('should return the priceSnapshot from the client', async () => {
+      const priceSnapshot = {
+        priceId: 'price_def456',
+        reference: 'pro-monthly',
+        label: 'Pro',
+        billingType: 'recurring',
+        amount: 9999,
+        currency: 'usd',
+        interval: 'month',
+        intervalCount: 1,
+      };
+      const mockSubscriptionList: SubscriptionList = {
+        data: [
+          {
+            id: '6812fe6e9f39b6760576f01c',
+            amount: 9999,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+            priceSnapshot,
+          },
+        ],
+        total: 1,
+        has_more: false,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockSubscriptionList);
+
+      const result = await subscriptionResource.list();
+
+      expect(result.data[0].priceSnapshot).toEqual(priceSnapshot);
+    });
+
     /**
      * Demonstrates how a consumer drives forward/backward pagination
      * through the SDK: walk forward with `starting_after`, walk back with

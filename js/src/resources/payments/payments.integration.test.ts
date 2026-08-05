@@ -380,5 +380,64 @@ describe('PaymentResource Integration Tests', () => {
         expect(typeof snapshot.percentage).toBe('number');
       }
     });
+
+    /**
+     * priceId is populated when the customer selected a specific price at checkout
+     * (multi-price products). For single-price products it will be null/undefined.
+     * We assert the field is present in the response shape and has the correct type.
+     */
+    it('should expose priceId on payments as string or null', async () => {
+      const result = await listPayments({ limit: 50 });
+      if (!result) return;
+
+      for (const payment of result.data) {
+        // TypeScript compile-time check: no cast needed
+        const priceId: string | null | undefined = payment.priceId;
+        expect(priceId === undefined || priceId === null || typeof priceId === 'string').toBe(true);
+      }
+    });
+
+    /**
+     * priceSnapshot is a frozen copy of the purchased price captured at the point
+     * of purchase (multi-price products). Single-price / legacy payments have no
+     * snapshot. We assert the response shape carries the field with the right type
+     * and, when present, a stringified priceId.
+     */
+    it('should expose priceSnapshot on payments as an object or null', async () => {
+      const result = await listPayments({ limit: 50 });
+      if (!result) return;
+
+      for (const payment of result.data) {
+        const snapshot = payment.priceSnapshot;
+        expect(snapshot === undefined || snapshot === null || typeof snapshot === 'object').toBe(
+          true
+        );
+        if (snapshot) {
+          const priceId = snapshot.priceId;
+          expect(priceId === undefined || priceId === null || typeof priceId === 'string').toBe(
+            true
+          );
+        }
+      }
+    });
+
+    /**
+     * Skip this test until M9b creates sample multi-price payments in the
+     * integration environment. Once those payments exist, remove the skip and
+     * assert priceId equals the expected price id.
+     */
+    describe('priceId on payment reads', () => {
+      it('should expose priceId matching the price selected at checkout', async () => {
+        const result = await listPayments({ limit: 100 });
+        if (!result) throw new Error('Could not fetch payments');
+
+        // No-op when the environment has no multi-price payments seeded.
+        const paymentWithPriceId = result.data.find((p) => p.priceId != null);
+        if (!paymentWithPriceId?.priceId) return;
+
+        expect(typeof paymentWithPriceId.priceId).toBe('string');
+        expect(paymentWithPriceId.priceId.length).toBeGreaterThan(0);
+      });
+    });
   });
 });

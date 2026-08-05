@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import type { Price, PriceInput } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { uniqueSuffix } from '../../test-helpers/test-lib';
 
@@ -349,6 +350,182 @@ describe('ProductResource Integration Tests', () => {
 
       expect(fetched.id).toBe(testProductId);
       expect(fetched.fixedTaxRateIds).toContain(taxRate.data.id);
+    });
+  });
+
+  describe('multi-price read path', () => {
+    it('reads prices[] and defaultPriceId fields on a product', async () => {
+      const { data: product } = await client.products.get(testProductId);
+
+      // prices[] may be null/empty on a legacy product – just assert the field exists
+      expect('prices' in product).toBe(true);
+      expect('defaultPriceId' in product).toBe(true);
+    });
+
+    it('reads prices[].billingType correctly', async () => {
+      const { data: product } = await client.products.get(testProductId);
+
+      if (product.prices && product.prices.length > 0) {
+        const price: Price = product.prices[0];
+        expect(['one_time', 'recurring']).toContain(price.billingType);
+        expect(typeof price.amount).toBe('number');
+        expect(typeof price.currency).toBe('string');
+        expect(typeof price.enabled).toBe('boolean');
+        expect(typeof price.isDefault).toBe('boolean');
+      }
+    });
+
+    it('reads variant priceIds scoping', async () => {
+      const { data: product } = await client.products.get(testProductId);
+
+      if (product.variants && product.variants.length > 0) {
+        const firstVariant = product.variants[0];
+        // priceIds is optional – assert the field is either present or absent gracefully
+        if (firstVariant.priceIds) {
+          expect(Array.isArray(firstVariant.priceIds)).toBe(true);
+        }
+      }
+    });
+  });
+
+  describe('multi-price create + read round-trip', () => {
+    let multiPriceProductId: string;
+
+    beforeAll(async () => {
+      // Create a checkout page whose product carries 3 prices.
+      // NOTE: Requires ProductService.create to persist prices[].
+      const { data: page } = await client.checkoutPages.create({
+        name: `Multi-Price Product Test ${uniqueSuffix()}`,
+        productData: {
+          prices: [
+            {
+              billingType: 'one_time',
+              amount: 4900,
+              currency: 'usd',
+              label: 'One-time',
+            },
+            {
+              billingType: 'recurring',
+              amount: 1000,
+              currency: 'usd',
+              label: 'Monthly',
+              recurring: { interval: 'month', intervalCount: 1 },
+            },
+            {
+              billingType: 'recurring',
+              amount: 9900,
+              currency: 'usd',
+              label: 'Annual',
+              recurring: { interval: 'year', intervalCount: 1 },
+            },
+          ] as PriceInput[],
+        },
+      });
+
+      if (page.product?.id) {
+        multiPriceProductId = page.product.id;
+      }
+    });
+
+    it('creates a 3-price product and reads prices[] back', async () => {
+      if (!multiPriceProductId) return;
+
+      const { data: product } = await client.products.get(multiPriceProductId);
+
+      expect(product.prices).toBeDefined();
+      expect(Array.isArray(product.prices)).toBe(true);
+      expect(product.prices!.length).toBe(3);
+
+      const oneTime = product.prices!.find((p) => p.billingType === 'one_time');
+      const monthly = product.prices!.find(
+        (p) => p.billingType === 'recurring' && p.recurring?.interval === 'month'
+      );
+      const annual = product.prices!.find(
+        (p) => p.billingType === 'recurring' && p.recurring?.interval === 'year'
+      );
+
+      expect(oneTime!.amount).toBe(4900);
+      expect(monthly!.amount).toBe(1000);
+      expect(annual!.amount).toBe(9900);
+    });
+
+    it('defaultPriceId is set on the product', async () => {
+      if (!multiPriceProductId) return;
+
+      const { data: product } = await client.products.get(multiPriceProductId);
+
+      expect(product.defaultPriceId).toBeDefined();
+      const priceIds = (product.prices ?? []).map((p: Price) => p.id);
+      expect(priceIds).toContain(product.defaultPriceId);
+    });
+
+    it('prices[] fields round-trip with correct billingType', async () => {
+      if (!multiPriceProductId) return;
+
+      const { data: product } = await client.products.get(multiPriceProductId);
+
+      for (const price of product.prices ?? []) {
+        expect(['one_time', 'recurring']).toContain(price.billingType);
+        expect(typeof price.amount).toBe('number');
+        expect(typeof price.currency).toBe('string');
+        expect(typeof price.enabled).toBe('boolean');
+        expect(typeof price.isDefault).toBe('boolean');
+      }
+    });
+  });
+
+  describe('multi-price validator rejections (via checkout-pages/create)', () => {
+    it('rejects prices[] with mismatched currencies — 400', async () => {
+      let threw = false;
+      try {
+        await client.checkoutPages.create({
+          name: `Currency Mismatch Test ${uniqueSuffix()}`,
+          productData: {
+            prices: [
+              { billingType: 'one_time', amount: 4900, currency: 'usd' },
+              { billingType: 'one_time', amount: 4900, currency: 'eur' },
+            ] as PriceInput[],
+          },
+        });
+      } catch (err: any) {
+        threw = true;
+        expect(err.message).toMatch(/400|currency/i);
+      }
+      expect(threw).toBe(true);
+    });
+
+    it('rejects prices: [] (empty array) — 400', async () => {
+      let threw = false;
+      try {
+        await client.checkoutPages.create({
+          name: `Empty Prices Test ${uniqueSuffix()}`,
+          productData: {
+            prices: [] as PriceInput[],
+          },
+        });
+      } catch (err: any) {
+        threw = true;
+        expect(err.message).toMatch(/400|price/i);
+      }
+      expect(threw).toBe(true);
+    });
+
+    it('rejects when all prices are disabled — 400', async () => {
+      let threw = false;
+      try {
+        await client.checkoutPages.create({
+          name: `All Disabled Test ${uniqueSuffix()}`,
+          productData: {
+            prices: [
+              { billingType: 'one_time', amount: 4900, currency: 'usd', enabled: false },
+            ] as PriceInput[],
+          },
+        });
+      } catch (err: any) {
+        threw = true;
+        expect(err.message).toMatch(/400|enabled/i);
+      }
+      expect(threw).toBe(true);
     });
   });
 });
