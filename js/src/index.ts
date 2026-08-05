@@ -1,4 +1,5 @@
 import { CheckoutPageApiClient, CheckoutPageApiClientOptions } from './client';
+import { AccountResource } from './resources/accounts/accounts';
 import { CustomerResource } from './resources/customers/customers';
 import { CouponResource } from './resources/coupons/coupons';
 import { PaymentResource } from './resources/payments/payments';
@@ -16,6 +17,7 @@ import { TaxRateResource } from './resources/tax-rates/tax-rates';
 import { InvoiceResource } from './resources/invoices/invoices';
 
 export class CheckoutPageClient {
+  public readonly accounts: AccountResource;
   public readonly customers: CustomerResource;
   public readonly coupons: CouponResource;
   public readonly payments: PaymentResource;
@@ -35,6 +37,7 @@ export class CheckoutPageClient {
 
   constructor(options: CheckoutPageApiClientOptions) {
     this.client = new CheckoutPageApiClient(options);
+    this.accounts = new AccountResource(this.client);
     this.customers = new CustomerResource(this.client);
     this.coupons = new CouponResource(this.client);
     this.payments = new PaymentResource(this.client);
@@ -60,6 +63,8 @@ export const createCheckoutPageClient = (options: CheckoutPageApiClientOptions) 
 // Export types and errors for convenience
 export type { CheckoutPageApiClientOptions } from './client';
 export type {
+  Account,
+  AccountLogo,
   Customer,
   Submission,
   SubmissionResponse,

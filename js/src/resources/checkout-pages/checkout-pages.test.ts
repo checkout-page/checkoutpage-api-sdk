@@ -62,16 +62,48 @@ describe('CheckoutPagesResource', () => {
     it('demonstrates a forward and backward pagination flow', async () => {
       const PAGE_1 = {
         data: [
-          { id: 'p5', name: 'p5', type: 'checkout', status: 'published', slug: '/p5', createdAt: '', updatedAt: '' },
-          { id: 'p4', name: 'p4', type: 'checkout', status: 'published', slug: '/p4', createdAt: '', updatedAt: '' },
+          {
+            id: 'p5',
+            name: 'p5',
+            type: 'checkout',
+            status: 'published',
+            slug: '/p5',
+            createdAt: '',
+            updatedAt: '',
+          },
+          {
+            id: 'p4',
+            name: 'p4',
+            type: 'checkout',
+            status: 'published',
+            slug: '/p4',
+            createdAt: '',
+            updatedAt: '',
+          },
         ],
         has_more: true,
         total: 5,
       };
       const PAGE_2 = {
         data: [
-          { id: 'p3', name: 'p3', type: 'checkout', status: 'published', slug: '/p3', createdAt: '', updatedAt: '' },
-          { id: 'p2', name: 'p2', type: 'checkout', status: 'published', slug: '/p2', createdAt: '', updatedAt: '' },
+          {
+            id: 'p3',
+            name: 'p3',
+            type: 'checkout',
+            status: 'published',
+            slug: '/p3',
+            createdAt: '',
+            updatedAt: '',
+          },
+          {
+            id: 'p2',
+            name: 'p2',
+            type: 'checkout',
+            status: 'published',
+            slug: '/p2',
+            createdAt: '',
+            updatedAt: '',
+          },
         ],
         has_more: true,
         total: 5,
@@ -130,6 +162,31 @@ describe('CheckoutPagesResource', () => {
       const result = await checkoutPagesResource.create(params);
 
       expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/checkout-pages/',
+        body: params,
+      });
+    });
+
+    it('forwards the product-behaviour settings under productData', async () => {
+      const params: CreateCheckoutPageParams = {
+        name: 'Membership checkout',
+        productData: {
+          title: 'Membership',
+          price: { amount: 4900, currency: 'usd', recurring: { interval: 'month' } },
+          enableFileAccessForInactiveSubscriptions: true,
+          limitSubscriptions: {
+            enabled: true,
+            limitSubscriptionsStripe: { enabled: false },
+          },
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue({ data: {} } as any);
+
+      await checkoutPagesResource.create(params);
+
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v1/checkout-pages/',

@@ -13,6 +13,13 @@ export type Schemas = components['schemas'];
 // Export all operations
 export type Operations = operations;
 
+// Account
+/** The seller account an API key belongs to. */
+export type Account = operations['account/get']['responses'][200]['content']['application/json'];
+
+/** Store logo on an account, or `null` when none is set. */
+export type AccountLogo = Account['logo'];
+
 // Customers
 export type Customer = operations['customers/get']['responses'][200]['content']['application/json'];
 export type CustomerList =

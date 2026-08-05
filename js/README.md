@@ -55,6 +55,18 @@ const checkoutpage = createCheckoutPageClient({
 
 ## Usage
 
+### Account
+
+#### Get the account your API key belongs to
+
+```typescript
+const account = await checkoutpage.accounts.get();
+
+console.log(account.name); // 'mystore' — store slug, the default checkout subdomain
+console.log(account.displayName); // 'My Store' — shown to customers
+console.log(account.logo?.url); // store logo, or null when none is set
+```
+
 ### Customers
 
 #### Get a customer
@@ -248,6 +260,44 @@ const updated = await checkoutpage.products.update('product_id', {
   hasUnlimitedStock: false,
 });
 ```
+
+#### Subscription limits and file access
+
+These settings live on the product, so a product reused across several checkout
+pages behaves consistently everywhere.
+
+```typescript
+await checkoutpage.products.update('product_id', {
+  // Cap each customer to one active subscription for this product
+  limitSubscriptions: {
+    enabled: true,
+    // Also check active subscriptions in Stripe
+    limitSubscriptionsStripe: { enabled: true },
+  },
+  // Let customers keep downloading files after their subscription lapses
+  enableFileAccessForInactiveSubscriptions: true,
+});
+```
+
+Both are also accepted when creating a page, under `productData`:
+
+```typescript
+await checkoutpage.checkoutPages.create({
+  name: 'Membership',
+  productData: {
+    title: 'Membership',
+    price: { amount: 4900, currency: 'usd', recurring: { interval: 'month' } },
+    limitSubscriptions: { enabled: true },
+    enableFileAccessForInactiveSubscriptions: true,
+  },
+});
+```
+
+> The page-level `limitSubscriptions`, `limitSubscriptionsStripe`, and
+> `enableFileAccessForInactiveSubscriptions` fields are **deprecated**. They are
+> still accepted and are applied to the page's product, and page responses still
+> report them by mirroring the product — but new integrations should set them
+> under `productData` or via `products.update()`.
 
 ### Files
 
