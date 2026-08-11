@@ -3481,6 +3481,90 @@ describe('CheckoutPagesResource integration tests', () => {
         expect(data.tax?.mode).toBe('none');
       });
     });
+
+    /**
+     * The product-behaviour fields live on the product; the flat page-level
+     * fields are deprecated but still accepted on input and still served on
+     * the page response, mirroring the product.
+     */
+    describe('product-behaviour settings', () => {
+      it('stores productData settings on the product', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            enableFileAccessForInactiveSubscriptions: true,
+            limitSubscriptions: {
+              enabled: true,
+              limitSubscriptionsStripe: { enabled: false },
+            },
+          },
+        });
+
+        expect(data.product?.enableFileAccessForInactiveSubscriptions).toBe(true);
+        expect(data.product?.limitSubscriptions?.enabled).toBe(true);
+        expect(data.product?.limitSubscriptions?.limitSubscriptionsStripe?.enabled).toBe(false);
+      });
+
+      it('mirrors the product settings onto the deprecated flat page fields', async () => {
+        const { data } = await createCheckoutPage({
+          productData: {
+            enableFileAccessForInactiveSubscriptions: true,
+            limitSubscriptions: {
+              enabled: true,
+              limitSubscriptionsStripe: { enabled: false },
+            },
+          },
+        });
+
+        expectPageFlag(data, 'enableFileAccessForInactiveSubscriptions', true);
+        expect(data.limitSubscriptions?.enabled).toBe(true);
+        expect(data.limitSubscriptionsStripe?.enabled).toBe(false);
+      });
+
+      it('still accepts the deprecated flat page fields and applies them to the product', async () => {
+        const { data } = await createCheckoutPage({
+          enableFileAccessForInactiveSubscriptions: true,
+          limitSubscriptions: { enabled: true },
+        });
+
+        expect(data.product?.enableFileAccessForInactiveSubscriptions).toBe(true);
+        expect(data.product?.limitSubscriptions?.enabled).toBe(true);
+      });
+
+      it('reports the settings the same way on a subsequent get', async () => {
+        const created = await createCheckoutPage({
+          productData: {
+            enableFileAccessForInactiveSubscriptions: true,
+            limitSubscriptions: {
+              enabled: true,
+              limitSubscriptionsStripe: { enabled: false },
+            },
+          },
+        });
+
+        const { data } = await client.checkoutPages.get(created.data.id);
+
+        expect(data.product?.enableFileAccessForInactiveSubscriptions).toBe(true);
+        expect(data.product?.limitSubscriptions?.enabled).toBe(true);
+        expectPageFlag(data, 'enableFileAccessForInactiveSubscriptions', true);
+      });
+
+      it('updates the product settings through the page update endpoint', async () => {
+        const created = await createCheckoutPage({
+          productData: {
+            enableFileAccessForInactiveSubscriptions: false,
+            limitSubscriptions: { enabled: false },
+          },
+        });
+
+        const { data } = await client.checkoutPages.update(created.data.id, {
+          enableFileAccessForInactiveSubscriptions: true,
+          limitSubscriptions: { enabled: true },
+        });
+
+        expect(data.product?.enableFileAccessForInactiveSubscriptions).toBe(true);
+        expect(data.product?.limitSubscriptions?.enabled).toBe(true);
+      });
+    });
   });
 
   describe('get', () => {

@@ -64,6 +64,10 @@ export class ProductResource {
     if (params.limitSubscriptions !== undefined) {
       body.limitSubscriptions = params.limitSubscriptions;
     }
+    if (params.enableFileAccessForInactiveSubscriptions !== undefined) {
+      body.enableFileAccessForInactiveSubscriptions =
+        params.enableFileAccessForInactiveSubscriptions;
+    }
     if (params.generateLicenseKeys !== undefined) {
       body.generateLicenseKeys = params.generateLicenseKeys;
     }

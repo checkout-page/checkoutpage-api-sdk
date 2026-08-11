@@ -265,6 +265,94 @@ describe('ProductResource Integration Tests', () => {
     });
   });
 
+  describe('product-level subscription and file-access settings', () => {
+    it('persists enableFileAccessForInactiveSubscriptions across a re-read', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const { data: enabled } = await client.products.update(testProductId, {
+        enableFileAccessForInactiveSubscriptions: true,
+      });
+      expect(enabled.enableFileAccessForInactiveSubscriptions).toBe(true);
+
+      const { data: reread } = await client.products.get(testProductId);
+      expect(reread.enableFileAccessForInactiveSubscriptions).toBe(true);
+
+      const { data: disabled } = await client.products.update(testProductId, {
+        enableFileAccessForInactiveSubscriptions: false,
+      });
+      expect(disabled.enableFileAccessForInactiveSubscriptions).toBe(false);
+    });
+
+    it('persists the nested limitSubscriptions shape across a re-read', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const { data: updated } = await client.products.update(testProductId, {
+        limitSubscriptions: {
+          enabled: true,
+          limitSubscriptionsStripe: { enabled: false },
+        },
+      });
+
+      expect(updated.limitSubscriptions?.enabled).toBe(true);
+      expect(updated.limitSubscriptions?.limitSubscriptionsStripe?.enabled).toBe(false);
+
+      const { data: reread } = await client.products.get(testProductId);
+      expect(reread.limitSubscriptions?.enabled).toBe(true);
+      expect(reread.limitSubscriptions?.limitSubscriptionsStripe?.enabled).toBe(false);
+    });
+
+    it('enables the Stripe-managed subscription limit', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const { data: updated } = await client.products.update(testProductId, {
+        limitSubscriptions: {
+          enabled: true,
+          limitSubscriptionsStripe: { enabled: true },
+        },
+      });
+
+      expect(updated.limitSubscriptions?.limitSubscriptionsStripe?.enabled).toBe(true);
+
+      const { data: reset } = await client.products.update(testProductId, {
+        limitSubscriptions: {
+          enabled: false,
+          limitSubscriptionsStripe: { enabled: false },
+        },
+      });
+
+      expect(reset.limitSubscriptions?.enabled).toBe(false);
+      expect(reset.limitSubscriptions?.limitSubscriptionsStripe?.enabled).toBe(false);
+    });
+
+    it('leaves the settings untouched when the update omits them', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      await client.products.update(testProductId, {
+        enableFileAccessForInactiveSubscriptions: true,
+        limitSubscriptions: { enabled: true, limitSubscriptionsStripe: { enabled: false } },
+      });
+
+      const { data: afterUnrelatedUpdate } = await client.products.update(testProductId, {
+        title: `Untouched Settings ${uniqueSuffix()}`,
+      });
+
+      expect(afterUnrelatedUpdate.enableFileAccessForInactiveSubscriptions).toBe(true);
+      expect(afterUnrelatedUpdate.limitSubscriptions?.enabled).toBe(true);
+    });
+  });
+
   describe('fixedTaxRateIds', () => {
     it('sets fixedTaxRateIds on update', async () => {
       if (!testProductId) {

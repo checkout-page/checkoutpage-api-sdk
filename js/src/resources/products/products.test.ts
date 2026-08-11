@@ -43,6 +43,33 @@ describe('ProductResource', () => {
       await expect(productResource.get('')).rejects.toThrow('Product ID is required');
     });
 
+    it('response carries the product-level subscription and file-access settings', async () => {
+      const mockResponse: Product = {
+        data: {
+          id: 'product_123',
+          title: 'Membership',
+          type: 'subscription',
+          enableFileAccessForInactiveSubscriptions: true,
+          limitSubscriptions: {
+            enabled: true,
+            limitSubscriptionsStripe: { enabled: false },
+          },
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await productResource.get('product_123');
+
+      expect(result.data.enableFileAccessForInactiveSubscriptions).toBe(true);
+      expect(result.data.limitSubscriptions).toEqual({
+        enabled: true,
+        limitSubscriptionsStripe: { enabled: false },
+      });
+    });
+
     it('should include prices[] and defaultPriceId in the response', async () => {
       const monthlyPrice: Price = {
         id: 'price_monthly',
@@ -301,6 +328,66 @@ describe('ProductResource', () => {
 
     it('should throw error for missing product id', async () => {
       await expect(productResource.update('', {})).rejects.toThrow('Product ID is required');
+    });
+
+    it('forwards enableFileAccessForInactiveSubscriptions', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: {} });
+
+      await productResource.update('product_123', {
+        enableFileAccessForInactiveSubscriptions: true,
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/products/product_123',
+        body: { enableFileAccessForInactiveSubscriptions: true },
+      });
+    });
+
+    it('forwards enableFileAccessForInactiveSubscriptions when disabling it', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: {} });
+
+      await productResource.update('product_123', {
+        enableFileAccessForInactiveSubscriptions: false,
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/products/product_123',
+        body: { enableFileAccessForInactiveSubscriptions: false },
+      });
+    });
+
+    it('forwards the nested limitSubscriptions shape intact', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: {} });
+
+      await productResource.update('product_123', {
+        limitSubscriptions: {
+          enabled: true,
+          limitSubscriptionsStripe: { enabled: true },
+        },
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/products/product_123',
+        body: {
+          limitSubscriptions: {
+            enabled: true,
+            limitSubscriptionsStripe: { enabled: true },
+          },
+        },
+      });
+    });
+
+    it('omits the product-behaviour fields when they are undefined', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: {} });
+
+      await productResource.update('product_123', { title: 'Only Title' });
+
+      const body = vi.mocked(client.request).mock.calls[0][0].body as Record<string, unknown>;
+      expect(body).not.toHaveProperty('enableFileAccessForInactiveSubscriptions');
+      expect(body).not.toHaveProperty('limitSubscriptions');
     });
 
     it('creates a request body with prices[] — one-time + monthly + yearly', async () => {

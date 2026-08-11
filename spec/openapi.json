@@ -105,6 +105,54 @@
       }
     },
     "schemas": {
+      "Account": {
+        "properties": {
+          "displayName": {
+            "description": "Store display name shown to customers.",
+            "example": "My Store",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "Unique identifier for the seller account.",
+            "example": "507f1f77bcf86cd799439011",
+            "type": "string"
+          },
+          "logo": {
+            "description": "Store logo, or null when none is set.",
+            "properties": {
+              "url": {
+                "description": "Publicly reachable URL of the store logo.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "name": {
+            "description": "Store slug, used as the default checkout subdomain.",
+            "example": "mystore",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "displayName",
+          "logo"
+        ],
+        "type": "object"
+      },
       "ApiKeyId": {
         "example": "6812fe6e9f39b6760576f01c",
         "type": "string"
@@ -947,7 +995,8 @@
                 "type": "object"
               },
               "enableFileAccessForInactiveSubscriptions": {
-                "description": "Whether customers with inactive subscriptions can still access digital files.",
+                "deprecated": true,
+                "description": "Deprecated — superseded by the product's `enableFileAccessForInactiveSubscriptions`. Mirrors the product value.",
                 "type": [
                   "boolean",
                   "null"
@@ -1037,7 +1086,8 @@
                 ]
               },
               "limitSubscriptions": {
-                "description": "Whether to limit each customer to one active subscription for this page.",
+                "deprecated": true,
+                "description": "Deprecated — superseded by the product's `limitSubscriptions.enabled`. Mirrors the product value.",
                 "properties": {
                   "enabled": {
                     "type": [
@@ -1052,7 +1102,8 @@
                 ]
               },
               "limitSubscriptionsStripe": {
-                "description": "Whether to enforce subscription limits via Stripe.",
+                "deprecated": true,
+                "description": "Deprecated — superseded by the product's `limitSubscriptions.limitSubscriptionsStripe.enabled`. Mirrors the product value.",
                 "properties": {
                   "enabled": {
                     "type": [
@@ -1538,7 +1589,8 @@
             ]
           },
           "enableFileAccessForInactiveSubscriptions": {
-            "description": "Allow file access for customers with inactive subscriptions.",
+            "deprecated": true,
+            "description": "Deprecated — superseded by `productData.enableFileAccessForInactiveSubscriptions`. Accepted and applied to the page's product.",
             "example": false,
             "type": [
               "boolean",
@@ -1634,7 +1686,8 @@
             "$ref": "#/components/schemas/PageInvoiceSettingsInput"
           },
           "limitSubscriptions": {
-            "description": "Limit the number of active subscriptions.",
+            "deprecated": true,
+            "description": "Deprecated — superseded by `productData.limitSubscriptions.enabled`. Accepted and applied to the page's product.",
             "properties": {
               "enabled": {
                 "type": [
@@ -1649,7 +1702,8 @@
             ]
           },
           "limitSubscriptionsStripe": {
-            "description": "Limit subscriptions via Stripe integration.",
+            "deprecated": true,
+            "description": "Deprecated — superseded by `productData.limitSubscriptions.limitSubscriptionsStripe.enabled`. Accepted and applied to the page's product.",
             "properties": {
               "enabled": {
                 "type": [
@@ -4821,14 +4875,12 @@
             "items": {
               "properties": {
                 "fileId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier for the file.",
-                      "example": "507f1f77bcf86cd799439011"
-                    }
+                  "description": "Unique identifier for the uploaded file. Absent for images added by URL (e.g. stock photos).",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "height": {
@@ -4868,7 +4920,6 @@
                 }
               },
               "required": [
-                "fileId",
                 "url",
                 "name"
               ],
@@ -8992,7 +9043,7 @@
             ]
           },
           "payWhatYouWant": {
-            "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want does not apply to subscriptions or payment plans.",
+            "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want applies to one-time prices and subscriptions, but not payment plans.",
             "type": [
               "boolean",
               "null"
@@ -9544,6 +9595,13 @@
               "null"
             ]
           },
+          "enableFileAccessForInactiveSubscriptions": {
+            "description": "Whether customers with inactive subscriptions can still access file downloads.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "fileIds": {
             "description": "List of file ids attached to this product.",
             "example": [
@@ -9594,19 +9652,46 @@
             "example": "507f1f77bcf86cd799439011",
             "type": "string"
           },
+          "limitSubscriptions": {
+            "description": "Duplicate-subscription prevention settings for this product.",
+            "properties": {
+              "enabled": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "limitSubscriptionsStripe": {
+                "properties": {
+                  "enabled": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "type": [
+              "object",
+              "null"
+            ]
+          },
           "media": {
             "description": "Product main image and gallery.",
             "items": {
               "properties": {
                 "fileId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier for the file.",
-                      "example": "507f1f77bcf86cd799439011"
-                    }
+                  "description": "Unique identifier for the uploaded file. Absent for images added by URL (e.g. stock photos).",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "height": {
@@ -9646,7 +9731,6 @@
                 }
               },
               "required": [
-                "fileId",
                 "url",
                 "name"
               ],
@@ -9757,7 +9841,8 @@
             "type": "string"
           },
           "type": {
-            "description": "Type of product (one-time charge or subscription).",
+            "deprecated": true,
+            "description": "Product type (one-time charge or subscription). Deprecated — a single-price projection derived from the first enabled price; only faithful for single-price products. Use `prices[]` for multi-price products.",
             "enum": [
               "charge",
               "subscription"
@@ -10314,7 +10399,7 @@
         "type": "object"
       },
       "ProductDetailsInput": {
-        "description": "Product configuration for checkout pages.\n\nUse this object to define pricing mode, subscription/payment plan behavior, inventory, variants, and conditional variant visibility.\n\nCommon setup patterns:\n- Standard one-time checkout: set `price.amount` and `price.currency`.\n- Variant-driven pricing: set `price.amount` to `0` (or omit it) and define `variants` with per-option `additionalChargeAmount`.\n- Subscriptions (recurring): configure `price.recurring`.\n- Payment plans (fixed installments): configure `price.paymentPlan` with `planIterations`.\n- Multiple selectable prices: use `prices[]`; `price` is the single-price alias and `pricingType` is deprecated (accepted and ignored).\n\nImportant rules:\n- You cannot set both `price.recurring` and `price.paymentPlan`.\n- `price.payWhatYouWant` cannot be used with subscriptions or payment plans.\n- When both `trialPeriodDays` and `startDate` are set, `startDate` wins.\n- For conditional variant logic (`showHideLogic`) or `preselect`, set a `key` on variants/options to enable cross-references. Keys are not persisted.",
+        "description": "Product configuration for checkout pages.\n\nUse this object to define pricing mode, subscription/payment plan behavior, inventory, variants, and conditional variant visibility.\n\nCommon setup patterns:\n- Standard one-time checkout: set `price.amount` and `price.currency`.\n- Variant-driven pricing: set `price.amount` to `0` (or omit it) and define `variants` with per-option `additionalChargeAmount`.\n- Subscriptions (recurring): configure `price.recurring`.\n- Payment plans (fixed installments): configure `price.paymentPlan` with `planIterations`.\n- Multiple selectable prices: use `prices[]`; `price` is the single-price alias and `pricingType` is deprecated (accepted and ignored).\n\nImportant rules:\n- You cannot set both `price.recurring` and `price.paymentPlan`.\n- `price.payWhatYouWant` applies to one-time prices and subscriptions, but not payment plans.\n- When both `trialPeriodDays` and `startDate` are set, `startDate` wins.\n- For conditional variant logic (`showHideLogic`) or `preselect`, set a `key` on variants/options to enable cross-references. Keys are not persisted.",
         "examples": [
           {
             "description": "A simple setup that creates a checkout with default name and email fields with a single price in USD.",
@@ -10510,6 +10595,14 @@
             },
             "type": [
               "array",
+              "null"
+            ]
+          },
+          "enableFileAccessForInactiveSubscriptions": {
+            "description": "Allow customers with inactive subscriptions to keep accessing file downloads.",
+            "example": false,
+            "type": [
+              "boolean",
               "null"
             ]
           },
@@ -11221,7 +11314,8 @@
         ]
       },
       "ProductPrice": {
-        "description": "Pricing configuration for this product.",
+        "deprecated": true,
+        "description": "Pricing configuration for this product. Deprecated — a single-price projection derived from the first enabled price; only faithful for single-price products. Use `prices[]` for multi-price products.",
         "properties": {
           "amount": {
             "description": "Price in smallest currency unit (cents).",
@@ -11661,14 +11755,12 @@
             "items": {
               "properties": {
                 "fileId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier for the file.",
-                      "example": "507f1f77bcf86cd799439011"
-                    }
+                  "description": "Unique identifier for the uploaded file. Absent for images added by URL (e.g. stock photos).",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "height": {
@@ -11708,7 +11800,6 @@
                 }
               },
               "required": [
-                "fileId",
                 "url",
                 "name"
               ],
@@ -12005,7 +12096,7 @@
             ]
           },
           "payWhatYouWant": {
-            "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want does not apply to subscriptions or payment plans.",
+            "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want applies to one-time prices and subscriptions, but not payment plans.",
             "type": [
               "boolean",
               "null"
@@ -13628,7 +13719,7 @@
             "type": "boolean"
           },
           "displayName": {
-            "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices.",
+            "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices. Maximum 50 characters.",
             "example": "VAT",
             "type": "string"
           },
@@ -15567,14 +15658,12 @@
             "description": "Image for the ticket type.",
             "properties": {
               "fileId": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
-                  },
-                  {
-                    "description": "Unique identifier for the file.",
-                    "example": "507f1f77bcf86cd799439011"
-                  }
+                "description": "Unique identifier for the uploaded file. Absent for images added by URL (e.g. stock photos).",
+                "example": "507f1f77bcf86cd799439011",
+                "pattern": "^[0-9a-fA-F]{24}$",
+                "type": [
+                  "string",
+                  "null"
                 ]
               },
               "height": {
@@ -15614,7 +15703,6 @@
               }
             },
             "required": [
-              "fileId",
               "url",
               "name"
             ],
@@ -15653,7 +15741,6 @@
             "enum": [
               "paid",
               "free",
-              "pwyw",
               null
             ],
             "type": [
@@ -15904,7 +15991,8 @@
             ]
           },
           "enableFileAccessForInactiveSubscriptions": {
-            "description": "Allow file access for customers with inactive subscriptions.",
+            "deprecated": true,
+            "description": "Deprecated — superseded by `productData.enableFileAccessForInactiveSubscriptions`. Accepted and applied to the page's product.",
             "example": false,
             "type": [
               "boolean",
@@ -15968,7 +16056,8 @@
             "$ref": "#/components/schemas/PageInvoiceSettingsInput"
           },
           "limitSubscriptions": {
-            "description": "Limit the number of active subscriptions.",
+            "deprecated": true,
+            "description": "Deprecated — superseded by `productData.limitSubscriptions.enabled`. Accepted and applied to the page's product.",
             "properties": {
               "enabled": {
                 "type": "boolean"
@@ -15980,7 +16069,8 @@
             ]
           },
           "limitSubscriptionsStripe": {
-            "description": "Limit subscriptions via Stripe integration.",
+            "deprecated": true,
+            "description": "Deprecated — superseded by `productData.limitSubscriptions.limitSubscriptionsStripe.enabled`. Accepted and applied to the page's product.",
             "properties": {
               "enabled": {
                 "type": "boolean"
@@ -17926,6 +18016,14 @@
               "null"
             ]
           },
+          "enableFileAccessForInactiveSubscriptions": {
+            "description": "Allow customers with inactive subscriptions to keep accessing file downloads.",
+            "example": false,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "fileIds": {
             "description": "Files for the product. Available to the customer after purchase.",
             "example": [
@@ -18110,7 +18208,7 @@
                 ]
               },
               "payWhatYouWant": {
-                "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want does not apply to subscriptions or payment plans.",
+                "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want applies to one-time prices and subscriptions, but not payment plans.",
                 "type": [
                   "boolean",
                   "null"
@@ -19552,6 +19650,93 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/v1/account/": {
+      "get": {
+        "description": "Returns the identity of the seller account the API key belongs to: store slug, display name and logo.",
+        "operationId": "account/get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            },
+            "description": "Account retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Account not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Get account details",
+        "tags": [
+          "Account"
+        ]
+      }
+    },
     "/v1/bookings/": {
       "get": {
         "description": "Returns a paginated list of your event bookings. The bookings are sorted in order, with the most recent bookings appearing first.",
@@ -22174,7 +22359,7 @@
                     "description": "A positive integer representing the number of months the coupon applies for. Required when `duration === repeating`, and not allowed when `duration` is `once` or `forever`.",
                     "example": 3,
                     "exclusiveMinimum": 0,
-                    "type": "number"
+                    "type": "integer"
                   },
                   "label": {
                     "description": "Internal name for the coupon.",
@@ -33167,9 +33352,9 @@
                     "type": "boolean"
                   },
                   "displayName": {
-                    "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices.",
+                    "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices. Maximum 50 characters.",
                     "example": "VAT",
-                    "maxLength": 100,
+                    "maxLength": 50,
                     "minLength": 1,
                     "type": "string"
                   },
@@ -33423,9 +33608,9 @@
                     "type": "boolean"
                   },
                   "displayName": {
-                    "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices.",
+                    "description": "Short name describing the type of tax, for example VAT, GST, or Sales Tax. Displayed in the checkout and invoices. Maximum 50 characters.",
                     "example": "VAT",
-                    "maxLength": 100,
+                    "maxLength": 50,
                     "minLength": 1,
                     "type": "string"
                   }
