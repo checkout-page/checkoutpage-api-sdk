@@ -787,6 +787,14 @@
                 "price": {
                   "type": "number"
                 },
+                "pricing": {
+                  "enum": [
+                    "paid",
+                    "pwyw",
+                    "free"
+                  ],
+                  "type": "string"
+                },
                 "quantity": {
                   "type": "number"
                 },
@@ -4172,7 +4180,7 @@
             "type": "string"
           },
           "price": {
-            "description": "Price in smallest currency unit (cents). Defaults to `0`.",
+            "description": "Price in smallest currency unit (cents). Defaults to `0`. For `pwyw` tickets this is the minimum amount.",
             "example": 2500,
             "minimum": 0,
             "type": [
@@ -4181,15 +4189,25 @@
             ]
           },
           "pricing": {
-            "description": "Pricing type for the ticket. Defaults to `paid`.",
+            "description": "Pricing type for the ticket. Defaults to `paid`. For `pwyw` (pay what you want), `price` is the minimum amount the customer must pay.",
             "enum": [
               "paid",
               "free",
+              "pwyw",
               null
             ],
             "example": "paid",
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "pwywSuggestedPrice": {
+            "description": "Suggested amount in smallest currency unit (cents) shown to customers on `pwyw` tickets. Must be at least `price` (the minimum).",
+            "example": 5000,
+            "minimum": 0,
+            "type": [
+              "number",
               "null"
             ]
           },
@@ -13967,6 +13985,14 @@
                   "null"
                 ]
               },
+              "showPwywPlaceholder": {
+                "description": "Show the amount placeholder in the pay-what-you-want ticket input.",
+                "example": true,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "showTicketGroupName": {
                 "description": "Show the ticket group name.",
                 "example": true,
@@ -14290,6 +14316,13 @@
                 ],
                 "type": [
                   "string",
+                  "null"
+                ]
+              },
+              "showPwywPlaceholder": {
+                "description": "Whether the amount placeholder is shown in the pay-what-you-want ticket input.",
+                "type": [
+                  "boolean",
                   "null"
                 ]
               },
@@ -14624,6 +14657,14 @@
                 "example": "small",
                 "type": [
                   "string",
+                  "null"
+                ]
+              },
+              "showPwywPlaceholder": {
+                "description": "Show the amount placeholder in the pay-what-you-want ticket input.",
+                "example": true,
+                "type": [
+                  "boolean",
                   "null"
                 ]
               },
@@ -14970,6 +15011,13 @@
                   "null"
                 ]
               },
+              "showPwywPlaceholder": {
+                "description": "Whether the amount placeholder is shown in the pay-what-you-want ticket input.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "showTicketGroupName": {
                 "description": "Whether the ticket group name is shown.",
                 "type": [
@@ -15271,6 +15319,14 @@
           "pageId": {
             "type": "string"
           },
+          "pricing": {
+            "enum": [
+              "paid",
+              "pwyw",
+              "free"
+            ],
+            "type": "string"
+          },
           "revenue": {
             "type": "number"
           },
@@ -15459,7 +15515,7 @@
             "type": "string"
           },
           "price": {
-            "description": "Price in smallest currency unit (cents). Defaults to `0`.",
+            "description": "Price in smallest currency unit (cents). Defaults to `0`. For `pwyw` tickets this is the minimum amount.",
             "example": 2500,
             "minimum": 0,
             "type": [
@@ -15468,15 +15524,25 @@
             ]
           },
           "pricing": {
-            "description": "Pricing type for the ticket. Defaults to `paid`.",
+            "description": "Pricing type for the ticket. Defaults to `paid`. For `pwyw` (pay what you want), `price` is the minimum amount the customer must pay.",
             "enum": [
               "paid",
               "free",
+              "pwyw",
               null
             ],
             "example": "paid",
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "pwywSuggestedPrice": {
+            "description": "Suggested amount in smallest currency unit (cents) shown to customers on `pwyw` tickets. Must be at least `price` (the minimum).",
+            "example": 5000,
+            "minimum": 0,
+            "type": [
+              "number",
               "null"
             ]
           },
@@ -15730,7 +15796,7 @@
             "type": "string"
           },
           "price": {
-            "description": "Price in smallest currency unit (e.g. cents).",
+            "description": "Price in smallest currency unit (e.g. cents). For `pwyw` tickets this is the minimum amount.",
             "type": [
               "number",
               "null"
@@ -15741,10 +15807,18 @@
             "enum": [
               "paid",
               "free",
+              "pwyw",
               null
             ],
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "pwywSuggestedPrice": {
+            "description": "Suggested amount in smallest currency unit for `pwyw` tickets.",
+            "type": [
+              "number",
               "null"
             ]
           },
@@ -19173,6 +19247,14 @@
                   "null"
                 ]
               },
+              "showPwywPlaceholder": {
+                "description": "Show the amount placeholder in the pay-what-you-want ticket input.",
+                "example": true,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "showTicketGroupName": {
                 "description": "Show the ticket group name.",
                 "example": true,
@@ -19471,7 +19553,7 @@
             "type": "string"
           },
           "price": {
-            "description": "Price in smallest currency unit (cents). Defaults to `0`.",
+            "description": "Price in smallest currency unit (cents). Defaults to `0`. For `pwyw` tickets this is the minimum amount.",
             "example": 2500,
             "minimum": 0,
             "type": [
@@ -19480,15 +19562,25 @@
             ]
           },
           "pricing": {
-            "description": "Pricing type for the ticket. Defaults to `paid`.",
+            "description": "Pricing type for the ticket. Defaults to `paid`. For `pwyw` (pay what you want), `price` is the minimum amount the customer must pay.",
             "enum": [
               "paid",
               "free",
+              "pwyw",
               null
             ],
             "example": "paid",
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "pwywSuggestedPrice": {
+            "description": "Suggested amount in smallest currency unit (cents) shown to customers on `pwyw` tickets. Must be at least `price` (the minimum).",
+            "example": 5000,
+            "minimum": 0,
+            "type": [
+              "number",
               "null"
             ]
           },
@@ -41527,6 +41619,14 @@
                                 "description": "Unique identifier. Must be in BSON ObjectId format."
                               }
                             ]
+                          },
+                          "pricing": {
+                            "enum": [
+                              "paid",
+                              "pwyw",
+                              "free"
+                            ],
+                            "type": "string"
                           },
                           "revenue": {
                             "type": "number"
