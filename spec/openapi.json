@@ -33861,12 +33861,12 @@
             }
           },
           {
-            "description": "Case-insensitive substring search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. Best default when the guest is identified by name, email, or the code on their ticket. Use `orderId` instead for an exact order lookup.",
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `customerName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `customerName`, `customerEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee — always review all matches, not just the first.",
             "in": "query",
             "name": "search",
             "required": false,
             "schema": {
-              "description": "Case-insensitive substring search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. Best default when the guest is identified by name, email, or the code on their ticket. Use `orderId` instead for an exact order lookup.",
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `customerName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `customerName`, `customerEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee — always review all matches, not just the first.",
               "type": "string"
             }
           },
