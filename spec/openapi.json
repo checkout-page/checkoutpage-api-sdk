@@ -1405,7 +1405,14 @@
               "67fcbdac6a91c25ef2d3534a"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": "array"
           },
@@ -1672,7 +1679,14 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": "array"
           },
@@ -2402,7 +2416,14 @@
               "fixedTaxRateIds": {
                 "description": "List of Tax Rate IDs applied to this event. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
                 "items": {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
                 },
                 "maxItems": 1,
                 "type": [
@@ -2595,7 +2616,14 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -3163,7 +3191,14 @@
               "507f1f77bcf86cd799439012"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -3215,7 +3250,14 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -4230,6 +4272,7 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
+                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "type": [
                   "string",
                   "null"
@@ -4612,7 +4655,14 @@
                     "ticketTypeIds": {
                       "description": "Resolved ticket type IDs this discount applies to.",
                       "items": {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          {
+                            "description": "Unique identifier. Must be in BSON ObjectId format."
+                          }
+                        ]
                       },
                       "type": [
                         "array",
@@ -4829,7 +4879,14 @@
             ]
           },
           "id": {
-            "$ref": "#/components/schemas/UniqueIdentifier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "Unique identifier. Must be in BSON ObjectId format."
+              }
+            ]
           },
           "images": {
             "description": "Images displayed on the page.",
@@ -5197,7 +5254,14 @@
             ]
           },
           "sellerId": {
-            "$ref": "#/components/schemas/UniqueIdentifier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "Unique identifier. Must be in BSON ObjectId format."
+              }
+            ]
           },
           "sendEmailConfirmation": {
             "description": "Send an email confirmation to the customer.",
@@ -5580,7 +5644,14 @@
             "items": {
               "properties": {
                 "id": {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
                 },
                 "label": {
                   "description": "Display label shown to customers for this option.",
@@ -9524,7 +9595,14 @@
                     "507f1f77bcf86cd799439011"
                   ],
                   "items": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "type": [
                     "array",
@@ -9555,7 +9633,14 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -9979,7 +10064,14 @@
                       "fileIds": {
                         "description": "Files specific to this variant option. Available to the customer after purchase.",
                         "items": {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "Unique identifier. Must be in BSON ObjectId format."
+                            }
+                          ]
                         },
                         "type": [
                           "array",
@@ -10545,14 +10637,28 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": "array"
           },
           "fixedTaxRateIds": {
             "description": "List of Tax Rate IDs applied to this product. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "maxItems": 1,
             "type": [
@@ -10582,7 +10688,14 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -10918,7 +11031,14 @@
                       "fileIds": {
                         "description": "Files specific to this variant option. Available to the customer after purchase.",
                         "items": {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "Unique identifier. Must be in BSON ObjectId format."
+                            }
+                          ]
                         },
                         "type": [
                           "array",
@@ -10931,6 +11051,7 @@
                             "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           {
+                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "type": [
                               "string",
                               "null"
@@ -11067,7 +11188,14 @@
                 "priceIds": {
                   "description": "Price ids this variant group is scoped to. Required when the product has multiple prices.",
                   "items": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "type": [
                     "array",
@@ -11638,7 +11766,14 @@
             ]
           },
           "id": {
-            "$ref": "#/components/schemas/UniqueIdentifier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "Unique identifier. Must be in BSON ObjectId format."
+              }
+            ]
           },
           "images": {
             "description": "Images displayed on the page.",
@@ -11819,7 +11954,14 @@
             ]
           },
           "sellerId": {
-            "$ref": "#/components/schemas/UniqueIdentifier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "Unique identifier. Must be in BSON ObjectId format."
+              }
+            ]
           },
           "sendEmailConfirmation": {
             "description": "Send an email confirmation to the customer.",
@@ -12714,7 +12856,14 @@
                   },
                   "pageIds": {
                     "items": {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
                     },
                     "type": "array"
                   },
@@ -13531,7 +13680,14 @@
           "transactionIds": {
             "description": "IDs of the transactions associated with this payment",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": "array"
           },
@@ -14018,6 +14174,7 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
+                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "type": [
                   "string",
                   "null"
@@ -14329,7 +14486,14 @@
           },
           "ticketTypeIds": {
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": "array"
           },
@@ -15748,7 +15912,7 @@
         "type": "object"
       },
       "UniqueIdentifier": {
-        "description": "Unique identifier. Must be in BSON ObjectId format.",
+        "description": "Unique identifier for the ticket.",
         "example": "65f4a1c2e4a9f3d2b1c0a9e8",
         "pattern": "^[0-9a-fA-F]{24}$",
         "type": "string"
@@ -15955,7 +16119,14 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -16190,6 +16361,7 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
+                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -16226,6 +16398,7 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
+                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -16627,7 +16800,14 @@
                       "items": {
                         "properties": {
                           "id": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -16664,7 +16844,14 @@
               "fixedTaxRateIds": {
                 "description": "List of Tax Rate IDs applied to this event. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
                 "items": {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
                 },
                 "maxItems": 1,
                 "type": [
@@ -16822,7 +17009,14 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -17024,6 +17218,7 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
+                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -17060,6 +17255,7 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
+                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -17419,6 +17615,7 @@
                           "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         {
+                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "type": [
                             "string",
                             "null"
@@ -17463,6 +17660,7 @@
                           "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         {
+                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "type": [
                             "string",
                             "null"
@@ -17664,6 +17862,7 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -17708,6 +17907,7 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -17911,7 +18111,14 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -17921,7 +18128,14 @@
           "fixedTaxRateIds": {
             "description": "List of Tax Rate IDs applied to this product. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "maxItems": 1,
             "type": [
@@ -17947,7 +18161,14 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             },
             "type": [
               "array",
@@ -18397,7 +18618,14 @@
                   ]
                 },
                 "id": {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
                 },
                 "increasesWithQuantity": {
                   "description": "Whether or not the variant quantity matches the checkout quantity. Defaults to `false`.",
@@ -18580,7 +18808,14 @@
                       "fileIds": {
                         "description": "Files specific to this variant option. Available to the customer after purchase.",
                         "items": {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "Unique identifier. Must be in BSON ObjectId format."
+                            }
+                          ]
                         },
                         "type": [
                           "array",
@@ -18588,7 +18823,14 @@
                         ]
                       },
                       "id": {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          {
+                            "description": "Unique identifier. Must be in BSON ObjectId format."
+                          }
+                        ]
                       },
                       "imageId": {
                         "allOf": [
@@ -18596,6 +18838,7 @@
                             "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           {
+                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "type": [
                               "string",
                               "null"
@@ -18732,7 +18975,14 @@
                 "priceIds": {
                   "description": "Price ids this variant group is scoped to. Required when the product has multiple prices.",
                   "items": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "type": [
                     "array",
@@ -19641,7 +19891,14 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -19650,7 +19907,14 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -20122,7 +20386,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -20226,7 +20497,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -20462,7 +20740,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -20558,7 +20843,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -21120,7 +21412,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -21129,7 +21428,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -21237,7 +21543,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -21246,7 +21559,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -21342,7 +21662,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -21351,7 +21678,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -22145,7 +22479,14 @@
                       "67fcbdac6a91c25ef2d3534a"
                     ],
                     "items": {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
                     },
                     "type": "array"
                   },
@@ -22168,7 +22509,14 @@
                       "67fcbdac6a91c25ef2d3534a"
                     ],
                     "items": {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
                     },
                     "type": "array"
                   }
@@ -23071,7 +23419,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -23175,7 +23530,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -23412,7 +23774,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -23508,7 +23877,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -24070,7 +24446,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -24079,7 +24462,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -24187,7 +24577,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -24196,7 +24593,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -24292,7 +24696,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -24301,7 +24712,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -24964,7 +25382,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -26123,7 +26548,14 @@
             "name": "fileId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -26241,7 +26673,14 @@
             "name": "fileId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -26752,7 +27191,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -26856,7 +27302,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -27093,7 +27546,14 @@
                       "507f1f77bcf86cd799439012"
                     ],
                     "items": {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
                     },
                     "type": [
                       "array",
@@ -27120,7 +27580,14 @@
                   "imageIds": {
                     "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
                     "items": {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
                     },
                     "type": [
                       "array",
@@ -27269,6 +27736,7 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -27305,6 +27773,7 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
+                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -27513,7 +27982,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -27609,7 +28085,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -28171,7 +28654,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -28180,7 +28670,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -28288,7 +28785,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -28297,7 +28801,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -28393,7 +28904,14 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -28402,7 +28920,14 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -30588,7 +31113,14 @@
             "name": "productId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -30631,7 +31163,14 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -30640,7 +31179,14 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -30840,7 +31386,14 @@
             "name": "productId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -30936,7 +31489,14 @@
             "name": "productId",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           }
         ],
@@ -31351,7 +31911,14 @@
             "name": "subscriptionId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -31360,7 +31927,14 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -31369,7 +31943,14 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -31584,7 +32165,14 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -31593,7 +32181,14 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
             }
           },
           {
@@ -31854,7 +32449,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -33214,120 +33816,6 @@
         "operationId": "tickets/list",
         "parameters": [
           {
-            "description": "Unique identifier. Must be in BSON ObjectId format.",
-            "in": "query",
-            "name": "pageId",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
-            }
-          },
-          {
-            "description": "Unique identifier. Must be in BSON ObjectId format.",
-            "in": "query",
-            "name": "bookingId",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
-            }
-          },
-          {
-            "in": "query",
-            "name": "orderId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "Unique identifier. Must be in BSON ObjectId format.",
-            "in": "query",
-            "name": "customerId",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
-            }
-          },
-          {
-            "description": "Unique identifier. Must be in BSON ObjectId format.",
-            "in": "query",
-            "name": "ticketTypeId",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/UniqueIdentifier"
-            }
-          },
-          {
-            "description": "Matches tickets whose ticket type belongs to the ticket group.",
-            "in": "query",
-            "name": "ticketGroupId",
-            "required": false,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Matches tickets whose ticket type belongs to the ticket group."
-                }
-              ]
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "enum": [
-                "PAID",
-                "CANCELED"
-              ],
-              "type": "string"
-            }
-          },
-          {
-            "description": "`UNCHECKEDIN` also matches tickets that have never been checked in.",
-            "in": "query",
-            "name": "checkInStatus",
-            "required": false,
-            "schema": {
-              "description": "`UNCHECKEDIN` also matches tickets that have never been checked in.",
-              "enum": [
-                "UNCHECKEDIN",
-                "CHECKEDIN"
-              ],
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "createdAfter",
-            "required": false,
-            "schema": {
-              "format": "date-time",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "createdBefore",
-            "required": false,
-            "schema": {
-              "format": "date-time",
-              "type": "string"
-            }
-          },
-          {
-            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`.",
-            "in": "query",
-            "name": "search",
-            "required": false,
-            "schema": {
-              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`.",
-              "type": "string"
-            }
-          },
-          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -33371,6 +33859,156 @@
                 }
               ]
             }
+          },
+          {
+            "description": "Case-insensitive substring search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. Best default when the guest is identified by name, email, or the code on their ticket. Use `orderId` instead for an exact order lookup.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "description": "Case-insensitive substring search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. Best default when the guest is identified by name, email, or the code on their ticket. Use `orderId` instead for an exact order lookup.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Return only tickets for a single event page. Use this to build a guest list for one event.",
+            "in": "query",
+            "name": "pageId",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Return only tickets for a single event page. Use this to build a guest list for one event."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Return the tickets created by one booking (Charge). Use when you already have the booking from the bookings endpoint and want the individual attendee tickets.",
+            "in": "query",
+            "name": "bookingId",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Return the tickets created by one booking (Charge). Use when you already have the booking from the bookings endpoint and want the individual attendee tickets."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Exact match on the order reference shared by every ticket in a booking. Partial values do not match — use `search` for that.",
+            "in": "query",
+            "name": "orderId",
+            "required": false,
+            "schema": {
+              "description": "Exact match on the order reference shared by every ticket in a booking. Partial values do not match — use `search` for that.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Return every ticket booked by one customer, across events. Useful when you already have the customer record.",
+            "in": "query",
+            "name": "customerId",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Return every ticket booked by one customer, across events. Useful when you already have the customer record."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Return only tickets of one ticket type (e.g. VIP). Combine with `pageId` when the same type name exists on several events.",
+            "in": "query",
+            "name": "ticketTypeId",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Return only tickets of one ticket type (e.g. VIP). Combine with `pageId` when the same type name exists on several events."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Return tickets whose ticket type belongs to this ticket group. Tickets do not store the group directly — it is resolved through their ticket type. Combining this with a `ticketTypeId` outside the group matches nothing.",
+            "in": "query",
+            "name": "ticketGroupId",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Return tickets whose ticket type belongs to this ticket group. Tickets do not store the group directly — it is resolved through their ticket type. Combining this with a `ticketTypeId` outside the group matches nothing."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Filter by ticket status. Valid values: PAID, CANCELED. Use \"PAID\" for tickets valid for admission and \"CANCELED\" for voided ones. An unfiltered list includes both.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "description": "Filter by ticket status. Valid values: PAID, CANCELED. Use \"PAID\" for tickets valid for admission and \"CANCELED\" for voided ones. An unfiltered list includes both.",
+              "enum": [
+                "PAID",
+                "CANCELED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by check-in state. Valid values: UNCHECKEDIN, CHECKEDIN. \"CHECKEDIN\" returns guests currently admitted; \"UNCHECKEDIN\" returns both guests who were checked back out and guests who have never been checked in.",
+            "in": "query",
+            "name": "checkInStatus",
+            "required": false,
+            "schema": {
+              "description": "Filter by check-in state. Valid values: UNCHECKEDIN, CHECKEDIN. \"CHECKEDIN\" returns guests currently admitted; \"UNCHECKEDIN\" returns both guests who were checked back out and guests who have never been checked in.",
+              "enum": [
+                "UNCHECKEDIN",
+                "CHECKEDIN"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Inclusive lower bound on ticket createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-01-01T00:00:00Z`). Never use a local timezone offset — tickets are stored and compared in UTC.",
+            "in": "query",
+            "name": "createdAfter",
+            "required": false,
+            "schema": {
+              "description": "Inclusive lower bound on ticket createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-01-01T00:00:00Z`). Never use a local timezone offset — tickets are stored and compared in UTC.",
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Inclusive upper bound on ticket createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-12-31T23:59:59Z`). Never use a local timezone offset — tickets are stored and compared in UTC.",
+            "in": "query",
+            "name": "createdBefore",
+            "required": false,
+            "schema": {
+              "description": "Inclusive upper bound on ticket createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-12-31T23:59:59Z`). Never use a local timezone offset — tickets are stored and compared in UTC.",
+              "format": "date-time",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -33381,11 +34019,20 @@
                   "properties": {
                     "data": {
                       "items": {
+                        "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
                           "bookingId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the booking (Charge) this ticket was created from. A booking of three tickets produces three ticket records sharing one `bookingId`. Retrieve it with the bookings endpoint."
+                              }
+                            ]
                           },
                           "canceledAt": {
+                            "description": "ISO-8601 UTC timestamp the ticket was canceled. Absent while the ticket is valid.",
                             "format": "date-time",
                             "type": "string"
                           },
@@ -33395,21 +34042,32 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `bookingId`. Use `bookingId` instead."
                               }
                             ]
                           },
                           "checkIns": {
+                            "description": "Full check-in history, oldest first. Empty when the guest has never been checked in. A guest checked in and back out again has multiple entries.",
                             "items": {
                               "properties": {
                                 "checkedInAt": {
+                                  "description": "ISO-8601 UTC timestamp the check-in was recorded.",
                                   "format": "date-time",
                                   "type": "string"
                                 },
                                 "checkedInBy": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Id of the user (event staff or seller) who performed the check-in."
+                                    }
+                                  ]
                                 },
                                 "method": {
+                                  "description": "How the check-in happened. `QRSCAN` is the ticket QR code scanned at the door, `MANUAL` is door staff tapping the check-in button.",
                                   "enum": [
                                     "QRSCAN",
                                     "MANUAL"
@@ -33417,6 +34075,7 @@
                                   "type": "string"
                                 },
                                 "status": {
+                                  "description": "Check-in state recorded by this scan. `CHECKEDIN` admitted the guest, `UNCHECKEDIN` reversed an earlier check-in.",
                                   "enum": [
                                     "UNCHECKEDIN",
                                     "CHECKEDIN"
@@ -33435,13 +34094,16 @@
                             "type": "array"
                           },
                           "couponAmount": {
+                            "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "createdAt": {
+                            "description": "ISO-8601 UTC timestamp the ticket record was created.",
                             "format": "date-time",
                             "type": "string"
                           },
                           "currency": {
+                            "description": "Lowercase ISO 4217 currency code for every amount on the ticket (e.g. \"usd\").",
                             "type": "string"
                           },
                           "customer": {
@@ -33450,38 +34112,60 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `customerId`. Use `customerId` instead."
                               }
                             ]
                           },
                           "customerEmail": {
+                            "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
                             "type": "string"
                           },
                           "customerId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the customer who booked the ticket."
+                              }
+                            ]
                           },
                           "customerName": {
+                            "description": "Name of the customer who booked, denormalised at purchase time.",
                             "type": "string"
                           },
                           "discountAmount": {
+                            "description": "Bulk discount allocated to this ticket, in the smallest currency unit. Booking-level discounts are apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "feeAmount": {
+                            "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "id": {
                             "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "latestCheckIn": {
+                            "description": "Most recent entry from `checkIns`, denormalised for filtering. Absent when the guest has never been checked in — treat that as not checked in.",
                             "properties": {
                               "checkedInAt": {
+                                "description": "ISO-8601 UTC timestamp the check-in was recorded.",
                                 "format": "date-time",
                                 "type": "string"
                               },
                               "checkedInBy": {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/UniqueIdentifier"
+                                  },
+                                  {
+                                    "description": "Id of the user (event staff or seller) who performed the check-in."
+                                  }
+                                ]
                               },
                               "method": {
+                                "description": "How the check-in happened. `QRSCAN` is the ticket QR code scanned at the door, `MANUAL` is door staff tapping the check-in button.",
                                 "enum": [
                                   "QRSCAN",
                                   "MANUAL"
@@ -33489,6 +34173,7 @@
                                 "type": "string"
                               },
                               "status": {
+                                "description": "Check-in state recorded by this scan. `CHECKEDIN` admitted the guest, `UNCHECKEDIN` reversed an earlier check-in.",
                                 "enum": [
                                   "UNCHECKEDIN",
                                   "CHECKEDIN"
@@ -33505,19 +34190,24 @@
                             "type": "object"
                           },
                           "livemode": {
+                            "description": "Whether the ticket came from a live payment. Test-mode tickets are never returned by the seller API.",
                             "type": "boolean"
                           },
                           "metadata": {
+                            "description": "Custom key/value entries attached to the ticket, typically written by door staff during check-in. Maximum 20 entries.",
                             "items": {
                               "properties": {
                                 "addedAt": {
+                                  "description": "ISO-8601 UTC timestamp the entry was added.",
                                   "format": "date-time",
                                   "type": "string"
                                 },
                                 "key": {
+                                  "description": "Metadata key. Maximum 50 characters.",
                                   "type": "string"
                                 },
                                 "value": {
+                                  "description": "Metadata value. Maximum 100 characters.",
                                   "type": "string"
                                 }
                               },
@@ -33531,13 +34221,16 @@
                             "type": "array"
                           },
                           "orderId": {
+                            "description": "Human-readable order reference shared by every ticket in the same booking. Shown to the customer on receipts and tickets.",
                             "type": "string"
                           },
                           "orderedAt": {
+                            "description": "ISO-8601 UTC timestamp the booking was placed. Matches across every ticket in the same booking.",
                             "format": "date-time",
                             "type": "string"
                           },
                           "originalPrice": {
+                            "description": "Price of the ticket before any discounts, coupons, taxes or fees, in the smallest currency unit (e.g. cents).",
                             "type": "number"
                           },
                           "page": {
@@ -33546,14 +34239,23 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `pageId`. Use `pageId` instead."
                               }
                             ]
                           },
                           "pageId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the event page the ticket was purchased from."
+                              }
+                            ]
                           },
                           "pricing": {
+                            "description": "Pricing model of the ticket type at the time of purchase. `paid` is a fixed price, `pwyw` means the buyer chose the amount, `free` is a zero-price ticket. Absent on tickets created before this field existed.",
                             "enum": [
                               "paid",
                               "pwyw",
@@ -33562,6 +34264,7 @@
                             "type": "string"
                           },
                           "revenue": {
+                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
                           },
                           "seller": {
@@ -33570,14 +34273,23 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `sellerId`. Use `sellerId` instead."
                               }
                             ]
                           },
                           "sellerId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the seller account the ticket belongs to."
+                              }
+                            ]
                           },
                           "status": {
+                            "description": "Lifecycle state of the ticket. `PAID` is valid for admission, `CANCELED` was voided by refund or cancellation and must not be admitted.",
                             "enum": [
                               "PAID",
                               "CANCELED"
@@ -33585,9 +34297,11 @@
                             "type": "string"
                           },
                           "taxAmount": {
+                            "description": "Tax allocated to this ticket, in the smallest currency unit. Booking-level tax is apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "ticketShortId": {
+                            "description": "Short uppercase alphanumeric code identifying the ticket (e.g. \"A1B2C3D4\"). Printed on the ticket and quoted by guests at the door — search on it to find a specific attendee.",
                             "type": "string"
                           },
                           "ticketType": {
@@ -33596,14 +34310,23 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `ticketTypeId`. Use `ticketTypeId` instead."
                               }
                             ]
                           },
                           "ticketTypeId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the ticket type purchased (e.g. General Admission, VIP). Ticket types belong to a ticket group on the event."
+                              }
+                            ]
                           },
                           "updatedAt": {
+                            "description": "ISO-8601 UTC timestamp the ticket record was last updated.",
                             "format": "date-time",
                             "type": "string"
                           }
@@ -33947,7 +34670,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -33955,7 +34685,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34021,7 +34752,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34029,7 +34767,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34095,7 +34834,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34103,7 +34849,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34169,7 +34916,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34177,7 +34931,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34243,7 +34998,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34251,7 +35013,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34324,7 +35087,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34332,7 +35102,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34398,7 +35169,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34406,7 +35184,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34472,7 +35251,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34480,7 +35266,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34546,7 +35333,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34554,7 +35348,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34620,7 +35415,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -34628,7 +35430,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -34821,7 +35624,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -35433,7 +36243,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -35441,7 +36258,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -35627,7 +36445,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -36239,7 +37064,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -36247,7 +37079,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -36433,7 +37266,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -37045,7 +37885,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -37053,7 +37900,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -37239,7 +38087,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -37851,7 +38706,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -37859,7 +38721,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -38045,7 +38908,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -38657,7 +39527,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -38665,7 +39542,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -38851,7 +39729,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -39463,7 +40348,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -39471,7 +40363,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -39657,7 +40550,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -40269,7 +41169,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -40277,7 +41184,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -40463,7 +41371,14 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                                    }
+                                  ]
                                 },
                                 "type": "array"
                               },
@@ -41075,7 +41990,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -41083,7 +42005,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
@@ -41126,11 +42049,20 @@
                   "data": {
                     "properties": {
                       "ticket": {
+                        "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
                           "bookingId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the booking (Charge) this ticket was created from. A booking of three tickets produces three ticket records sharing one `bookingId`. Retrieve it with the bookings endpoint."
+                              }
+                            ]
                           },
                           "canceledAt": {
+                            "description": "ISO-8601 UTC timestamp the ticket was canceled. Absent while the ticket is valid.",
                             "format": "date-time",
                             "type": "string"
                           },
@@ -41140,21 +42072,32 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `bookingId`. Use `bookingId` instead."
                               }
                             ]
                           },
                           "checkIns": {
+                            "description": "Full check-in history, oldest first. Empty when the guest has never been checked in. A guest checked in and back out again has multiple entries.",
                             "items": {
                               "properties": {
                                 "checkedInAt": {
+                                  "description": "ISO-8601 UTC timestamp the check-in was recorded.",
                                   "format": "date-time",
                                   "type": "string"
                                 },
                                 "checkedInBy": {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/UniqueIdentifier"
+                                    },
+                                    {
+                                      "description": "Id of the user (event staff or seller) who performed the check-in."
+                                    }
+                                  ]
                                 },
                                 "method": {
+                                  "description": "How the check-in happened. `QRSCAN` is the ticket QR code scanned at the door, `MANUAL` is door staff tapping the check-in button.",
                                   "enum": [
                                     "QRSCAN",
                                     "MANUAL"
@@ -41162,6 +42105,7 @@
                                   "type": "string"
                                 },
                                 "status": {
+                                  "description": "Check-in state recorded by this scan. `CHECKEDIN` admitted the guest, `UNCHECKEDIN` reversed an earlier check-in.",
                                   "enum": [
                                     "UNCHECKEDIN",
                                     "CHECKEDIN"
@@ -41180,13 +42124,16 @@
                             "type": "array"
                           },
                           "couponAmount": {
+                            "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "createdAt": {
+                            "description": "ISO-8601 UTC timestamp the ticket record was created.",
                             "format": "date-time",
                             "type": "string"
                           },
                           "currency": {
+                            "description": "Lowercase ISO 4217 currency code for every amount on the ticket (e.g. \"usd\").",
                             "type": "string"
                           },
                           "customer": {
@@ -41195,38 +42142,60 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `customerId`. Use `customerId` instead."
                               }
                             ]
                           },
                           "customerEmail": {
+                            "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
                             "type": "string"
                           },
                           "customerId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the customer who booked the ticket."
+                              }
+                            ]
                           },
                           "customerName": {
+                            "description": "Name of the customer who booked, denormalised at purchase time.",
                             "type": "string"
                           },
                           "discountAmount": {
+                            "description": "Bulk discount allocated to this ticket, in the smallest currency unit. Booking-level discounts are apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "feeAmount": {
+                            "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "id": {
                             "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "latestCheckIn": {
+                            "description": "Most recent entry from `checkIns`, denormalised for filtering. Absent when the guest has never been checked in — treat that as not checked in.",
                             "properties": {
                               "checkedInAt": {
+                                "description": "ISO-8601 UTC timestamp the check-in was recorded.",
                                 "format": "date-time",
                                 "type": "string"
                               },
                               "checkedInBy": {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/UniqueIdentifier"
+                                  },
+                                  {
+                                    "description": "Id of the user (event staff or seller) who performed the check-in."
+                                  }
+                                ]
                               },
                               "method": {
+                                "description": "How the check-in happened. `QRSCAN` is the ticket QR code scanned at the door, `MANUAL` is door staff tapping the check-in button.",
                                 "enum": [
                                   "QRSCAN",
                                   "MANUAL"
@@ -41234,6 +42203,7 @@
                                 "type": "string"
                               },
                               "status": {
+                                "description": "Check-in state recorded by this scan. `CHECKEDIN` admitted the guest, `UNCHECKEDIN` reversed an earlier check-in.",
                                 "enum": [
                                   "UNCHECKEDIN",
                                   "CHECKEDIN"
@@ -41250,19 +42220,24 @@
                             "type": "object"
                           },
                           "livemode": {
+                            "description": "Whether the ticket came from a live payment. Test-mode tickets are never returned by the seller API.",
                             "type": "boolean"
                           },
                           "metadata": {
+                            "description": "Custom key/value entries attached to the ticket, typically written by door staff during check-in. Maximum 20 entries.",
                             "items": {
                               "properties": {
                                 "addedAt": {
+                                  "description": "ISO-8601 UTC timestamp the entry was added.",
                                   "format": "date-time",
                                   "type": "string"
                                 },
                                 "key": {
+                                  "description": "Metadata key. Maximum 50 characters.",
                                   "type": "string"
                                 },
                                 "value": {
+                                  "description": "Metadata value. Maximum 100 characters.",
                                   "type": "string"
                                 }
                               },
@@ -41276,13 +42251,16 @@
                             "type": "array"
                           },
                           "orderId": {
+                            "description": "Human-readable order reference shared by every ticket in the same booking. Shown to the customer on receipts and tickets.",
                             "type": "string"
                           },
                           "orderedAt": {
+                            "description": "ISO-8601 UTC timestamp the booking was placed. Matches across every ticket in the same booking.",
                             "format": "date-time",
                             "type": "string"
                           },
                           "originalPrice": {
+                            "description": "Price of the ticket before any discounts, coupons, taxes or fees, in the smallest currency unit (e.g. cents).",
                             "type": "number"
                           },
                           "page": {
@@ -41291,14 +42269,23 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `pageId`. Use `pageId` instead."
                               }
                             ]
                           },
                           "pageId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the event page the ticket was purchased from."
+                              }
+                            ]
                           },
                           "pricing": {
+                            "description": "Pricing model of the ticket type at the time of purchase. `paid` is a fixed price, `pwyw` means the buyer chose the amount, `free` is a zero-price ticket. Absent on tickets created before this field existed.",
                             "enum": [
                               "paid",
                               "pwyw",
@@ -41307,6 +42294,7 @@
                             "type": "string"
                           },
                           "revenue": {
+                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
                           },
                           "seller": {
@@ -41315,14 +42303,23 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `sellerId`. Use `sellerId` instead."
                               }
                             ]
                           },
                           "sellerId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the seller account the ticket belongs to."
+                              }
+                            ]
                           },
                           "status": {
+                            "description": "Lifecycle state of the ticket. `PAID` is valid for admission, `CANCELED` was voided by refund or cancellation and must not be admitted.",
                             "enum": [
                               "PAID",
                               "CANCELED"
@@ -41330,9 +42327,11 @@
                             "type": "string"
                           },
                           "taxAmount": {
+                            "description": "Tax allocated to this ticket, in the smallest currency unit. Booking-level tax is apportioned across the tickets in the booking.",
                             "type": "number"
                           },
                           "ticketShortId": {
+                            "description": "Short uppercase alphanumeric code identifying the ticket (e.g. \"A1B2C3D4\"). Printed on the ticket and quoted by guests at the door — search on it to find a specific attendee.",
                             "type": "string"
                           },
                           "ticketType": {
@@ -41341,14 +42340,23 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true
+                                "deprecated": true,
+                                "description": "Deprecated alias of `ticketTypeId`. Use `ticketTypeId` instead."
                               }
                             ]
                           },
                           "ticketTypeId": {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Id of the ticket type purchased (e.g. General Admission, VIP). Ticket types belong to a ticket group on the event."
+                              }
+                            ]
                           },
                           "updatedAt": {
+                            "description": "ISO-8601 UTC timestamp the ticket record was last updated.",
                             "format": "date-time",
                             "type": "string"
                           }
@@ -41405,7 +42413,14 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "$ref": "#/components/schemas/UniqueIdentifier"
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
                   },
                   "seller_id": {
                     "allOf": [
@@ -41413,7 +42428,8 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
                       }
                     ]
                   },
