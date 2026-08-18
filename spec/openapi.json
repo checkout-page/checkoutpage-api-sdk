@@ -1405,14 +1405,7 @@
               "67fcbdac6a91c25ef2d3534a"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": "array"
           },
@@ -1679,14 +1672,7 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": "array"
           },
@@ -2416,14 +2402,7 @@
               "fixedTaxRateIds": {
                 "description": "List of Tax Rate IDs applied to this event. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
                 "items": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UniqueIdentifier"
                 },
                 "maxItems": 1,
                 "type": [
@@ -2616,14 +2595,7 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -3191,14 +3163,7 @@
               "507f1f77bcf86cd799439012"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -3250,14 +3215,7 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -4272,7 +4230,6 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "type": [
                   "string",
                   "null"
@@ -4655,14 +4612,7 @@
                     "ticketTypeIds": {
                       "description": "Resolved ticket type IDs this discount applies to.",
                       "items": {
-                        "allOf": [
-                          {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
-                          },
-                          {
-                            "description": "Unique identifier. Must be in BSON ObjectId format."
-                          }
-                        ]
+                        "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       "type": [
                         "array",
@@ -4879,14 +4829,7 @@
             ]
           },
           "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UniqueIdentifier"
-              },
-              {
-                "description": "Unique identifier. Must be in BSON ObjectId format."
-              }
-            ]
+            "$ref": "#/components/schemas/UniqueIdentifier"
           },
           "images": {
             "description": "Images displayed on the page.",
@@ -5254,14 +5197,7 @@
             ]
           },
           "sellerId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UniqueIdentifier"
-              },
-              {
-                "description": "Unique identifier. Must be in BSON ObjectId format."
-              }
-            ]
+            "$ref": "#/components/schemas/UniqueIdentifier"
           },
           "sendEmailConfirmation": {
             "description": "Send an email confirmation to the customer.",
@@ -5644,14 +5580,7 @@
             "items": {
               "properties": {
                 "id": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UniqueIdentifier"
                 },
                 "label": {
                   "description": "Display label shown to customers for this option.",
@@ -7209,7 +7138,14 @@
             "type": "string"
           },
           "taxRate": {
-            "$ref": "#/components/schemas/UniqueIdentifier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "Tax rate ID this snapshot was taken from."
+              }
+            ]
           },
           "updatedAt": {
             "format": "date-time",
@@ -9588,14 +9524,7 @@
                     "507f1f77bcf86cd799439011"
                   ],
                   "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "type": [
                     "array",
@@ -9626,14 +9555,7 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -10057,14 +9979,7 @@
                       "fileIds": {
                         "description": "Files specific to this variant option. Available to the customer after purchase.",
                         "items": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format."
-                            }
-                          ]
+                          "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         "type": [
                           "array",
@@ -10630,28 +10545,14 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": "array"
           },
           "fixedTaxRateIds": {
             "description": "List of Tax Rate IDs applied to this product. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "maxItems": 1,
             "type": [
@@ -10681,14 +10582,7 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -11024,14 +10918,7 @@
                       "fileIds": {
                         "description": "Files specific to this variant option. Available to the customer after purchase.",
                         "items": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format."
-                            }
-                          ]
+                          "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         "type": [
                           "array",
@@ -11044,7 +10931,6 @@
                             "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           {
-                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "type": [
                               "string",
                               "null"
@@ -11181,14 +11067,7 @@
                 "priceIds": {
                   "description": "Price ids this variant group is scoped to. Required when the product has multiple prices.",
                   "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "type": [
                     "array",
@@ -11759,14 +11638,7 @@
             ]
           },
           "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UniqueIdentifier"
-              },
-              {
-                "description": "Unique identifier. Must be in BSON ObjectId format."
-              }
-            ]
+            "$ref": "#/components/schemas/UniqueIdentifier"
           },
           "images": {
             "description": "Images displayed on the page.",
@@ -11947,14 +11819,7 @@
             ]
           },
           "sellerId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UniqueIdentifier"
-              },
-              {
-                "description": "Unique identifier. Must be in BSON ObjectId format."
-              }
-            ]
+            "$ref": "#/components/schemas/UniqueIdentifier"
           },
           "sendEmailConfirmation": {
             "description": "Send an email confirmation to the customer.",
@@ -12849,14 +12714,7 @@
                   },
                   "pageIds": {
                     "items": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
+                      "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     "type": "array"
                   },
@@ -13673,14 +13531,7 @@
           "transactionIds": {
             "description": "IDs of the transactions associated with this payment",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": "array"
           },
@@ -14167,7 +14018,6 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "Unique identifier. Must be in BSON ObjectId format.",
                 "type": [
                   "string",
                   "null"
@@ -14479,14 +14329,7 @@
           },
           "ticketTypeIds": {
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": "array"
           },
@@ -15905,7 +15748,7 @@
         "type": "object"
       },
       "UniqueIdentifier": {
-        "description": "Tax rate ID this snapshot was taken from.",
+        "description": "Unique identifier. Must be in BSON ObjectId format.",
         "example": "65f4a1c2e4a9f3d2b1c0a9e8",
         "pattern": "^[0-9a-fA-F]{24}$",
         "type": "string"
@@ -16112,14 +15955,7 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -16354,7 +16190,6 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -16391,7 +16226,6 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -16793,14 +16627,7 @@
                       "items": {
                         "properties": {
                           "id": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           }
                         },
                         "required": [
@@ -16837,14 +16664,7 @@
               "fixedTaxRateIds": {
                 "description": "List of Tax Rate IDs applied to this event. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
                 "items": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UniqueIdentifier"
                 },
                 "maxItems": 1,
                 "type": [
@@ -17002,14 +16822,7 @@
           "imageIds": {
             "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -17211,7 +17024,6 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -17248,7 +17060,6 @@
                       "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
                       "type": [
                         "string",
                         "null"
@@ -17608,7 +17419,6 @@
                           "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         {
-                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "type": [
                             "string",
                             "null"
@@ -17653,7 +17463,6 @@
                           "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         {
-                          "description": "Unique identifier. Must be in BSON ObjectId format.",
                           "type": [
                             "string",
                             "null"
@@ -17855,7 +17664,6 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -17900,7 +17708,6 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -18104,14 +17911,7 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -18121,14 +17921,7 @@
           "fixedTaxRateIds": {
             "description": "List of Tax Rate IDs applied to this product. When tax.mode is \"fixed\" and this is omitted on create, the seller default rate is applied.",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "maxItems": 1,
             "type": [
@@ -18154,14 +17947,7 @@
               "507f1f77bcf86cd799439011"
             ],
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             },
             "type": [
               "array",
@@ -18611,14 +18397,7 @@
                   ]
                 },
                 "id": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UniqueIdentifier"
                 },
                 "increasesWithQuantity": {
                   "description": "Whether or not the variant quantity matches the checkout quantity. Defaults to `false`.",
@@ -18801,14 +18580,7 @@
                       "fileIds": {
                         "description": "Files specific to this variant option. Available to the customer after purchase.",
                         "items": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format."
-                            }
-                          ]
+                          "$ref": "#/components/schemas/UniqueIdentifier"
                         },
                         "type": [
                           "array",
@@ -18816,14 +18588,7 @@
                         ]
                       },
                       "id": {
-                        "allOf": [
-                          {
-                            "$ref": "#/components/schemas/UniqueIdentifier"
-                          },
-                          {
-                            "description": "Unique identifier. Must be in BSON ObjectId format."
-                          }
-                        ]
+                        "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       "imageId": {
                         "allOf": [
@@ -18831,7 +18596,6 @@
                             "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           {
-                            "description": "Unique identifier. Must be in BSON ObjectId format.",
                             "type": [
                               "string",
                               "null"
@@ -18968,14 +18732,7 @@
                 "priceIds": {
                   "description": "Price ids this variant group is scoped to. Required when the product has multiple prices.",
                   "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "type": [
                     "array",
@@ -19884,14 +19641,7 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -19900,14 +19650,7 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -20379,14 +20122,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -20490,14 +20226,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -20733,14 +20462,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -20836,14 +20558,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -21405,14 +21120,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -21421,14 +21129,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -21536,14 +21237,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -21552,14 +21246,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -21655,14 +21342,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -21671,14 +21351,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -22472,14 +22145,7 @@
                       "67fcbdac6a91c25ef2d3534a"
                     ],
                     "items": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
+                      "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     "type": "array"
                   },
@@ -22502,14 +22168,7 @@
                       "67fcbdac6a91c25ef2d3534a"
                     ],
                     "items": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
+                      "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     "type": "array"
                   }
@@ -23412,14 +23071,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -23523,14 +23175,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -23767,14 +23412,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -23870,14 +23508,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -24439,14 +24070,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -24455,14 +24079,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -24570,14 +24187,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -24586,14 +24196,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -24689,14 +24292,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -24705,14 +24301,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -25375,14 +24964,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -26541,14 +26123,7 @@
             "name": "fileId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -26666,14 +26241,7 @@
             "name": "fileId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -27184,14 +26752,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -27295,14 +26856,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -27539,14 +27093,7 @@
                       "507f1f77bcf86cd799439012"
                     ],
                     "items": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
+                      "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     "type": [
                       "array",
@@ -27573,14 +27120,7 @@
                   "imageIds": {
                     "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
                     "items": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
+                      "$ref": "#/components/schemas/UniqueIdentifier"
                     },
                     "type": [
                       "array",
@@ -27729,7 +27269,6 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -27766,7 +27305,6 @@
                               "$ref": "#/components/schemas/UniqueIdentifier"
                             },
                             {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
                               "type": [
                                 "string",
                                 "null"
@@ -27975,14 +27513,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -28078,14 +27609,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -28647,14 +28171,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -28663,14 +28180,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -28778,14 +28288,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -28794,14 +28297,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -28897,14 +28393,7 @@
             "name": "pageId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -28913,14 +28402,7 @@
             "name": "fieldId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -31106,14 +30588,7 @@
             "name": "productId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -31156,14 +30631,7 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -31172,14 +30640,7 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -31379,14 +30840,7 @@
             "name": "productId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -31482,14 +30936,7 @@
             "name": "productId",
             "required": true,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           }
         ],
@@ -31904,14 +31351,7 @@
             "name": "subscriptionId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -31920,14 +31360,7 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -31936,14 +31369,7 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -32158,14 +31584,7 @@
             "name": "pageId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -32174,14 +31593,7 @@
             "name": "customerId",
             "required": false,
             "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                }
-              ]
+              "$ref": "#/components/schemas/UniqueIdentifier"
             }
           },
           {
@@ -32442,14 +31854,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -33803,6 +33208,521 @@
         ]
       }
     },
+    "/v1/tickets/": {
+      "get": {
+        "description": "Returns a paginated list of tickets across your event bookings, sorted with the most recent tickets appearing first.",
+        "operationId": "tickets/list",
+        "parameters": [
+          {
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "in": "query",
+            "name": "pageId",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/UniqueIdentifier"
+            }
+          },
+          {
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "in": "query",
+            "name": "bookingId",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/UniqueIdentifier"
+            }
+          },
+          {
+            "in": "query",
+            "name": "orderId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "in": "query",
+            "name": "customerId",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/UniqueIdentifier"
+            }
+          },
+          {
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "in": "query",
+            "name": "ticketTypeId",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/UniqueIdentifier"
+            }
+          },
+          {
+            "description": "Matches tickets whose ticket type belongs to the ticket group.",
+            "in": "query",
+            "name": "ticketGroupId",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Matches tickets whose ticket type belongs to the ticket group."
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "PAID",
+                "CANCELED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "`UNCHECKEDIN` also matches tickets that have never been checked in.",
+            "in": "query",
+            "name": "checkInStatus",
+            "required": false,
+            "schema": {
+              "description": "`UNCHECKEDIN` also matches tickets that have never been checked in.",
+              "enum": [
+                "UNCHECKEDIN",
+                "CHECKEDIN"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createdAfter",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "createdBefore",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+              "example": 20,
+              "type": "string"
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "in": "query",
+            "name": "ending_before",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "bookingId": {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          "canceledAt": {
+                            "format": "date-time",
+                            "type": "string"
+                          },
+                          "charge": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "checkIns": {
+                            "items": {
+                              "properties": {
+                                "checkedInAt": {
+                                  "format": "date-time",
+                                  "type": "string"
+                                },
+                                "checkedInBy": {
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                },
+                                "method": {
+                                  "enum": [
+                                    "QRSCAN",
+                                    "MANUAL"
+                                  ],
+                                  "type": "string"
+                                },
+                                "status": {
+                                  "enum": [
+                                    "UNCHECKEDIN",
+                                    "CHECKEDIN"
+                                  ],
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "status",
+                                "method",
+                                "checkedInBy",
+                                "checkedInAt"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "couponAmount": {
+                            "type": "number"
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "type": "string"
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "customer": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "customerEmail": {
+                            "type": "string"
+                          },
+                          "customerId": {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          "customerName": {
+                            "type": "string"
+                          },
+                          "discountAmount": {
+                            "type": "number"
+                          },
+                          "feeAmount": {
+                            "type": "number"
+                          },
+                          "id": {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          "latestCheckIn": {
+                            "properties": {
+                              "checkedInAt": {
+                                "format": "date-time",
+                                "type": "string"
+                              },
+                              "checkedInBy": {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              "method": {
+                                "enum": [
+                                  "QRSCAN",
+                                  "MANUAL"
+                                ],
+                                "type": "string"
+                              },
+                              "status": {
+                                "enum": [
+                                  "UNCHECKEDIN",
+                                  "CHECKEDIN"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "status",
+                              "method",
+                              "checkedInBy",
+                              "checkedInAt"
+                            ],
+                            "type": "object"
+                          },
+                          "livemode": {
+                            "type": "boolean"
+                          },
+                          "metadata": {
+                            "items": {
+                              "properties": {
+                                "addedAt": {
+                                  "format": "date-time",
+                                  "type": "string"
+                                },
+                                "key": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "value",
+                                "addedAt"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "orderId": {
+                            "type": "string"
+                          },
+                          "orderedAt": {
+                            "format": "date-time",
+                            "type": "string"
+                          },
+                          "originalPrice": {
+                            "type": "number"
+                          },
+                          "page": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "pageId": {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          "pricing": {
+                            "enum": [
+                              "paid",
+                              "pwyw",
+                              "free"
+                            ],
+                            "type": "string"
+                          },
+                          "revenue": {
+                            "type": "number"
+                          },
+                          "seller": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "sellerId": {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          "status": {
+                            "enum": [
+                              "PAID",
+                              "CANCELED"
+                            ],
+                            "type": "string"
+                          },
+                          "taxAmount": {
+                            "type": "number"
+                          },
+                          "ticketShortId": {
+                            "type": "string"
+                          },
+                          "ticketType": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "deprecated": true
+                              }
+                            ]
+                          },
+                          "ticketTypeId": {
+                            "$ref": "#/components/schemas/UniqueIdentifier"
+                          },
+                          "updatedAt": {
+                            "format": "date-time",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "seller",
+                          "sellerId",
+                          "charge",
+                          "bookingId",
+                          "orderId",
+                          "page",
+                          "pageId",
+                          "ticketType",
+                          "ticketTypeId",
+                          "originalPrice",
+                          "discountAmount",
+                          "feeAmount",
+                          "taxAmount",
+                          "couponAmount",
+                          "revenue",
+                          "customer",
+                          "customerId",
+                          "ticketShortId",
+                          "status",
+                          "checkIns",
+                          "customerEmail",
+                          "livemode",
+                          "orderedAt",
+                          "metadata",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "has_more": {
+                      "description": "Whether more records exist beyond the current page.",
+                      "type": "boolean"
+                    },
+                    "total": {
+                      "description": "Total number of records matching the query across all pages.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "has_more"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Tickets retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List all tickets",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
     "/v1/tickets/validate/:qrCode": {
       "post": {
         "description": "Validates a ticket using its QR code. Scan the QR code and pass the data and optionally manages metadata entries",
@@ -34027,14 +33947,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34042,8 +33955,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34109,14 +34021,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34124,8 +34029,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34191,14 +34095,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34206,8 +34103,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34273,14 +34169,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34288,8 +34177,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34355,14 +34243,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34370,8 +34251,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34444,14 +34324,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34459,8 +34332,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34526,14 +34398,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34541,8 +34406,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34608,14 +34472,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34623,8 +34480,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34690,14 +34546,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34705,8 +34554,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34772,14 +34620,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -34787,8 +34628,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -34981,14 +34821,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -35600,14 +35433,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -35615,8 +35441,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -35802,14 +35627,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -36421,14 +36239,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -36436,8 +36247,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -36623,14 +36433,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -37242,14 +37045,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -37257,8 +37053,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -37444,14 +37239,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -38063,14 +37851,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -38078,8 +37859,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -38265,14 +38045,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -38884,14 +38657,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -38899,8 +38665,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -39086,14 +38851,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -39705,14 +39463,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -39720,8 +39471,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -39907,14 +39657,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -40526,14 +40269,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -40541,8 +40277,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -40728,14 +40463,7 @@
                               },
                               "pageIds": {
                                 "items": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "type": "array"
                               },
@@ -41347,14 +41075,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -41362,8 +41083,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
@@ -41408,14 +41128,7 @@
                       "ticket": {
                         "properties": {
                           "bookingId": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "canceledAt": {
                             "format": "date-time",
@@ -41427,8 +41140,7 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true,
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                                "deprecated": true
                               }
                             ]
                           },
@@ -41440,14 +41152,7 @@
                                   "type": "string"
                                 },
                                 "checkedInBy": {
-                                  "allOf": [
-                                    {
-                                      "$ref": "#/components/schemas/UniqueIdentifier"
-                                    },
-                                    {
-                                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                                    }
-                                  ]
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
                                 },
                                 "method": {
                                   "enum": [
@@ -41490,8 +41195,7 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true,
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                                "deprecated": true
                               }
                             ]
                           },
@@ -41499,14 +41203,7 @@
                             "type": "string"
                           },
                           "customerId": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "customerName": {
                             "type": "string"
@@ -41518,14 +41215,7 @@
                             "type": "number"
                           },
                           "id": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "latestCheckIn": {
                             "properties": {
@@ -41534,14 +41224,7 @@
                                 "type": "string"
                               },
                               "checkedInBy": {
-                                "allOf": [
-                                  {
-                                    "$ref": "#/components/schemas/UniqueIdentifier"
-                                  },
-                                  {
-                                    "description": "Unique identifier. Must be in BSON ObjectId format."
-                                  }
-                                ]
+                                "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               "method": {
                                 "enum": [
@@ -41565,6 +41248,9 @@
                               "checkedInAt"
                             ],
                             "type": "object"
+                          },
+                          "livemode": {
+                            "type": "boolean"
                           },
                           "metadata": {
                             "items": {
@@ -41605,20 +41291,12 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true,
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                                "deprecated": true
                               }
                             ]
                           },
                           "pageId": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "pricing": {
                             "enum": [
@@ -41637,20 +41315,12 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true,
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                                "deprecated": true
                               }
                             ]
                           },
                           "sellerId": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "status": {
                             "enum": [
@@ -41671,20 +41341,12 @@
                                 "$ref": "#/components/schemas/UniqueIdentifier"
                               },
                               {
-                                "deprecated": true,
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                                "deprecated": true
                               }
                             ]
                           },
                           "ticketTypeId": {
-                            "allOf": [
-                              {
-                                "$ref": "#/components/schemas/UniqueIdentifier"
-                              },
-                              {
-                                "description": "Unique identifier. Must be in BSON ObjectId format."
-                              }
-                            ]
+                            "$ref": "#/components/schemas/UniqueIdentifier"
                           },
                           "updatedAt": {
                             "format": "date-time",
@@ -41714,6 +41376,7 @@
                           "status",
                           "checkIns",
                           "customerEmail",
+                          "livemode",
                           "orderedAt",
                           "metadata",
                           "createdAt",
@@ -41742,14 +41405,7 @@
                     "type": "string"
                   },
                   "sellerId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/UniqueIdentifier"
-                      },
-                      {
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
-                      }
-                    ]
+                    "$ref": "#/components/schemas/UniqueIdentifier"
                   },
                   "seller_id": {
                     "allOf": [
@@ -41757,8 +41413,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "deprecated": true,
-                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                        "deprecated": true
                       }
                     ]
                   },
