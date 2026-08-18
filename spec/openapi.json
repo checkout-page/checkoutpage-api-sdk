@@ -33945,22 +33945,6 @@
             }
           },
           {
-            "description": "Return tickets whose ticket type belongs to this ticket group. Tickets do not store the group directly — it is resolved through their ticket type. Combining this with a `ticketTypeId` outside the group matches nothing.",
-            "in": "query",
-            "name": "ticketGroupId",
-            "required": false,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "Return tickets whose ticket type belongs to this ticket group. Tickets do not store the group directly — it is resolved through their ticket type. Combining this with a `ticketTypeId` outside the group matches nothing."
-                }
-              ]
-            }
-          },
-          {
             "description": "Filter by ticket status. Valid values: PAID, CANCELED. Use \"PAID\" for tickets valid for admission and \"CANCELED\" for voided ones. An unfiltered list includes both.",
             "in": "query",
             "name": "status",

@@ -8,7 +8,6 @@ const PAGE_ID = '67fcbdac6a91c25ef2d3534a';
 const BOOKING_ID = '6812fe6e9f39b6760576f01d';
 const CUSTOMER_ID = '507f1f77bcf86cd799439010';
 const TICKET_TYPE_ID = '507f1f77bcf86cd799439011';
-const TICKET_GROUP_ID = '507f1f77bcf86cd799439012';
 const CURSOR = '507f1f77bcf86cd799439013';
 
 const BASE_TICKET: TicketList['data'][number] = {
@@ -53,7 +52,6 @@ const DEFAULT_QUERY = {
   orderId: undefined,
   customerId: undefined,
   ticketTypeId: undefined,
-  ticketGroupId: undefined,
   status: undefined,
   checkInStatus: undefined,
   createdAfter: undefined,
@@ -93,7 +91,6 @@ describe('EventTicketsResource', () => {
       orderId: 'order_123',
       customerId: CUSTOMER_ID,
       ticketTypeId: TICKET_TYPE_ID,
-      ticketGroupId: TICKET_GROUP_ID,
       status: 'PAID',
       checkInStatus: 'CHECKEDIN',
       createdAfter: '2024-01-01T00:00:00.000Z',
@@ -113,7 +110,6 @@ describe('EventTicketsResource', () => {
         orderId: 'order_123',
         customerId: CUSTOMER_ID,
         ticketTypeId: TICKET_TYPE_ID,
-        ticketGroupId: TICKET_GROUP_ID,
         status: 'PAID',
         checkInStatus: 'CHECKEDIN',
         createdAfter: '2024-01-01T00:00:00.000Z',

@@ -312,7 +312,6 @@ export class EventTicketsResource {
       orderId: args.orderId,
       customerId: args.customerId,
       ticketTypeId: args.ticketTypeId,
-      ticketGroupId: args.ticketGroupId,
       status: args.status,
       checkInStatus: args.checkInStatus,
       createdAfter: args.createdAfter,
