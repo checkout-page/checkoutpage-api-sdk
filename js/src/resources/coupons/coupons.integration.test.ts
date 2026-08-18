@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { CheckoutPageClient, createCheckoutPageClient, ValidationError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
+import { uniqueSuffix } from '../../test-helpers/test-lib';
 import {
   AmountNonRepeating,
   AmountRepeating,
@@ -12,6 +13,7 @@ import { ConflictError } from '../../errors';
 describe('CouponResource Integration Tests', () => {
   let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
+  let createdEventIds: string[] = [];
 
   beforeAll(() => {
     config = loadIntegrationConfig();
@@ -21,6 +23,52 @@ describe('CouponResource Integration Tests', () => {
       baseUrl: config.baseUrl,
     });
   });
+
+  afterEach(async () => {
+    for (const eventId of [...createdEventIds].reverse()) {
+      try {
+        await client.events.delete(eventId);
+      } catch {
+        // Best-effort cleanup for integration tests.
+      }
+    }
+    createdEventIds = [];
+  });
+
+  const createEventWithTicketType = async () => {
+    const suffix = uniqueSuffix();
+    const event = await client.events.create({
+      name: `SDK Coupon Event ${suffix}`,
+      title: `SDK Coupon Event Title ${suffix}`,
+      eventDetails: {
+        type: 'in_person',
+        currency: 'usd',
+        startDate: '2026-09-01T09:00:00Z',
+        endDate: '2026-09-01T17:00:00Z',
+        timezone: 'UTC',
+        location: 'SDK Event Venue',
+      },
+      ticketGroups: [
+        {
+          name: `SDK Coupon Group ${suffix}`,
+          ticketTypes: [
+            {
+              name: `SDK Coupon Ticket ${suffix}`,
+              pricing: 'paid',
+              price: 2500,
+            },
+          ],
+        },
+      ],
+    });
+    createdEventIds.push(event.data.id);
+
+    const ticketTypeId = event.data.ticketGroups?.[0]?.ticketTypes?.[0]?.id;
+    if (!ticketTypeId) {
+      throw new Error('Provisioned event is missing its ticket type');
+    }
+    return { eventId: event.data.id, ticketTypeId };
+  };
 
   describe('list', () => {
     it('should fetch a list of coupons', async () => {
@@ -376,6 +424,7 @@ describe('CouponResource Integration Tests', () => {
     });
 
     it('should fail to create a coupon because the ticketTypeId does not exist in a page', async () => {
+      const { ticketTypeId } = await createEventWithTicketType();
       const params = {
         type: 'amount' as const,
         label: 'Ticket Type Coupon',
@@ -383,7 +432,7 @@ describe('CouponResource Integration Tests', () => {
         amountOff: 500,
         currency: 'usd',
         duration: 'once' as const,
-        ticketTypeIds: [config.testTicketTypeId],
+        ticketTypeIds: [ticketTypeId],
       } as AmountNonRepeating & { ticketTypeIds: string[] };
       await expect(client.coupons.create(params as any)).rejects.toThrowError(
         /One or more ticketTypeIds do not belong to the specified pages/
@@ -391,6 +440,7 @@ describe('CouponResource Integration Tests', () => {
     });
 
     it('should create coupon with multiple ticketTypeIds', async () => {
+      const { eventId, ticketTypeId } = await createEventWithTicketType();
       const params = {
         type: 'amount' as const,
         label: 'Multi Ticket Type Coupon',
@@ -398,14 +448,14 @@ describe('CouponResource Integration Tests', () => {
         amountOff: 500,
         currency: 'usd',
         duration: 'once' as const,
-        pageIds: [config.testTicketTypePageId],
-        ticketTypeIds: [config.testTicketTypeId],
+        pageIds: [eventId],
+        ticketTypeIds: [ticketTypeId],
       } as AmountNonRepeating & { ticketTypeIds: string[] };
 
       const { data } = await client.coupons.create(params as any);
 
       expect((data as any).ticketTypeIds).toHaveLength(1);
-      expect((data as any).ticketTypeIds[0]).toBe(config.testTicketTypeId);
+      expect((data as any).ticketTypeIds[0]).toBe(ticketTypeId);
       expect(data.deleted).toBe(false);
     });
   });

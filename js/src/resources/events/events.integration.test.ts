@@ -13,6 +13,7 @@ describe('EventsResource integration tests', () => {
   let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
   let createdPageIds: string[] = [];
+  let createdCheckoutPageIds: string[] = [];
 
   const rememberPage = (pageId: string) => {
     createdPageIds.push(pageId);
@@ -44,8 +45,6 @@ describe('EventsResource integration tests', () => {
     expect(typeof value).toBe('string');
     expect(Number.isNaN(new Date(value as string).getTime())).toBe(false);
   };
-
-  const normalizeSlug = (slug: string | null | undefined) => slug?.replace(/^\/+/, '') ?? slug;
 
   const expectErrorEnvelope = (payload: unknown, expectedMessage: string) => {
     expect(payload).toEqual({
@@ -127,6 +126,22 @@ describe('EventsResource integration tests', () => {
     });
   });
 
+  const createRedirectCheckoutPage = async () => {
+    const suffix = uniqueSuffix();
+    const response = await client.checkoutPages.create({
+      name: `SDK Redirect Target ${suffix}`,
+      productData: {
+        title: `SDK Redirect Product ${suffix}`,
+        price: {
+          amount: 4900,
+          currency: 'usd',
+        },
+      },
+    });
+    createdCheckoutPageIds.push(response.data.id);
+    return response.data;
+  };
+
   afterEach(async () => {
     for (const pageId of [...createdPageIds].reverse()) {
       try {
@@ -136,6 +151,15 @@ describe('EventsResource integration tests', () => {
       }
     }
     createdPageIds = [];
+
+    for (const pageId of [...createdCheckoutPageIds].reverse()) {
+      try {
+        await client.checkoutPages.delete(pageId);
+      } catch {
+        // Best-effort cleanup for integration tests.
+      }
+    }
+    createdCheckoutPageIds = [];
   });
 
   describe('list', () => {
@@ -289,7 +313,8 @@ describe('EventsResource integration tests', () => {
     it('creates an event with exhaustive page event and ticket configuration', async () => {
       const pageImageId = await uploadImage('event-page');
       const ticketImageId = await uploadImage('event-ticket');
-      const slug = `/sdk-event-${uniqueSuffix()}`;
+      const funnelPage = await createRedirectCheckoutPage();
+      const slug = `sdk-event-${uniqueSuffix()}`;
       const eventName = `Full Event ${uniqueSuffix()}`;
       const title = `Full Event Title ${uniqueSuffix()}`;
       const redirectUrl = 'https://example.com/events/thanks';
@@ -372,7 +397,7 @@ describe('EventsResource integration tests', () => {
             order: 0,
             enabled: true,
             config: {
-              pageId: config.testCheckoutPageId,
+              pageId: funnelPage.id,
             },
           },
           {
@@ -545,7 +570,7 @@ describe('EventsResource integration tests', () => {
       });
 
       expectBaseEventResponse(data, eventName);
-      expect(normalizeSlug(data.slug)).toBe(normalizeSlug(slug));
+      expect(data.slug).toBe(slug);
       expect(data.locale).toBe('en-US');
       expect(data.title).toBe(title);
       expect(data.description).toBeDefined();
@@ -696,13 +721,15 @@ describe('EventsResource integration tests', () => {
     }, 15000);
 
     it('creates an event with checkout redirect configuration', async () => {
+      const redirectPage = await createRedirectCheckoutPage();
+
       const { data } = await createEvent({
         afterPaymentAction: 'checkout',
-        redirectPageId: config.testCheckoutPageId,
+        redirectPageId: redirectPage.id,
       });
 
       expect(data.afterPaymentAction).toBe('checkout');
-      expect(data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(data.redirectPageId).toBe(redirectPage.id);
     });
 
     it('rejects an uppercase slug on create', async () => {
@@ -1003,6 +1030,7 @@ describe('EventsResource integration tests', () => {
 
   describe('update', () => {
     it('updates exhaustive event configuration', async () => {
+      const redirectPage = await createRedirectCheckoutPage();
       const created = await createEvent({
         ticketGroups: [
           {
@@ -1018,7 +1046,7 @@ describe('EventsResource integration tests', () => {
         ],
       });
       const imageId = await uploadImage('event-update-page');
-      const updatedSlug = `/updated-event-${uniqueSuffix()}`;
+      const updatedSlug = `updated-event-${uniqueSuffix()}`;
 
       const result = await client.events.update(created.data.id, {
         name: `Updated Event ${uniqueSuffix()}`,
@@ -1052,7 +1080,7 @@ describe('EventsResource integration tests', () => {
           },
         ],
         redirectUrlInsideEmbed: true,
-        redirectPageId: config.testCheckoutPageId,
+        redirectPageId: redirectPage.id,
         sendPaymentNotification: true,
         notifyEmail: 'updated-events@example.com',
         sendEmailConfirmation: true,
@@ -1147,7 +1175,7 @@ describe('EventsResource integration tests', () => {
 
       expectBaseEventResponse(result.data);
       expect(result.data.status).toBe('draft');
-      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(updatedSlug));
+      expect(result.data.slug).toBe(updatedSlug);
       expect(result.data.locale).toBe('fr-FR');
       expect(result.data.allowDynamicTitle).toBe(true);
       expect(result.data.allowDynamicDescription).toBe(true);
@@ -1161,7 +1189,7 @@ describe('EventsResource integration tests', () => {
       expect(result.data.redirectUrlPath?.[0]?.key).toBe('order');
       expect(result.data.redirectUrlQuery?.[0]?.parameter).toBe('email');
       expect(result.data.redirectUrlInsideEmbed).toBe(true);
-      expect(result.data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(result.data.redirectPageId).toBe(redirectPage.id);
       expect(result.data.sendPaymentNotification).toBe(true);
       expect(result.data.notifyEmail).toBe('updated-events@example.com');
       expect(result.data.sendEmailConfirmation).toBe(true);
@@ -1307,7 +1335,7 @@ describe('EventsResource integration tests', () => {
 
     it('preserves slug while clearing other nullable settings when null is provided', async () => {
       const created = await createEvent({
-        slug: `/clear-event-${uniqueSuffix()}`,
+        slug: `clear-event-${uniqueSuffix()}`,
         redirectUrl: 'https://example.com/original',
         notifyEmail: 'owner@example.com',
         confirmationCheckoutTitle: 'Original confirmation title',
@@ -1329,7 +1357,7 @@ describe('EventsResource integration tests', () => {
         trackingCodes: null,
       });
 
-      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(created.data.slug));
+      expect(result.data.slug).toBe(created.data.slug);
       expect(result.data.redirectUrl).toBeNull();
       expect(result.data.notifyEmail).toBeNull();
       expect(result.data.confirmationCheckoutTitle).toBeNull();

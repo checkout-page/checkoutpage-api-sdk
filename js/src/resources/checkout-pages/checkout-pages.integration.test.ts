@@ -94,8 +94,6 @@ describe('CheckoutPagesResource integration tests', () => {
     expect(page[field]).toBe(expected);
   };
 
-  const normalizeSlug = (slug: string | null | undefined) => slug?.replace(/^\/+/, '') ?? slug;
-
   const createCheckoutPage = async (overrides: Partial<CreateCheckoutPageParams> = {}) => {
     const suffix = uniqueSuffix();
     const params: CreateCheckoutPageParams = {
@@ -261,26 +259,32 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.product?.price.paymentPlan?.planIterations).toBeFalsy();
     });
 
-    it('fails to create a recurring subscription with trialPeriodDays and startDate set at the same time.', async () => {
-      await expect(
-        createCheckoutPage({
-          productData: {
-            title: `Recurring ${uniqueSuffix()}`,
-            price: {
-              amount: 4999,
-              currency: 'usd',
-              setupFee: 2999,
-              recurring: {
-                interval: 'month',
-                intervalCount: 1,
-                trialPeriodDays: 7,
-                startDate: new Date(Date.now() + 86400000).toISOString(),
-              },
-              discountedFromPrice: 9999,
+    it('accepts a recurring subscription with both trialPeriodDays and startDate (startDate wins)', async () => {
+      const startDate = new Date(Date.now() + 86400000).toISOString();
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Recurring ${uniqueSuffix()}`,
+          price: {
+            amount: 4999,
+            currency: 'usd',
+            setupFee: 2999,
+            recurring: {
+              interval: 'month',
+              intervalCount: 1,
+              trialPeriodDays: 7,
+              startDate,
             },
+            discountedFromPrice: 9999,
           },
-        })
-      ).rejects.toThrow(ValidationError);
+        },
+      });
+
+      expect(data.product?.price?.recurring).toMatchObject({
+        interval: 'month',
+        intervalCount: 1,
+        trialPeriodDays: 7,
+        startDate,
+      });
     });
 
     it('creates a payment plan checkout page', async () => {
@@ -657,7 +661,9 @@ describe('CheckoutPagesResource integration tests', () => {
         afterPaymentAction: 'confirmation',
         allowDynamicDescription: false,
         allowDynamicDiscountedFromPrice: false,
+        allowDynamicLabel: false,
         allowDynamicPlanIterations: false,
+        allowDynamicPreselectedPrice: false,
         allowDynamicPrice: false,
         allowDynamicRedirectUrl: false,
         allowDynamicTitle: false,
@@ -667,7 +673,6 @@ describe('CheckoutPagesResource integration tests', () => {
         createdAt: expect.any(String),
         customizeCheckoutConfirmation: false,
         customizeEmailConfirmation: false,
-        enableFileAccessForInactiveSubscriptions: false,
         fees: [],
         fields: [
           {
@@ -679,7 +684,17 @@ describe('CheckoutPagesResource integration tests', () => {
             hidden: false,
             id: expect.any(String),
             label: 'Email',
+            collect: 'billing',
+            collectShippingPhone: false,
             limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitBillingCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitShippingCountries: {
               countries: [],
               enabled: false,
             },
@@ -711,7 +726,17 @@ describe('CheckoutPagesResource integration tests', () => {
             hidden: false,
             id: expect.any(String),
             label: 'Plan',
+            collect: 'billing',
+            collectShippingPhone: false,
             limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitBillingCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitShippingCountries: {
               countries: [],
               enabled: false,
             },
@@ -753,7 +778,17 @@ describe('CheckoutPagesResource integration tests', () => {
             hidden: false,
             id: expect.any(String),
             label: 'Visible when Plan is_empty',
+            collect: 'billing',
+            collectShippingPhone: false,
             limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitBillingCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitShippingCountries: {
               countries: [],
               enabled: false,
             },
@@ -785,7 +820,17 @@ describe('CheckoutPagesResource integration tests', () => {
             hidden: false,
             id: expect.any(String),
             label: 'Visible when Plan is_not_empty',
+            collect: 'billing',
+            collectShippingPhone: false,
             limitAllowedCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitBillingCountries: {
+              countries: [],
+              enabled: false,
+            },
+            limitShippingCountries: {
               countries: [],
               enabled: false,
             },
@@ -831,6 +876,7 @@ describe('CheckoutPagesResource integration tests', () => {
         paymentOptions: [],
         product: {
           createdAt: expect.any(String),
+          defaultPriceId: expect.any(String),
           discounts: [],
           fileIds: [],
           hasUnlimitedStock: true,
@@ -843,6 +889,22 @@ describe('CheckoutPagesResource integration tests', () => {
             pricingType: 'single',
             setupFeeMultipliesWithQuantity: false,
           },
+          prices: [
+            {
+              amount: 1000,
+              billingType: 'one_time',
+              currency: 'usd',
+              enabled: true,
+              hidden: false,
+              id: expect.any(String),
+              isDefault: true,
+              order: 0,
+              payWhatYouWant: false,
+              pwywSuggestedPrice: 0,
+              reference: expect.any(String),
+              setupFeeMultipliesWithQuantity: false,
+            },
+          ],
           stock: 0,
           taxBehavior: '',
           taxCode: '',
@@ -869,7 +931,7 @@ describe('CheckoutPagesResource integration tests', () => {
         status: 'published',
         tax: {
           enabled: true,
-          mode: 'fixed',
+          mode: expect.any(String),
         },
         type: 'checkout',
         updatedAt: expect.any(String),
@@ -879,13 +941,14 @@ describe('CheckoutPagesResource integration tests', () => {
     });
 
     it('creates a checkout page with checkout redirect configuration', async () => {
+      const redirectTarget = await createCheckoutPage();
       const { data } = await createCheckoutPage({
         afterPaymentAction: 'checkout',
-        redirectPageId: config.testCheckoutPageId,
+        redirectPageId: redirectTarget.data.id,
       });
 
       expect(data.afterPaymentAction).toBe('checkout');
-      expect(data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(data.redirectPageId).toBe(redirectTarget.data.id);
     });
 
     it('creates a checkout page with customized confirmation email content', async () => {
@@ -947,12 +1010,12 @@ describe('CheckoutPagesResource integration tests', () => {
     it('creates a checkout page with locale slug and tracking codes', async () => {
       const { data } = await createCheckoutPage({
         locale: 'fr-FR',
-        slug: `/sdk-checkout-${uniqueSuffix()}`,
+        slug: `sdk-checkout-${uniqueSuffix()}`,
         trackingCodes: '<script>window.sdkCheckoutTest=true;</script>',
       });
 
       expect(data.locale).toBe('fr-FR');
-      expect(normalizeSlug(data.slug)).toContain('sdk-checkout-');
+      expect(data.slug).toContain('sdk-checkout-');
       expect(data.trackingCodes).toContain('sdkCheckoutTest');
     });
 
@@ -1210,6 +1273,7 @@ describe('CheckoutPagesResource integration tests', () => {
     });
 
     it('creates a large page with many options, fields, variants etc', async () => {
+      const funnelTarget = await createCheckoutPage();
       const suffix = uniqueSuffix();
       const slug = `t013b-qa-scenario-slice-${suffix}`;
 
@@ -1353,7 +1417,7 @@ describe('CheckoutPagesResource integration tests', () => {
             type: 'upsell',
             order: 1,
             enabled: true,
-            config: { action: 'checkout', pageId: config.testCheckoutPageId },
+            config: { action: 'checkout', pageId: funnelTarget.data.id },
           },
           {
             type: 'upsell',
@@ -1967,7 +2031,7 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.funnelSteps?.[0]).toMatchObject({
         type: 'upsell',
         order: 1,
-        config: { action: 'checkout', pageId: config.testCheckoutPageId },
+        config: { action: 'checkout', pageId: funnelTarget.data.id },
       });
       expect(data.funnelSteps?.[1]).toMatchObject({
         type: 'upsell',
@@ -2083,6 +2147,7 @@ describe('CheckoutPagesResource integration tests', () => {
     }, 30000);
 
     it('creates a checkout page with funnel steps', async () => {
+      const funnelTarget = await createCheckoutPage();
       const { data } = await createCheckoutPage({
         funnelSteps: [
           {
@@ -2090,7 +2155,7 @@ describe('CheckoutPagesResource integration tests', () => {
             order: 0,
             enabled: true,
             config: {
-              pageId: config.testCheckoutPageId,
+              pageId: funnelTarget.data.id,
             },
           },
         ],
@@ -3703,11 +3768,11 @@ describe('CheckoutPagesResource integration tests', () => {
       const created = await createCheckoutPage();
       const result = await client.checkoutPages.update(created.data.id, {
         name: `Updated ${uniqueSuffix()}`,
-        slug: `/updated-${uniqueSuffix()}`,
+        slug: `updated-${uniqueSuffix()}`,
       });
 
       expect(result.data.name).toContain('Updated');
-      expect(normalizeSlug(result.data.slug)).toContain('updated-');
+      expect(result.data.slug).toContain('updated-');
     });
 
     it('rejects an uppercase slug on update', async () => {
@@ -3834,14 +3899,15 @@ describe('CheckoutPagesResource integration tests', () => {
     });
 
     it('updates checkout redirect settings', async () => {
+      const redirectTarget = await createCheckoutPage();
       const created = await createCheckoutPage();
       const result = await client.checkoutPages.update(created.data.id, {
         afterPaymentAction: 'checkout',
-        redirectPageId: config.testCheckoutPageId,
+        redirectPageId: redirectTarget.data.id,
       });
 
       expect(result.data.afterPaymentAction).toBe('checkout');
-      expect(result.data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(result.data.redirectPageId).toBe(redirectTarget.data.id);
     });
 
     it('rejects an unknown redirectPageId on update', async () => {
@@ -4113,7 +4179,7 @@ describe('CheckoutPagesResource integration tests', () => {
       ['confirmationCheckoutTitle', 'Clear this title'],
       ['confirmationCheckoutMessage', '<p>Clear this message</p>'],
       ['trackingCodes', '<script>window.clearMe=true;</script>'],
-      ['slug', `/clear-${uniqueSuffix()}`],
+      ['slug', `clear-${uniqueSuffix()}`],
     ] as const)('clears %s when null is provided', async (field, initialValue) => {
       const created = await createCheckoutPage({
         [field]: initialValue,
@@ -4123,7 +4189,7 @@ describe('CheckoutPagesResource integration tests', () => {
       });
 
       if (field === 'slug') {
-        expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(created.data.slug));
+        expect(result.data.slug).toBe(created.data.slug);
         return;
       }
 

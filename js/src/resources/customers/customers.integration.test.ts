@@ -113,13 +113,17 @@ describe('CustomerResource Integration Tests', () => {
     });
 
     it('should filter customers by search query', async () => {
+      const seed = await client.customers.list({ limit: 5 });
+      const target = seed.data.find((c) => c.email);
+      if (!target?.email) throw new Error('No customer with an email found for search test');
+
       const result = await client.customers.list({
-        search: config.testCustomerEmail,
+        search: target.email,
       });
 
-      const foundCustomer = result.data.find((c) => c.email === config.testCustomerEmail);
+      const foundCustomer = result.data.find((c) => c.email === target.email);
       expect(foundCustomer).toBeDefined();
-      expect(foundCustomer?.email).toBe(config.testCustomerEmail);
+      expect(foundCustomer?.email).toBe(target.email);
     });
 
     it('should return empty array when search has no matches', async () => {
@@ -362,14 +366,14 @@ describe('CustomerResource Integration Tests', () => {
     });
 
     it('rejects an empty string for a clearable field (use null to clear)', async () => {
-      await expect(
-        client.customers.update(config.testCustomerId, { phone: '' }),
-      ).rejects.toThrow(ValidationError);
+      await expect(client.customers.update(config.testCustomerId, { phone: '' })).rejects.toThrow(
+        ValidationError
+      );
     });
 
     it('rejects null on the primary email — it cannot be cleared via PATCH', async () => {
       await expect(sendUpdate({ email: null as unknown as string })).rejects.toThrow(
-        ValidationError,
+        ValidationError
       );
     });
 
@@ -377,7 +381,7 @@ describe('CustomerResource Integration Tests', () => {
       await expect(
         client.customers.update(config.testCustomerId, {
           address: { line1: '1 Strict St', zip: '10601' } as NonNullable<SdkUpdateBody>['address'],
-        }),
+        })
       ).rejects.toThrow(ValidationError);
     });
 
@@ -385,7 +389,7 @@ describe('CustomerResource Integration Tests', () => {
       await expect(
         client.customers.update(config.testCustomerId, {
           shipping: { nickname: 'Home' } as NonNullable<SdkUpdateBody>['shipping'],
-        }),
+        })
       ).rejects.toThrow(ValidationError);
     });
 

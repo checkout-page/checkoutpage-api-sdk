@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
   AuthenticationError,
   CheckoutPageClient,
@@ -14,10 +14,11 @@ describe('CheckoutPagesResource fields integration tests', () => {
   let client: CheckoutPageClient;
   let invalidClient: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
+  let pageId: string;
   let createdFieldIds: string[] = [];
 
   const createField = async (params: CreateCheckoutPageFieldParams) => {
-    const result = await client.checkoutPages.fields.create(config.testCheckoutPageId, params);
+    const result = await client.checkoutPages.fields.create(pageId, params);
     createdFieldIds.push(result.data.id);
     return result.data;
   };
@@ -26,7 +27,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
     createdFieldIds = createdFieldIds.filter((id) => id !== fieldId);
   };
 
-  beforeAll(() => {
+  beforeAll(async () => {
     config = loadIntegrationConfig();
 
     client = createCheckoutPageClient({
@@ -38,12 +39,33 @@ describe('CheckoutPagesResource fields integration tests', () => {
       apiKey: 'invalid_api_key',
       baseUrl: config.baseUrl,
     });
+
+    const suffix = uniqueSuffix();
+    const page = await client.checkoutPages.create({
+      name: `SDK Fields Host ${suffix}`,
+      productData: {
+        title: `SDK Fields Product ${suffix}`,
+        price: {
+          amount: 4900,
+          currency: 'usd',
+        },
+      },
+    });
+    pageId = page.data.id;
+  });
+
+  afterAll(async () => {
+    try {
+      await client.checkoutPages.delete(pageId);
+    } catch {
+      // Best-effort cleanup for integration tests.
+    }
   });
 
   afterEach(async () => {
     for (const fieldId of [...createdFieldIds].reverse()) {
       try {
-        await client.checkoutPages.fields.delete(config.testCheckoutPageId, fieldId);
+        await client.checkoutPages.fields.delete(pageId, fieldId);
       } catch {
         // Best-effort cleanup for integration tests.
       }
@@ -53,7 +75,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
   });
 
   it('lists fields for a checkout page', async () => {
-    const result = await client.checkoutPages.fields.list(config.testCheckoutPageId);
+    const result = await client.checkoutPages.fields.list(pageId);
 
     expect(Array.isArray(result.data)).toBe(true);
     expect(result.data.length).toBeGreaterThan(0);
@@ -72,7 +94,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    const result = await client.checkoutPages.fields.list(config.testCheckoutPageId);
+    const result = await client.checkoutPages.fields.list(pageId);
 
     expect(result.data.some((field) => field.id === customField.id)).toBe(true);
     expect(result.data.some((field) => field.element === 'email')).toBe(true);
@@ -85,9 +107,9 @@ describe('CheckoutPagesResource fields integration tests', () => {
   });
 
   it('fails for an invalid api key', async () => {
-    await expect(
-      invalidClient.checkoutPages.fields.list(config.testCheckoutPageId)
-    ).rejects.toThrow(AuthenticationError);
+    await expect(invalidClient.checkoutPages.fields.list(pageId)).rejects.toThrow(
+      AuthenticationError
+    );
   });
 
   it('creates a basic text field', async () => {
@@ -235,7 +257,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
     });
 
     await expect(
-      client.checkoutPages.fields.create(config.testCheckoutPageId, {
+      client.checkoutPages.fields.create(pageId, {
         label: `Second Quantity ${uniqueSuffix()}`,
         element: 'quantity',
         required: true,
@@ -253,7 +275,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
     });
 
     await expect(
-      client.checkoutPages.fields.create(config.testCheckoutPageId, {
+      client.checkoutPages.fields.create(pageId, {
         label: `Reference Two ${uniqueSuffix()}`,
         element: 'text',
         reference,
@@ -263,7 +285,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
 
   it('fails when multiple email fields are added', async () => {
     await expect(
-      client.checkoutPages.fields.create(config.testCheckoutPageId, {
+      client.checkoutPages.fields.create(pageId, {
         label: `Extra Email ${uniqueSuffix()}`,
         element: 'email',
         type: 'email',
@@ -278,10 +300,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    const result = await client.checkoutPages.fields.get(
-      config.testCheckoutPageId,
-      createdField.id
-    );
+    const result = await client.checkoutPages.fields.get(pageId, createdField.id);
 
     expect(result.data.id).toBe(createdField.id);
     expect(result.data.label).toBe(createdField.label);
@@ -310,7 +329,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       },
     });
 
-    const result = await client.checkoutPages.fields.get(config.testCheckoutPageId, targetField.id);
+    const result = await client.checkoutPages.fields.get(pageId, targetField.id);
 
     expect(result.data.options).toHaveLength(2);
     expect(result.data.showHideLogic?.enabled).toBe(true);
@@ -318,9 +337,9 @@ describe('CheckoutPagesResource fields integration tests', () => {
   });
 
   it('fails for an unknown field id', async () => {
-    await expect(
-      client.checkoutPages.fields.get(config.testCheckoutPageId, fakeObjectId('badfield'))
-    ).rejects.toThrow(NotFoundError);
+    await expect(client.checkoutPages.fields.get(pageId, fakeObjectId('badfield'))).rejects.toThrow(
+      NotFoundError
+    );
   });
 
   it('updates a field label and placeholder', async () => {
@@ -329,7 +348,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    const result = await client.checkoutPages.fields.update(config.testCheckoutPageId, field.id, {
+    const result = await client.checkoutPages.fields.update(pageId, field.id, {
       label: `Updated Label ${uniqueSuffix()}`,
       placeholder: 'Updated placeholder',
     });
@@ -345,7 +364,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       options: [{ label: 'Old', value: 'old' }],
     });
 
-    const result = await client.checkoutPages.fields.update(config.testCheckoutPageId, field.id, {
+    const result = await client.checkoutPages.fields.update(pageId, field.id, {
       options: [
         { label: 'New One', value: 'new-1' },
         { label: 'New Two', value: 'new-2' },
@@ -367,20 +386,16 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    const result = await client.checkoutPages.fields.update(
-      config.testCheckoutPageId,
-      targetField.id,
-      {
-        showHideLogic: {
-          enabled: true,
-          comparison: 'is',
-          value: 'TRUE',
-          element: {
-            elementId: sourceField.id,
-          },
+    const result = await client.checkoutPages.fields.update(pageId, targetField.id, {
+      showHideLogic: {
+        enabled: true,
+        comparison: 'is',
+        value: 'TRUE',
+        element: {
+          elementId: sourceField.id,
         },
-      }
-    );
+      },
+    });
 
     expect(result.data.showHideLogic?.enabled).toBe(true);
     expect(result.data.showHideLogic?.element?.elementId).toBe(sourceField.id);
@@ -393,7 +408,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       required: false,
     });
 
-    const result = await client.checkoutPages.fields.update(config.testCheckoutPageId, field.id, {
+    const result = await client.checkoutPages.fields.update(pageId, field.id, {
       order: 99,
       required: true,
     });
@@ -417,7 +432,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       },
     });
 
-    const result = await client.checkoutPages.fields.update(config.testCheckoutPageId, field.id, {
+    const result = await client.checkoutPages.fields.update(pageId, field.id, {
       placeholder: null,
       defaultValue: null,
       minValue: null,
@@ -430,7 +445,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
 
   it('fails for an unknown field id on update', async () => {
     await expect(
-      client.checkoutPages.fields.update(config.testCheckoutPageId, fakeObjectId('badfield'), {
+      client.checkoutPages.fields.update(pageId, fakeObjectId('badfield'), {
         label: 'Nope',
       })
     ).rejects.toThrow(NotFoundError);
@@ -449,7 +464,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
     });
 
     await expect(
-      client.checkoutPages.fields.update(config.testCheckoutPageId, target.id, {
+      client.checkoutPages.fields.update(pageId, target.id, {
         reference,
       })
     ).rejects.toThrow(ValidationError);
@@ -470,7 +485,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
     });
 
     await expect(
-      client.checkoutPages.fields.update(config.testCheckoutPageId, target.id, {
+      client.checkoutPages.fields.update(pageId, target.id, {
         element: 'quantity',
         required: true,
       })
@@ -484,7 +499,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
     });
 
     await expect(
-      client.checkoutPages.fields.update(config.testCheckoutPageId, target.id, {
+      client.checkoutPages.fields.update(pageId, target.id, {
         element: 'email',
         type: 'email',
         required: true,
@@ -498,13 +513,11 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    const result = await client.checkoutPages.fields.delete(config.testCheckoutPageId, field.id);
+    const result = await client.checkoutPages.fields.delete(pageId, field.id);
     forgetField(field.id);
 
     expect(result.data.success).toBe(true);
-    await expect(
-      client.checkoutPages.fields.get(config.testCheckoutPageId, field.id)
-    ).rejects.toThrow(NotFoundError);
+    await expect(client.checkoutPages.fields.get(pageId, field.id)).rejects.toThrow(NotFoundError);
   });
 
   it('returns success and message after deletion', async () => {
@@ -513,7 +526,7 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    const result = await client.checkoutPages.fields.delete(config.testCheckoutPageId, field.id);
+    const result = await client.checkoutPages.fields.delete(pageId, field.id);
     forgetField(field.id);
 
     expect(result.data).toEqual({
@@ -528,17 +541,17 @@ describe('CheckoutPagesResource fields integration tests', () => {
       element: 'text',
     });
 
-    await client.checkoutPages.fields.delete(config.testCheckoutPageId, field.id);
+    await client.checkoutPages.fields.delete(pageId, field.id);
     forgetField(field.id);
 
-    await expect(
-      client.checkoutPages.fields.delete(config.testCheckoutPageId, field.id)
-    ).rejects.toThrow(NotFoundError);
+    await expect(client.checkoutPages.fields.delete(pageId, field.id)).rejects.toThrow(
+      NotFoundError
+    );
   });
 
   it('fails for an unknown field id on delete', async () => {
     await expect(
-      client.checkoutPages.fields.delete(config.testCheckoutPageId, fakeObjectId('badfield'))
+      client.checkoutPages.fields.delete(pageId, fakeObjectId('badfield'))
     ).rejects.toThrow(NotFoundError);
   });
 });
