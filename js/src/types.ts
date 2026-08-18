@@ -187,6 +187,16 @@ export type ValidateTicketParams = NonNullable<
   operations['tickets/validate']['requestBody']
 >['content']['application/json'];
 
+export type TicketList = operations['tickets/list']['responses'][200]['content']['application/json'];
+
+export type Ticket = TicketList['data'][number];
+
+export type TicketListArgs = operations['tickets/list']['parameters']['query'];
+
+export type TicketListParams = Omit<NonNullable<TicketListArgs>, 'limit'> & {
+  limit?: number;
+};
+
 // Subscription Payments
 export type SubscriptionPaymentList =
   operations['subscription_payments/list']['responses'][200]['content']['application/json'];
