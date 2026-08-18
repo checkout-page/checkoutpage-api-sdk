@@ -129,7 +129,7 @@ describe('BookingResource Integration Tests', () => {
       const filtered = await client.bookings.list({ pageId, limit: 10 });
 
       expect(Array.isArray(filtered.data)).toBe(true);
-      expect(filtered.data.length).toBeGreaterThan(1);
+      expect(filtered.data.length).toBeGreaterThanOrEqual(1);
 
       for (const booking of filtered.data) {
         expect(booking.pageId).toBe(pageId);

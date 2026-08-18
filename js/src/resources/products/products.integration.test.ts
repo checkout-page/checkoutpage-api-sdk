@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { CheckoutPageClient, createCheckoutPageClient, ValidationError } from '../../index';
 import type { Price, PriceInput } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { uniqueSuffix } from '../../test-helpers/test-lib';
@@ -8,6 +8,34 @@ describe('ProductResource Integration Tests', () => {
   let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
   let testProductId: string;
+  let createdPageIds: string[] = [];
+
+  const createProductWithPrice = async (price: Record<string, unknown>) => {
+    const { data: page } = await client.checkoutPages.create({
+      name: `Product Price Test Page ${uniqueSuffix()}`,
+      productData: {
+        price: price as never,
+      },
+    });
+    createdPageIds.push(page.id);
+
+    const productId = page.product?.id;
+    if (!productId) {
+      throw new Error('Provisioned page is missing its product');
+    }
+    return productId;
+  };
+
+  afterAll(async () => {
+    for (const pageId of [...createdPageIds].reverse()) {
+      try {
+        await client.checkoutPages.delete(pageId);
+      } catch {
+        // Best-effort cleanup for integration tests.
+      }
+    }
+    createdPageIds = [];
+  });
 
   beforeAll(async () => {
     config = loadIntegrationConfig();
@@ -127,12 +155,13 @@ describe('ProductResource Integration Tests', () => {
     });
 
     it('should update subscription recurring settings', async () => {
-      if (!testProductId) {
-        console.log('Skipping: No test product ID available');
-        return;
-      }
+      const productId = await createProductWithPrice({
+        amount: 4900,
+        currency: 'usd',
+        recurring: { interval: 'month', intervalCount: 1 },
+      });
 
-      const { data: updated } = await client.products.update(testProductId, {
+      const { data: updated } = await client.products.update(productId, {
         price: {
           recurring: {
             interval: 'month',
@@ -141,18 +170,19 @@ describe('ProductResource Integration Tests', () => {
         },
       });
 
-      expect(updated.id).toBe(testProductId);
+      expect(updated.id).toBe(productId);
       expect(updated.price.recurring?.interval).toBe('month');
       expect(updated.price.recurring?.intervalCount).toBe(3);
     });
 
     it('should update subscription trial period', async () => {
-      if (!testProductId) {
-        console.log('Skipping: No test product ID available');
-        return;
-      }
+      const productId = await createProductWithPrice({
+        amount: 4900,
+        currency: 'usd',
+        recurring: { interval: 'month', intervalCount: 1 },
+      });
 
-      const { data: updated } = await client.products.update(testProductId, {
+      const { data: updated } = await client.products.update(productId, {
         price: {
           recurring: {
             interval: 'month',
@@ -162,7 +192,7 @@ describe('ProductResource Integration Tests', () => {
         },
       });
 
-      expect(updated.id).toBe(testProductId);
+      expect(updated.id).toBe(productId);
       expect(updated.price.recurring?.trialPeriodDays).toBe(14);
     });
 
@@ -198,13 +228,14 @@ describe('ProductResource Integration Tests', () => {
       expect(updated.price.setupFeeMultipliesWithQuantity).toBe(true);
     });
 
-    it('should update to a payment plan', async () => {
-      if (!testProductId) {
-        console.log('Skipping: No test product ID available');
-        return;
-      }
+    it('should update payment plan iterations', async () => {
+      const productId = await createProductWithPrice({
+        amount: 12000,
+        currency: 'usd',
+        paymentPlan: { interval: 'month', intervalCount: 1, planIterations: 3 },
+      });
 
-      const { data: updated } = await client.products.update(testProductId, {
+      const { data: updated } = await client.products.update(productId, {
         price: {
           paymentPlan: {
             interval: 'month',
@@ -214,22 +245,47 @@ describe('ProductResource Integration Tests', () => {
         },
       });
 
-      expect(updated.id).toBe(testProductId);
+      expect(updated.id).toBe(productId);
       expect(updated.price.paymentPlan?.planIterations).toBe(6);
     });
 
-    it('should enable pay what you want pricing', async () => {
+    it('should update pay what you want suggested price', async () => {
+      const productId = await createProductWithPrice({
+        amount: 1000,
+        currency: 'usd',
+        payWhatYouWant: true,
+      });
+
+      const { data: updated } = await client.products.update(productId, {
+        price: { payWhatYouWant: true, pwywSuggestedPrice: 2500 },
+      });
+
+      expect(updated.id).toBe(productId);
+      expect(updated.price.payWhatYouWant).toBe(true);
+      // The legacy `price` alias omits pwywSuggestedPrice — prices[] is canonical.
+      expect(updated.prices?.[0]?.payWhatYouWant).toBe(true);
+      expect(updated.prices?.[0]?.pwywSuggestedPrice).toBe(2500);
+    });
+
+    it('rejects changing a price billing identity after creation', async () => {
       if (!testProductId) {
         console.log('Skipping: No test product ID available');
         return;
       }
 
-      const { data: updated } = await client.products.update(testProductId, {
-        price: { payWhatYouWant: true },
-      });
+      await expect(
+        client.products.update(testProductId, {
+          price: {
+            recurring: { interval: 'month', intervalCount: 1 },
+          },
+        })
+      ).rejects.toThrow(ValidationError);
 
-      expect(updated.id).toBe(testProductId);
-      expect(updated.price.payWhatYouWant).toBe(true);
+      await expect(
+        client.products.update(testProductId, {
+          price: { payWhatYouWant: true },
+        })
+      ).rejects.toThrow(/fixed at creation/);
     });
 
     it('should update multiple fields simultaneously', async () => {

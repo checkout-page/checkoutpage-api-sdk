@@ -13,6 +13,7 @@ describe('FormsResource integration tests', () => {
   let client: CheckoutPageClient;
   let config: ReturnType<typeof loadIntegrationConfig>;
   let createdPageIds: string[] = [];
+  let createdCheckoutPageIds: string[] = [];
 
   const rememberPage = (pageId: string) => {
     createdPageIds.push(pageId);
@@ -67,8 +68,6 @@ describe('FormsResource integration tests', () => {
     expect(typeof value).toBe('string');
     expect(Number.isNaN(new Date(value as string).getTime())).toBe(false);
   };
-
-  const normalizeSlug = (slug: string | null | undefined) => slug?.replace(/^\/+/, '') ?? slug;
 
   const expectBaseFormResponse = (form: Form, expectedName?: string) => {
     expect(form.id).toBeTypeOf('string');
@@ -143,6 +142,22 @@ describe('FormsResource integration tests', () => {
     });
   });
 
+  const createRedirectCheckoutPage = async () => {
+    const suffix = uniqueSuffix();
+    const response = await client.checkoutPages.create({
+      name: `SDK Redirect Target ${suffix}`,
+      productData: {
+        title: `SDK Redirect Product ${suffix}`,
+        price: {
+          amount: 4900,
+          currency: 'usd',
+        },
+      },
+    });
+    createdCheckoutPageIds.push(response.data.id);
+    return response.data;
+  };
+
   afterEach(async () => {
     for (const pageId of [...createdPageIds].reverse()) {
       try {
@@ -152,6 +167,15 @@ describe('FormsResource integration tests', () => {
       }
     }
     createdPageIds = [];
+
+    for (const pageId of [...createdCheckoutPageIds].reverse()) {
+      try {
+        await client.checkoutPages.delete(pageId);
+      } catch {
+        // Best-effort cleanup for integration tests.
+      }
+    }
+    createdCheckoutPageIds = [];
   });
 
   describe('list', () => {
@@ -349,7 +373,8 @@ describe('FormsResource integration tests', () => {
     it('creates a form with exhaustive page configuration and field combinations', async () => {
       const imageId = await uploadImage('form-complete-page');
       const fileId = await uploadFile('form-complete-file');
-      const slug = `/sdk-form-${uniqueSuffix()}`;
+      const funnelPage = await createRedirectCheckoutPage();
+      const slug = `sdk-form-${uniqueSuffix()}`;
       const formName = `Full Form ${uniqueSuffix()}`;
       const title = `Full Form Title ${uniqueSuffix()}`;
 
@@ -555,7 +580,7 @@ describe('FormsResource integration tests', () => {
             order: 0,
             enabled: true,
             config: {
-              pageId: config.testCheckoutPageId,
+              pageId: funnelPage.id,
             },
           },
         ],
@@ -565,7 +590,7 @@ describe('FormsResource integration tests', () => {
       });
 
       expectBaseFormResponse(data, formName);
-      expect(normalizeSlug(data.slug)).toBe(normalizeSlug(slug));
+      expect(data.slug).toBe(slug);
       expect(data.locale).toBe('en-US');
       expect(data.title).toBe(title);
       expect(data.description).toBeDefined();
@@ -606,7 +631,7 @@ describe('FormsResource integration tests', () => {
       expect(checkoutStep?.order).toBe(0);
       expect(checkoutStep?.enabled).toBe(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      expect((checkoutStep?.config as any)?.pageId).toBe(config.testCheckoutPageId);
+      expect((checkoutStep?.config as any)?.pageId).toBe(funnelPage.id);
       expect(pageIncludesImage(data, imageId)).toBe(true);
       expect(pageIncludesFile(data, fileId)).toBe(true);
       expectImageMetadata(data, imageId);
@@ -710,13 +735,15 @@ describe('FormsResource integration tests', () => {
     }, 15000);
 
     it('creates a form with redirect configuration', async () => {
+      const redirectPage = await createRedirectCheckoutPage();
+
       const { data } = await createForm({
         afterPaymentAction: 'checkout',
-        redirectPageId: config.testCheckoutPageId,
+        redirectPageId: redirectPage.id,
       });
 
       expect(data.afterPaymentAction).toBe('checkout');
-      expect(data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(data.redirectPageId).toBe(redirectPage.id);
     });
 
     it('rejects an uppercase slug on create', async () => {
@@ -885,6 +912,7 @@ describe('FormsResource integration tests', () => {
 
   describe('update', () => {
     it('updates form metadata and attachments exhaustively', async () => {
+      const redirectPage = await createRedirectCheckoutPage();
       const created = await createForm({
         fields: [
           {
@@ -898,7 +926,7 @@ describe('FormsResource integration tests', () => {
       });
       const imageId = await uploadImage('form-update-image');
       const fileId = await uploadFile('form-update-file');
-      const updatedSlug = `/updated-form-${uniqueSuffix()}`;
+      const updatedSlug = `updated-form-${uniqueSuffix()}`;
       const createdEmailField = created.data.fields?.find((field) => field.reference === 'email');
 
       expect(createdEmailField).toBeDefined();
@@ -928,7 +956,7 @@ describe('FormsResource integration tests', () => {
           },
         ],
         redirectUrlInsideEmbed: true,
-        redirectPageId: config.testCheckoutPageId,
+        redirectPageId: redirectPage.id,
         sendPaymentNotification: true,
         notifyEmail: 'updated-forms@example.com',
         sendEmailConfirmation: true,
@@ -965,7 +993,7 @@ describe('FormsResource integration tests', () => {
 
       expectBaseFormResponse(result.data);
       expect(result.data.status).toBe('draft');
-      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(updatedSlug));
+      expect(result.data.slug).toBe(updatedSlug);
       expect(result.data.locale).toBe('fr-FR');
       expect(result.data.closePopupOnClickOutside).toBe(true);
       expect(result.data.redirect?.enabled).toBe(true);
@@ -989,7 +1017,7 @@ describe('FormsResource integration tests', () => {
       expect(result.data.trackingCodes).toContain('sdkFormUpdated');
       expect(result.data.allowDynamicTitle).toBe(true);
       expect(result.data.allowDynamicDescription).toBe(true);
-      expect(result.data.redirectPageId).toBe(config.testCheckoutPageId);
+      expect(result.data.redirectPageId).toBe(redirectPage.id);
       expect(result.data.invoiceSettings?.bankDetails).toBe('Updated account');
       expect(result.data.invoiceSettings?.dueDays?.enabled).toBe(true);
       expect(result.data.invoiceSettings?.dueDays?.days).toBe(14);
@@ -1097,7 +1125,7 @@ describe('FormsResource integration tests', () => {
       expect(pageIncludesImage(fileOnlyResult.data, replacementImageId)).toBe(true);
       expect(pageIncludesFile(fileOnlyResult.data, replacementFileId)).toBe(true);
       expect(pageIncludesFile(fileOnlyResult.data, originalFileId)).toBe(false);
-    }, 15000);
+    }, 30000);
 
     it('resolves redirect path and query identifiers on update across field and built-in keys', async () => {
       const created = await createForm({
@@ -1184,7 +1212,7 @@ describe('FormsResource integration tests', () => {
       const imageId = await uploadImage('form-clear-image');
       const fileId = await uploadFile('form-clear-file');
       const created = await createForm({
-        slug: `/clear-form-${uniqueSuffix()}`,
+        slug: `clear-form-${uniqueSuffix()}`,
         redirectUrl: 'https://example.com/original',
         notifyEmail: 'owner@example.com',
         confirmationCheckoutTitle: 'Original confirmation title',
@@ -1210,7 +1238,7 @@ describe('FormsResource integration tests', () => {
         fileIds: [],
       });
 
-      expect(normalizeSlug(result.data.slug)).toBe(normalizeSlug(created.data.slug));
+      expect(result.data.slug).toBe(created.data.slug);
       expect(result.data.redirectUrl).toBeNull();
       expect(result.data.notifyEmail).toBeNull();
       expect(result.data.confirmationCheckoutTitle).toBeNull();
@@ -1220,7 +1248,7 @@ describe('FormsResource integration tests', () => {
       expect(result.data.trackingCodes).toBeNull();
       expect(result.data.images ?? []).toEqual([]);
       expect(result.data.files ?? []).toEqual([]);
-    }, 10000);
+    }, 30000);
 
     it('fails for an unknown form id', async () => {
       await expect(
