@@ -1303,6 +1303,25 @@
                   "null"
                 ]
               },
+              "themeOverrides": {
+                "description": "Theme variable overrides applied on top of the page theme, or null when none are set.",
+                "properties": {
+                  "variables": {
+                    "additionalProperties": {},
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "variables"
+                ],
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
               "type": {
                 "description": "Type of page.",
                 "enum": [
