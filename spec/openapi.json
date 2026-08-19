@@ -2111,6 +2111,9 @@
               "null"
             ]
           },
+          "themeOverrides": {
+            "$ref": "#/components/schemas/ThemeOverridesInput"
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts to include on the page. Supports HTML `<script>` tags.",
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n",
@@ -13796,6 +13799,22 @@
         ],
         "type": "object"
       },
+      "ThemeOverridesInput": {
+        "description": "Theme overrides for this page. Sending a value replaces the whole overrides object; null clears all overrides.",
+        "properties": {
+          "variables": {
+            "description": "Theme variable overrides applied on top of the page theme. Keys follow the theme property registry (see GET /v1/theme-properties). Unknown paths are rejected with a 400 naming the offending path.",
+            "type": "object"
+          }
+        },
+        "required": [
+          "variables"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
+      },
       "Ticket": {
         "title": "Ticket",
         "type": "object"
@@ -16549,6 +16568,9 @@
               "object",
               "null"
             ]
+          },
+          "themeOverrides": {
+            "$ref": "#/components/schemas/ThemeOverridesInput"
           },
           "trackingCodes": {
             "description": "Custom tracking scripts to include on the page. Supports HTML `<script>` tags.",
@@ -33807,6 +33829,176 @@
         "summary": "Update a tax rate",
         "tags": [
           "Tax Rates"
+        ]
+      }
+    },
+    "/v1/theme-properties/": {
+      "get": {
+        "description": "Returns the full set of theming properties a checkout page's themeOverrides can set, including each property's type, description, and allowed options.",
+        "operationId": "theme-properties/list",
+        "parameters": [
+          {
+            "description": "Case-insensitive substring match over property path and description.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "description": "Case-insensitive substring match over property path and description.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Return only properties whose path starts with this prefix, e.g. 'variables.tokens'.",
+            "in": "query",
+            "name": "pathPrefix",
+            "required": false,
+            "schema": {
+              "description": "Return only properties whose path starts with this prefix, e.g. 'variables.tokens'.",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "properties": {
+                          "defaultValue": {
+                            "description": "The value applied when this property is not overridden."
+                          },
+                          "description": {
+                            "description": "Human-readable description of what this property controls.",
+                            "type": "string"
+                          },
+                          "options": {
+                            "description": "The fixed set of values this property accepts, when it is not a free-form value.",
+                            "items": {
+                              "properties": {
+                                "label": {
+                                  "description": "Human-readable label for this option, shown in UIs.",
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ],
+                                  "description": "The value to set the theme property to."
+                                }
+                              },
+                              "required": [
+                                "value",
+                                "label"
+                              ],
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "path": {
+                            "description": "Dot-notation path into the checkout page's theme overrides, e.g. 'variables.tokens.colorPrimary'.",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "The kind of value this property accepts, e.g. 'color', 'font', 'size', 'select'.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "type",
+                          "description"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "has_more": {
+                      "description": "Whether more records exist beyond the current page.",
+                      "type": "boolean"
+                    },
+                    "total": {
+                      "description": "Total number of records matching the query across all pages.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "has_more"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Theme properties retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List theme properties",
+        "tags": [
+          "Theme Properties"
         ]
       }
     },
