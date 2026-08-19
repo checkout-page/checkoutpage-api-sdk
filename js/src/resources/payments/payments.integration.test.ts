@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
 import { APIError } from '../../errors';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
@@ -50,18 +50,14 @@ describe('PaymentResource Integration Tests', () => {
     });
 
     it('should throw a 404 for a payment that does not exist', async () => {
-      await expect(client.payments.get('507f1f77bcf86cd799439011')).rejects.toMatchObject({
-        statusCode: 404,
-      });
+      await expect(client.payments.get('507f1f77bcf86cd799439011')).rejects.toThrow(NotFoundError);
     });
 
     it('should throw a 404 for a booking id, which is not a payment', async () => {
       const bookings = await client.bookings.list({ limit: 1 });
       if (bookings.data.length === 0) return;
 
-      await expect(client.payments.get(bookings.data[0].id)).rejects.toMatchObject({
-        statusCode: 404,
-      });
+      await expect(client.payments.get(bookings.data[0].id)).rejects.toThrow(NotFoundError);
     });
   });
 
