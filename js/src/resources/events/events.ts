@@ -27,8 +27,6 @@ import type {
   CreateEventFieldParams,
   UpdateEventFieldParams,
   EventFieldDeleteResponse,
-  TicketList,
-  TicketListParams,
 } from '../../types';
 
 export class EventFieldsResource {
@@ -302,43 +300,13 @@ export class EventTicketGroupsResource {
   }
 }
 
-export class EventTicketsResource {
-  constructor(private client: CheckoutPageApiClient) {}
-
-  async list(args: TicketListParams = {}): Promise<TicketList> {
-    const query: Record<string, string | undefined> = {
-      pageId: args.pageId,
-      bookingId: args.bookingId,
-      orderId: args.orderId,
-      customerId: args.customerId,
-      ticketTypeId: args.ticketTypeId,
-      status: args.status,
-      checkInStatus: args.checkInStatus,
-      createdAfter: args.createdAfter,
-      createdBefore: args.createdBefore,
-      search: args.search,
-      limit: args.limit?.toString(),
-      starting_after: args.starting_after,
-      ending_before: args.ending_before,
-    };
-
-    return this.client.request<TicketList>({
-      method: 'GET',
-      query,
-      path: '/v1/tickets/',
-    });
-  }
-}
-
 export class EventsResource {
   public readonly ticketGroups: EventTicketGroupsResource;
   public readonly fields: EventFieldsResource;
-  public readonly tickets: EventTicketsResource;
 
   constructor(private client: CheckoutPageApiClient) {
     this.ticketGroups = new EventTicketGroupsResource(client);
     this.fields = new EventFieldsResource(client);
-    this.tickets = new EventTicketsResource(client);
   }
 
   async list(args: EventListParams = {}): Promise<EventList> {
