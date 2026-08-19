@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PaymentResource } from './payments';
 import { CheckoutPageApiClient } from '../../client';
-import type { PaymentList } from '../../types';
+import type { PaymentList, PaymentResponse } from '../../types';
 
 const PAYMENT_ID_1 = '6812fe6e9f39b6760576f01c';
 const PAYMENT_ID_2 = '6812fe6e9f39b6760576f01d';
@@ -44,6 +44,26 @@ describe('PaymentResource', () => {
   beforeEach(() => {
     client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     paymentResource = new PaymentResource(client);
+  });
+
+  describe('get', () => {
+    it('should fetch a payment by id', async () => {
+      const mockPayment: PaymentResponse = { data: BASE_PAYMENT };
+      vi.spyOn(client, 'request').mockResolvedValue(mockPayment);
+
+      const result = await paymentResource.get(PAYMENT_ID_1);
+
+      expect(result).toEqual(mockPayment);
+      expect(result.data.id).toBe(PAYMENT_ID_1);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/payments/${PAYMENT_ID_1}`,
+      });
+    });
+
+    it('should throw error for missing payment id', async () => {
+      await expect(paymentResource.get('')).rejects.toThrow('Payment ID is required');
+    });
   });
 
   describe('list', () => {

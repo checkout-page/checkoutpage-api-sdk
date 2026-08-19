@@ -33,6 +33,38 @@ describe('PaymentResource Integration Tests', () => {
     });
   });
 
+  describe('get', () => {
+    it('should fetch a single payment by id', async () => {
+      const seed = await listPayments({ limit: 1 });
+      if (!seed || seed.data.length === 0) throw Error('No payments available to fetch');
+
+      const expected = seed.data[0];
+      const result = await client.payments.get(expected.id);
+
+      expect(result).toHaveProperty('data');
+      expect(result.data.id).toBe(expected.id);
+      expect(result.data.amount).toBe(expected.amount);
+      expect(result.data.status).toBe(expected.status);
+      expect(result.data).toHaveProperty('createdAt');
+      expect(result.data).toHaveProperty('updatedAt');
+    });
+
+    it('should throw a 404 for a payment that does not exist', async () => {
+      await expect(client.payments.get('507f1f77bcf86cd799439011')).rejects.toMatchObject({
+        statusCode: 404,
+      });
+    });
+
+    it('should throw a 404 for a booking id, which is not a payment', async () => {
+      const bookings = await client.bookings.list({ limit: 1 });
+      if (bookings.data.length === 0) return;
+
+      await expect(client.payments.get(bookings.data[0].id)).rejects.toMatchObject({
+        statusCode: 404,
+      });
+    });
+  });
+
   describe('list', () => {
     it('should fetch a list of payments', async () => {
       const result = await listPayments();
