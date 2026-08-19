@@ -1,8 +1,38 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { ValidateTicketData, ValidateTicketParams, ValidateTicketResponse } from '../../types';
+import type {
+  TicketList,
+  TicketListParams,
+  ValidateTicketData,
+  ValidateTicketParams,
+  ValidateTicketResponse,
+} from '../../types';
 
 export class TicketResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  async list(args: TicketListParams = {}): Promise<TicketList> {
+    const query: Record<string, string | undefined> = {
+      pageId: args.pageId,
+      bookingId: args.bookingId,
+      orderId: args.orderId,
+      customerId: args.customerId,
+      ticketTypeId: args.ticketTypeId,
+      status: args.status,
+      checkInStatus: args.checkInStatus,
+      createdAfter: args.createdAfter,
+      createdBefore: args.createdBefore,
+      search: args.search,
+      limit: args.limit?.toString(),
+      starting_after: args.starting_after,
+      ending_before: args.ending_before,
+    };
+
+    return this.client.request<TicketList>({
+      method: 'GET',
+      query,
+      path: '/v1/tickets/',
+    });
+  }
 
   async validate(qrCode: string, params?: ValidateTicketParams): Promise<ValidateTicketResponse> {
     const body = params || {};
