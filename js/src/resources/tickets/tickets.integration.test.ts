@@ -97,9 +97,6 @@ describe('TicketResource Integration Tests', () => {
 
     it('should paginate with starting_after', async () => {
       const page1 = await client.tickets.list({ limit: 1 });
-      if (page1.total <= 1 || !page1.data[0]) {
-        return;
-      }
 
       const page2 = await client.tickets.list({ limit: 1, starting_after: page1.data[0].id });
 
