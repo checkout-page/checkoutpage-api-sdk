@@ -113,6 +113,9 @@ export type Payment = PaymentList['data'][number];
 /** Frozen snapshot of the purchased price captured at the point of purchase. */
 export type PriceSnapshot = NonNullable<Payment['priceSnapshot']>;
 
+export type PaymentResponse =
+  operations['payments/get']['responses'][200]['content']['application/json'];
+
 export type PaymentListArgs = operations['payments/list']['parameters']['query'];
 
 export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit'> & {

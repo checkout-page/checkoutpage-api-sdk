@@ -8705,6 +8705,18 @@
         ],
         "type": "object"
       },
+      "PaymentDetailResponse": {
+        "description": "Envelope containing one payment.",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Payment"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
       "Price": {
         "properties": {
           "amount": {
@@ -31375,6 +31387,112 @@
         ]
       }
     },
+    "/v1/payments/:paymentId": {
+      "get": {
+        "description": "Returns one payment by ID, including customer and billing details, status, tax breakdown, the purchased price snapshot, and refund history when present.",
+        "operationId": "payments/get",
+        "parameters": [
+          {
+            "description": "The ID of the payment to retrieve. Use the list payments endpoint first if you need to discover a payment ID by email, name, customer, page, product, or date range.",
+            "in": "path",
+            "name": "paymentId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the payment to retrieve. Use the list payments endpoint first if you need to discover a payment ID by email, name, customer, page, product, or date range.",
+                  "example": "6812fe6e9f39b6760576f01c"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDetailResponse"
+                }
+              }
+            },
+            "description": "Payment retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Payment not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Get payment details",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
     "/v1/products/:productId": {
       "get": {
         "description": "Retrieves the details of an existing product by its ID.",
@@ -33887,7 +34005,7 @@
             }
           },
           {
-            "description": "Return the tickets created by one booking (Charge). Use when you already have the booking from the bookings endpoint and want the individual attendee tickets.",
+            "description": "Return the tickets created by one booking. Use when you already have the booking from the bookings endpoint and want the individual attendee tickets.",
             "in": "query",
             "name": "bookingId",
             "required": false,
@@ -33897,7 +34015,7 @@
                   "$ref": "#/components/schemas/UniqueIdentifier"
                 },
                 {
-                  "description": "Return the tickets created by one booking (Charge). Use when you already have the booking from the bookings endpoint and want the individual attendee tickets."
+                  "description": "Return the tickets created by one booking. Use when you already have the booking from the bookings endpoint and want the individual attendee tickets."
                 }
               ]
             }
