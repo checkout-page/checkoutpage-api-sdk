@@ -31389,7 +31389,7 @@
     },
     "/v1/payments/:paymentId": {
       "get": {
-        "description": "Returns one payment by ID, including customer and billing details, status, tax breakdown, the purchased price snapshot, and refund history when present. Bookings are not returned here — use the bookings endpoints for event charges.",
+        "description": "Returns one payment by ID, including customer and billing details, status, tax breakdown, the purchased price snapshot, and refund history when present.",
         "operationId": "payments/get",
         "parameters": [
           {
