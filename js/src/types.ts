@@ -202,12 +202,12 @@ export type TicketListParams = Omit<NonNullable<TicketListArgs>, 'limit'> & {
 
 // Subscription Payments
 export type SubscriptionPaymentList =
-  operations['subscription_payments/list']['responses'][200]['content']['application/json'];
+  operations['subscription-payments/list']['responses'][200]['content']['application/json'];
 
 export type SubscriptionPayment = SubscriptionPaymentList['data'][number];
 
 export type SubscriptionPaymentListArgs =
-  operations['subscription_payments/list']['parameters']['query'];
+  operations['subscription-payments/list']['parameters']['query'];
 
 export type SubscriptionPaymentListParams = Omit<
   NonNullable<SubscriptionPaymentListArgs>,
