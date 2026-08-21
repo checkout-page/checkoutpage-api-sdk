@@ -32021,7 +32021,7 @@
     "/v1/subscription-payments/": {
       "get": {
         "description": "Returns a paginated list of your subscription payments. The subscription payments are sorted in order, with the most recent payments appearing first.",
-        "operationId": "subscription_payments/list",
+        "operationId": "subscription-payments/list",
         "parameters": [
           {
             "description": "Unique identifier. Must be in BSON ObjectId format.",
