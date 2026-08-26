@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookingResource } from './bookings';
 import { CheckoutPageApiClient } from '../../client';
-import type { BookingList } from '../../types';
+import type { BookingList, BookingResponse } from '../../types';
 
 const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
 const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
@@ -47,6 +47,26 @@ describe('BookingResource', () => {
   beforeEach(() => {
     client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     bookingResource = new BookingResource(client);
+  });
+
+  describe('get', () => {
+    it('should fetch a booking by id', async () => {
+      const mockBooking: BookingResponse = { data: BASE_BOOKING };
+      vi.spyOn(client, 'request').mockResolvedValue(mockBooking);
+
+      const result = await bookingResource.get(BOOKING_ID_1);
+
+      expect(result).toEqual(mockBooking);
+      expect(result.data.id).toBe(BOOKING_ID_1);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/bookings/${BOOKING_ID_1}`,
+      });
+    });
+
+    it('should throw error for missing booking id', async () => {
+      await expect(bookingResource.get('')).rejects.toThrow('Booking ID is required');
+    });
   });
 
   describe('list', () => {

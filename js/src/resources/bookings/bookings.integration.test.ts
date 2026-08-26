@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('BookingResource Integration Tests', () => {
@@ -12,6 +12,34 @@ describe('BookingResource Integration Tests', () => {
     client = createCheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
+    });
+  });
+
+  describe('get', () => {
+    it('should fetch a single booking by id', async () => {
+      const seed = await client.bookings.list({ limit: 1 });
+      if (seed.data.length === 0) throw Error('No bookings available to fetch');
+
+      const expected = seed.data[0];
+      const result = await client.bookings.get(expected.id);
+
+      expect(result).toHaveProperty('data');
+      expect(result.data.id).toBe(expected.id);
+      expect(result.data.amount).toBe(expected.amount);
+      expect(result.data.status).toBe(expected.status);
+      expect(result.data).toHaveProperty('createdAt');
+      expect(result.data).toHaveProperty('updatedAt');
+    });
+
+    it('should throw a 404 for a booking that does not exist', async () => {
+      await expect(client.bookings.get('507f1f77bcf86cd799439011')).rejects.toThrow(NotFoundError);
+    });
+
+    it('should throw a 404 for a payment id, which is not a booking', async () => {
+      const payments = await client.payments.list({ limit: 1 });
+      if (payments.data.length === 0) return;
+
+      await expect(client.bookings.get(payments.data[0].id)).rejects.toThrow(NotFoundError);
     });
   });
 
