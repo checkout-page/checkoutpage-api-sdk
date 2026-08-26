@@ -209,6 +209,9 @@ export type SubscriptionPaymentList =
 
 export type SubscriptionPayment = SubscriptionPaymentList['data'][number];
 
+export type SubscriptionPaymentResponse =
+  operations['subscription-payments/get']['responses'][200]['content']['application/json'];
+
 export type SubscriptionPaymentListArgs =
   operations['subscription-payments/list']['parameters']['query'];
 

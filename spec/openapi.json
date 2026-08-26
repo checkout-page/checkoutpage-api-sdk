@@ -13752,6 +13752,18 @@
         ],
         "type": "object"
       },
+      "SubscriptionPaymentDetailResponse": {
+        "description": "Envelope containing one subscription payment.",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SubscriptionPaymentDetail"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
       "SubscriptionPaymentId": {
         "example": "6812fe6e9f39b6760576f01c",
         "type": "string"
@@ -33142,6 +33154,112 @@
           }
         ],
         "summary": "List all subscription payments",
+        "tags": [
+          "Subscription Payments"
+        ]
+      }
+    },
+    "/v1/subscription-payments/:subscriptionPaymentId": {
+      "get": {
+        "description": "Returns one subscription payment by ID — a single charge in a subscription billing cycle, including its payment and invoice status, billing reason, payment method, and Stripe references. To list every payment on a subscription, use the list endpoint with `subscriptionId`.",
+        "operationId": "subscription-payments/get",
+        "parameters": [
+          {
+            "description": "The ID of the subscription payment to retrieve. Use the list subscription payments endpoint first if you need to discover an ID — filter by `subscriptionId` to see every payment on one subscription.",
+            "in": "path",
+            "name": "subscriptionPaymentId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the subscription payment to retrieve. Use the list subscription payments endpoint first if you need to discover an ID — filter by `subscriptionId` to see every payment on one subscription.",
+                  "example": "6812fe6e9f39b6760576f01c"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionPaymentDetailResponse"
+                }
+              }
+            },
+            "description": "Subscription payment retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Subscription payment not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Get subscription payment details",
         "tags": [
           "Subscription Payments"
         ]

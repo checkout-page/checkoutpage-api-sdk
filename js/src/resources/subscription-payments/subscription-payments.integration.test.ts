@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('SubscriptionPaymentResource Integration Tests', () => {
@@ -12,6 +12,43 @@ describe('SubscriptionPaymentResource Integration Tests', () => {
     client = createCheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
+    });
+  });
+
+  describe('get', () => {
+    it('should fetch a single subscription payment by id', async () => {
+      const seed = await client.subscriptionPayments.list({ limit: 1 });
+      if (seed.data.length === 0) throw Error('No subscription payments available to fetch');
+
+      const expected = seed.data[0];
+      const result = await client.subscriptionPayments.get(expected.id);
+
+      expect(result).toHaveProperty('data');
+      expect(result.data.id).toBe(expected.id);
+      expect(result.data.amount).toBe(expected.amount);
+      expect(result.data).toHaveProperty('createdAt');
+      expect(result.data).toHaveProperty('updatedAt');
+    });
+
+    it('should resolve a payment discovered by filtering on its subscription', async () => {
+      const seed = await client.subscriptionPayments.list({ limit: 25 });
+      const withSubscription = seed.data.find((payment) => payment.subscriptionId != null);
+      if (!withSubscription?.subscriptionId) return;
+
+      const forSubscription = await client.subscriptionPayments.list({
+        subscriptionId: withSubscription.subscriptionId,
+        limit: 1,
+      });
+      expect(forSubscription.data.length).toBeGreaterThan(0);
+
+      const result = await client.subscriptionPayments.get(forSubscription.data[0].id);
+      expect(result.data.subscriptionId).toBe(withSubscription.subscriptionId);
+    });
+
+    it('should throw a 404 for a subscription payment that does not exist', async () => {
+      await expect(client.subscriptionPayments.get('507f1f77bcf86cd799439011')).rejects.toThrow(
+        NotFoundError
+      );
     });
   });
 
