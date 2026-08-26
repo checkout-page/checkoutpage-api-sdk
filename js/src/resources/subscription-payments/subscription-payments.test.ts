@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SubscriptionPaymentResource } from './subscription-payments';
 import { CheckoutPageApiClient } from '../../client';
-import type { SubscriptionPaymentList } from '../../types';
+import type { SubscriptionPaymentList, SubscriptionPaymentResponse } from '../../types';
+
+const SUBSCRIPTION_PAYMENT_ID = '6812fe6e9f39b6760576f01c';
 
 describe('SubscriptionPaymentResource', () => {
   let client: CheckoutPageApiClient;
@@ -10,6 +12,35 @@ describe('SubscriptionPaymentResource', () => {
   beforeEach(() => {
     client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     subscriptionPaymentResource = new SubscriptionPaymentResource(client);
+  });
+
+  describe('get', () => {
+    it('should fetch a subscription payment by id', async () => {
+      const mockPayment: SubscriptionPaymentResponse = {
+        data: {
+          id: SUBSCRIPTION_PAYMENT_ID,
+          amount: 1999,
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockPayment);
+
+      const result = await subscriptionPaymentResource.get(SUBSCRIPTION_PAYMENT_ID);
+
+      expect(result).toEqual(mockPayment);
+      expect(result.data.id).toBe(SUBSCRIPTION_PAYMENT_ID);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/subscription-payments/${SUBSCRIPTION_PAYMENT_ID}`,
+      });
+    });
+
+    it('should throw error for missing subscription payment id', async () => {
+      await expect(subscriptionPaymentResource.get('')).rejects.toThrow(
+        'Subscription payment ID is required'
+      );
+    });
   });
 
   describe('list', () => {
