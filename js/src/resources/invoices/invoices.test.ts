@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { InvoiceResource } from './invoices';
 
+const INVOICE_ID = '6812fe6e9f39b6760576f01c';
+
 describe('InvoiceResource', () => {
   let client: CheckoutPageApiClient;
   let resource: InvoiceResource;
@@ -9,6 +11,26 @@ describe('InvoiceResource', () => {
   beforeEach(() => {
     client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     resource = new InvoiceResource(client);
+  });
+
+  describe('get', () => {
+    it('GETs /v1/invoices/:id and returns the envelope', async () => {
+      const mockResponse = { data: { id: INVOICE_ID } } as any;
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await resource.get(INVOICE_ID);
+
+      expect(result).toEqual(mockResponse);
+      expect(result.data.id).toBe(INVOICE_ID);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/invoices/${INVOICE_ID}`,
+      });
+    });
+
+    it('should throw error for missing invoice id', async () => {
+      await expect(resource.get('')).rejects.toThrow('Invoice ID is required');
+    });
   });
 
   describe('list', () => {

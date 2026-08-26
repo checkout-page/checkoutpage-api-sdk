@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('InvoiceResource integration tests', () => {
@@ -11,6 +11,38 @@ describe('InvoiceResource integration tests', () => {
     client = createCheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
+    });
+  });
+
+  describe('get', () => {
+    it('should fetch a single invoice by id', async () => {
+      const seed = await client.invoices.list({ limit: 1 });
+      if (seed.data.length === 0) throw Error('No invoices available to fetch');
+
+      const expected = seed.data[0];
+      const result = await client.invoices.get(expected.id);
+
+      expect(result).toHaveProperty('data');
+      expect(result.data.id).toBe(expected.id);
+      expect(result.data.amount).toBe(expected.amount);
+      expect(result.data.status).toBe(expected.status);
+      expect(result.data).toHaveProperty('createdAt');
+      expect(result.data).toHaveProperty('updatedAt');
+    });
+
+    it('should return a freshly signed invoiceUrl on each fetch', async () => {
+      const seed = await client.invoices.list({ limit: 25 });
+      const withPdf = seed.data.find((invoice) => invoice.invoiceUrl != null);
+      if (!withPdf) return;
+
+      const result = await client.invoices.get(withPdf.id);
+
+      expect(typeof result.data.invoiceUrl).toBe('string');
+      expect(result.data.invoiceUrl).toContain('http');
+    });
+
+    it('should throw a 404 for an invoice that does not exist', async () => {
+      await expect(client.invoices.get('507f1f77bcf86cd799439011')).rejects.toThrow(NotFoundError);
     });
   });
 

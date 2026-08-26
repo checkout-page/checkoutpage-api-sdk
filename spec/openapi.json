@@ -30501,6 +30501,749 @@
         ]
       }
     },
+    "/v1/invoices/:id": {
+      "get": {
+        "description": "Returns one invoice by ID, including line items, tax breakdown, fees, buyer and seller billing details, and a freshly signed `invoiceUrl` for the hosted PDF.",
+        "operationId": "invoices/get",
+        "parameters": [
+          {
+            "description": "The ID of the invoice to retrieve. Use `list_invoices` first if you need to discover the invoice ID by customer email, customer name, invoice number, PO number, or the payment it belongs to (`chargeId`).",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the invoice to retrieve. Use `list_invoices` first if you need to discover the invoice ID by customer email, customer name, invoice number, PO number, or the payment it belongs to (`chargeId`)."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "description": "Invoice generated from a payment (Charge) on the Checkout Page account. Read-only.",
+                      "properties": {
+                        "amount": {
+                          "description": "Total invoice amount in the smallest currency unit (e.g. 10661 USD = $106.61, 500 JPY = ¥500). Divide by 100 before displaying, except for zero-decimal currencies like JPY.",
+                          "type": "number"
+                        },
+                        "amountDue": {
+                          "description": "Outstanding amount in the smallest currency unit. Non-zero only on \"open\" or \"uncollectible\" invoices.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "amountExcludingTax": {
+                          "description": "Subtotal of the invoice excluding tax, in the smallest currency unit.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "amountPaid": {
+                          "description": "Amount paid in the smallest currency unit. Equal to `amount` when status is \"paid\".",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "amountRefunded": {
+                          "description": "Amount refunded against this invoice in the smallest currency unit. Refund metadata lives on the originating Charge — query list_payments by chargeId for full refund history.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "amountUsd": {
+                          "description": "Total amount converted to USD at the time of the invoice, in the smallest currency unit (cents).",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "billing": {
+                          "description": "Buyer billing details captured at checkout (name, email, phone, address, tax ID). May be empty for digital products.",
+                          "properties": {
+                            "address": {
+                              "description": "Buyer billing address captured at checkout.",
+                              "properties": {
+                                "city": {
+                                  "type": "string"
+                                },
+                                "country": {
+                                  "type": "string"
+                                },
+                                "line1": {
+                                  "type": "string"
+                                },
+                                "line2": {
+                                  "type": "string"
+                                },
+                                "postalCode": {
+                                  "type": "string"
+                                },
+                                "state": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "email": {
+                              "description": "Buyer email captured at checkout. Lowercased.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "description": "Buyer name captured at checkout.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "phone": {
+                              "description": "Buyer phone captured at checkout, free-form.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "taxId": {
+                              "description": "Buyer tax ID (e.g. VAT/GST number) captured at checkout.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "taxIdType": {
+                              "description": "Type/jurisdiction of the buyer tax ID (e.g. \"eu_vat\", \"us_ein\").",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "bulkDiscount": {
+                          "description": "Quantity-based discount applied to the invoice, when one was in effect.",
+                          "properties": {
+                            "amount": {
+                              "description": "Resolved total discount applied to the invoice, in the smallest currency unit.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "amountOff": {
+                              "description": "Fixed amount off per unit, in the smallest currency unit. Mutually exclusive with `percentOff`.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "maxQuantity": {
+                              "description": "Maximum quantity covered by this discount tier (omit for open-ended).",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "minQuantity": {
+                              "description": "Minimum quantity at which this discount tier activates.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "percentOff": {
+                              "description": "Percentage off per unit (0-100). Mutually exclusive with `amountOff`.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "chargeId": {
+                          "description": "Originating payment (Charge) that generated this invoice. For refund details (amountRefunded, lastRefundAt, lastRefundReason) look up the Charge via list_payments — the invoice itself does not carry refund metadata.",
+                          "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "coupon": {
+                          "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
+                          "properties": {
+                            "amountOff": {
+                              "description": "Fixed amount off the invoice, in the smallest currency unit. Mutually exclusive with `percentOff`.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "code": {
+                              "description": "Coupon code redeemed on the invoice (case-sensitive as stored).",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "discount": {
+                              "description": "Resolved discount applied to the invoice, in the smallest currency unit.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "id": {
+                              "description": "Coupon record id. Resolve full coupon details by id if needed.",
+                              "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                              "pattern": "^[0-9a-fA-F]{24}$",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "label": {
+                              "description": "Customer-facing label for the coupon.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "percentOff": {
+                              "description": "Percentage off the invoice (0-100). Mutually exclusive with `amountOff`.",
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "description": "ISO-8601 UTC timestamp the invoice was created.",
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "currency": {
+                          "description": "ISO 4217 currency code (lowercase, e.g. \"usd\", \"gbp\", \"eur\").",
+                          "type": "string"
+                        },
+                        "customerEmail": {
+                          "description": "Customer email on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerEmail` or `search` query params.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "customerId": {
+                          "description": "Customer record this invoice belongs to. For full customer profile fields (company, phone, tax ID), call get_customer with this id.",
+                          "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "customerName": {
+                          "description": "Customer name on the invoice. Denormalised from the Charge (preferred) or Customer record. Filterable via the `customerName` or `search` query params.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "fees": {
+                          "description": "Additional fees on the invoice (e.g. shipping, processing).",
+                          "items": {
+                            "properties": {
+                              "amount": {
+                                "description": "Fee amount in the smallest currency unit.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "name": {
+                                "description": "Display name for the fee (e.g. \"Shipping\", \"Processing\").",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "percentage": {
+                                "description": "Fee as a percentage of the subtotal (0-100), when defined that way.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ]
+                        },
+                        "id": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "Unique identifier for the invoice."
+                            }
+                          ]
+                        },
+                        "invoiceNumber": {
+                          "description": "Human-readable invoice number (e.g. \"2026-000010\"). Use when a customer asks for their invoice number.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "invoiceUrl": {
+                          "description": "Presigned hosted URL for the invoice PDF, safe to share with the buyer. Expires 1 hour after the response is generated — re-list or re-fetch the invoice to obtain a fresh URL. Absent for invoices that have no generated PDF (e.g. drafts).",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "invoiceUuid": {
+                          "description": "Stable UUID for the invoice, used in invoice URLs.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "lineItems": {
+                          "description": "Itemised list of products, variants, setup fees, and tickets on the invoice. Use when a customer asks what they were charged for.",
+                          "items": {
+                            "properties": {
+                              "amount": {
+                                "description": "Line total (quantity × unitPrice) in the smallest currency unit, before discount.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "bulkDiscountAmount": {
+                                "description": "Bulk-discount amount applied to this line, in the smallest currency unit.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "couponCode": {
+                                "description": "Code of the coupon that produced `couponDiscountAmount`, if any.",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "couponDiscountAmount": {
+                                "description": "Coupon-discount amount applied to this line, in the smallest currency unit.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "name": {
+                                "description": "Display name for the line item (typically the product title or variant label).",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "quantity": {
+                                "description": "Quantity purchased for this line.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "type": {
+                                "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket.",
+                                "enum": [
+                                  "product",
+                                  "setupFee",
+                                  "variantOption",
+                                  "ticket",
+                                  null
+                                ],
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "unitPrice": {
+                                "description": "Per-unit price in the smallest currency unit, before discount.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ]
+                        },
+                        "livemode": {
+                          "description": "True for live-mode invoices; false for test-mode invoices. Test- and live-mode data are isolated.",
+                          "type": "boolean"
+                        },
+                        "poNumber": {
+                          "description": "Customer-supplied purchase-order number. Filterable via the `poNumber` query param.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "poNumberLabel": {
+                          "description": "Merchant-defined label for the PO number field (e.g. \"Purchase Order\", \"Reference\").",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "productTitle": {
+                          "description": "Title of the first product line item on the invoice. Denormalised for search and filtering.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "sellerBilling": {
+                          "description": "Seller registration details on the invoice (name, email, tax ID, address). Use when a customer asks about the seller's tax registration.",
+                          "properties": {
+                            "address": {
+                              "description": "Seller registration address printed on the invoice.",
+                              "properties": {
+                                "city": {
+                                  "type": "string"
+                                },
+                                "country": {
+                                  "type": "string"
+                                },
+                                "line1": {
+                                  "type": "string"
+                                },
+                                "line2": {
+                                  "type": "string"
+                                },
+                                "postalCode": {
+                                  "type": "string"
+                                },
+                                "state": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "email": {
+                              "description": "Seller support/billing email on the invoice.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "description": "Seller legal/display name on the invoice.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "taxId": {
+                              "description": "Seller tax registration ID printed on the invoice.",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "sellerId": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "Seller account that owns this invoice."
+                            }
+                          ]
+                        },
+                        "status": {
+                          "description": "Invoice status. \"paid\" — payment was collected. \"open\" — outstanding. \"uncollectible\" — payment failed and was abandoned. \"refunded\" — fully refunded. \"partially_refunded\" — partial refund issued. \"void\" — cancelled. \"draft\" — not yet finalised.",
+                          "enum": [
+                            "draft",
+                            "open",
+                            "paid",
+                            "uncollectible",
+                            "refunded",
+                            "partially_refunded",
+                            "void"
+                          ],
+                          "type": "string"
+                        },
+                        "subtotal": {
+                          "description": "Sum of line items before discount and tax, in the smallest currency unit.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "subtotalAfterDiscount": {
+                          "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "taxAmount": {
+                          "description": "Total tax amount on the invoice in the smallest currency unit.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "taxBreakdown": {
+                          "description": "Per-line-item tax breakdown. Use this when a customer asks how tax was calculated.",
+                          "items": {
+                            "properties": {
+                              "taxAmount": {
+                                "description": "Tax collected for this line, in the smallest currency unit.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "taxRateDetails": {
+                                "description": "Detail of the tax rate applied to this line (country/state/type/percentage).",
+                                "properties": {
+                                  "country": {
+                                    "description": "ISO 3166-1 alpha-2 country code the tax rate applies to.",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "percentageDecimal": {
+                                    "description": "Tax percentage as a decimal (e.g. 0.2 for 20%).",
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "state": {
+                                    "description": "Subdivision the tax rate applies to (e.g. US state code).",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "taxType": {
+                                    "description": "Tax classification (e.g. \"vat\", \"sales_tax\").",
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "taxType": {
+                                "description": "Tax classification for this line of the breakdown (e.g. \"vat\", \"sales_tax\").",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "taxabilityReason": {
+                                "description": "Why the line was treated as taxable or not (e.g. \"standard_rated\", \"zero_rated\", \"not_collecting\").",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "taxableAmount": {
+                                "description": "Amount subject to tax for this line, in the smallest currency unit.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ]
+                        },
+                        "taxRates": {
+                          "description": "Historical snapshot of the merchant tax rates that applied at the time of the invoice. Preserved even if the merchant later edits or deletes the rate.",
+                          "items": {
+                            "$ref": "#/components/schemas/HistoricalTaxRateSnapshot"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ]
+                        },
+                        "taxSource": {
+                          "description": "How tax was calculated: \"stripe_tax\" (Stripe Tax service) or \"fixed_tax_rate\" (merchant-defined rates). Null when the invoice has no tax.",
+                          "enum": [
+                            "fixed_tax_rate",
+                            "stripe_tax",
+                            null
+                          ],
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "updatedAt": {
+                          "description": "ISO-8601 UTC timestamp the invoice was last updated.",
+                          "format": "date-time",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "sellerId",
+                        "livemode",
+                        "currency",
+                        "amount",
+                        "status",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invoice retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Invoice not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Get invoice details",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
     "/v1/invoices/:id/regenerate": {
       "post": {
         "description": "Regenerates the PDF for an invoice and returns the updated invoice and PDF. Refreshes billing details, PO number, and the denormalized customer / product fields from the source Charge. Preserves line items, amounts, taxes, fees, and status. The previous PDF is overwritten in place; the returned `invoiceUrl` is a freshly signed link.",

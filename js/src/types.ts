@@ -497,6 +497,9 @@ export type Invoice =
 export type InvoiceList =
   operations['invoices/list']['responses'][200]['content']['application/json'];
 
+export type InvoiceResponse =
+  operations['invoices/get']['responses'][200]['content']['application/json'];
+
 export type InvoiceListArgs = operations['invoices/list']['parameters']['query'];
 
 export type InvoiceListParams = Omit<NonNullable<InvoiceListArgs>, 'limit'> & {

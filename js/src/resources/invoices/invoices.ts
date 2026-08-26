@@ -1,8 +1,27 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { Invoice, InvoiceList, InvoiceListParams } from '../../types';
+import type { Invoice, InvoiceList, InvoiceListParams, InvoiceResponse } from '../../types';
 
 export class InvoiceResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  /**
+   * Retrieve a single invoice by ID. The returned `invoiceUrl` is a freshly
+   * signed link to the hosted PDF and expires an hour later — re-fetch to
+   * mint a new one.
+   *
+   * @example
+   * const { data: invoice } = await client.invoices.get(invoiceId);
+   */
+  async get(id: string): Promise<InvoiceResponse> {
+    if (!id) {
+      throw new Error('Invoice ID is required');
+    }
+
+    return this.client.request<InvoiceResponse>({
+      method: 'GET',
+      path: `/v1/invoices/${id}`,
+    });
+  }
 
   async list(args: InvoiceListParams = {}): Promise<InvoiceList> {
     const query: Record<string, string | undefined> = {
