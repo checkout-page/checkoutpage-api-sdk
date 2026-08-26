@@ -860,6 +860,18 @@
         ],
         "type": "object"
       },
+      "BookingDetailResponse": {
+        "description": "Envelope containing one booking.",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Booking"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
       "BulkDiscountInput": {
         "properties": {
           "maxQuantity": {
@@ -9537,6 +9549,13 @@
       },
       "Product": {
         "properties": {
+          "callToActionText": {
+            "description": "Accept copy shown on an order-bump card, e.g. \"Yes! Add gift wrapping\".",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "createdAt": {
             "description": "When the product was created.",
             "example": "2024-01-15T10:30:00.000Z",
@@ -9833,6 +9852,22 @@
             },
             "type": [
               "array",
+              "null"
+            ]
+          },
+          "role": {
+            "description": "What the product is for. `orderbump` products are the simplified add-ons a checkout page can offer; they can never be sold as a page product, and a product cannot be converted between roles. Read-only.",
+            "enum": [
+              "product",
+              "orderbump"
+            ],
+            "example": "product",
+            "type": "string"
+          },
+          "shortDescription": {
+            "description": "Plain-text one-liner, shown where the full description is too long.",
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -10415,6 +10450,7 @@
           "id",
           "type",
           "title",
+          "role",
           "price",
           "createdAt",
           "updatedAt"
@@ -20110,6 +20146,112 @@
           }
         ],
         "summary": "List all bookings",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/v1/bookings/:bookingId": {
+      "get": {
+        "description": "Returns one event booking by ID, including customer and billing details, status, tax breakdown, the purchased tickets, and refund history when present.",
+        "operationId": "bookings/get",
+        "parameters": [
+          {
+            "description": "The ID of the booking to retrieve. Use the list bookings endpoint first if you need to discover a booking ID by email, name, customer, event, or date range.",
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the booking to retrieve. Use the list bookings endpoint first if you need to discover a booking ID by email, name, customer, event, or date range.",
+                  "example": "6812fe6e9f39b6760576f01c"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDetailResponse"
+                }
+              }
+            },
+            "description": "Booking retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Booking not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Get booking details",
         "tags": [
           "Events"
         ]

@@ -174,6 +174,9 @@ export type BookingList =
 
 export type Booking = BookingList['data'][number];
 
+export type BookingResponse =
+  operations['bookings/get']['responses'][200]['content']['application/json'];
+
 export type BookingListArgs = operations['bookings/list']['parameters']['query'];
 
 export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit'> & {
