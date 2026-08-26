@@ -141,6 +141,9 @@ export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'li
   limit?: number;
 };
 
+export type SubscriptionResponse =
+  operations['subscriptions/get']['responses'][200]['content']['application/json'];
+
 /**
  * Raw wire-shape from the OpenAPI spec — every field optional. Not exported
  * because the public `SubscriptionCancelParams` below tightens this into a

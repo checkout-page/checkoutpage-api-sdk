@@ -12,6 +12,41 @@ describe('SubscriptionResource', () => {
     subscriptionResource = new SubscriptionResource(client);
   });
 
+  describe('get', () => {
+    it('should fetch a subscription by id', async () => {
+      const mockSubscription: SubscriptionResponse = {
+        data: {
+          id: '6812fe6e9f39b6760576f01c',
+          sellerId: '6812fe6e9f39b6760576f01d',
+          customerEmail: 'test@example.com',
+          customerName: 'Test Customer',
+          currency: 'usd',
+          amount: 2999,
+          interval: 'month',
+          intervalCount: 1,
+          status: 'active',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        },
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockSubscription);
+
+      const result = await subscriptionResource.get('6812fe6e9f39b6760576f01c');
+
+      expect(result).toEqual(mockSubscription);
+      expect(result.data.id).toBe('6812fe6e9f39b6760576f01c');
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c',
+      });
+    });
+
+    it('should throw error for missing subscription id', async () => {
+      await expect(subscriptionResource.get('')).rejects.toThrow('Subscription ID is required');
+    });
+  });
+
   describe('list', () => {
     it('should fetch a list of subscriptions with default parameters', async () => {
       const mockSubscriptionList: SubscriptionList = {
