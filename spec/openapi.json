@@ -22788,6 +22788,171 @@
         ]
       }
     },
+    "/v1/coupons/:couponId": {
+      "patch": {
+        "description": "Updates a coupon. Ticket types are scoped through pages, so any ticketTypeIds must belong to the pageIds sent in the same request, or — when pageIds are omitted — to the pages already on the coupon.",
+        "operationId": "coupons/update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "couponId",
+            "required": true,
+            "schema": {
+              "example": "6812fe6e9f39b6760576f01c",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "deleted": {
+                    "description": "If true, this coupon will be soft deleted. It is no longer usable but data is retained.",
+                    "example": false,
+                    "type": "boolean"
+                  },
+                  "label": {
+                    "description": "Internal name for the coupon.",
+                    "example": "Free shipping within US",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "maxRedemptions": {
+                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times.",
+                    "example": 5,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "pageIds": {
+                    "description": "A list of pageIds that this coupon can be used within.",
+                    "example": [
+                      "67ee075004de439ab0b675b6",
+                      "67fcbdac6a91c25ef2d3534a"
+                    ],
+                    "items": {
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "redeemBy": {
+                    "description": "The ISO datetime that this coupon must be used before.",
+                    "example": "2025-10-04T07:36:45.122Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "ticketTypeIds": {
+                    "description": "A list of ticketTypeIds that this coupon can be used with. Empty array will clear the list.",
+                    "example": [
+                      "67ee075004de439ab0b675b6",
+                      "67fcbdac6a91c25ef2d3534a"
+                    ],
+                    "items": {
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Coupon"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Coupon updated successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Coupon not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Update a coupon",
+        "tags": [
+          "Coupons"
+        ]
+      }
+    },
     "/v1/customers/": {
       "get": {
         "description": "Returns a paginated list of your customers. The customers are sorted in order, with the most recent customers appearing first.",
