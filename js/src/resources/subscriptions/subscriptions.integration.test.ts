@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import {
+  CheckoutPageClient,
+  NotFoundError,
+  ValidationError,
+  createCheckoutPageClient,
+} from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('SubscriptionResource Integration Tests', () => {
@@ -12,6 +17,40 @@ describe('SubscriptionResource Integration Tests', () => {
     client = createCheckoutPageClient({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
+    });
+  });
+
+  describe('get', () => {
+    it('should fetch a real subscription by ID and return a list-consistent shape', async () => {
+      const listResult = await client.subscriptions.list({ limit: 1 });
+      const seed = listResult.data[0];
+      if (!seed) {
+        throw new Error('Expected at least one subscription to exist for the get integration test');
+      }
+
+      const { data: subscription } = await client.subscriptions.get(seed.id);
+
+      expect(subscription.id).toBe(seed.id);
+      expect(typeof subscription.amount).toBe('number');
+      expect(typeof subscription.createdAt).toBe('string');
+      expect(typeof subscription.updatedAt).toBe('string');
+      expect(subscription.amount).toBe(seed.amount);
+      if (seed.customerEmail) {
+        expect(subscription.customerEmail).toBe(seed.customerEmail);
+      }
+      if (seed.status) {
+        expect(subscription.status).toBe(seed.status);
+      }
+    });
+
+    it('should throw a NotFoundError for a missing subscription ID', async () => {
+      await expect(client.subscriptions.get('6812fe6e9f39b6760576f01c')).rejects.toThrow(
+        NotFoundError
+      );
+    });
+
+    it('should throw ValidationError for an invalid subscription ID', async () => {
+      await expect(client.subscriptions.get('not-a-valid-id')).rejects.toThrow(ValidationError);
     });
   });
 

@@ -4,10 +4,28 @@ import type {
   SubscriptionCancelResponse,
   SubscriptionList,
   SubscriptionListParams,
+  SubscriptionResponse,
 } from '../../types';
 
 export class SubscriptionResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  /**
+   * Retrieve a single subscription by ID.
+   *
+   * @example
+   * const { data: subscription } = await client.subscriptions.get(subscriptionId);
+   */
+  async get(subscriptionId: string): Promise<SubscriptionResponse> {
+    if (!subscriptionId) {
+      throw new Error('Subscription ID is required');
+    }
+
+    return this.client.request<SubscriptionResponse>({
+      method: 'GET',
+      path: `/v1/subscriptions/${subscriptionId}`,
+    });
+  }
 
   async list(args: SubscriptionListParams = {}): Promise<SubscriptionList> {
     const query: Record<string, string | undefined> = {
