@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeAll, afterEach } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient, ValidationError } from '../../index';
+import {
+  CheckoutPageClient,
+  createCheckoutPageClient,
+  NotFoundError,
+  ValidationError,
+} from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { uniqueSuffix } from '../../test-helpers/test-lib';
 import {
@@ -167,6 +172,61 @@ describe('CouponResource Integration Tests', () => {
         // Verify that we got items before the cursor
         expect(beforePage.data.every((item) => item.id !== middleId)).toBe(true);
       }
+    });
+  });
+
+  describe('update', () => {
+    const createCoupon = async () =>
+      (
+        await client.coupons.create({
+          type: 'percent',
+          label: 'Integration Test Update Coupon',
+          code: `TEST_UPDATE_${Date.now()}`,
+          percentOff: 10,
+          duration: 'once',
+        })
+      ).data;
+
+    it('should update the editable fields of a coupon', async () => {
+      const created = await createCoupon();
+
+      const { data } = await client.coupons.update(created.id, {
+        label: 'Renamed by integration test',
+        maxRedemptions: 7,
+      });
+
+      expect(data.id).toBe(created.id);
+      expect(data.label).toBe('Renamed by integration test');
+      expect(data.maxRedemptions).toBe(7);
+      // Untouched fields survive a partial update.
+      expect(data.code).toBe(created.code);
+      expect(data.percentOff).toBe(created.percentOff);
+      expect(data.duration).toBe(created.duration);
+    });
+
+    it('should soft delete a coupon', async () => {
+      const created = await createCoupon();
+      expect(created.deleted).toBe(false);
+
+      const { data } = await client.coupons.update(created.id, { deleted: true });
+
+      expect(data.id).toBe(created.id);
+      expect(data.deleted).toBe(true);
+    });
+
+    it('should reject an update that would change the discount', async () => {
+      const created = await createCoupon();
+
+      await expect(
+        // The discount is fixed once mirrored into Stripe; the body schema is strict.
+        client.coupons.update(created.id, { percentOff: 50 } as never)
+      ).rejects.toThrow();
+    });
+
+    it('should throw a 404 for a coupon that does not exist', async () => {
+      await expect(
+        client.coupons.update('507f1f77bcf86cd799439011', { deleted: true })
+      ).rejects.toThrow(NotFoundError);
     });
   });
 

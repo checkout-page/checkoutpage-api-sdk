@@ -4,6 +4,8 @@ import {
   CouponListParams,
   CreateCouponParams,
   CreateCouponResponse,
+  UpdateCouponParams,
+  UpdateCouponResponse,
 } from '../../types';
 
 export class CouponResource {
@@ -21,6 +23,31 @@ export class CouponResource {
       method: 'GET',
       query,
       path: '/v1/coupons/',
+    });
+  }
+
+  /**
+   * Update an existing coupon. Only the fields you supply are changed.
+   *
+   * `pageIds` and `ticketTypeIds` replace the existing lists rather than
+   * merging — pass an empty array to clear one.
+   *
+   * The discount itself (`code`, `amountOff`, `percentOff`, `currency`,
+   * `duration`) is fixed once the coupon is mirrored into Stripe. To change a
+   * discount, soft delete this coupon and create a replacement.
+   *
+   * @example
+   * const { data: coupon } = await client.coupons.update(couponId, { deleted: true });
+   */
+  async update(couponId: string, params: UpdateCouponParams): Promise<UpdateCouponResponse> {
+    if (!couponId) {
+      throw new Error('Coupon ID is required');
+    }
+
+    return this.client.request<UpdateCouponResponse>({
+      method: 'PATCH',
+      path: `/v1/coupons/${couponId}`,
+      body: params,
     });
   }
 

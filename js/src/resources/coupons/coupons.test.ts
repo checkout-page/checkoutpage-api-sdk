@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CouponResource } from './coupons';
 import { CheckoutPageApiClient } from '../../client';
-import { CouponList, CreateCouponResponse } from '../../types';
+import { CouponList, CreateCouponResponse, UpdateCouponResponse } from '../../types';
 
 describe('CouponResource', () => {
   let client: CheckoutPageApiClient;
@@ -10,6 +10,40 @@ describe('CouponResource', () => {
   beforeEach(() => {
     client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     couponResource = new CouponResource(client);
+  });
+
+  describe('update', () => {
+    const COUPON_ID = '67ee075004de439ab0b675b6';
+
+    it('should PATCH the coupon endpoint with the supplied fields', async () => {
+      const mockResponse = { data: { id: COUPON_ID } } as unknown as UpdateCouponResponse;
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await couponResource.update(COUPON_ID, { label: 'Renamed', deleted: true });
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/coupons/${COUPON_ID}`,
+        body: { label: 'Renamed', deleted: true },
+      });
+    });
+
+    it('should forward an empty array so a scoping list can be cleared', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: COUPON_ID } } as never);
+
+      await couponResource.update(COUPON_ID, { ticketTypeIds: [] });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ body: { ticketTypeIds: [] } })
+      );
+    });
+
+    it('should throw error for missing coupon id', async () => {
+      await expect(couponResource.update('', { deleted: true })).rejects.toThrow(
+        'Coupon ID is required'
+      );
+    });
   });
 
   describe('list', () => {

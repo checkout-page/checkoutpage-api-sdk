@@ -64,6 +64,13 @@ export type Coupon = CouponList['data'][number];
 export type CreateCouponResponse =
   operations['coupons/create']['responses']['201']['content']['application/json'];
 
+export type UpdateCouponParams = NonNullable<
+  operations['coupons/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateCouponResponse =
+  operations['coupons/update']['responses'][200]['content']['application/json'];
+
 export type CouponListArgs = operations['coupons/list']['parameters']['query'];
 
 export type CouponListParams = Omit<NonNullable<CouponListArgs>, 'limit'> & {
