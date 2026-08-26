@@ -203,7 +203,8 @@ export type ValidateTicketParams = NonNullable<
   operations['tickets/validate']['requestBody']
 >['content']['application/json'];
 
-export type TicketList = operations['tickets/list']['responses'][200]['content']['application/json'];
+export type TicketList =
+  operations['tickets/list']['responses'][200]['content']['application/json'];
 
 export type Ticket = TicketList['data'][number];
 
@@ -518,6 +519,16 @@ export type InvoiceListArgs = operations['invoices/list']['parameters']['query']
 export type InvoiceListParams = Omit<NonNullable<InvoiceListArgs>, 'limit'> & {
   limit?: number;
 };
+
+// Theme properties
+export type ThemePropertyList =
+  operations['theme-properties/list']['responses'][200]['content']['application/json'];
+
+export type ThemeProperty = ThemePropertyList['data'][number];
+
+export type ThemePropertyListArgs = operations['theme-properties/list']['parameters']['query'];
+
+export type ThemePropertyListParams = NonNullable<ThemePropertyListArgs>;
 
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';
