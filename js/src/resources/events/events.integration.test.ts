@@ -1558,6 +1558,52 @@ describe('EventsResource integration tests', () => {
     });
   });
 
+  describe('eventDetails.limitRegistrations', () => {
+    it('sets the flag on create and stamps enabledAt server-side', async () => {
+      const { data } = await createEvent({
+        eventDetails: { limitRegistrations: { enabled: true } },
+      });
+
+      expect(data.eventDetails?.limitRegistrations?.enabled).toBe(true);
+      expectIsoDate(data.eventDetails?.limitRegistrations?.enabledAt);
+    });
+
+    it('enables the flag via update', async () => {
+      const created = await createEvent();
+
+      const { data } = await client.events.update(created.data.id, {
+        eventDetails: { limitRegistrations: { enabled: true } },
+      });
+
+      expect(data.eventDetails?.limitRegistrations?.enabled).toBe(true);
+      expectIsoDate(data.eventDetails?.limitRegistrations?.enabledAt);
+    });
+
+    it('leaves the flag untouched when an eventDetails update omits it', async () => {
+      const created = await createEvent({ eventDetails: { limitRegistrations: { enabled: true } } });
+      const stamped = created.data.eventDetails?.limitRegistrations?.enabledAt;
+
+      const { data } = await client.events.update(created.data.id, {
+        eventDetails: { location: 'SDK Event Venue Updated' },
+      });
+
+      expect(data.eventDetails?.limitRegistrations?.enabled).toBe(true);
+      expect(data.eventDetails?.limitRegistrations?.enabledAt).toBe(stamped);
+    });
+
+    it('disables the flag while keeping the enabledAt audit stamp', async () => {
+      const created = await createEvent({ eventDetails: { limitRegistrations: { enabled: true } } });
+      const stamped = created.data.eventDetails?.limitRegistrations?.enabledAt;
+
+      const { data } = await client.events.update(created.data.id, {
+        eventDetails: { limitRegistrations: { enabled: false } },
+      });
+
+      expect(data.eventDetails?.limitRegistrations?.enabled).toBe(false);
+      expect(data.eventDetails?.limitRegistrations?.enabledAt).toBe(stamped);
+    });
+  });
+
   describe('delete', () => {
     it('archives an existing event', async () => {
       const created = await createEvent();
