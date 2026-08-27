@@ -161,52 +161,78 @@
         "description": "",
         "properties": {
           "abandonedCartEmailSentAt": {
+            "description": "Timestamp of the most recent abandoned-cart recovery email, if applicable.",
             "format": "date-time",
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "abandonedCartEmailStatus": {
+            "description": "The status of the abandonment email sent for this charge.\n    `pending`: No email has been sent. Stays as pending if isAbandoned is false.\n    `first_sent`: The first abandonment email has been sent.\n    `second_sent`: The second abandonment email has been sent.\n    `third_sent`: The third abandonment email has been sent.\n    `skipped`: The abandonment email processed was skipped.",
             "enum": [
               "pending",
               "first_sent",
               "second_sent",
               "third_sent",
-              "skipped"
+              "skipped",
+              null
             ],
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "abandonmentStatus": {
             "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the charge is not an abandoned cart.",
             "enum": [
               "abandoned",
-              "recovered"
+              "recovered",
+              null
             ],
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "amount": {
-            "description": "The total amount intended to be collected.",
+            "description": "Total amount billed for the record, in the smallest currency unit.",
             "type": "number"
           },
           "amountDue": {
-            "description": "The outstanding amount of money to be paid.",
+            "description": "Outstanding amount still due, in the smallest currency unit.",
             "type": "number"
           },
           "amountExcludingTax": {
-            "type": "number"
+            "description": "The total amount excluding tax.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "amountPaid": {
-            "description": "The amount of money paid toward the total.",
+            "description": "Amount collected toward `amount`, in the smallest currency unit. Refunded records retain their original `amountPaid` value; use `amountRefunded` to determine the refunded portion.",
             "type": "number"
           },
           "amountRefunded": {
-            "description": "The total amount refunded.",
-            "type": "number"
+            "description": "Total amount refunded, in the smallest currency unit. Present on all records and `0` when no refund has been issued. NOTE: For records created before 2026-01-22T06:43:28.000Z, some refunds may have incomplete metadata and show `amountRefunded: 0`.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "amountUsd": {
-            "type": "number"
+            "description": "The total amount in USD. Calculated using the exchange rate at the time of the transaction.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "billing": {
+            "description": "Billing details, including name, email, phone, and address.",
             "properties": {
               "address": {
+                "description": "Billing address.",
                 "properties": {
                   "city": {
                     "type": "string"
@@ -227,25 +253,49 @@
                     "type": "string"
                   }
                 },
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ]
               },
               "billingEmail": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "companyName": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "email": {
-                "type": "string"
+                "description": "Email from the billing details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string"
+                "description": "Name from the billing details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "phone": {
-                "type": "string"
+                "description": "Phone number from the billing details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "canceledAt": {
             "description": "The date this was canceled.",
@@ -260,109 +310,187 @@
             "type": "string"
           },
           "clientIp": {
+            "description": "Customer IP address.",
             "type": [
               "string",
               "null"
             ]
           },
           "coupon": {
+            "description": "Coupon details when a coupon was applied. `amountOff` is the fixed discount configured on the coupon, `percentOff` is the configured percentage discount, and `discount` is the total discount actually applied to this record.",
             "properties": {
               "amountOff": {
-                "type": "number"
+                "description": "Fixed amount off configured on the coupon. Cannot be combined with `percentOff`.",
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "code": {
-                "type": "string"
+                "description": "Coupon code.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "discount": {
-                "type": "number"
+                "description": "Total discount actually applied to this record.",
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "id": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "label": {
-                "type": "string"
+                "description": "Coupon label.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "percentOff": {
-                "type": "number"
+                "description": "Percentage off configured on the coupon. Cannot be combined with `amountOff`.",
+                "type": [
+                  "number",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "createdAt": {
+            "description": "ISO 8601 timestamp when this record was created.",
             "format": "date-time",
             "type": "string"
           },
           "currency": {
-            "type": "string"
+            "description": "Three-letter currency code.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "customerEmail": {
-            "type": "string"
+            "description": "Customer's email address (e.g. `andrew@example.com`). Present on all records with a linked customer entity. Null on incomplete checkouts. Searchable via `search`",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "customerId": {
-            "type": "string"
+            "description": "Customer  ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "customerName": {
-            "type": "string"
+            "description": "Customer full name. Searchable via `search`.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "discount": {
             "properties": {
               "amount": {
+                "description": "Total discount amount.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "amountOff": {
+                "description": "Fixed amount off the original price. Cannot be combined with `percentOff`.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "maxQuantity": {
+                "description": "Maximum quantity allowed for the discount.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "minQuantity": {
+                "description": "Minimum quantity required to be eligible for the discount.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "percentOff": {
+                "description": "Percentage off the original price. Cannot be combined with `amountOff`.",
                 "type": [
                   "number",
                   "null"
                 ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "dynamicPrice": {
-            "type": "number"
+            "description": "The dynamic price controlled by query params at checkout that overrides the default price configured on the page.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "eventTitle": {
-            "type": "string"
+            "description": "Human-readable event name. (e.g. \"Future of AI Summit 2026\", \"Conference\"). Present on all records. Use this instead of `pageSlug` when presenting event information. Searchable via `search`",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "fees": {
+            "description": "Array of fee objects.",
             "items": {
               "properties": {
                 "amount": {
-                  "type": "number"
+                  "description": "Fee amount in the smallest currency unit.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "name": {
-                  "type": "string"
+                  "description": "Fee name.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "percentage": {
-                  "type": "number"
+                  "description": "Fee percentage when applicable.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "fields": {
+            "description": "Submitted form field responses.",
             "items": {
               "properties": {
                 "element": {
@@ -382,22 +510,41 @@
                     "email",
                     "tax-id",
                     "phone",
-                    "country"
+                    "country",
+                    null
                   ],
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "fieldId": {
-                  "type": "string"
+                  "description": "Unique field ID.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "label": {
-                  "type": "string"
+                  "description": "Label shown for the field.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "meta": {
                   "additionalProperties": {},
-                  "type": "object"
+                  "type": [
+                    "object",
+                    "null"
+                  ]
                 },
                 "reference": {
-                  "type": "string"
+                  "description": "Reference key for the field.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "type": {
                   "enum": [
@@ -424,69 +571,133 @@
                     "shipping-address-line2",
                     "shipping-address-postal_code",
                     "shipping-address-state",
-                    "tax-id"
+                    "tax-id",
+                    null
                   ],
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "value": {
-                  "type": "string"
+                  "description": "Submitted value for the field.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "id": {
+            "description": "Unique record ID. Use this for pagination cursors.",
             "type": "string"
           },
           "invoiceId": {
-            "type": "string"
+            "description": "Generated invoice ID when an invoice exists. This confirms that an invoice was created, but not that the invoice document itself is available here.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "isAbandoned": {
-            "type": "boolean"
+            "description": "Whether the checkout flow was abandoned.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "lastRefundAt": {
-            "description": "The date this charge was most recently refunded.",
-            "type": "string"
+            "description": "Timestamp of the most recent refund action.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "lastRefundReason": {
-            "description": "The reason on the most recent refund transaction.",
-            "type": "string"
+            "description": "Reason code for the most recent refund action.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "lastRefundReasonNote": {
-            "description": "The custom note on the most recent refund transaction.",
-            "type": "string"
+            "description": "Free-text note for the most recent refund action. Refund reason fields reflect only the most recent refund action, not the full refund history.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "livemode": {
-            "type": "boolean"
+            "description": "Whether this is a real transaction.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "locale": {
-            "type": "string"
+            "description": "Customer's browser locale.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "orderId": {
-            "type": "string"
+            "description": "Human-readable order number.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "orderStatus": {
-            "type": "string"
+            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "enum": [
+              "active",
+              "canceled",
+              "archived",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "pageId": {
-            "type": "string"
+            "description": "Checkout page ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "pageSlug": {
+            "description": "Page URL slug. This is a URL fragment, not a human-friendly title.",
             "type": [
               "string",
               "null"
             ]
           },
           "paymentError": {
-            "type": "string"
+            "description": "Last payment-specific error message. This field is not guaranteed to be set and persists after a later successful payment, so check `status` before interpreting `paymentError`.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "paymentMethod": {
+            "description": "Payment method details, such as `gateway`, `method`, `brand`, `last4`, `country`, and `funding`. This may be absent when a payment method was never initiated.",
             "properties": {
               "brand": {
+                "description": "Payment method brand, such as visa or mastercard.",
                 "type": "string"
               },
               "country": {
+                "description": "Country associated with the payment method when available.",
                 "type": "string"
               },
               "expMonth": {
@@ -508,6 +719,7 @@
                 "type": "number"
               },
               "funding": {
+                "description": "Funding type for the payment method, such as debit or credit.",
                 "type": "string"
               },
               "gateway": {
@@ -519,9 +731,11 @@
                 "type": "string"
               },
               "last4": {
+                "description": "Last four digits of the payment method when available.",
                 "type": "string"
               },
               "method": {
+                "description": "Payment method, such as card.",
                 "type": "string"
               },
               "mode": {
@@ -532,28 +746,46 @@
                 "type": "string"
               },
               "wallet": {
+                "description": "Wallet used for the payment method when applicable.",
                 "type": "string"
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "paymentOption": {
+            "description": "Payment option details. `type` is `full` for standard payments and `manual` for invoice or offline flows; when `type` is `manual`, a `status: unpaid` record is expected and does not indicate a failure.",
             "properties": {
               "description": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "instructions": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "manualType": {
                 "enum": [
                   "invoice",
-                  "cash_on_delivery"
+                  "cash_on_delivery",
+                  null
                 ],
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "partialAmount": {
                 "type": [
@@ -565,36 +797,64 @@
                 "enum": [
                   "manual",
                   "partial",
-                  "full"
+                  "full",
+                  null
                 ],
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "queryParameters": {
             "additionalProperties": {
               "type": "string"
             },
-            "type": "object"
+            "description": "URL query parameters captured from the page link.",
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "recoveredAt": {
             "description": "The date at which the customer recovered their checkout through cart abandonment.",
             "format": "date-time",
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "screenWidth": {
-            "type": "number"
+            "description": "Customer's screen width in pixels.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "sellerId": {
-            "type": "string"
+            "description": "Seller ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "sessionId": {
-            "type": "string"
+            "description": "Unique session ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "shipping": {
+            "description": "Shipping details, including name, phone, and address. Often empty.",
             "properties": {
               "address": {
+                "description": "Shipping address.",
                 "properties": {
                   "city": {
                     "type": "string"
@@ -615,18 +875,33 @@
                     "type": "string"
                   }
                 },
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string"
+                "description": "Name from the shipping details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "phone": {
-                "type": "string"
+                "description": "Phone number from the shipping details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "status": {
+            "description": "Payment status.\n    `paid`: payment collected in full.\n    `partially_paid`: some amount collected, but a balance remains.\n    `refunded`: full refund issued. `amountPaid` still shows the original amount, not the net amount after refund. Use `amountRefunded` for the refund amount and `lastRefundAt` for the refund date.\n    `partial_refund`: partial refund issued. Use `amountRefunded` for the refund amount and `amountPaid - amountRefunded` for the net amount retained. `lastRefundAt`, `lastRefundReason`, and `lastRefundReasonNote` describe the most recent refund action.\n    `draft`: checkout in progress and not yet submitted.\n    `draft_expired`: checkout started but expired before completion.\n    `created`: payment record created, but no action taken yet.\n    `pending`: payment submitted and awaiting processing.\n    `unpaid`: manual or invoice payment created, but not yet paid. This is expected for invoice-based checkouts and is not a failure state.\n    `failed`: payment attempt was rejected. Check `paymentError` for the most recent error message when present.\n    `canceled`: payment was canceled.",
             "enum": [
               "created",
               "pending",
@@ -643,10 +918,16 @@
             "type": "string"
           },
           "stripeChargeId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "stripePaymentIntentId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "stripeTaxCalculationId": {
             "type": [
@@ -661,13 +942,20 @@
             ]
           },
           "taxAmount": {
-            "type": "number"
+            "description": "The total tax amount.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "taxBreakdown": {
             "items": {
               "properties": {
                 "taxAmount": {
-                  "type": "number"
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "taxRateDetails": {
                   "properties": {
@@ -696,19 +984,34 @@
                       ]
                     }
                   },
-                  "type": "object"
+                  "type": [
+                    "object",
+                    "null"
+                  ]
                 },
                 "taxType": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "taxabilityReason": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "taxableAmount": {
-                  "type": "number"
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 }
               },
-              "type": "object"
+              "type": [
+                "object",
+                "null"
+              ]
             },
             "type": "array"
           },
@@ -735,126 +1038,217 @@
             ]
           },
           "tickets": {
+            "description": "Array of ticket objects.",
             "items": {
               "properties": {
                 "bookingFeeAmount": {
-                  "type": "number"
+                  "description": "Booking fee charged for this ticket line item, in the smallest currency unit.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "capacity": {
-                  "type": "number"
+                  "description": "Ticket type capacity. If not set ticket capacity is unlimited.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "discount": {
                   "properties": {
                     "amount": {
+                      "description": "Total discount amount.",
                       "type": [
                         "number",
                         "null"
                       ]
                     },
                     "amountOff": {
+                      "description": "Fixed amount off the original price. Cannot be combined with `percentOff`.",
                       "type": [
                         "number",
                         "null"
                       ]
                     },
                     "maxQuantity": {
+                      "description": "Maximum quantity allowed for the discount.",
                       "type": [
                         "number",
                         "null"
                       ]
                     },
                     "minQuantity": {
+                      "description": "Minimum quantity required to be eligible for the discount.",
                       "type": [
                         "number",
                         "null"
                       ]
                     },
                     "percentOff": {
+                      "description": "Percentage off the original price. Cannot be combined with `amountOff`.",
                       "type": [
                         "number",
                         "null"
                       ]
                     }
                   },
-                  "type": "object"
+                  "type": [
+                    "object",
+                    "null"
+                  ]
                 },
                 "name": {
-                  "type": "string"
+                  "description": "Ticket name.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "originalPrice": {
-                  "type": "number"
+                  "description": "Per-ticket price before discount, in the smallest currency unit.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "price": {
-                  "type": "number"
+                  "description": "Per-ticket price in the smallest currency unit.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "pricing": {
+                  "description": "Ticket type pricing at time of purchase. 'pwyw' means the buyer chose the amount (pay what you want).",
                   "enum": [
                     "paid",
                     "pwyw",
-                    "free"
+                    "free",
+                    null
                   ],
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "quantity": {
-                  "type": "number"
+                  "description": "Quantity purchased for this ticket line item.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "reference": {
-                  "type": "string"
+                  "description": "Ticket reference.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "ticketGroupCapacity": {
-                  "type": "number"
+                  "description": "Ticket group capacity.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "ticketGroupId": {
-                  "type": "string"
+                  "description": "Ticket group ID.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "ticketGroupName": {
-                  "type": "string"
+                  "description": "Ticket group name.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "ticketGroupReference": {
-                  "type": "string"
+                  "description": "Ticket group reference.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "ticketTypeId": {
-                  "type": "string"
+                  "description": "Ticket type ID.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "transactionIds": {
             "items": {
               "type": "string"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "updatedAt": {
+            "description": "ISO 8601 timestamp when this record was last updated.",
             "format": "date-time",
             "type": "string"
           },
           "upsell": {
-            "type": "boolean"
+            "description": "Whether this record is an upsell. Upsell records are included in results by default.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "upsellChargeId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "upsellPageId": {
-            "type": "string"
+            "description": "The page ID that is redirected to for the upsell.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "upsellSubscriptionId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "userAgent": {
-            "type": "string"
+            "description": "Customer's browser user agent string.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "visitId": {
-            "type": "string"
+            "description": "Unique visit ID to track a customer across multiple sessions.",
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
           "id",
+          "status",
           "amount",
           "taxBreakdown",
-          "status",
           "createdAt",
           "updatedAt"
         ],
@@ -7985,52 +8379,78 @@
         "description": "",
         "properties": {
           "abandonedCartEmailSentAt": {
+            "description": "Timestamp of the most recent abandoned-cart recovery email, if applicable.",
             "format": "date-time",
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "abandonedCartEmailStatus": {
+            "description": "The status of the abandonment email sent for this charge.\n    `pending`: No email has been sent. Stays as pending if isAbandoned is false.\n    `first_sent`: The first abandonment email has been sent.\n    `second_sent`: The second abandonment email has been sent.\n    `third_sent`: The third abandonment email has been sent.\n    `skipped`: The abandonment email processed was skipped.",
             "enum": [
               "pending",
               "first_sent",
               "second_sent",
               "third_sent",
-              "skipped"
+              "skipped",
+              null
             ],
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "abandonmentStatus": {
             "description": "'abandoned': checkout was started but not completed and not recovered yet. 'recovered': was abandoned but the customer returned and paid. Absent when the charge is not an abandoned cart.",
             "enum": [
               "abandoned",
-              "recovered"
+              "recovered",
+              null
             ],
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "amount": {
-            "description": "The total amount intended to be collected.",
+            "description": "Total amount billed for the record, in the smallest currency unit.",
             "type": "number"
           },
           "amountDue": {
-            "description": "The outstanding amount of money to be paid.",
+            "description": "Outstanding amount still due, in the smallest currency unit.",
             "type": "number"
           },
           "amountExcludingTax": {
-            "type": "number"
+            "description": "The total amount excluding tax.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "amountPaid": {
-            "description": "The amount of money paid toward the total.",
+            "description": "Amount collected toward `amount`, in the smallest currency unit. Refunded records retain their original `amountPaid` value; use `amountRefunded` to determine the refunded portion.",
             "type": "number"
           },
           "amountRefunded": {
-            "description": "The total amount refunded.",
-            "type": "number"
+            "description": "Total amount refunded, in the smallest currency unit. Present on all records and `0` when no refund has been issued. NOTE: For records created before 2026-01-22T06:43:28.000Z, some refunds may have incomplete metadata and show `amountRefunded: 0`.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "amountUsd": {
-            "type": "number"
+            "description": "The total amount in USD. Calculated using the exchange rate at the time of the transaction.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "billing": {
+            "description": "Billing details, including name, email, phone, and address.",
             "properties": {
               "address": {
+                "description": "Billing address.",
                 "properties": {
                   "city": {
                     "type": "string"
@@ -8051,25 +8471,49 @@
                     "type": "string"
                   }
                 },
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ]
               },
               "billingEmail": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "companyName": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "email": {
-                "type": "string"
+                "description": "Email from the billing details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string"
+                "description": "Name from the billing details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "phone": {
-                "type": "string"
+                "description": "Phone number from the billing details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "canceledAt": {
             "description": "The date this was canceled.",
@@ -8084,109 +8528,187 @@
             "type": "string"
           },
           "clientIp": {
+            "description": "Customer IP address.",
             "type": [
               "string",
               "null"
             ]
           },
           "coupon": {
+            "description": "Coupon details when a coupon was applied. `amountOff` is the fixed discount configured on the coupon, `percentOff` is the configured percentage discount, and `discount` is the total discount actually applied to this record.",
             "properties": {
               "amountOff": {
-                "type": "number"
+                "description": "Fixed amount off configured on the coupon. Cannot be combined with `percentOff`.",
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "code": {
-                "type": "string"
+                "description": "Coupon code.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "discount": {
-                "type": "number"
+                "description": "Total discount actually applied to this record.",
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
               "id": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "label": {
-                "type": "string"
+                "description": "Coupon label.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "percentOff": {
-                "type": "number"
+                "description": "Percentage off configured on the coupon. Cannot be combined with `amountOff`.",
+                "type": [
+                  "number",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "createdAt": {
+            "description": "ISO 8601 timestamp when this record was created.",
             "format": "date-time",
             "type": "string"
           },
           "currency": {
-            "type": "string"
+            "description": "Three-letter currency code.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "customerEmail": {
-            "type": "string"
+            "description": "Customer's email address (e.g. `andrew@example.com`). Present on all records with a linked customer entity. Null on incomplete checkouts. Searchable via `search`",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "customerId": {
-            "type": "string"
+            "description": "Customer  ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "customerName": {
-            "type": "string"
+            "description": "Customer full name. Searchable via `search`.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "discount": {
             "properties": {
               "amount": {
+                "description": "Total discount amount.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "amountOff": {
+                "description": "Fixed amount off the original price. Cannot be combined with `percentOff`.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "maxQuantity": {
+                "description": "Maximum quantity allowed for the discount.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "minQuantity": {
+                "description": "Minimum quantity required to be eligible for the discount.",
                 "type": [
                   "number",
                   "null"
                 ]
               },
               "percentOff": {
+                "description": "Percentage off the original price. Cannot be combined with `amountOff`.",
                 "type": [
                   "number",
                   "null"
                 ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "discountedFromPrice": {
-            "type": "number"
+            "description": "Original pre-discount price in the smallest currency unit. Marketing tool only.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "dynamicPrice": {
-            "type": "number"
+            "description": "The dynamic price controlled by query params at checkout that overrides the default price configured on the page.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "fees": {
+            "description": "Array of fee objects.",
             "items": {
               "properties": {
                 "amount": {
-                  "type": "number"
+                  "description": "Fee amount in the smallest currency unit.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "name": {
-                  "type": "string"
+                  "description": "Fee name.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "percentage": {
-                  "type": "number"
+                  "description": "Fee percentage when applicable.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "fields": {
+            "description": "Submitted form field responses.",
             "items": {
               "properties": {
                 "element": {
@@ -8206,22 +8728,41 @@
                     "email",
                     "tax-id",
                     "phone",
-                    "country"
+                    "country",
+                    null
                   ],
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "fieldId": {
-                  "type": "string"
+                  "description": "Unique field ID.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "label": {
-                  "type": "string"
+                  "description": "Label shown for the field.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "meta": {
                   "additionalProperties": {},
-                  "type": "object"
+                  "type": [
+                    "object",
+                    "null"
+                  ]
                 },
                 "reference": {
-                  "type": "string"
+                  "description": "Reference key for the field.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "type": {
                   "enum": [
@@ -8248,75 +8789,147 @@
                     "shipping-address-line2",
                     "shipping-address-postal_code",
                     "shipping-address-state",
-                    "tax-id"
+                    "tax-id",
+                    null
                   ],
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "value": {
-                  "type": "string"
+                  "description": "Submitted value for the field.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "id": {
+            "description": "Unique record ID. Use this for pagination cursors.",
             "type": "string"
           },
           "invoiceId": {
-            "type": "string"
+            "description": "Generated invoice ID when an invoice exists. This confirms that an invoice was created, but not that the invoice document itself is available here.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "isAbandoned": {
-            "type": "boolean"
+            "description": "Whether the checkout flow was abandoned.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "lastRefundAt": {
-            "description": "The date this charge was most recently refunded.",
-            "type": "string"
+            "description": "Timestamp of the most recent refund action.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "lastRefundReason": {
-            "description": "The reason on the most recent refund transaction.",
-            "type": "string"
+            "description": "Reason code for the most recent refund action.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "lastRefundReasonNote": {
-            "description": "The custom note on the most recent refund transaction.",
-            "type": "string"
+            "description": "Free-text note for the most recent refund action. Refund reason fields reflect only the most recent refund action, not the full refund history.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "licenseKeyId": {
-            "type": "string"
+            "description": "Associated license key ID, if generate license keys is enabled.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "livemode": {
-            "type": "boolean"
+            "description": "Whether this is a real transaction.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "locale": {
-            "type": "string"
+            "description": "Customer's browser locale.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "orderId": {
-            "type": "string"
+            "description": "Human-readable order number.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "orderStatus": {
-            "type": "string"
+            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "enum": [
+              "active",
+              "canceled",
+              "archived",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "pageId": {
-            "type": "string"
+            "description": "Checkout page ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "pageSlug": {
+            "description": "Page URL slug. This is a URL fragment, not a human-friendly title.",
             "type": [
               "string",
               "null"
             ]
           },
           "payWhatYouWantPrice": {
-            "type": "number"
+            "description": "Pay-what-you-want amount selected by the customer, in the smallest currency unit.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "paymentError": {
-            "type": "string"
+            "description": "Last payment-specific error message. This field is not guaranteed to be set and persists after a later successful payment, so check `status` before interpreting `paymentError`.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "paymentMethod": {
+            "description": "Payment method details, such as `gateway`, `method`, `brand`, `last4`, `country`, and `funding`. This may be absent when a payment method was never initiated.",
             "properties": {
               "brand": {
+                "description": "Payment method brand, such as visa or mastercard.",
                 "type": "string"
               },
               "country": {
+                "description": "Country associated with the payment method when available.",
                 "type": "string"
               },
               "expMonth": {
@@ -8338,6 +8951,7 @@
                 "type": "number"
               },
               "funding": {
+                "description": "Funding type for the payment method, such as debit or credit.",
                 "type": "string"
               },
               "gateway": {
@@ -8349,9 +8963,11 @@
                 "type": "string"
               },
               "last4": {
+                "description": "Last four digits of the payment method when available.",
                 "type": "string"
               },
               "method": {
+                "description": "Payment method, such as card.",
                 "type": "string"
               },
               "mode": {
@@ -8362,28 +8978,46 @@
                 "type": "string"
               },
               "wallet": {
+                "description": "Wallet used for the payment method when applicable.",
                 "type": "string"
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "paymentOption": {
+            "description": "Payment option details. `type` is `full` for standard payments and `manual` for invoice or offline flows; when `type` is `manual`, a `status: unpaid` record is expected and does not indicate a failure.",
             "properties": {
               "description": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "instructions": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "manualType": {
                 "enum": [
                   "invoice",
-                  "cash_on_delivery"
+                  "cash_on_delivery",
+                  null
                 ],
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "partialAmount": {
                 "type": [
@@ -8395,12 +9029,19 @@
                 "enum": [
                   "manual",
                   "partial",
-                  "full"
+                  "full",
+                  null
                 ],
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "priceId": {
             "description": "Id of the price the customer selected at checkout.",
@@ -8413,43 +9054,84 @@
             "$ref": "#/components/schemas/PriceSnapshot"
           },
           "productId": {
-            "type": "string"
+            "description": "Product ID for the purchased item.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "productPrice": {
-            "type": "number"
+            "description": "Base product price in the smallest currency unit.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "productTitle": {
-            "type": "string"
+            "description": "Human-readable product name.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "quantity": {
-            "type": "number"
+            "description": "Quantity purchased for this payment record.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "queryParameters": {
             "additionalProperties": {
               "type": "string"
             },
-            "type": "object"
+            "description": "URL query parameters captured from the page link.",
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "recoveredAt": {
             "description": "The date at which the customer recovered their checkout through cart abandonment.",
             "format": "date-time",
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "screenWidth": {
-            "type": "number"
+            "description": "Customer's screen width in pixels.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "sellerId": {
-            "type": "string"
+            "description": "Seller ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "sessionId": {
-            "type": "string"
+            "description": "Unique session ID.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "setupFee": {
-            "type": "number"
+            "description": "One-time setup fee in the smallest currency unit.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "shipping": {
+            "description": "Shipping details, including name, phone, and address. Often empty.",
             "properties": {
               "address": {
+                "description": "Shipping address.",
                 "properties": {
                   "city": {
                     "type": "string"
@@ -8470,21 +9152,40 @@
                     "type": "string"
                   }
                 },
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string"
+                "description": "Name from the shipping details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "phone": {
-                "type": "string"
+                "description": "Phone number from the shipping details.",
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "sku": {
-            "type": "string"
+            "description": "SKU for the purchased product or variant.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "status": {
+            "description": "Payment status.\n    `paid`: payment collected in full.\n    `partially_paid`: some amount collected, but a balance remains.\n    `refunded`: full refund issued. `amountPaid` still shows the original amount, not the net amount after refund. Use `amountRefunded` for the refund amount and `lastRefundAt` for the refund date.\n    `partial_refund`: partial refund issued. Use `amountRefunded` for the refund amount and `amountPaid - amountRefunded` for the net amount retained. `lastRefundAt`, `lastRefundReason`, and `lastRefundReasonNote` describe the most recent refund action.\n    `draft`: checkout in progress and not yet submitted.\n    `draft_expired`: checkout started but expired before completion.\n    `created`: payment record created, but no action taken yet.\n    `pending`: payment submitted and awaiting processing.\n    `unpaid`: manual or invoice payment created, but not yet paid. This is expected for invoice-based checkouts and is not a failure state.\n    `failed`: payment attempt was rejected. Check `paymentError` for the most recent error message when present.\n    `canceled`: payment was canceled.",
             "enum": [
               "created",
               "pending",
@@ -8501,10 +9202,16 @@
             "type": "string"
           },
           "stripeChargeId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "stripePaymentIntentId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "stripeTaxCalculationId": {
             "type": [
@@ -8519,13 +9226,20 @@
             ]
           },
           "taxAmount": {
-            "type": "number"
+            "description": "The total tax amount.",
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "taxBreakdown": {
             "items": {
               "properties": {
                 "taxAmount": {
-                  "type": "number"
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "taxRateDetails": {
                   "properties": {
@@ -8554,19 +9268,34 @@
                       ]
                     }
                   },
-                  "type": "object"
+                  "type": [
+                    "object",
+                    "null"
+                  ]
                 },
                 "taxType": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "taxabilityReason": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "taxableAmount": {
-                  "type": "number"
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 }
               },
-              "type": "object"
+              "type": [
+                "object",
+                "null"
+              ]
             },
             "type": "array"
           },
@@ -8596,122 +9325,194 @@
             "items": {
               "type": "string"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "updatedAt": {
+            "description": "ISO 8601 timestamp when this record was last updated.",
             "format": "date-time",
             "type": "string"
           },
           "upsell": {
-            "type": "boolean"
+            "description": "Whether this record is an upsell. Upsell records are included in results by default.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "upsellChargeId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "upsellPageId": {
-            "type": "string"
+            "description": "The page ID that is redirected to for the upsell.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "upsellSubscriptionId": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "userAgent": {
-            "type": "string"
+            "description": "Customer's browser user agent string.",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "variants": {
+            "description": "Selected product variants and chosen options.",
             "items": {
               "properties": {
                 "name": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "reference": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "selectedOptions": {
                   "items": {
                     "properties": {
                       "additionalChargeAmount": {
-                        "type": "number"
+                        "type": [
+                          "number",
+                          "null"
+                        ]
                       },
                       "discount": {
                         "properties": {
                           "amount": {
+                            "description": "Total discount amount.",
                             "type": [
                               "number",
                               "null"
                             ]
                           },
                           "amountOff": {
+                            "description": "Fixed amount off the original price. Cannot be combined with `percentOff`.",
                             "type": [
                               "number",
                               "null"
                             ]
                           },
                           "maxQuantity": {
+                            "description": "Maximum quantity allowed for the discount.",
                             "type": [
                               "number",
                               "null"
                             ]
                           },
                           "minQuantity": {
+                            "description": "Minimum quantity required to be eligible for the discount.",
                             "type": [
                               "number",
                               "null"
                             ]
                           },
                           "percentOff": {
+                            "description": "Percentage off the original price. Cannot be combined with `amountOff`.",
                             "type": [
                               "number",
                               "null"
                             ]
                           }
                         },
-                        "type": "object"
+                        "type": [
+                          "object",
+                          "null"
+                        ]
                       },
                       "optionId": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "optionName": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "originalAdditionalChargeAmount": {
-                        "type": "number"
+                        "type": [
+                          "number",
+                          "null"
+                        ]
                       },
                       "quantity": {
-                        "type": "number"
+                        "type": [
+                          "number",
+                          "null"
+                        ]
                       },
                       "sku": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     },
                     "type": "object"
                   },
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "selectionType": {
                   "enum": [
                     "single",
                     "multiple",
-                    "quantity"
+                    "quantity",
+                    null
                   ],
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "variantId": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "type": "object"
             },
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "visitId": {
-            "type": "string"
+            "description": "Unique visit ID to track a customer across multiple sessions.",
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
           "id",
+          "status",
           "amount",
           "taxBreakdown",
-          "status",
           "createdAt",
           "updatedAt"
         ],
@@ -9707,6 +10508,28 @@
             "description": "Unique identifier for the product.",
             "example": "507f1f77bcf86cd799439011",
             "type": "string"
+          },
+          "limitPayments": {
+            "description": "Duplicate-payment prevention settings for this product. Applies to one-time payments only.",
+            "properties": {
+              "enabled": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "enabledAt": {
+                "description": "ISO 8601 timestamp of when duplicate-payment prevention was switched on.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "limitSubscriptions": {
             "description": "Duplicate-subscription prevention settings for this product.",
@@ -10747,6 +11570,22 @@
             },
             "type": [
               "array",
+              "null"
+            ]
+          },
+          "limitPayments": {
+            "description": "Duplicate-payment prevention settings for this product. Applies to one-time payments only.",
+            "properties": {
+              "enabled": {
+                "description": "Prevent a customer who has already paid for this product from paying again. One-time payments only. Defaults to `false`.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "type": [
+              "object",
               "null"
             ]
           },
@@ -18232,6 +19071,22 @@
             },
             "type": [
               "array",
+              "null"
+            ]
+          },
+          "limitPayments": {
+            "description": "Duplicate-payment prevention settings for this product. Applies to one-time payments only.",
+            "properties": {
+              "enabled": {
+                "description": "Prevent a customer who has already paid for this product from paying again. One-time payments only. Defaults to `false`.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "type": [
+              "object",
               "null"
             ]
           },
