@@ -149,4 +149,64 @@ describe('WebhookResource Integration Tests', () => {
       client.webhooks.create({ name: 'second', url, events: ['payment.paid'] })
     ).rejects.toBeInstanceOf(ConflictError);
   });
+
+  it('updates name, status, and events, and the change is reflected on get', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK update ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(created.id);
+
+    const { data: updated } = await client.webhooks.update(created.id, {
+      name: 'Renamed via SDK',
+      status: 'inactive',
+      events: ['booking.paid', 'booking.paid', 'ticket.created'],
+    });
+
+    expect(updated.id).toBe(created.id);
+    expect(updated.name).toBe('Renamed via SDK');
+    expect(updated.status).toBe('inactive');
+    expect(updated.events).toEqual(['booking.paid', 'ticket.created']);
+    expect(updated).not.toHaveProperty('secret');
+
+    const { data: fetched } = await client.webhooks.get(created.id);
+    expect(fetched.name).toBe('Renamed via SDK');
+    expect(fetched.status).toBe('inactive');
+    expect(fetched.events).toEqual(['booking.paid', 'ticket.created']);
+  });
+
+  it('rejects an http URL update with a ValidationError', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK update http ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(created.id);
+
+    await expect(
+      client.webhooks.update(created.id, { url: 'http://example.com/insecure' }),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it('rejects updating to a URL already used by another webhook with a ConflictError', async () => {
+    const takenUrl = hookUrl();
+    const { data: taken } = await client.webhooks.create({
+      name: `SDK update taken-url ${uniqueSuffix()}`,
+      url: takenUrl,
+      events: ['payment.paid'],
+    });
+    createdIds.push(taken.id);
+
+    const { data: toUpdate } = await client.webhooks.create({
+      name: `SDK update dup ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(toUpdate.id);
+
+    await expect(
+      client.webhooks.update(toUpdate.id, { url: takenUrl }),
+    ).rejects.toBeInstanceOf(ConflictError);
+  });
 });

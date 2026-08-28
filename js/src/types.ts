@@ -542,6 +542,13 @@ export type CreateWebhookResponse =
 export type WebhookResponse =
   operations['webhooks/get']['responses'][200]['content']['application/json'];
 
+export type UpdateWebhookParams = NonNullable<
+  operations['webhooks/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateWebhookResponse =
+  operations['webhooks/update']['responses'][200]['content']['application/json'];
+
 export type DeleteWebhookResponse =
   operations['webhooks/delete']['responses'][200]['content']['application/json'];
 

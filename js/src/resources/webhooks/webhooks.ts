@@ -3,6 +3,8 @@ import {
   CreateWebhookParams,
   CreateWebhookResponse,
   DeleteWebhookResponse,
+  UpdateWebhookParams,
+  UpdateWebhookResponse,
   WebhookList,
   WebhookListParams,
   WebhookResponse,
@@ -69,6 +71,29 @@ export class WebhookResource {
     return this.client.request<CreateWebhookResponse>({
       method: 'POST',
       path: '/v1/webhooks/',
+      body: params,
+    });
+  }
+
+  /**
+   * Update a webhook endpoint. Only the fields supplied are changed — omit a
+   * field to leave it as-is. `events` and `customHeaders` are replaced
+   * wholesale when supplied, not merged. `url` must use https. `status`
+   * accepts `active` or `inactive` (`failed` is system-managed).
+   *
+   * @example
+   * const { data: webhook } = await client.webhooks.update(webhookId, {
+   *   status: 'inactive',
+   * });
+   */
+  async update(webhookId: string, params: UpdateWebhookParams): Promise<UpdateWebhookResponse> {
+    if (!webhookId) {
+      throw new Error('Webhook ID is required');
+    }
+
+    return this.client.request<UpdateWebhookResponse>({
+      method: 'PATCH',
+      path: `/v1/webhooks/${webhookId}`,
       body: params,
     });
   }
