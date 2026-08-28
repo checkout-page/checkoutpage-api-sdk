@@ -36736,6 +36736,863 @@
           "Events"
         ]
       }
+    },
+    "/v1/webhooks/": {
+      "get": {
+        "description": "Returns the webhooks registered for the account, newest first, with delivery counters and the time of the last attempt. Secrets are never returned. Filter by `status` or by a single `event`.",
+        "operationId": "webhooks/list",
+        "parameters": [
+          {
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+              "example": 20,
+              "type": "string"
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "in": "query",
+            "name": "ending_before",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            }
+          },
+          {
+            "description": "Only return webhooks with this status. Valid values: active, inactive, failed.",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "description": "Only return webhooks with this status. Valid values: active, inactive, failed.",
+              "enum": [
+                "active",
+                "inactive",
+                "failed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return webhooks subscribed to this event, for example `payment.paid`.",
+            "in": "query",
+            "name": "event",
+            "required": false,
+            "schema": {
+              "description": "Only return webhooks subscribed to this event, for example `payment.paid`.",
+              "enum": [
+                "customer.created",
+                "customer.updated",
+                "payment.abandoned",
+                "payment.created",
+                "payment.paid",
+                "booking.abandoned",
+                "booking.created",
+                "booking.paid",
+                "ticket.created",
+                "submission.created",
+                "submission.updated",
+                "subscription.abandoned",
+                "subscription.created",
+                "subscription.trialing",
+                "subscription.scheduled",
+                "subscription.active",
+                "subscription.completed",
+                "subscription.canceled",
+                "subscription.expired"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "description": "A webhook endpoint subscribed to one or more events.",
+                        "properties": {
+                          "apiVersion": {
+                            "description": "Payload schema version delivered to the endpoint.",
+                            "enum": [
+                              "v1"
+                            ],
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "description": "ISO-8601 time the webhook was created.",
+                            "type": "string"
+                          },
+                          "customHeaders": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "description": "Extra headers sent with every delivery. An empty object when none are set.",
+                            "type": "object"
+                          },
+                          "deliveryCount": {
+                            "description": "Total delivery attempts made to this endpoint.",
+                            "type": "integer"
+                          },
+                          "events": {
+                            "description": "Events this endpoint receives.",
+                            "items": {
+                              "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                              "enum": [
+                                "customer.created",
+                                "customer.updated",
+                                "payment.abandoned",
+                                "payment.created",
+                                "payment.paid",
+                                "booking.abandoned",
+                                "booking.created",
+                                "booking.paid",
+                                "ticket.created",
+                                "submission.created",
+                                "submission.updated",
+                                "subscription.abandoned",
+                                "subscription.created",
+                                "subscription.trialing",
+                                "subscription.scheduled",
+                                "subscription.active",
+                                "subscription.completed",
+                                "subscription.canceled",
+                                "subscription.expired"
+                              ],
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "failureCount": {
+                            "description": "Deliveries that failed after all retries.",
+                            "type": "integer"
+                          },
+                          "id": {
+                            "description": "Unique identifier for the webhook.",
+                            "type": "string"
+                          },
+                          "lastFailureAt": {
+                            "description": "ISO-8601 time of the most recent failed delivery, or null.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "lastSuccessAt": {
+                            "description": "ISO-8601 time of the most recent successful delivery, or null.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "lastTriggeredAt": {
+                            "description": "ISO-8601 time of the most recent delivery attempt, or null if never triggered.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "description": "Internal label for the endpoint.",
+                            "type": "string"
+                          },
+                          "status": {
+                            "description": "`active` receives deliveries, `inactive` is paused by the seller, `failed` is set by Checkout Page after repeated delivery failures.",
+                            "enum": [
+                              "active",
+                              "inactive",
+                              "failed"
+                            ],
+                            "type": "string"
+                          },
+                          "successCount": {
+                            "description": "Deliveries that received a 2xx response.",
+                            "type": "integer"
+                          },
+                          "updatedAt": {
+                            "description": "ISO-8601 time the webhook was last changed.",
+                            "type": "string"
+                          },
+                          "url": {
+                            "description": "The https URL deliveries are POSTed to.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "url",
+                          "events",
+                          "status",
+                          "apiVersion",
+                          "customHeaders",
+                          "deliveryCount",
+                          "successCount",
+                          "failureCount",
+                          "lastTriggeredAt",
+                          "lastSuccessAt",
+                          "lastFailureAt",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "has_more": {
+                      "description": "Whether more records exist beyond the current page.",
+                      "type": "boolean"
+                    },
+                    "total": {
+                      "description": "Total number of records matching the query across all pages.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "has_more"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A page of webhooks"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List webhooks",
+        "tags": [
+          "Webhooks"
+        ]
+      },
+      "post": {
+        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This response is the only place the signing `secret` is ever returned — store it immediately. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
+        "operationId": "webhooks/create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "customHeaders": {
+                    "additionalProperties": {
+                      "maxLength": 1000,
+                      "type": "string"
+                    },
+                    "description": "Extra HTTP headers sent with every delivery, for example an `Authorization` header your receiver expects. Maximum 10.",
+                    "example": {
+                      "Authorization": "Bearer my-receiver-token"
+                    },
+                    "type": "object"
+                  },
+                  "events": {
+                    "description": "Events this endpoint receives. At least one is required; duplicates are ignored.",
+                    "example": [
+                      "payment.paid",
+                      "subscription.created"
+                    ],
+                    "items": {
+                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                      "enum": [
+                        "customer.created",
+                        "customer.updated",
+                        "payment.abandoned",
+                        "payment.created",
+                        "payment.paid",
+                        "booking.abandoned",
+                        "booking.created",
+                        "booking.paid",
+                        "ticket.created",
+                        "submission.created",
+                        "submission.updated",
+                        "subscription.abandoned",
+                        "subscription.created",
+                        "subscription.trialing",
+                        "subscription.scheduled",
+                        "subscription.active",
+                        "subscription.completed",
+                        "subscription.canceled",
+                        "subscription.expired"
+                      ],
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "name": {
+                    "description": "Internal label for the endpoint, shown in the dashboard.",
+                    "example": "CRM sync",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "secret": {
+                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. It is returned once, in the create response, and cannot be retrieved later.",
+                    "maxLength": 100,
+                    "minLength": 10,
+                    "type": "string"
+                  },
+                  "url": {
+                    "description": "The https URL Checkout Page POSTs event payloads to. Plain http is rejected.",
+                    "example": "https://example.com/hooks/checkoutpage",
+                    "format": "uri",
+                    "maxLength": 2048,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "url",
+                  "events"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "properties": {
+                        "apiVersion": {
+                          "description": "Payload schema version delivered to the endpoint.",
+                          "enum": [
+                            "v1"
+                          ],
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "description": "ISO-8601 time the webhook was created.",
+                          "type": "string"
+                        },
+                        "customHeaders": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "description": "Extra headers sent with every delivery. An empty object when none are set.",
+                          "type": "object"
+                        },
+                        "deliveryCount": {
+                          "description": "Total delivery attempts made to this endpoint.",
+                          "type": "integer"
+                        },
+                        "events": {
+                          "description": "Events this endpoint receives.",
+                          "items": {
+                            "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                            "enum": [
+                              "customer.created",
+                              "customer.updated",
+                              "payment.abandoned",
+                              "payment.created",
+                              "payment.paid",
+                              "booking.abandoned",
+                              "booking.created",
+                              "booking.paid",
+                              "ticket.created",
+                              "submission.created",
+                              "submission.updated",
+                              "subscription.abandoned",
+                              "subscription.created",
+                              "subscription.trialing",
+                              "subscription.scheduled",
+                              "subscription.active",
+                              "subscription.completed",
+                              "subscription.canceled",
+                              "subscription.expired"
+                            ],
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "failureCount": {
+                          "description": "Deliveries that failed after all retries.",
+                          "type": "integer"
+                        },
+                        "id": {
+                          "description": "Unique identifier for the webhook.",
+                          "type": "string"
+                        },
+                        "lastFailureAt": {
+                          "description": "ISO-8601 time of the most recent failed delivery, or null.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "lastSuccessAt": {
+                          "description": "ISO-8601 time of the most recent successful delivery, or null.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "lastTriggeredAt": {
+                          "description": "ISO-8601 time of the most recent delivery attempt, or null if never triggered.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "description": "Internal label for the endpoint.",
+                          "type": "string"
+                        },
+                        "secret": {
+                          "description": "Signing secret for this endpoint. Returned only in the create response — store it now, it cannot be retrieved later.",
+                          "type": "string"
+                        },
+                        "status": {
+                          "description": "`active` receives deliveries, `inactive` is paused by the seller, `failed` is set by Checkout Page after repeated delivery failures.",
+                          "enum": [
+                            "active",
+                            "inactive",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "successCount": {
+                          "description": "Deliveries that received a 2xx response.",
+                          "type": "integer"
+                        },
+                        "updatedAt": {
+                          "description": "ISO-8601 time the webhook was last changed.",
+                          "type": "string"
+                        },
+                        "url": {
+                          "description": "The https URL deliveries are POSTed to.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "url",
+                        "events",
+                        "status",
+                        "apiVersion",
+                        "customHeaders",
+                        "deliveryCount",
+                        "successCount",
+                        "failureCount",
+                        "lastTriggeredAt",
+                        "lastSuccessAt",
+                        "lastFailureAt",
+                        "createdAt",
+                        "updatedAt",
+                        "secret"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Webhook created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid webhook data, or the maximum of 10 webhooks has been reached"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict - A webhook with this URL already exists"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Create a webhook",
+        "tags": [
+          "Webhooks"
+        ]
+      }
+    },
+    "/v1/webhooks/:webhookId": {
+      "delete": {
+        "description": "Deletes a webhook. Deliveries stop immediately; the delivery history is retained. The response is the final state of the webhook — a later read of the same id returns 404.",
+        "operationId": "webhooks/delete",
+        "parameters": [
+          {
+            "description": "The webhook id, as returned by create or list.",
+            "in": "path",
+            "name": "webhookId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The webhook id, as returned by create or list."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "description": "A webhook endpoint subscribed to one or more events.",
+                      "properties": {
+                        "apiVersion": {
+                          "description": "Payload schema version delivered to the endpoint.",
+                          "enum": [
+                            "v1"
+                          ],
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "description": "ISO-8601 time the webhook was created.",
+                          "type": "string"
+                        },
+                        "customHeaders": {
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "description": "Extra headers sent with every delivery. An empty object when none are set.",
+                          "type": "object"
+                        },
+                        "deliveryCount": {
+                          "description": "Total delivery attempts made to this endpoint.",
+                          "type": "integer"
+                        },
+                        "events": {
+                          "description": "Events this endpoint receives.",
+                          "items": {
+                            "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                            "enum": [
+                              "customer.created",
+                              "customer.updated",
+                              "payment.abandoned",
+                              "payment.created",
+                              "payment.paid",
+                              "booking.abandoned",
+                              "booking.created",
+                              "booking.paid",
+                              "ticket.created",
+                              "submission.created",
+                              "submission.updated",
+                              "subscription.abandoned",
+                              "subscription.created",
+                              "subscription.trialing",
+                              "subscription.scheduled",
+                              "subscription.active",
+                              "subscription.completed",
+                              "subscription.canceled",
+                              "subscription.expired"
+                            ],
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "failureCount": {
+                          "description": "Deliveries that failed after all retries.",
+                          "type": "integer"
+                        },
+                        "id": {
+                          "description": "Unique identifier for the webhook.",
+                          "type": "string"
+                        },
+                        "lastFailureAt": {
+                          "description": "ISO-8601 time of the most recent failed delivery, or null.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "lastSuccessAt": {
+                          "description": "ISO-8601 time of the most recent successful delivery, or null.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "lastTriggeredAt": {
+                          "description": "ISO-8601 time of the most recent delivery attempt, or null if never triggered.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "description": "Internal label for the endpoint.",
+                          "type": "string"
+                        },
+                        "status": {
+                          "description": "`active` receives deliveries, `inactive` is paused by the seller, `failed` is set by Checkout Page after repeated delivery failures.",
+                          "enum": [
+                            "active",
+                            "inactive",
+                            "failed"
+                          ],
+                          "type": "string"
+                        },
+                        "successCount": {
+                          "description": "Deliveries that received a 2xx response.",
+                          "type": "integer"
+                        },
+                        "updatedAt": {
+                          "description": "ISO-8601 time the webhook was last changed.",
+                          "type": "string"
+                        },
+                        "url": {
+                          "description": "The https URL deliveries are POSTed to.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "url",
+                        "events",
+                        "status",
+                        "apiVersion",
+                        "customHeaders",
+                        "deliveryCount",
+                        "successCount",
+                        "failureCount",
+                        "lastTriggeredAt",
+                        "lastSuccessAt",
+                        "lastFailureAt",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Webhook deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Webhook not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Delete a webhook",
+        "tags": [
+          "Webhooks"
+        ]
+      }
     }
   },
   "servers": [
