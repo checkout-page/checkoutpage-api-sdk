@@ -59,6 +59,8 @@ describe('WebhookResource Integration Tests', () => {
     expect(byEvent.data.some(w => w.id === webhook.id)).toBe(true);
     const byOtherEvent = await client.webhooks.list({ event: 'ticket.created', limit: 100 });
     expect(byOtherEvent.data.some(w => w.id === webhook.id)).toBe(false);
+    const active = await client.webhooks.list({ status: 'active', limit: 100 });
+    expect(active.data.some(w => w.id === webhook.id)).toBe(true);
     const inactive = await client.webhooks.list({ status: 'inactive', limit: 100 });
     expect(inactive.data.some(w => w.id === webhook.id)).toBe(false);
   });
@@ -69,6 +71,7 @@ describe('WebhookResource Integration Tests', () => {
       url: hookUrl(),
       events: ['customer.created'],
     });
+    createdIds.push(webhook.id);
 
     const { data: deleted } = await client.webhooks.delete(webhook.id);
     expect(deleted.id).toBe(webhook.id);
