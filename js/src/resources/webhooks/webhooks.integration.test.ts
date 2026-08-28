@@ -3,6 +3,7 @@ import {
   CheckoutPageClient,
   createCheckoutPageClient,
   ConflictError,
+  NotFoundError,
   ValidationError,
 } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
@@ -56,6 +57,31 @@ describe('WebhookResource Integration Tests', () => {
     expect(webhook.events).toEqual(['payment.paid', 'subscription.created']);
     expect(webhook.status).toBe('active');
     expect(webhook.customHeaders).toEqual({ Authorization: 'Bearer receiver-token' });
+  });
+
+  it('gets a webhook by id without the secret', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK get ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(created.id);
+
+    const { data: fetched } = await client.webhooks.get(created.id);
+    expect(fetched.id).toBe(created.id);
+    expect(fetched.name).toBe(created.name);
+    expect(fetched).not.toHaveProperty('secret');
+  });
+
+  it('rejects get of a deleted webhook with a NotFoundError', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK get deleted ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    await client.webhooks.delete(created.id);
+
+    await expect(client.webhooks.get(created.id)).rejects.toBeInstanceOf(NotFoundError);
   });
 
   it('lists webhooks without secrets and filters by event and status', async () => {

@@ -167,6 +167,7 @@ export type {
   Webhook,
   WebhookList,
   WebhookListParams,
+  WebhookResponse,
   CreateWebhookParams,
   CreateWebhookResponse,
   DeleteWebhookResponse,

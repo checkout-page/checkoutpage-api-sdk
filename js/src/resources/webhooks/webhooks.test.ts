@@ -7,6 +7,7 @@ import type {
   DeleteWebhookResponse,
   Webhook,
   WebhookList,
+  WebhookResponse,
 } from '../../types';
 
 const WEBHOOK_ID = '507f1f77bcf86cd799439011';
@@ -36,6 +37,25 @@ describe('WebhookResource', () => {
   beforeEach(() => {
     client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
     webhooks = new WebhookResource(client);
+  });
+
+  describe('get', () => {
+    it('GETs the webhook by id', async () => {
+      const mockResponse = { data: mockWebhook } as unknown as WebhookResponse;
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await webhooks.get(WEBHOOK_ID);
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/webhooks/${WEBHOOK_ID}`,
+      });
+    });
+
+    it('throws when the id is empty', async () => {
+      await expect(webhooks.get('')).rejects.toThrow('Webhook ID is required');
+    });
   });
 
   describe('list', () => {
