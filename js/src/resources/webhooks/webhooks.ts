@@ -93,7 +93,7 @@ export class WebhookResource {
 
     return this.client.request<UpdateWebhookResponse>({
       method: 'PATCH',
-      path: `/v1/webhooks/${webhookId}`,
+      path: `/v1/webhooks/${encodeURIComponent(webhookId)}`,
       body: params,
     });
   }

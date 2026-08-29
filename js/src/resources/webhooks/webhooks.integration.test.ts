@@ -7,7 +7,7 @@ import {
   ValidationError,
 } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
-import { uniqueSuffix } from '../../test-helpers/test-lib';
+import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
 
 describe('WebhookResource Integration Tests', () => {
   let client: CheckoutPageClient;
@@ -185,7 +185,7 @@ describe('WebhookResource Integration Tests', () => {
     createdIds.push(created.id);
 
     await expect(
-      client.webhooks.update(created.id, { url: 'http://example.com/insecure' }),
+      client.webhooks.update(created.id, { url: 'http://example.com/insecure' })
     ).rejects.toBeInstanceOf(ValidationError);
   });
 
@@ -205,8 +205,90 @@ describe('WebhookResource Integration Tests', () => {
     });
     createdIds.push(toUpdate.id);
 
+    await expect(client.webhooks.update(toUpdate.id, { url: takenUrl })).rejects.toBeInstanceOf(
+      ConflictError
+    );
+  });
+
+  it('leaves fields the PATCH omits untouched', async () => {
+    const url = hookUrl();
+    const { data: created } = await client.webhooks.create({
+      name: `SDK partial ${uniqueSuffix()}`,
+      url,
+      events: ['payment.paid'],
+      customHeaders: { Authorization: 'Bearer receiver-token' },
+    });
+    createdIds.push(created.id);
+
+    const { data: updated } = await client.webhooks.update(created.id, { name: 'Only the name' });
+
+    expect(updated.name).toBe('Only the name');
+    expect(updated.url).toBe(url);
+    expect(updated.customHeaders).toEqual({ Authorization: 'Bearer receiver-token' });
+    expect(updated.events).toEqual(['payment.paid']);
+
+    const { data: fetched } = await client.webhooks.get(created.id);
+    expect(fetched.url).toBe(url);
+    expect(fetched.customHeaders).toEqual({ Authorization: 'Bearer receiver-token' });
+  });
+
+  it('updates the URL to a new https URL', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK update url ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(created.id);
+
+    const nextUrl = hookUrl();
+    const { data: updated } = await client.webhooks.update(created.id, { url: nextUrl });
+    expect(updated.url).toBe(nextUrl);
+
+    const { data: fetched } = await client.webhooks.get(created.id);
+    expect(fetched.url).toBe(nextUrl);
+  });
+
+  it('replaces customHeaders wholesale rather than merging them', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK headers ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+      customHeaders: { Authorization: 'Bearer receiver-token' },
+    });
+    createdIds.push(created.id);
+
+    const { data: updated } = await client.webhooks.update(created.id, {
+      customHeaders: { 'X-New': 'v' },
+    });
+
+    expect(updated.customHeaders).toEqual({ 'X-New': 'v' });
+
+    const { data: fetched } = await client.webhooks.get(created.id);
+    expect(fetched.customHeaders).toEqual({ 'X-New': 'v' });
+  });
+
+  it('rejects updating a deleted webhook with a NotFoundError', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `SDK update deleted ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(created.id);
+
+    await client.webhooks.delete(created.id);
+
+    await expect(client.webhooks.update(created.id, { name: 'ghost' })).rejects.toBeInstanceOf(
+      NotFoundError
+    );
+  });
+
+  // The service filters on { _id, seller, isDeleted } — drop `seller` and one key
+  // could repoint another seller's webhook at an attacker-controlled URL.
+  it('rejects updating a well-formed id the key does not own with a NotFoundError', async () => {
     await expect(
-      client.webhooks.update(toUpdate.id, { url: takenUrl }),
-    ).rejects.toBeInstanceOf(ConflictError);
+      client.webhooks.update(fakeObjectId('unowned-webhook'), {
+        url: 'https://attacker.example.com/hooks',
+      })
+    ).rejects.toBeInstanceOf(NotFoundError);
   });
 });
