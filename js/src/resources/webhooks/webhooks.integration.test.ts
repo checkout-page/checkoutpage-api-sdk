@@ -79,6 +79,8 @@ describe('WebhookResource Integration Tests', () => {
       url: hookUrl(),
       events: ['payment.paid'],
     });
+    createdIds.push(created.id);
+
     await client.webhooks.delete(created.id);
 
     await expect(client.webhooks.get(created.id)).rejects.toBeInstanceOf(NotFoundError);

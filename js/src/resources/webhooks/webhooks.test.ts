@@ -41,7 +41,7 @@ describe('WebhookResource', () => {
 
   describe('get', () => {
     it('GETs the webhook by id', async () => {
-      const mockResponse = { data: mockWebhook } as unknown as WebhookResponse;
+      const mockResponse: WebhookResponse = { data: mockWebhook };
       vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
 
       const result = await webhooks.get(WEBHOOK_ID);
