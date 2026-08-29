@@ -68,6 +68,10 @@ npx ts-node get-customer.ts
 
 - `get-bookings.ts` - List all bookings
 
+### Webhooks
+
+- `webhooks.ts` - Create, list, and delete webhook endpoints
+
 ## Getting Your API Key
 
 1. Log in to your Checkout Page dashboard at https://checkoutpage.com
