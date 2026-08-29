@@ -20,7 +20,7 @@ export function loadIntegrationConfig(): IntegrationConfig {
   dotenv.config({ path: envPath });
 
   const apiKey = process.env.CHECKOUTPAGE_API_KEY;
-  const baseUrl = process.env.CHECKOUTPAGE_BASE_URL || 'https://api.checkoutpage.com';
+  const baseUrl = process.env.CHECKOUTPAGE_BASE_URL;
   const testCustomerId = process.env.TEST_CUSTOMER_ID || '';
   const testCustomerEmail = process.env.TEST_CUSTOMER_EMAIL || '';
   const testSellerId = process.env.TEST_SELLER_ID || '';
@@ -37,6 +37,18 @@ export function loadIntegrationConfig(): IntegrationConfig {
         'To run integration tests:\n' +
         '1. Copy .env.test.example to .env.test\n' +
         '2. Add your CHECKOUTPAGE_API_KEY and test data\n' +
+        '3. Run: pnpm test:integration\n'
+    );
+  }
+
+  // No default: an unset base URL used to silently target production, so a
+  // half-filled .env.test ran create/update/delete against a live seller.
+  if (!baseUrl) {
+    throw new Error(
+      '\nIntegration tests will fail - no base URL provided.\n' +
+        'To run integration tests:\n' +
+        '1. Copy .env.test.example to .env.test\n' +
+        '2. Set CHECKOUTPAGE_BASE_URL explicitly (there is no default — production is never assumed)\n' +
         '3. Run: pnpm test:integration\n'
     );
   }
