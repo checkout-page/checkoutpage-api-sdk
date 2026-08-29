@@ -56,7 +56,8 @@ export class WebhookResource {
 
   /**
    * Delete a webhook endpoint. Deliveries stop immediately; the returned
-   * object is its final state and a later read of the id returns 404.
+   * object is its final state. The webhook no longer appears in `list()`,
+   * and deleting the same id again returns 404.
    */
   async delete(webhookId: string): Promise<DeleteWebhookResponse> {
     if (!webhookId) {
@@ -65,7 +66,7 @@ export class WebhookResource {
 
     return this.client.request<DeleteWebhookResponse>({
       method: 'DELETE',
-      path: `/v1/webhooks/${webhookId}`,
+      path: `/v1/webhooks/${encodeURIComponent(webhookId)}`,
     });
   }
 }
