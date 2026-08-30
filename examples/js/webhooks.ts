@@ -13,7 +13,7 @@ async function main() {
     customHeaders: { Authorization: 'Bearer receiver-token' },
   });
 
-  // The secret is returned here and nowhere else — store it now, it cannot be
+  // The secret is returned here and nowhere else, store it now, it cannot be
   // retrieved later.
   console.log('Created webhook:', created.data.id);
   console.log('Signing secret (store this now):', created.data.secret);
