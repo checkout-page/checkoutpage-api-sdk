@@ -58,6 +58,22 @@ describe('WebhookResource Integration Tests', () => {
     expect(webhook.customHeaders).toEqual({ Authorization: 'Bearer receiver-token' });
   });
 
+  it('creates a webhook with a secret', async () => {
+    const { data: webhook } = await client.webhooks.create({
+      name: `SDK ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid', 'payment.paid', 'subscription.created'],
+      customHeaders: { Authorization: 'Bearer receiver-token' },
+      secret: 'not-very-secret',
+    });
+    createdIds.push(webhook.id);
+
+    expect(webhook.secret).toBe('not-very-secret');
+    expect(webhook.events).toEqual(['payment.paid', 'subscription.created']);
+    expect(webhook.status).toBe('active');
+    expect(webhook.customHeaders).toEqual({ Authorization: 'Bearer receiver-token' });
+  });
+
   it('lists webhooks without secrets and filters by event and status', async () => {
     const { data: webhook } = await client.webhooks.create({
       name: `SDK list ${uniqueSuffix()}`,
