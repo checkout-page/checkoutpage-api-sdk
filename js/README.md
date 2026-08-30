@@ -327,6 +327,52 @@ const result = await checkoutpage.files.upload({
 console.log('File uploaded:', result.data.id);
 ```
 
+### Webhooks
+
+#### List webhook endpoints
+
+```typescript
+const { data: webhooks, has_more } = await checkoutpage.webhooks.list();
+```
+
+#### Filter by event and status
+
+```typescript
+const active = await checkoutpage.webhooks.list({
+  event: 'payment.paid',
+  status: 'active',
+  limit: 25,
+});
+```
+
+#### Create a webhook endpoint
+
+```typescript
+const { data: webhook } = await checkoutpage.webhooks.create({
+  name: 'CRM sync',
+  url: 'https://example.com/hooks/checkoutpage',
+  events: ['payment.paid', 'subscription.created'],
+  customHeaders: { Authorization: 'Bearer receiver-token' },
+});
+
+saveSecret(webhook.secret);
+```
+
+> The `url` must use **https** — an `http` URL is rejected with a `ValidationError`,
+> and a URL already registered on the account is rejected with a `ConflictError`.
+
+> The create response is the **only** place the signing `secret` is ever returned.
+> It is not included in `list()` responses and cannot be retrieved later — store it
+> when you create the endpoint. Omit `secret` to have one generated for you.
+
+#### Delete a webhook endpoint
+
+```typescript
+const { data: deleted } = await checkoutpage.webhooks.delete(webhook.id);
+```
+
+Deliveries stop immediately and the endpoint no longer appears in `list()`.
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:

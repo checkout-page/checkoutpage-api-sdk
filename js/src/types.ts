@@ -519,5 +519,28 @@ export type InvoiceListParams = Omit<NonNullable<InvoiceListArgs>, 'limit'> & {
   limit?: number;
 };
 
+// Webhooks
+export type WebhookList =
+  operations['webhooks/list']['responses'][200]['content']['application/json'];
+
+/** A webhook endpoint. The signing `secret` is only present on `CreateWebhookResponse`. */
+export type Webhook = WebhookList['data'][number];
+
+export type WebhookListArgs = operations['webhooks/list']['parameters']['query'];
+
+export type WebhookListParams = Omit<NonNullable<WebhookListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateWebhookParams = NonNullable<
+  operations['webhooks/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateWebhookResponse =
+  operations['webhooks/create']['responses'][201]['content']['application/json'];
+
+export type DeleteWebhookResponse =
+  operations['webhooks/delete']['responses'][200]['content']['application/json'];
+
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';

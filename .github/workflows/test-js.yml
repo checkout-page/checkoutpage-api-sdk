@@ -8,7 +8,7 @@ on:
       - 'spec/**'
       - '.github/workflows/test-js.yml'
   pull_request:
-    branches: [main]
+    branches: ['**']
     paths:
       - 'js/**'
       - 'spec/**'
