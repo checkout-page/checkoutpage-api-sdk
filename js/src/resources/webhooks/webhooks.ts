@@ -5,10 +5,29 @@ import {
   DeleteWebhookResponse,
   WebhookList,
   WebhookListParams,
+  WebhookResponse,
 } from '../../types';
 
 export class WebhookResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  /**
+   * Retrieve a single webhook endpoint by ID. The signing secret is never
+   * returned — only `create` returns it, and only once.
+   *
+   * @example
+   * const { data: webhook } = await client.webhooks.get(webhookId);
+   */
+  async get(webhookId: string): Promise<WebhookResponse> {
+    if (!webhookId) {
+      throw new Error('Webhook ID is required');
+    }
+
+    return this.client.request<WebhookResponse>({
+      method: 'GET',
+      path: `/v1/webhooks/${encodeURIComponent(webhookId)}`,
+    });
+  }
 
   /**
    * List webhook endpoints, newest first. Secrets are never returned.
@@ -56,8 +75,7 @@ export class WebhookResource {
 
   /**
    * Delete a webhook endpoint. Deliveries stop immediately; the returned
-   * object is its final state. The webhook no longer appears in `list()`,
-   * and deleting the same id again returns 404.
+   * object is its final state and a later `get` of the same id returns 404.
    */
   async delete(webhookId: string): Promise<DeleteWebhookResponse> {
     if (!webhookId) {
