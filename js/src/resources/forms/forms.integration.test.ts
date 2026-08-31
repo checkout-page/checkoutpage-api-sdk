@@ -1257,6 +1257,62 @@ describe('FormsResource integration tests', () => {
     });
   });
 
+  describe('formDetails.limitSubmissions', () => {
+    it('sets the flag on create and stamps enabledAt server-side', async () => {
+      const { data } = await createForm({
+        formDetails: { limitSubmissions: { enabled: true } },
+      });
+
+      expect(data.formDetails?.limitSubmissions?.enabled).toBe(true);
+      expectIsoDate(data.formDetails?.limitSubmissions?.enabledAt);
+    });
+
+    it('ignores a client-supplied enabledAt', async () => {
+      const forged = '1999-01-01T00:00:00.000Z';
+      const { data } = await createForm({
+        // enabledAt is response-only; the cast smuggles it past the input type
+        // to prove the server discards it.
+        formDetails: { limitSubmissions: { enabled: true, enabledAt: forged } as never },
+      });
+
+      expect(data.formDetails?.limitSubmissions?.enabled).toBe(true);
+      expect(data.formDetails?.limitSubmissions?.enabledAt).not.toBe(forged);
+    });
+
+    it('enables the flag via update', async () => {
+      const created = await createForm();
+
+      const { data } = await client.forms.update(created.data.id, {
+        formDetails: { limitSubmissions: { enabled: true } },
+      });
+
+      expect(data.formDetails?.limitSubmissions?.enabled).toBe(true);
+      expectIsoDate(data.formDetails?.limitSubmissions?.enabledAt);
+    });
+
+    it('leaves the flag untouched when an update omits formDetails', async () => {
+      const created = await createForm({ formDetails: { limitSubmissions: { enabled: true } } });
+      const stamped = created.data.formDetails?.limitSubmissions?.enabledAt;
+
+      const { data } = await client.forms.update(created.data.id, {
+        name: `SDK Form Renamed ${uniqueSuffix()}`,
+      });
+
+      expect(data.formDetails?.limitSubmissions?.enabled).toBe(true);
+      expect(data.formDetails?.limitSubmissions?.enabledAt).toBe(stamped);
+    });
+
+    it('clears the flag via formDetails: null while keeping the enabledAt audit stamp', async () => {
+      const created = await createForm({ formDetails: { limitSubmissions: { enabled: true } } });
+      const stamped = created.data.formDetails?.limitSubmissions?.enabledAt;
+
+      const { data } = await client.forms.update(created.data.id, { formDetails: null });
+
+      expect(data.formDetails?.limitSubmissions?.enabled).toBe(false);
+      expect(data.formDetails?.limitSubmissions?.enabledAt).toBe(stamped);
+    });
+  });
+
   describe('delete', () => {
     it('archives an existing form', async () => {
       const created = await createForm();

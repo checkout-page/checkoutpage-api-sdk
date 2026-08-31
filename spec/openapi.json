@@ -2837,6 +2837,22 @@
                   "null"
                 ]
               },
+              "limitRegistrations": {
+                "description": "Duplicate-registration prevention settings for this event.",
+                "properties": {
+                  "enabled": {
+                    "description": "Prevent a guest who has already registered for or bought tickets to this event from registering again. Defaults to `false`.",
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
               "location": {
                 "description": "Event location address. Required for `in_person` and `hybrid` events.",
                 "type": [
@@ -3608,6 +3624,31 @@
             },
             "type": [
               "array",
+              "null"
+            ]
+          },
+          "formDetails": {
+            "description": "Form behaviour settings.",
+            "properties": {
+              "limitSubmissions": {
+                "description": "Duplicate-submission prevention settings for this form.",
+                "properties": {
+                  "enabled": {
+                    "description": "Prevent a lead who has already submitted this form from submitting again. Defaults to `false`.",
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "type": [
+              "object",
               "null"
             ]
           },
@@ -5099,6 +5140,28 @@
                 "maxItems": 1,
                 "type": [
                   "array",
+                  "null"
+                ]
+              },
+              "limitRegistrations": {
+                "description": "Duplicate-registration prevention settings for this event.",
+                "properties": {
+                  "enabled": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "enabledAt": {
+                    "description": "ISO 8601 timestamp of when duplicate-registration prevention was switched on.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
                   "null"
                 ]
               },
@@ -6985,6 +7048,37 @@
                 },
                 "type": [
                   "array",
+                  "null"
+                ]
+              },
+              "formDetails": {
+                "description": "Form behaviour settings.",
+                "properties": {
+                  "limitSubmissions": {
+                    "description": "Duplicate-submission prevention settings for this form.",
+                    "properties": {
+                      "enabled": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "enabledAt": {
+                        "description": "ISO 8601 timestamp of when duplicate-submission prevention was switched on.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
                   "null"
                 ]
               },
@@ -17755,6 +17849,22 @@
                 "maxItems": 1,
                 "type": [
                   "array",
+                  "null"
+                ]
+              },
+              "limitRegistrations": {
+                "description": "Duplicate-registration prevention settings for this event.",
+                "properties": {
+                  "enabled": {
+                    "description": "Prevent a guest who has already registered for or bought tickets to this event from registering again. Defaults to `false`.",
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
                   "null"
                 ]
               },
@@ -28743,6 +28853,31 @@
                     },
                     "type": [
                       "array",
+                      "null"
+                    ]
+                  },
+                  "formDetails": {
+                    "description": "Form behaviour settings.",
+                    "properties": {
+                      "limitSubmissions": {
+                        "description": "Duplicate-submission prevention settings for this form.",
+                        "properties": {
+                          "enabled": {
+                            "description": "Prevent a lead who has already submitted this form from submitting again. Defaults to `false`.",
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": [
+                      "object",
                       "null"
                     ]
                   },
