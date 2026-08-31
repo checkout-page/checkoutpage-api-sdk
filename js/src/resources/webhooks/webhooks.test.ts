@@ -5,6 +5,7 @@ import type {
   CreateWebhookParams,
   CreateWebhookResponse,
   DeleteWebhookResponse,
+  UpdateWebhookResponse,
   Webhook,
   WebhookList,
   WebhookResponse,
@@ -125,6 +126,29 @@ describe('WebhookResource', () => {
         path: '/v1/webhooks/',
         body: params,
       });
+    });
+  });
+
+  describe('update', () => {
+    it('PATCHes the params as the body and returns the response', async () => {
+      const mockResponse = {
+        data: { ...mockWebhook, name: 'Renamed', status: 'inactive' },
+      } as unknown as UpdateWebhookResponse;
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const params = { name: 'Renamed', status: 'inactive' as const };
+      const result = await webhooks.update(WEBHOOK_ID, params);
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/webhooks/${WEBHOOK_ID}`,
+        body: params,
+      });
+    });
+
+    it('throws when the id is empty', async () => {
+      await expect(webhooks.update('', { name: 'x' })).rejects.toThrow('Webhook ID is required');
     });
   });
 
