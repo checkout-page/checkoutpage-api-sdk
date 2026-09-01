@@ -213,6 +213,13 @@ export type TicketListParams = Omit<NonNullable<TicketListArgs>, 'limit'> & {
   limit?: number;
 };
 
+export type UpdateTicketParams = NonNullable<
+  operations['tickets/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateTicketResponse =
+  operations['tickets/update']['responses'][200]['content']['application/json'];
+
 // Subscription Payments
 export type SubscriptionPaymentList =
   operations['subscription-payments/list']['responses'][200]['content']['application/json'];

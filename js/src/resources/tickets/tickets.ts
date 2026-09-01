@@ -2,6 +2,8 @@ import type { CheckoutPageApiClient } from '../../client';
 import type {
   TicketList,
   TicketListParams,
+  UpdateTicketParams,
+  UpdateTicketResponse,
   ValidateTicketData,
   ValidateTicketParams,
   ValidateTicketResponse,
@@ -31,6 +33,27 @@ export class TicketResource {
       method: 'GET',
       query,
       path: '/v1/tickets/',
+    });
+  }
+
+  async update(ticketId: string, params: UpdateTicketParams): Promise<UpdateTicketResponse> {
+    if (!ticketId) {
+      throw new Error('Ticket ID is required');
+    }
+
+    const body: Record<string, unknown> = {};
+
+    if (params.customerName !== undefined) {
+      body.customerName = params.customerName;
+    }
+    if (params.customerEmail !== undefined) {
+      body.customerEmail = params.customerEmail;
+    }
+
+    return this.client.request<UpdateTicketResponse>({
+      method: 'PATCH',
+      path: `/v1/tickets/${ticketId}`,
+      body,
     });
   }
 

@@ -30,6 +30,7 @@ const BASE_TICKET: TicketList['data'][number] = {
   customer: CUSTOMER_ID,
   customerId: CUSTOMER_ID,
   ticketShortId: 'ABC12345',
+  qrCodeData: TICKET_ID,
   status: 'PAID',
   checkIns: [],
   customerEmail: 'customer@example.com',
@@ -122,6 +123,62 @@ describe('TicketResource', () => {
           starting_after: CURSOR,
         },
       });
+    });
+  });
+
+  describe('update', () => {
+    it('updates the attendee name and email', async () => {
+      const updated = {
+        ...BASE_TICKET,
+        customerName: 'Jane Updated',
+        customerEmail: 'jane-updated@example.com',
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: updated });
+
+      const result = await ticketResource.update(TICKET_ID, {
+        customerName: 'Jane Updated',
+        customerEmail: 'jane-updated@example.com',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: {
+          customerName: 'Jane Updated',
+          customerEmail: 'jane-updated@example.com',
+        },
+      });
+      expect(result.data.customerName).toBe('Jane Updated');
+    });
+
+    it('omits fields that were not supplied', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.update(TICKET_ID, { customerName: 'Only Name' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: { customerName: 'Only Name' },
+      });
+    });
+
+    it('passes null through to clear the attendee name', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.update(TICKET_ID, { customerName: null });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: { customerName: null },
+      });
+    });
+
+    it('throws when the ticket id is missing', async () => {
+      await expect(ticketResource.update('', { customerName: 'X' })).rejects.toThrow(
+        'Ticket ID is required',
+      );
     });
   });
 
