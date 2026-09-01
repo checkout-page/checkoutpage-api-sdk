@@ -1038,7 +1038,7 @@
             ]
           },
           "ticketPdfUrl": {
-            "description": "Temporary signed URL for the booking ticket PDF, containing every ticket in the booking. The URL expires 30 minutes after the response is generated — request the booking again for a fresh link, and do not store the URL. `null` when no PDF exists yet (for example the booking is unpaid or abandoned).",
+            "description": "Temporary signed URL for the booking ticket PDF, containing every ticket in the booking. The URL expires 30 minutes after the response is generated, so never store it in your database. To keep a permanent copy, download the PDF and store the file yourself. To link to the PDF from your app, retrieve the booking again when rendering — every response carries a fresh URL. `null` when no PDF exists yet (for example the booking is unpaid or abandoned).",
             "type": [
               "string",
               "null"
