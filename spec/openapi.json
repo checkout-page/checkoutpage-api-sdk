@@ -14821,6 +14821,14 @@
           "data": {
             "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
             "properties": {
+              "attendeeEmail": {
+                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                "type": "string"
+              },
+              "attendeeName": {
+                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                "type": "string"
+              },
               "bookingId": {
                 "allOf": [
                   {
@@ -14922,7 +14930,8 @@
                 ]
               },
               "customerEmail": {
-                "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
+                "deprecated": true,
+                "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
                 "type": "string"
               },
               "customerId": {
@@ -14936,7 +14945,8 @@
                 ]
               },
               "customerName": {
-                "description": "Name of the customer who booked, denormalised at purchase time.",
+                "deprecated": true,
+                "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
                 "type": "string"
               },
               "discountAmount": {
@@ -15159,6 +15169,7 @@
               "status",
               "checkIns",
               "customerEmail",
+              "attendeeEmail",
               "livemode",
               "orderedAt",
               "metadata",
@@ -16579,6 +16590,12 @@
       "TicketModel": {
         "description": "",
         "properties": {
+          "attendeeEmail": {
+            "type": "string"
+          },
+          "attendeeName": {
+            "type": "string"
+          },
           "canceledAt": {
             "format": "date-time",
             "type": "string"
@@ -16607,9 +16624,13 @@
             "type": "string"
           },
           "customerEmail": {
+            "deprecated": true,
+            "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
             "type": "string"
           },
           "customerName": {
+            "deprecated": true,
+            "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
             "type": "string"
           },
           "discountAmount": {
@@ -16706,6 +16727,7 @@
           "status",
           "orderId",
           "customerEmail",
+          "attendeeEmail",
           "ticketTypeId",
           "checkIns",
           "ticketShortId",
@@ -36589,12 +36611,12 @@
             }
           },
           {
-            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `customerName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `customerName`, `customerEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee — always review all matches, not just the first.",
+            "description": "Case-insensitive search matched against `attendeeEmail`, `attendeeName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `attendeeEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `attendeeName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `attendeeName`, `attendeeEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee - always review all matches, not just the first.",
             "in": "query",
             "name": "search",
             "required": false,
             "schema": {
-              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `customerName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `customerName`, `customerEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee — always review all matches, not just the first.",
+              "description": "Case-insensitive search matched against `attendeeEmail`, `attendeeName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `attendeeEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `attendeeName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `attendeeName`, `attendeeEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee - always review all matches, not just the first.",
               "type": "string"
             }
           },
@@ -36733,6 +36755,14 @@
                       "items": {
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
+                          "attendeeEmail": {
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
+                          "attendeeName": {
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
                           "bookingId": {
                             "allOf": [
                               {
@@ -36834,7 +36864,8 @@
                             ]
                           },
                           "customerEmail": {
-                            "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
                             "type": "string"
                           },
                           "customerId": {
@@ -36848,7 +36879,8 @@
                             ]
                           },
                           "customerName": {
-                            "description": "Name of the customer who booked, denormalised at purchase time.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
                             "type": "string"
                           },
                           "discountAmount": {
@@ -37071,6 +37103,7 @@
                           "status",
                           "checkIns",
                           "customerEmail",
+                          "attendeeEmail",
                           "livemode",
                           "orderedAt",
                           "metadata",
@@ -37165,7 +37198,7 @@
     },
     "/v1/tickets/:ticketId": {
       "patch": {
-        "description": "Updates the attendee details held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `customerName` to clear it; `customerEmail` cannot be cleared. Requests with an empty body are rejected. When the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects the updated attendee details. The booking and customer records are not affected.",
+        "description": "Updates the attendee details held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. Requests with an empty body are rejected. When the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects the updated attendee details. The booking and customer records are not affected.",
         "operationId": "tickets/update",
         "parameters": [
           {
@@ -37191,12 +37224,12 @@
               "schema": {
                 "additionalProperties": false,
                 "properties": {
-                  "customerEmail": {
+                  "attendeeEmail": {
                     "description": "Attendee email held on the ticket. Trimmed and lowercased before storage. Cannot be cleared via this endpoint. Changing it does not affect the booking or customer records.",
                     "format": "email",
                     "type": "string"
                   },
-                  "customerName": {
+                  "attendeeName": {
                     "description": "Attendee name held on the ticket. Shown on the ticket PDF and the guest list. Send `null` to clear.",
                     "minLength": 1,
                     "type": [
@@ -46321,6 +46354,14 @@
                       "ticket": {
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
+                          "attendeeEmail": {
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
+                          "attendeeName": {
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
                           "bookingId": {
                             "allOf": [
                               {
@@ -46422,7 +46463,8 @@
                             ]
                           },
                           "customerEmail": {
-                            "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
                             "type": "string"
                           },
                           "customerId": {
@@ -46436,7 +46478,8 @@
                             ]
                           },
                           "customerName": {
-                            "description": "Name of the customer who booked, denormalised at purchase time.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
                             "type": "string"
                           },
                           "discountAmount": {
@@ -46659,6 +46702,7 @@
                           "status",
                           "checkIns",
                           "customerEmail",
+                          "attendeeEmail",
                           "livemode",
                           "orderedAt",
                           "metadata",

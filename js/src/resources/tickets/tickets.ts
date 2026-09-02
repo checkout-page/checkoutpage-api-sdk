@@ -43,11 +43,11 @@ export class TicketResource {
 
     const body: Record<string, unknown> = {};
 
-    if (params.customerName !== undefined) {
-      body.customerName = params.customerName;
+    if (params.attendeeName !== undefined) {
+      body.attendeeName = params.attendeeName;
     }
-    if (params.customerEmail !== undefined) {
-      body.customerEmail = params.customerEmail;
+    if (params.attendeeEmail !== undefined) {
+      body.attendeeEmail = params.attendeeEmail;
     }
 
     return this.client.request<UpdateTicketResponse>({
