@@ -21223,7 +21223,7 @@
     "/v1/bookings/:bookingId/ticket-pdf": {
       "get": {
         "description": "Returns the booking's ticket PDF as the response body (`application/pdf`), containing every ticket in the booking. The response is the file itself, not JSON. Each request returns the current PDF, so ticket changes (for example attendee updates) are reflected on the next download. This endpoint requires your API key, so never call it from a browser, mobile app, or email link - proxy it through your own server instead: your user clicks a download button in your app, your server calls this endpoint and streams the file back. To link to the PDF from an email or host it at a stable URL, download it and attach or re-host it yourself. Returns 404 when no PDF exists, for example when the booking is unpaid or abandoned.",
-        "operationId": "bookings/ticket-pdf",
+        "operationId": "bookings/download-ticket-pdf",
         "parameters": [
           {
             "description": "The ID of the booking to retrieve. Use the list bookings endpoint first if you need to discover a booking ID by email, name, customer, event, or date range.",
