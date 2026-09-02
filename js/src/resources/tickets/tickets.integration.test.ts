@@ -48,6 +48,33 @@ describe('TicketResource Integration Tests', () => {
       expect(new Date(ticket.orderedAt).toString()).not.toBe('Invalid Date');
     });
 
+    it('returns the check-in code on every ticket', async () => {
+      const result = await client.tickets.list({ limit: 10 });
+
+      if (result.data.length === 0) {
+        throw new Error('No tickets found in the integration environment for check-in code test');
+      }
+
+      for (const ticket of result.data) {
+        expect(typeof ticket.checkInCode).toBe('string');
+        expect(ticket.checkInCode.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('validate accepts a listed ticket check-in code', async () => {
+      const listed = await client.tickets.list({ limit: 20, status: 'PAID' });
+      const ticket = listed.data[0];
+
+      if (!ticket) {
+        throw new Error('No PAID ticket available for check-in code round-trip test');
+      }
+
+      const validation = await client.tickets.validate(ticket.checkInCode);
+
+      expect(validation.success).toBe(true);
+      expect(validation.ticket.id).toBe(ticket.id);
+    });
+
     it('should respect limit and report has_more', async () => {
       const result = await client.tickets.list({ limit: 1 });
 
