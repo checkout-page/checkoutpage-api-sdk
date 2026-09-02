@@ -45,7 +45,7 @@ describe('BookingResource Integration Tests', () => {
 
   describe('downloadTicketPdf', () => {
     it('downloads the ticket PDF as bytes for a booking that has one', async () => {
-      const seed = await client.bookings.list({ limit: 20 });
+      const seed = await client.bookings.list({ limit: 5, status: 'paid' });
       if (seed.data.length === 0) throw Error('No bookings available to download a PDF for');
 
       let pdf: ArrayBuffer | null = null;
@@ -59,6 +59,7 @@ describe('BookingResource Integration Tests', () => {
           throw err;
         }
       }
+
       if (!pdf) throw Error('No booking with a ticket PDF found in the first page');
 
       expect(pdf.byteLength).toBeGreaterThan(0);
@@ -66,9 +67,9 @@ describe('BookingResource Integration Tests', () => {
     });
 
     it('should throw a 404 for a booking that does not exist', async () => {
-      await expect(
-        client.bookings.downloadTicketPdf('507f1f77bcf86cd799439011')
-      ).rejects.toThrow(NotFoundError);
+      await expect(client.bookings.downloadTicketPdf('507f1f77bcf86cd799439011')).rejects.toThrow(
+        NotFoundError
+      );
     });
   });
 

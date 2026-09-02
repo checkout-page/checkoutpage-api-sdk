@@ -30,9 +30,13 @@ const BASE_TICKET: TicketList['data'][number] = {
   customer: CUSTOMER_ID,
   customerId: CUSTOMER_ID,
   ticketShortId: 'ABC12345',
+  checkInCode: TICKET_ID,
   status: 'PAID',
   checkIns: [],
+  customerName: 'Customer Example',
+  attendeeName: 'Customer Example',
   customerEmail: 'customer@example.com',
+  attendeeEmail: 'customer@example.com',
   livemode: true,
   orderedAt: '2024-01-01T00:00:00.000Z',
   metadata: [],
@@ -125,6 +129,84 @@ describe('TicketResource', () => {
     });
   });
 
+  describe('update', () => {
+    it('updates the attendee name and email', async () => {
+      const updated = {
+        ...BASE_TICKET,
+        attendeeName: 'Jane Updated',
+        attendeeEmail: 'jane-updated@example.com',
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: updated });
+
+      const result = await ticketResource.update(TICKET_ID, {
+        attendeeName: 'Jane Updated',
+        attendeeEmail: 'jane-updated@example.com',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: {
+          attendeeName: 'Jane Updated',
+          attendeeEmail: 'jane-updated@example.com',
+        },
+      });
+      expect(result.data.attendeeName).toBe('Jane Updated');
+    });
+
+    it('omits fields that were not supplied', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.update(TICKET_ID, { attendeeName: 'Only Name' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: { attendeeName: 'Only Name' },
+      });
+    });
+
+    it('forwards metadata operations', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.update(TICKET_ID, {
+        metadata: [
+          { key: 'seat', value: 'A1' },
+          { key: 'diet', value: null },
+        ],
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: {
+          metadata: [
+            { key: 'seat', value: 'A1' },
+            { key: 'diet', value: null },
+          ],
+        },
+      });
+    });
+
+    it('passes null through to clear the attendee name', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.update(TICKET_ID, { attendeeName: null });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: { attendeeName: null },
+      });
+    });
+
+    it('throws when the ticket id is missing', async () => {
+      await expect(ticketResource.update('', { attendeeName: 'X' })).rejects.toThrow(
+        'Ticket ID is required',
+      );
+    });
+  });
+
   describe('validate', () => {
     it('should validate a ticket with QR code without metadata', async () => {
       const mockValidationResponse: ValidateTicketResponse = {
@@ -137,6 +219,7 @@ describe('TicketResource', () => {
           status: 'PAID',
           orderId: 'order_123',
           customerEmail: 'customer@example.com',
+          attendeeEmail: 'customer@example.com',
           ticketTypeId: 'ticket_type_123',
           checkIns: [],
           ticketShortId: 'TICK123',
@@ -178,6 +261,7 @@ describe('TicketResource', () => {
           status: 'PAID',
           orderId: 'order_123',
           customerEmail: 'customer@example.com',
+          attendeeEmail: 'customer@example.com',
           ticketTypeId: 'ticket_type_123',
           checkIns: [],
           ticketShortId: 'TICK123',
@@ -242,6 +326,7 @@ describe('TicketResource', () => {
           status: 'PAID',
           orderId: 'order_123',
           customerEmail: 'customer@example.com',
+          attendeeEmail: 'customer@example.com',
           ticketTypeId: 'ticket_type_123',
           checkIns: [],
           ticketShortId: 'TICK123',
@@ -285,6 +370,7 @@ describe('TicketResource', () => {
           status: 'PAID',
           orderId: 'order_123',
           customerEmail: 'customer@example.com',
+          attendeeEmail: 'customer@example.com',
           ticketTypeId: 'ticket_type_123',
           checkIns: [
             {
@@ -336,6 +422,7 @@ describe('TicketResource', () => {
           status: 'PAID',
           orderId: 'order_123',
           customerEmail: 'customer@example.com',
+          attendeeEmail: 'customer@example.com',
           ticketTypeId: 'ticket_type_123',
           checkIns: [],
           ticketShortId: 'TICK123',
@@ -413,6 +500,7 @@ describe('TicketResource', () => {
           status: 'CANCELED',
           orderId: 'order_123',
           customerEmail: 'customer@example.com',
+          attendeeEmail: 'customer@example.com',
           ticketTypeId: 'ticket_type_123',
           checkIns: [],
           ticketShortId: 'TICK123',

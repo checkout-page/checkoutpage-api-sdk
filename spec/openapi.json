@@ -14815,6 +14815,375 @@
         },
         "type": "array"
       },
+      "TicketDetailResponse": {
+        "description": "Envelope containing one ticket.",
+        "properties": {
+          "data": {
+            "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
+            "properties": {
+              "attendeeEmail": {
+                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                "type": "string"
+              },
+              "attendeeName": {
+                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                "type": "string"
+              },
+              "bookingId": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "description": "Id of the booking (Charge) this ticket was created from. A booking of three tickets produces three ticket records sharing one `bookingId`. Retrieve it with the bookings endpoint."
+                  }
+                ]
+              },
+              "canceledAt": {
+                "description": "ISO-8601 UTC timestamp the ticket was canceled. Absent while the ticket is valid.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "charge": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "deprecated": true,
+                    "description": "Deprecated alias of `bookingId`. Use `bookingId` instead."
+                  }
+                ]
+              },
+              "checkInCode": {
+                "description": "Check-in credential for this ticket. Encode it as a QR code for the Checkout Page check-in scanner, or post it to the ticket validation endpoint, to admit the guest. Treat the value as opaque - its format may change.",
+                "type": "string"
+              },
+              "checkIns": {
+                "description": "Full check-in history, oldest first. Empty when the guest has never been checked in. A guest checked in and back out again has multiple entries.",
+                "items": {
+                  "properties": {
+                    "checkedInAt": {
+                      "description": "ISO-8601 UTC timestamp the check-in was recorded.",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "checkedInBy": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Id of the user (event staff or seller) who performed the check-in."
+                        }
+                      ]
+                    },
+                    "method": {
+                      "description": "How the check-in happened. `QRSCAN` is the ticket QR code scanned at the door, `MANUAL` is door staff tapping the check-in button.",
+                      "enum": [
+                        "QRSCAN",
+                        "MANUAL"
+                      ],
+                      "type": "string"
+                    },
+                    "status": {
+                      "description": "Check-in state recorded by this scan. `CHECKEDIN` admitted the guest, `UNCHECKEDIN` reversed an earlier check-in.",
+                      "enum": [
+                        "UNCHECKEDIN",
+                        "CHECKEDIN"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "method",
+                    "checkedInBy",
+                    "checkedInAt"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "couponAmount": {
+                "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
+                "type": "number"
+              },
+              "createdAt": {
+                "description": "ISO-8601 UTC timestamp the ticket record was created.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "currency": {
+                "description": "Lowercase ISO 4217 currency code for every amount on the ticket (e.g. \"usd\").",
+                "type": "string"
+              },
+              "customer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "deprecated": true,
+                    "description": "Deprecated alias of `customerId`. Use `customerId` instead."
+                  }
+                ]
+              },
+              "customerEmail": {
+                "deprecated": true,
+                "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
+                "type": "string"
+              },
+              "customerId": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "description": "Id of the customer who booked the ticket."
+                  }
+                ]
+              },
+              "customerName": {
+                "deprecated": true,
+                "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
+                "type": "string"
+              },
+              "discountAmount": {
+                "description": "Bulk discount allocated to this ticket, in the smallest currency unit. Booking-level discounts are apportioned across the tickets in the booking.",
+                "type": "number"
+              },
+              "feeAmount": {
+                "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
+                "type": "number"
+              },
+              "id": {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              "latestCheckIn": {
+                "description": "Most recent entry from `checkIns`, denormalised for filtering. Absent when the guest has never been checked in — treat that as not checked in.",
+                "properties": {
+                  "checkedInAt": {
+                    "description": "ISO-8601 UTC timestamp the check-in was recorded.",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "checkedInBy": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Id of the user (event staff or seller) who performed the check-in."
+                      }
+                    ]
+                  },
+                  "method": {
+                    "description": "How the check-in happened. `QRSCAN` is the ticket QR code scanned at the door, `MANUAL` is door staff tapping the check-in button.",
+                    "enum": [
+                      "QRSCAN",
+                      "MANUAL"
+                    ],
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "Check-in state recorded by this scan. `CHECKEDIN` admitted the guest, `UNCHECKEDIN` reversed an earlier check-in.",
+                    "enum": [
+                      "UNCHECKEDIN",
+                      "CHECKEDIN"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "status",
+                  "method",
+                  "checkedInBy",
+                  "checkedInAt"
+                ],
+                "type": "object"
+              },
+              "livemode": {
+                "description": "Whether the ticket came from a live payment. Test-mode tickets are never returned by the seller API.",
+                "type": "boolean"
+              },
+              "metadata": {
+                "description": "Custom key/value entries attached to the ticket, typically written by door staff during check-in. Maximum 20 entries.",
+                "items": {
+                  "properties": {
+                    "addedAt": {
+                      "description": "ISO-8601 UTC timestamp the entry was added.",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "key": {
+                      "description": "Metadata key. Maximum 50 characters.",
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "Metadata value. Maximum 100 characters.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value",
+                    "addedAt"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "orderId": {
+                "description": "Human-readable order reference shared by every ticket in the same booking. Shown to the customer on receipts and tickets.",
+                "type": "string"
+              },
+              "orderedAt": {
+                "description": "ISO-8601 UTC timestamp the booking was placed. Matches across every ticket in the same booking.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "originalPrice": {
+                "description": "Price of the ticket before any discounts, coupons, taxes or fees, in the smallest currency unit (e.g. cents).",
+                "type": "number"
+              },
+              "page": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "deprecated": true,
+                    "description": "Deprecated alias of `pageId`. Use `pageId` instead."
+                  }
+                ]
+              },
+              "pageId": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "description": "Id of the event page the ticket was purchased from."
+                  }
+                ]
+              },
+              "pricing": {
+                "description": "Pricing model of the ticket type at the time of purchase. `paid` is a fixed price, `pwyw` means the buyer chose the amount, `free` is a zero-price ticket. Absent on tickets created before this field existed.",
+                "enum": [
+                  "paid",
+                  "pwyw",
+                  "free"
+                ],
+                "type": "string"
+              },
+              "revenue": {
+                "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                "type": "number"
+              },
+              "seller": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "deprecated": true,
+                    "description": "Deprecated alias of `sellerId`. Use `sellerId` instead."
+                  }
+                ]
+              },
+              "sellerId": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "description": "Id of the seller account the ticket belongs to."
+                  }
+                ]
+              },
+              "status": {
+                "description": "Lifecycle state of the ticket. `PAID` is valid for admission, `CANCELED` was voided by refund or cancellation and must not be admitted.",
+                "enum": [
+                  "PAID",
+                  "CANCELED"
+                ],
+                "type": "string"
+              },
+              "taxAmount": {
+                "description": "Tax allocated to this ticket, in the smallest currency unit. Booking-level tax is apportioned across the tickets in the booking.",
+                "type": "number"
+              },
+              "ticketShortId": {
+                "description": "Short uppercase alphanumeric code identifying the ticket (e.g. \"A1B2C3D4\"). Printed on the ticket and quoted by guests at the door — search on it to find a specific attendee.",
+                "type": "string"
+              },
+              "ticketType": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "deprecated": true,
+                    "description": "Deprecated alias of `ticketTypeId`. Use `ticketTypeId` instead."
+                  }
+                ]
+              },
+              "ticketTypeId": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqueIdentifier"
+                  },
+                  {
+                    "description": "Id of the ticket type purchased (e.g. General Admission, VIP). Ticket types belong to a ticket group on the event."
+                  }
+                ]
+              },
+              "updatedAt": {
+                "description": "ISO-8601 UTC timestamp the ticket record was last updated.",
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "seller",
+              "sellerId",
+              "charge",
+              "bookingId",
+              "orderId",
+              "page",
+              "pageId",
+              "ticketType",
+              "ticketTypeId",
+              "originalPrice",
+              "discountAmount",
+              "feeAmount",
+              "taxAmount",
+              "couponAmount",
+              "revenue",
+              "customer",
+              "customerId",
+              "ticketShortId",
+              "checkInCode",
+              "status",
+              "checkIns",
+              "customerEmail",
+              "attendeeEmail",
+              "livemode",
+              "orderedAt",
+              "metadata",
+              "createdAt",
+              "updatedAt"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
       "TicketGroupBulkDiscountResponse": {
         "properties": {
           "maxQuantity": {
@@ -16221,6 +16590,12 @@
       "TicketModel": {
         "description": "",
         "properties": {
+          "attendeeEmail": {
+            "type": "string"
+          },
+          "attendeeName": {
+            "type": "string"
+          },
           "canceledAt": {
             "format": "date-time",
             "type": "string"
@@ -16249,9 +16624,13 @@
             "type": "string"
           },
           "customerEmail": {
+            "deprecated": true,
+            "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
             "type": "string"
           },
           "customerName": {
+            "deprecated": true,
+            "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
             "type": "string"
           },
           "discountAmount": {
@@ -16348,6 +16727,7 @@
           "status",
           "orderId",
           "customerEmail",
+          "attendeeEmail",
           "ticketTypeId",
           "checkIns",
           "ticketShortId",
@@ -36231,12 +36611,12 @@
             }
           },
           {
-            "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `customerName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `customerName`, `customerEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee — always review all matches, not just the first.",
+            "description": "Case-insensitive search matched against `attendeeEmail`, `attendeeName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `attendeeEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `attendeeName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `attendeeName`, `attendeeEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee - always review all matches, not just the first.",
             "in": "query",
             "name": "search",
             "required": false,
             "schema": {
-              "description": "Case-insensitive search matched against `customerEmail`, `customerName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `customerEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `customerName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `customerName`, `customerEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee — always review all matches, not just the first.",
+              "description": "Case-insensitive search matched against `attendeeEmail`, `attendeeName`, `ticketShortId` and `orderId`. The query is routed based on input shape: email-like inputs (`jane@example.com`) match `attendeeEmail` only; an 8-digit input (`64819115`) is treated as a whole order reference and matched exactly against `orderId`; other identifier-like inputs containing a digit, underscore or hyphen match `ticketShortId` and `orderId`; multi-word inputs match `attendeeName` and `ticketShortId`; any other single bare word falls back to a broad substring match across `attendeeName`, `attendeeEmail` and `ticketShortId`. Best default when the guest is identified by name, email, or the code on their ticket. A booking produces one ticket per attendee - always review all matches, not just the first.",
               "type": "string"
             }
           },
@@ -36375,6 +36755,14 @@
                       "items": {
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
+                          "attendeeEmail": {
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
+                          "attendeeName": {
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
                           "bookingId": {
                             "allOf": [
                               {
@@ -36476,7 +36864,8 @@
                             ]
                           },
                           "customerEmail": {
-                            "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
                             "type": "string"
                           },
                           "customerId": {
@@ -36490,7 +36879,8 @@
                             ]
                           },
                           "customerName": {
-                            "description": "Name of the customer who booked, denormalised at purchase time.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
                             "type": "string"
                           },
                           "discountAmount": {
@@ -36713,6 +37103,7 @@
                           "status",
                           "checkIns",
                           "customerEmail",
+                          "attendeeEmail",
                           "livemode",
                           "orderedAt",
                           "metadata",
@@ -36800,6 +37191,165 @@
           }
         ],
         "summary": "List all tickets",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/v1/tickets/:ticketId": {
+      "patch": {
+        "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. The booking and customer records are not affected.",
+        "operationId": "tickets/update",
+        "parameters": [
+          {
+            "description": "The ID of the ticket to update.",
+            "in": "path",
+            "name": "ticketId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the ticket to update."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "attendeeEmail": {
+                    "description": "Attendee email held on the ticket. Trimmed and lowercased before storage. Cannot be cleared via this endpoint. Changing it does not affect the booking or customer records.",
+                    "format": "email",
+                    "type": "string"
+                  },
+                  "attendeeName": {
+                    "description": "Attendee name held on the ticket. Shown on the ticket PDF and the guest list. Send `null` to clear.",
+                    "minLength": 1,
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "metadata": {
+                    "description": "Per-entry metadata operations, matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched. A ticket holds at most 20 entries. Door staff also write metadata during check-in, so avoid replace-everything sync patterns.",
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "key": {
+                          "description": "Metadata key. Maximum 50 characters.",
+                          "maxLength": 50,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "value": {
+                          "description": "Metadata value, maximum 100 characters. Send `null` to delete the key.",
+                          "maxLength": 100,
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 20,
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketDetailResponse"
+                }
+              }
+            },
+            "description": "Ticket updated successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Ticket not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Update a ticket",
         "tags": [
           "Events"
         ]
@@ -45833,6 +46383,14 @@
                       "ticket": {
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
+                          "attendeeEmail": {
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
+                          "attendeeName": {
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "type": "string"
+                          },
                           "bookingId": {
                             "allOf": [
                               {
@@ -45934,7 +46492,8 @@
                             ]
                           },
                           "customerEmail": {
-                            "description": "Email of the customer who booked, denormalised at purchase time. The ticket is delivered here.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeEmail`. Use `attendeeEmail` instead.",
                             "type": "string"
                           },
                           "customerId": {
@@ -45948,7 +46507,8 @@
                             ]
                           },
                           "customerName": {
-                            "description": "Name of the customer who booked, denormalised at purchase time.",
+                            "deprecated": true,
+                            "description": "Deprecated alias of `attendeeName`. Use `attendeeName` instead.",
                             "type": "string"
                           },
                           "discountAmount": {
@@ -46171,6 +46731,7 @@
                           "status",
                           "checkIns",
                           "customerEmail",
+                          "attendeeEmail",
                           "livemode",
                           "orderedAt",
                           "metadata",
