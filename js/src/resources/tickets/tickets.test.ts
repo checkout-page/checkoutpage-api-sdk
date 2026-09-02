@@ -30,7 +30,7 @@ const BASE_TICKET: TicketList['data'][number] = {
   customer: CUSTOMER_ID,
   customerId: CUSTOMER_ID,
   ticketShortId: 'ABC12345',
-  qrCodeData: TICKET_ID,
+  checkInCode: TICKET_ID,
   status: 'PAID',
   checkIns: [],
   customerEmail: 'customer@example.com',

@@ -14847,6 +14847,10 @@
                   }
                 ]
               },
+              "checkInCode": {
+                "description": "Check-in credential for this ticket. Encode it as a QR code for the Checkout Page check-in scanner, or post it to the ticket validation endpoint, to admit the guest. Treat the value as opaque - its format may change.",
+                "type": "string"
+              },
               "checkIns": {
                 "description": "Full check-in history, oldest first. Empty when the guest has never been checked in. A guest checked in and back out again has multiple entries.",
                 "items": {
@@ -15063,10 +15067,6 @@
                 ],
                 "type": "string"
               },
-              "qrCodeData": {
-                "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque - its format may change.",
-                "type": "string"
-              },
               "revenue": {
                 "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                 "type": "number"
@@ -15155,7 +15155,7 @@
               "customer",
               "customerId",
               "ticketShortId",
-              "qrCodeData",
+              "checkInCode",
               "status",
               "checkIns",
               "customerEmail",
