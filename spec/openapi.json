@@ -1038,7 +1038,7 @@
             ]
           },
           "ticketPdfUrl": {
-            "description": "Stable URL for the booking ticket PDF, containing every ticket in the booking. The URL does not expire and is safe to store — each request returns the current PDF, so later changes (for example attendee updates) are reflected automatically. Treat it as a secret: anyone holding the URL can download the tickets. `null` when no PDF exists yet (for example the booking is unpaid or abandoned).",
+            "description": "Stable URL for the booking ticket PDF, containing every ticket in the booking. The URL does not expire and is safe to store - each request returns the current PDF, so later changes (for example attendee updates) are reflected automatically. Treat it as a secret: anyone holding the URL can download the tickets. `null` when no PDF exists yet (for example the booking is unpaid or abandoned).",
             "type": [
               "string",
               "null"
@@ -36517,7 +36517,7 @@
                             "type": "string"
                           },
                           "qrCodeData": {
-                            "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque — its format may change.",
+                            "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque - its format may change.",
                             "type": "string"
                           },
                           "revenue": {
@@ -45975,7 +45975,7 @@
                             "type": "string"
                           },
                           "qrCodeData": {
-                            "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque — its format may change.",
+                            "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque - its format may change.",
                             "type": "string"
                           },
                           "revenue": {
