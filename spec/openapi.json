@@ -37198,7 +37198,7 @@
     },
     "/v1/tickets/:ticketId": {
       "patch": {
-        "description": "Updates the attendee details held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. Requests with an empty body are rejected. When the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects the updated attendee details. The booking and customer records are not affected.",
+        "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. The booking and customer records are not affected.",
         "operationId": "tickets/update",
         "parameters": [
           {
@@ -37236,6 +37236,35 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "metadata": {
+                    "description": "Per-entry metadata operations, matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched. A ticket holds at most 20 entries. Door staff also write metadata during check-in, so avoid replace-everything sync patterns.",
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "key": {
+                          "description": "Metadata key. Maximum 50 characters.",
+                          "maxLength": 50,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "value": {
+                          "description": "Metadata value, maximum 100 characters. Send `null` to delete the key.",
+                          "maxLength": 100,
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "value"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 20,
+                    "type": "array"
                   }
                 },
                 "type": "object"

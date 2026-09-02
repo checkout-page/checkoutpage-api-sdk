@@ -166,6 +166,28 @@ describe('TicketResource', () => {
       });
     });
 
+    it('forwards metadata operations', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.update(TICKET_ID, {
+        metadata: [
+          { key: 'seat', value: 'A1' },
+          { key: 'diet', value: null },
+        ],
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/tickets/${TICKET_ID}`,
+        body: {
+          metadata: [
+            { key: 'seat', value: 'A1' },
+            { key: 'diet', value: null },
+          ],
+        },
+      });
+    });
+
     it('passes null through to clear the attendee name', async () => {
       vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
 

@@ -49,6 +49,9 @@ export class TicketResource {
     if (params.attendeeEmail !== undefined) {
       body.attendeeEmail = params.attendeeEmail;
     }
+    if (params.metadata !== undefined) {
+      body.metadata = params.metadata;
+    }
 
     return this.client.request<UpdateTicketResponse>({
       method: 'PATCH',
