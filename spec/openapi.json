@@ -36401,6 +36401,10 @@
                               }
                             ]
                           },
+                          "checkInCode": {
+                            "description": "Check-in credential for this ticket. Encode it as a QR code for the Checkout Page check-in scanner, or post it to the ticket validation endpoint, to admit the guest. Treat the value as opaque - its format may change.",
+                            "type": "string"
+                          },
                           "checkIns": {
                             "description": "Full check-in history, oldest first. Empty when the guest has never been checked in. A guest checked in and back out again has multiple entries.",
                             "items": {
@@ -36617,10 +36621,6 @@
                             ],
                             "type": "string"
                           },
-                          "qrCodeData": {
-                            "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque - its format may change.",
-                            "type": "string"
-                          },
                           "revenue": {
                             "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
@@ -36709,7 +36709,7 @@
                           "customer",
                           "customerId",
                           "ticketShortId",
-                          "qrCodeData",
+                          "checkInCode",
                           "status",
                           "checkIns",
                           "customerEmail",
@@ -36805,14 +36805,14 @@
         ]
       }
     },
-    "/v1/tickets/validate/:qrCode": {
+    "/v1/tickets/validate/:checkInCode": {
       "post": {
-        "description": "Validates a ticket using its QR code. Scan the QR code and pass the data and optionally manages metadata entries",
+        "description": "Validates a ticket using its check-in code - the value read from the ticket QR code (the ticket's `checkInCode`). Optionally manages metadata entries on the ticket.",
         "operationId": "tickets/validate",
         "parameters": [
           {
             "in": "path",
-            "name": "qrCode",
+            "name": "checkInCode",
             "required": true,
             "schema": {
               "minLength": 1,
@@ -45859,6 +45859,10 @@
                               }
                             ]
                           },
+                          "checkInCode": {
+                            "description": "Check-in credential for this ticket. Encode it as a QR code for the Checkout Page check-in scanner, or post it to the ticket validation endpoint, to admit the guest. Treat the value as opaque - its format may change.",
+                            "type": "string"
+                          },
                           "checkIns": {
                             "description": "Full check-in history, oldest first. Empty when the guest has never been checked in. A guest checked in and back out again has multiple entries.",
                             "items": {
@@ -46075,10 +46079,6 @@
                             ],
                             "type": "string"
                           },
-                          "qrCodeData": {
-                            "description": "Payload to encode when rendering a QR code for this ticket. Scanning the rendered code with the Checkout Page check-in scanner (or posting it to the ticket validation endpoint) admits the guest. Treat the value as opaque - its format may change.",
-                            "type": "string"
-                          },
                           "revenue": {
                             "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
@@ -46167,7 +46167,7 @@
                           "customer",
                           "customerId",
                           "ticketShortId",
-                          "qrCodeData",
+                          "checkInCode",
                           "status",
                           "checkIns",
                           "customerEmail",
