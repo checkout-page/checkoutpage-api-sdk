@@ -43,6 +43,35 @@ describe('BookingResource Integration Tests', () => {
     });
   });
 
+  describe('downloadTicketPdf', () => {
+    it('downloads the ticket PDF as bytes for a booking that has one', async () => {
+      const seed = await client.bookings.list({ limit: 20 });
+      if (seed.data.length === 0) throw Error('No bookings available to download a PDF for');
+
+      let pdf: ArrayBuffer | null = null;
+      for (const booking of seed.data) {
+        try {
+          pdf = await client.bookings.downloadTicketPdf(booking.id);
+          break;
+        } catch (err) {
+          // Unpaid/abandoned bookings have no PDF; keep looking.
+          if (err instanceof NotFoundError) continue;
+          throw err;
+        }
+      }
+      if (!pdf) throw Error('No booking with a ticket PDF found in the first page');
+
+      expect(pdf.byteLength).toBeGreaterThan(0);
+      expect(new TextDecoder().decode(pdf.slice(0, 5))).toBe('%PDF-');
+    });
+
+    it('should throw a 404 for a booking that does not exist', async () => {
+      await expect(
+        client.bookings.downloadTicketPdf('507f1f77bcf86cd799439011')
+      ).rejects.toThrow(NotFoundError);
+    });
+  });
+
   describe('list', () => {
     it('should fetch a list of bookings', async () => {
       const result = await client.bookings.list();

@@ -64,6 +64,29 @@ export class CheckoutPageApiClient {
     return await this.handleResponse<T>(response);
   }
 
+  /**
+   * Perform a request whose successful response is a binary file rather than
+   * JSON (e.g. a ticket PDF). Errors are parsed and thrown the same way as
+   * request().
+   */
+  async requestRaw(options: RequestOptions): Promise<ArrayBuffer> {
+    const url = this.buildUrl(options.path, options.query);
+
+    const response = await fetch(url, {
+      method: options.method,
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'User-Agent': '@checkoutpage/sdk/0.1.0',
+      },
+    });
+
+    if (!response.ok) {
+      await this.handleResponse<never>(response);
+    }
+
+    return await response.arrayBuffer();
+  }
+
   private buildUrl(
     path: string,
     query?: Record<string, string | number | boolean | undefined>

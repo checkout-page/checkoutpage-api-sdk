@@ -69,6 +69,25 @@ describe('BookingResource', () => {
     });
   });
 
+  describe('downloadTicketPdf', () => {
+    it('requests the ticket-pdf endpoint via the raw binary path', async () => {
+      const bytes = new TextEncoder().encode('%PDF-1.4 fake').buffer;
+      vi.spyOn(client, 'requestRaw').mockResolvedValue(bytes);
+
+      const result = await bookingResource.downloadTicketPdf(BOOKING_ID_1);
+
+      expect(client.requestRaw).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/bookings/${BOOKING_ID_1}/ticket-pdf`,
+      });
+      expect(result).toBe(bytes);
+    });
+
+    it('should throw error for missing booking id', async () => {
+      await expect(bookingResource.downloadTicketPdf('')).rejects.toThrow('Booking ID is required');
+    });
+  });
+
   describe('list', () => {
     it('should call the bookings endpoint with all default query params when called with no args', async () => {
       const mockBookingList: BookingList = { data: [], total: 0, has_more: false };
