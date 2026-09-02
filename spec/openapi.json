@@ -37165,7 +37165,7 @@
     },
     "/v1/tickets/:ticketId": {
       "patch": {
-        "description": "Updates the attendee details held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `customerName` to clear it; `customerEmail` cannot be cleared. Requests with an empty body are rejected. When the booking has a ticket PDF, it is regenerated so the PDF matches the updated attendee details - the booking's `ticketPdfUrl` keeps working throughout. The booking and customer records are not affected.",
+        "description": "Updates the attendee details held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `customerName` to clear it; `customerEmail` cannot be cleared. Requests with an empty body are rejected. When the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects the updated attendee details. The booking and customer records are not affected.",
         "operationId": "tickets/update",
         "parameters": [
           {
