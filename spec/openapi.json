@@ -1037,13 +1037,6 @@
               "null"
             ]
           },
-          "ticketPdfUrl": {
-            "description": "Stable URL for the booking ticket PDF, containing every ticket in the booking. The URL does not expire and is safe to store - each request returns the current PDF, so later changes (for example attendee updates) are reflected automatically. Treat it as a secret: anyone holding the URL can download the tickets. `null` when no PDF exists yet (for example the booking is unpaid or abandoned).",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
           "tickets": {
             "description": "Array of ticket objects.",
             "items": {
@@ -21222,6 +21215,114 @@
           }
         ],
         "summary": "Get booking details",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/v1/bookings/:bookingId/ticket-pdf": {
+      "get": {
+        "description": "Returns the booking's ticket PDF as the response body (`application/pdf`), containing every ticket in the booking. The response is the file itself, not JSON. Each request returns the current PDF, so ticket changes (for example attendee updates) are reflected on the next download. This endpoint requires your API key, so never call it from a browser, mobile app, or email link - proxy it through your own server instead: your user clicks a download button in your app, your server calls this endpoint and streams the file back. To link to the PDF from an email or host it at a stable URL, download it and attach or re-host it yourself. Returns 404 when no PDF exists, for example when the booking is unpaid or abandoned.",
+        "operationId": "bookings/ticket-pdf",
+        "parameters": [
+          {
+            "description": "The ID of the booking to retrieve. Use the list bookings endpoint first if you need to discover a booking ID by email, name, customer, event, or date range.",
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the booking to retrieve. Use the list bookings endpoint first if you need to discover a booking ID by email, name, customer, event, or date range.",
+                  "example": "6812fe6e9f39b6760576f01c"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "description": "The ticket PDF binary.",
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The ticket PDF file"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Booking or ticket PDF not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Download the ticket PDF",
         "tags": [
           "Events"
         ]

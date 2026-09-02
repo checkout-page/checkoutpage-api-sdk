@@ -22,6 +22,27 @@ export class BookingResource {
     });
   }
 
+  /**
+   * Download the booking's ticket PDF (every ticket in the booking) as raw
+   * bytes. The response reflects the current tickets, so attendee updates
+   * appear on the next download. Throws NotFoundError when no PDF exists,
+   * e.g. for unpaid or abandoned bookings.
+   *
+   * @example
+   * const pdf = await client.bookings.downloadTicketPdf(bookingId);
+   * fs.writeFileSync('tickets.pdf', Buffer.from(pdf));
+   */
+  async downloadTicketPdf(bookingId: string): Promise<ArrayBuffer> {
+    if (!bookingId) {
+      throw new Error('Booking ID is required');
+    }
+
+    return this.client.requestRaw({
+      method: 'GET',
+      path: `/v1/bookings/${bookingId}/ticket-pdf`,
+    });
+  }
+
   async list(args: BookingListParams = {}): Promise<BookingList> {
     const query: Record<string, string | undefined> = {
       search: args.search,
