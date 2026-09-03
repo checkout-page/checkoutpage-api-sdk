@@ -70,6 +70,45 @@ describe('CheckoutPagesResource multi-price integration tests', () => {
     id: string,
   ) => product.prices?.find((p) => p.id === id);
 
+  describe('references', () => {
+    it('derives references from the price data, numbering duplicates around explicit ones', async () => {
+      const product = (await createWithPrices([
+        { billingType: 'one_time', amount: 2500, currency: 'usd' },
+        { billingType: 'one_time', amount: 2500, currency: 'usd' },
+        { billingType: 'one_time', amount: 9900, currency: 'usd', reference: 'launch-offer' },
+        {
+          billingType: 'recurring',
+          amount: 1000,
+          currency: 'usd',
+          recurring: { interval: 'month', intervalCount: 1 },
+        },
+        { billingType: 'one_time', amount: 0, currency: 'usd', payWhatYouWant: true, pwywSuggestedPrice: 500 },
+      ])).product!;
+
+      expect(product.prices!.map((p) => p.reference)).toEqual([
+        'price_one_time_fixed_2500',
+        'price_one_time_fixed_2500_2',
+        'launch-offer',
+        'price_recurring_fixed_1000',
+        'price_one_time_pwyw_0',
+      ]);
+    });
+
+    it('derives the reference for the legacy price alias too', async () => {
+      const suffix = uniqueSuffix();
+      const { data } = await client.checkoutPages.create({
+        name: `MP alias ${suffix}`,
+        productData: {
+          title: `MP alias product ${suffix}`,
+          price: { amount: 4900, currency: 'usd' },
+        },
+      });
+      remember(data.id);
+
+      expect(data.product!.prices![0].reference).toBe('price_one_time_fixed_4900');
+    });
+  });
+
   describe('single price[] happy paths', () => {
     it('creates a one-time price and marks it default, mirroring the legacy scalar', async () => {
       const product = (await createWithPrices([
@@ -84,7 +123,7 @@ describe('CheckoutPagesResource multi-price integration tests', () => {
       expect(price.isDefault).toBe(true);
       expect(price.enabled).toBe(true);
       expect(price.hidden).toBe(false);
-      expect(price.reference).toMatch(/^prc_/);
+      expect(price.reference).toBe('price_one_time_fixed_2500');
       expect(product.defaultPriceId).toBe(price.id);
       // legacy scalar projection mirrors the default entry
       expect(product.price.amount).toBe(2500);

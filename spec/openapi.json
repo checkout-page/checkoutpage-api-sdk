@@ -9883,7 +9883,7 @@
             ]
           },
           "reference": {
-            "description": "Merchant-facing internal id (e.g. prc_ab12cd34).",
+            "description": "Merchant-facing internal id (e.g. price_one_time_fixed_5000).",
             "type": [
               "string",
               "null"
@@ -10168,7 +10168,7 @@
             ]
           },
           "reference": {
-            "description": "Merchant-facing internal id (auto-generated when omitted).",
+            "description": "Merchant-facing internal id (SKU-like). Derived from the price data when omitted, e.g. price_one_time_fixed_5000. A price resent by id keeps its stored reference.",
             "type": [
               "string",
               "null"
@@ -13283,7 +13283,7 @@
             ]
           },
           "reference": {
-            "description": "Merchant-facing internal id (auto-generated when omitted).",
+            "description": "Merchant-facing internal id (SKU-like). Derived from the price data when omitted, e.g. price_one_time_fixed_5000. A price resent by id keeps its stored reference.",
             "type": [
               "string",
               "null"
@@ -19875,7 +19875,7 @@
                 ]
               },
               "reference": {
-                "description": "Merchant-facing internal id (auto-generated when omitted).",
+                "description": "Merchant-facing internal id (SKU-like). Derived from the price data when omitted, e.g. price_one_time_fixed_5000. A price resent by id keeps its stored reference.",
                 "type": [
                   "string",
                   "null"
