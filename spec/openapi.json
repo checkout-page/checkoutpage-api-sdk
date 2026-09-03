@@ -2031,7 +2031,7 @@
             ]
           },
           "fields": {
-            "description": "Custom checkout fields to create. If one of your fields must be an `email` element and `required` must be true. Defaults to a name and email field if none are set.",
+            "description": "Custom checkout fields to create. When provided, at least one field must be an `email` element with `type` `email` and `required` `true`. When omitted, the page gets Name and Email address fields, plus a required billing Address on checkout and event pages. Forms get Name and Email address only.",
             "items": {
               "$ref": "#/components/schemas/FieldInput"
             },
@@ -2984,7 +2984,7 @@
             ]
           },
           "fields": {
-            "description": "Custom checkout fields to create. If one of your fields must be an `email` element and `required` must be true. Defaults to a name and email field if none are set.",
+            "description": "Custom checkout fields to create. When provided, at least one field must be an `email` element with `type` `email` and `required` `true`. When omitted, the page gets Name and Email address fields, plus a required billing Address on checkout and event pages. Forms get Name and Email address only.",
             "items": {
               "$ref": "#/components/schemas/FieldInput"
             },
@@ -3597,7 +3597,7 @@
             ]
           },
           "fields": {
-            "description": "Custom checkout fields to create. If one of your fields must be an `email` element and `required` must be true. Defaults to a name and email field if none are set.",
+            "description": "Custom checkout fields to create. When provided, at least one field must be an `email` element with `type` `email` and `required` `true`. When omitted, the page gets Name and Email address fields, plus a required billing Address on checkout and event pages. Forms get Name and Email address only.",
             "items": {
               "$ref": "#/components/schemas/FieldInput"
             },
@@ -4889,6 +4889,20 @@
           },
           "allowDynamicDiscountedFromPrice": {
             "description": "Whether the compare-at price can be overridden via URL query parameters.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "allowDynamicLabel": {
+            "description": "Whether a price's label can be set dynamically via URL parameters.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "allowDynamicPreselectedPrice": {
+            "description": "Whether a price can be preselected (and revealed if hidden) via URL parameters.",
             "type": [
               "boolean",
               "null"
