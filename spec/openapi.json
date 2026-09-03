@@ -17473,6 +17473,7 @@
             ]
           },
           "funnelSteps": {
+            "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
             "items": {
               "$ref": "#/components/schemas/UpdateFunnelStepInput"
             },
@@ -17490,7 +17491,7 @@
             ]
           },
           "imageIds": {
-            "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account.",
+            "description": "Array of images for the page gallery. All referenced file IDs must exist and belong to your account. Pass null to clear the gallery.",
             "items": {
               "allOf": [
                 {
@@ -17514,7 +17515,10 @@
             "description": "Deprecated — superseded by `productData.limitSubscriptions.enabled`. Accepted and applied to the page's product.",
             "properties": {
               "enabled": {
-                "type": "boolean"
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
             },
             "type": [
@@ -17527,7 +17531,10 @@
             "description": "Deprecated — superseded by `productData.limitSubscriptions.limitSubscriptionsStripe.enabled`. Accepted and applied to the page's product.",
             "properties": {
               "enabled": {
-                "type": "boolean"
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               }
             },
             "type": [
@@ -17671,6 +17678,7 @@
           "productId": {
             "description": "The product to associate with this checkout page. Must belong to your account.",
             "example": "507f1f77bcf86cd799439011",
+            "pattern": "^[0-9a-fA-F]{24}$",
             "type": [
               "string",
               "null"
@@ -17704,6 +17712,7 @@
           "redirectPageId": {
             "description": "ID of the page (checkout, event or form) to redirect to after payment. Applies when `afterPaymentAction` is `checkout`.",
             "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+            "pattern": "^[0-9a-fA-F]{24}$",
             "type": [
               "string",
               "null"
@@ -17726,29 +17735,44 @@
             ]
           },
           "redirectUrlPath": {
+            "description": "Additional path parameters appended to the `redirectUrl`. Applies if `afterPaymentAction` is `redirect` and `redirectUrl` is set. To reference a field value, use `fieldId` (the persisted field ID, from the page detail response) instead of the create-time `fieldKey`. [Learn more](https://checkoutpage.com/docs/articles/add-field-and-variant-data-to-redirect-url)",
+            "example": [
+              {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields"
+              },
+              {
+                "identifier": "orderId",
+                "key": "orderId"
+              }
+            ],
             "items": {
+              "description": "A single path segment appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+              "example": {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields"
+              },
               "properties": {
                 "fieldId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
+                  "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "identifier": {
+                  "description": "Static value or token identifier for this path segment. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                  "example": "orderId",
                   "type": [
                     "string",
                     "null"
                   ]
                 },
                 "key": {
+                  "description": "What this path segment resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                  "example": "fields",
                   "type": [
                     "string",
                     "null"
@@ -17763,35 +17787,50 @@
             ]
           },
           "redirectUrlQuery": {
+            "description": "Query parameters for the `redirectUrl`. Applies if `afterPaymentAction` is `redirect` and `redirectUrl` is set. To reference a field value, use `fieldId` instead of the create-time `fieldKey`. [Learn more](https://checkoutpage.com/docs/articles/add-field-and-variant-data-to-redirect-url)",
+            "example": [
+              {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields",
+                "parameter": "name"
+              }
+            ],
             "items": {
+              "description": "A single query parameter appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+              "example": {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields",
+                "parameter": "email"
+              },
               "properties": {
                 "fieldId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
+                  "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "identifier": {
+                  "description": "Static value or token identifier for this query parameter. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                  "example": "orderId",
                   "type": [
                     "string",
                     "null"
                   ]
                 },
                 "key": {
+                  "description": "What this query value resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                  "example": "fields",
                   "type": [
                     "string",
                     "null"
                   ]
                 },
                 "parameter": {
+                  "description": "The query string parameter name to set on the redirect URL.",
+                  "example": "email",
                   "type": [
                     "string",
                     "null"
@@ -17881,7 +17920,7 @@
             ]
           },
           "status": {
-            "description": "Initial publication status. Defaults to \"published\" if not provided.",
+            "description": "Publication status of the page.",
             "enum": [
               "published",
               "draft",
@@ -17895,18 +17934,18 @@
             ]
           },
           "tax": {
-            "description": "Tax configuration for this page.",
+            "description": "Tax configuration for this page. Defaults to Stripe Tax when omitted.",
             "example": {
               "enabled": true,
-              "mode": "fixed"
+              "mode": "stripe"
             },
             "properties": {
               "enabled": {
-                "description": "If enabled mode must be one of `fixed` or `stripe`. If disabled mode must be `none`.",
+                "description": "Whether to collect tax. When `true`, `mode` must be `fixed` or `stripe`. When `false`, `mode` must be `none` or omitted.",
                 "type": "boolean"
               },
               "mode": {
-                "description": "Use mode `none` to not collect any tax. Use mode `fixed` for a fixed tax rate at checkout (configure the rate ID on `product.fixedTaxRateIds` for checkout pages or `eventDetails.fixedTaxRateIds` for event pages). Use mode `stripe` to enable Stripe tax, make sure Stripe tax is enabled globally in your Checkout Page account and configured in Stripe. You must also configure address fields in your page for the Stripe Tax calculation to be completed successfully. If omitted when `enabled` is `true`, defaults to `stripe`.",
+                "description": "Tax collection mode. `stripe` — Stripe Tax calculates tax automatically based on the customer's address; requires address fields on the page and Stripe Tax configured in the account. `fixed` — a fixed tax rate is applied; configure the rate ID on `productData.fixedTaxRateIds` or rely on the account default rate. Call `list_tax_rates` first to find an existing rate. If no suitable rate exists, use `create_tax_rate` to create one first. `none` — no tax is collected. Defaults to `stripe` when `enabled` is `true`.",
                 "enum": [
                   "none",
                   "fixed",
@@ -18089,7 +18128,7 @@
             ]
           },
           "eventDetails": {
-            "description": "Event-specific details like type, dates, location, and update-only discount references.",
+            "description": "Event-specific details like type, dates, location. Ticket-specific discounts (`discounts[].ticketTypeIds`) must reference existing ticket types by `{ id }` — update cannot create new ticket types to key against, so the create-time `{ key }` form is rejected.",
             "properties": {
               "capacity": {
                 "description": "Total event capacity. Omit for unlimited.",
@@ -18379,6 +18418,7 @@
             ]
           },
           "funnelSteps": {
+            "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
             "items": {
               "$ref": "#/components/schemas/UpdateFunnelStepInput"
             },
@@ -18599,29 +18639,44 @@
             ]
           },
           "redirectUrlPath": {
+            "description": "Additional path parameters appended to the `redirectUrl`. Applies if `afterPaymentAction` is `redirect` and `redirectUrl` is set. To reference a field value, use `fieldId` (the persisted field ID, from the page detail response) instead of the create-time `fieldKey`. [Learn more](https://checkoutpage.com/docs/articles/add-field-and-variant-data-to-redirect-url)",
+            "example": [
+              {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields"
+              },
+              {
+                "identifier": "orderId",
+                "key": "orderId"
+              }
+            ],
             "items": {
+              "description": "A single path segment appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+              "example": {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields"
+              },
               "properties": {
                 "fieldId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
+                  "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "identifier": {
+                  "description": "Static value or token identifier for this path segment. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                  "example": "orderId",
                   "type": [
                     "string",
                     "null"
                   ]
                 },
                 "key": {
+                  "description": "What this path segment resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                  "example": "fields",
                   "type": [
                     "string",
                     "null"
@@ -18636,35 +18691,50 @@
             ]
           },
           "redirectUrlQuery": {
+            "description": "Query parameters for the `redirectUrl`. Applies if `afterPaymentAction` is `redirect` and `redirectUrl` is set. To reference a field value, use `fieldId` instead of the create-time `fieldKey`. [Learn more](https://checkoutpage.com/docs/articles/add-field-and-variant-data-to-redirect-url)",
+            "example": [
+              {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields",
+                "parameter": "name"
+              }
+            ],
             "items": {
+              "description": "A single query parameter appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+              "example": {
+                "fieldId": "507f1f77bcf86cd799439011",
+                "key": "fields",
+                "parameter": "email"
+              },
               "properties": {
                 "fieldId": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format.",
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
+                  "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                  "example": "507f1f77bcf86cd799439011",
+                  "pattern": "^[0-9a-fA-F]{24}$",
+                  "type": [
+                    "string",
+                    "null"
                   ]
                 },
                 "identifier": {
+                  "description": "Static value or token identifier for this query parameter. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                  "example": "orderId",
                   "type": [
                     "string",
                     "null"
                   ]
                 },
                 "key": {
+                  "description": "What this query value resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                  "example": "fields",
                   "type": [
                     "string",
                     "null"
                   ]
                 },
                 "parameter": {
+                  "description": "The query string parameter name to set on the redirect URL.",
+                  "example": "email",
                   "type": [
                     "string",
                     "null"
@@ -18849,6 +18919,7 @@
               "pageId": {
                 "description": "The checkout or event page shown for this funnel step.",
                 "example": "507f1f77bcf86cd799439011",
+                "pattern": "^[0-9a-fA-F]{24}$",
                 "type": [
                   "string",
                   "null"
@@ -18975,6 +19046,7 @@
               "redirectPageId": {
                 "description": "The page to send the customer to when `action` is `checkout`.",
                 "example": "507f1f77bcf86cd799439013",
+                "pattern": "^[0-9a-fA-F]{24}$",
                 "type": [
                   "string",
                   "null"
@@ -18989,36 +19061,40 @@
                 ]
               },
               "redirectUrlPath": {
-                "description": "Optional path values appended to `redirectUrl`.",
+                "description": "Optional path values appended to `redirectUrl`. To reference a field value, use `fieldId` (the persisted field ID, from the page detail response) — the create-time `fieldKey` string is rejected.",
                 "example": [
                   {
-                    "identifier": "orderId",
-                    "key": "orderId"
+                    "fieldId": "507f1f77bcf86cd799439011",
+                    "key": "fields"
                   }
                 ],
                 "items": {
+                  "description": "A single path segment appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+                  "example": {
+                    "fieldId": "507f1f77bcf86cd799439011",
+                    "key": "fields"
+                  },
                   "properties": {
                     "fieldId": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format.",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        }
+                      "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                      "example": "507f1f77bcf86cd799439011",
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "type": [
+                        "string",
+                        "null"
                       ]
                     },
                     "identifier": {
+                      "description": "Static value or token identifier for this path segment. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                      "example": "orderId",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "key": {
+                      "description": "What this path segment resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                      "example": "fields",
                       "type": [
                         "string",
                         "null"
@@ -19033,43 +19109,50 @@
                 ]
               },
               "redirectUrlQuery": {
-                "description": "Optional query parameters appended to `redirectUrl`.",
+                "description": "Optional query parameters appended to `redirectUrl`. To reference a field value, use `fieldId` instead of the create-time `fieldKey`.",
                 "example": [
                   {
-                    "identifier": "customer-email-field-id",
+                    "fieldId": "507f1f77bcf86cd799439011",
                     "key": "fields",
                     "parameter": "email"
                   }
                 ],
                 "items": {
+                  "description": "A single query parameter appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+                  "example": {
+                    "fieldId": "507f1f77bcf86cd799439011",
+                    "key": "fields",
+                    "parameter": "email"
+                  },
                   "properties": {
                     "fieldId": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format.",
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        }
+                      "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                      "example": "507f1f77bcf86cd799439011",
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "type": [
+                        "string",
+                        "null"
                       ]
                     },
                     "identifier": {
+                      "description": "Static value or token identifier for this query parameter. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                      "example": "orderId",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "key": {
+                      "description": "What this query value resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                      "example": "fields",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "parameter": {
+                      "description": "The query string parameter name to set on the redirect URL.",
+                      "example": "email",
                       "type": [
                         "string",
                         "null"
@@ -19217,6 +19300,7 @@
               "pageId": {
                 "description": "The checkout or event page to use as the upsell when `action` is `checkout`. In the dashboard this matches the \"Upsell checkout page\" picker.",
                 "example": "507f1f77bcf86cd799439012",
+                "pattern": "^[0-9a-fA-F]{24}$",
                 "type": [
                   "string",
                   "null"
@@ -19244,28 +19328,32 @@
                       }
                     ],
                     "items": {
+                      "description": "A single path segment appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+                      "example": {
+                        "fieldId": "507f1f77bcf86cd799439011",
+                        "key": "fields"
+                      },
                       "properties": {
                         "fieldId": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            }
+                          "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                          "example": "507f1f77bcf86cd799439011",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         },
                         "identifier": {
+                          "description": "Static value or token identifier for this path segment. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                          "example": "orderId",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "key": {
+                          "description": "What this path segment resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                          "example": "fields",
                           "type": [
                             "string",
                             "null"
@@ -19289,34 +19377,41 @@
                       }
                     ],
                     "items": {
+                      "description": "A single query parameter appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+                      "example": {
+                        "fieldId": "507f1f77bcf86cd799439011",
+                        "key": "fields",
+                        "parameter": "email"
+                      },
                       "properties": {
                         "fieldId": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            }
+                          "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                          "example": "507f1f77bcf86cd799439011",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         },
                         "identifier": {
+                          "description": "Static value or token identifier for this query parameter. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                          "example": "orderId",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "key": {
+                          "description": "What this query value resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                          "example": "fields",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "parameter": {
+                          "description": "The query string parameter name to set on the redirect URL.",
+                          "example": "email",
                           "type": [
                             "string",
                             "null"
@@ -29370,6 +29465,7 @@
                     ]
                   },
                   "funnelSteps": {
+                    "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
                     "items": {
                       "$ref": "#/components/schemas/UpdateFunnelStepInput"
                     },
@@ -29515,6 +29611,7 @@
                   "redirectPageId": {
                     "description": "ID of the page (checkout, event or form) to redirect to after payment. Applies when `afterPaymentAction` is `checkout`.",
                     "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                    "pattern": "^[0-9a-fA-F]{24}$",
                     "type": [
                       "string",
                       "null"
@@ -29537,29 +29634,44 @@
                     ]
                   },
                   "redirectUrlPath": {
+                    "description": "Additional path parameters appended to the `redirectUrl`. Applies if `afterPaymentAction` is `redirect` and `redirectUrl` is set. To reference a field value, use `fieldId` (the persisted field ID, from the page detail response) instead of the create-time `fieldKey`. [Learn more](https://checkoutpage.com/docs/articles/add-field-and-variant-data-to-redirect-url)",
+                    "example": [
+                      {
+                        "fieldId": "507f1f77bcf86cd799439011",
+                        "key": "fields"
+                      },
+                      {
+                        "identifier": "orderId",
+                        "key": "orderId"
+                      }
+                    ],
                     "items": {
+                      "description": "A single path segment appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+                      "example": {
+                        "fieldId": "507f1f77bcf86cd799439011",
+                        "key": "fields"
+                      },
                       "properties": {
                         "fieldId": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            }
+                          "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                          "example": "507f1f77bcf86cd799439011",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         },
                         "identifier": {
+                          "description": "Static value or token identifier for this path segment. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                          "example": "orderId",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "key": {
+                          "description": "What this path segment resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                          "example": "fields",
                           "type": [
                             "string",
                             "null"
@@ -29574,35 +29686,50 @@
                     ]
                   },
                   "redirectUrlQuery": {
+                    "description": "Query parameters for the `redirectUrl`. Applies if `afterPaymentAction` is `redirect` and `redirectUrl` is set. To reference a field value, use `fieldId` instead of the create-time `fieldKey`. [Learn more](https://checkoutpage.com/docs/articles/add-field-and-variant-data-to-redirect-url)",
+                    "example": [
+                      {
+                        "fieldId": "507f1f77bcf86cd799439011",
+                        "key": "fields",
+                        "parameter": "name"
+                      }
+                    ],
                     "items": {
+                      "description": "A single query parameter appended to the redirect URL on update. To reference a field value, set `key` to `fields` and `fieldId` to the field's persisted ID (from the page detail response). For any other token, set `key` to the token name and `identifier` to its value.",
+                      "example": {
+                        "fieldId": "507f1f77bcf86cd799439011",
+                        "key": "fields",
+                        "parameter": "email"
+                      },
                       "properties": {
                         "fieldId": {
-                          "allOf": [
-                            {
-                              "$ref": "#/components/schemas/UniqueIdentifier"
-                            },
-                            {
-                              "description": "Unique identifier. Must be in BSON ObjectId format.",
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            }
+                          "description": "The persisted field's ID, as `fieldId`. Required when `key` is `fields`; on update, field references resolve by `fieldId` rather than the create-time `fieldKey` string, since update requests can't create new fields to key against. Get current field IDs from the page detail response. Rejected unless `key` is `fields`.",
+                          "example": "507f1f77bcf86cd799439011",
+                          "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         },
                         "identifier": {
+                          "description": "Static value or token identifier for this query parameter. Required unless `key` is `fields` — in that case use `fieldId` instead and omit this. Rejected when `key` is `fields`.",
+                          "example": "orderId",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "key": {
+                          "description": "What this query value resolves to. Set to `fields` to reference a field value collected on the page (pair with `fieldId`); any other value is a static token name (pair with `identifier`).",
+                          "example": "fields",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "parameter": {
+                          "description": "The query string parameter name to set on the redirect URL.",
+                          "example": "email",
                           "type": [
                             "string",
                             "null"
@@ -29643,7 +29770,7 @@
                     ]
                   },
                   "status": {
-                    "description": "Initial publication status. Defaults to \"published\" if not provided.",
+                    "description": "Publication status of the page.",
                     "enum": [
                       "published",
                       "draft",
