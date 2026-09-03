@@ -180,6 +180,29 @@ describe('CheckoutPagesResource fields integration tests', () => {
     expect(field.defaultValue?.value).toBe('Acme Inc.');
   });
 
+  it('generates a reference from the field type when the caller omits one', async () => {
+    const field = await createField({
+      label: `Phone ${uniqueSuffix()}`,
+      element: 'phone',
+      type: 'phone',
+    });
+
+    expect(field.reference).toBe('customer_phone');
+  });
+
+  it('generates a reference from the label when neither reference nor type is supplied', async () => {
+    const field = await createField({
+      label: 'Seating preference',
+      element: 'select',
+      options: [
+        { label: 'Near the band', value: 'near-the-band' },
+        { label: 'Anywhere', value: 'anywhere' },
+      ],
+    });
+
+    expect(field.reference).toBe('seating-preference');
+  });
+
   it('creates a field with showHideLogic referencing an existing field', async () => {
     const sourceField = await createField({
       label: `Checkbox Source ${uniqueSuffix()}`,

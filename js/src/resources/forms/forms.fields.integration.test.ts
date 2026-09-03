@@ -227,6 +227,39 @@ describe('FormsResource fields integration tests', () => {
     expect(field.reference).toContain('default-');
   });
 
+  it('generates a reference from the field type when the caller omits one', async () => {
+    const form = await createForm();
+    const field = await createField(form.id, {
+      label: `Phone ${uniqueSuffix()}`,
+      element: 'phone',
+      type: 'phone',
+    });
+
+    expect(field.reference).toBe('customer_phone');
+  });
+
+  it('generates a reference from the label when neither reference nor type is supplied', async () => {
+    const form = await createForm();
+    const field = await createField(form.id, {
+      label: 'Seating preference',
+      element: 'select',
+      options: [
+        { label: 'Near the band', value: 'near-the-band' },
+        { label: 'Anywhere', value: 'anywhere' },
+      ],
+    });
+
+    expect(field.reference).toBe('seating-preference');
+  });
+
+  it('numbers a generated reference already used by another field on the form', async () => {
+    const form = await createForm();
+    await createField(form.id, { label: 'Notes', element: 'textarea' });
+    const second = await createField(form.id, { label: 'Notes', element: 'textarea' });
+
+    expect(second.reference).toBe('notes-2');
+  });
+
   it('creates a field with show hide logic', async () => {
     const form = await createForm();
     const sourceField = await createField(form.id, {

@@ -224,6 +224,22 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.status).toBe('draft');
     });
 
+    it('generates references for fields created without one', async () => {
+      const { data } = await createCheckoutPage({
+        fields: [
+          { label: 'Email address', element: 'email', type: 'email', required: true },
+          { label: 'Phone', element: 'phone', type: 'phone' },
+          { label: 'Notes', element: 'textarea' },
+          { label: 'Notes', element: 'textarea' },
+        ],
+      });
+
+      const references = data.fields
+        ?.filter((field) => ['Email address', 'Phone', 'Notes'].includes(field.label))
+        .map((field) => field.reference);
+      expect(references).toEqual(['customer_email', 'customer_phone', 'notes', 'notes-2']);
+    });
+
     it('creates a one-time payment checkout page', async () => {
       const { data } = await createCheckoutPage({
         productData: {
@@ -616,6 +632,7 @@ describe('CheckoutPagesResource integration tests', () => {
     it('creates a checkout page with field conditional logic', async () => {
       const { data } = await createCheckoutPage({
         name: 'T023_is_empty_per_updated_description',
+        tax: { enabled: true },
         productData: {
           title: 'T023 is_empty per docs',
           price: { amount: 1000, currency: 'usd' },
@@ -706,6 +723,7 @@ describe('CheckoutPagesResource integration tests', () => {
             },
             options: [],
             order: 0,
+            reference: 'customer_email',
             required: true,
             showHideLogic: {
               comparison: 'is',
@@ -759,6 +777,7 @@ describe('CheckoutPagesResource integration tests', () => {
               },
             ],
             order: 1,
+            reference: 'plan',
             required: false,
             showHideLogic: {
               comparison: 'is',
@@ -800,6 +819,7 @@ describe('CheckoutPagesResource integration tests', () => {
             },
             options: [],
             order: 2,
+            reference: 'visible-when-plan-isempty',
             required: false,
             showHideLogic: {
               comparison: 'is_empty',
@@ -842,6 +862,7 @@ describe('CheckoutPagesResource integration tests', () => {
             },
             options: [],
             order: 3,
+            reference: 'visible-when-plan-isnotempty',
             required: false,
             showHideLogic: {
               comparison: 'is_not_empty',
@@ -905,6 +926,7 @@ describe('CheckoutPagesResource integration tests', () => {
               setupFeeMultipliesWithQuantity: false,
             },
           ],
+          role: 'product',
           stock: 0,
           taxBehavior: '',
           taxCode: '',
