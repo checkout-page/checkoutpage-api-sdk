@@ -340,6 +340,18 @@ describe('FormsResource integration tests', () => {
       expect(data.status).toBe('draft');
     });
 
+    it('generates unique references for fields created without one', async () => {
+      const { data } = await createForm({
+        fields: [
+          { label: 'Email address', element: 'email', type: 'email', required: true },
+          { label: 'Notes', element: 'textarea' },
+          { label: 'Notes', element: 'textarea' },
+        ],
+      });
+
+      expect(data.fields?.map((field) => field.reference)).toEqual(['customer_email', 'notes', 'notes-2']);
+    });
+
     it('creates a form with uploaded imageIds', async () => {
       const imageId = await uploadImage('form-page');
       const { data } = await createForm({ imageIds: [imageId] });

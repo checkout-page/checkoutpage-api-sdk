@@ -224,6 +224,22 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.status).toBe('draft');
     });
 
+    it('generates references for fields created without one', async () => {
+      const { data } = await createCheckoutPage({
+        fields: [
+          { label: 'Email address', element: 'email', type: 'email', required: true },
+          { label: 'Phone', element: 'phone', type: 'phone' },
+          { label: 'Notes', element: 'textarea' },
+          { label: 'Notes', element: 'textarea' },
+        ],
+      });
+
+      const references = data.fields
+        ?.filter((field) => ['Email address', 'Phone', 'Notes'].includes(field.label))
+        .map((field) => field.reference);
+      expect(references).toEqual(['customer_email', 'customer_phone', 'notes', 'notes-2']);
+    });
+
     it('creates a one-time payment checkout page', async () => {
       const { data } = await createCheckoutPage({
         productData: {

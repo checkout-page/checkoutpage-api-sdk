@@ -6785,7 +6785,7 @@
             ]
           },
           "reference": {
-            "description": "External reference ID for integration purposes.",
+            "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
             "example": "custom_field_1",
             "maxLength": 36,
             "type": [
@@ -22779,7 +22779,7 @@
                     ]
                   },
                   "reference": {
-                    "description": "External reference ID for integration purposes.",
+                    "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
                     "example": "custom_field_1",
                     "maxLength": 36,
                     "type": [
@@ -23614,7 +23614,7 @@
                     ]
                   },
                   "reference": {
-                    "description": "External reference ID for integration purposes.",
+                    "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
                     "example": "custom_field_1",
                     "maxLength": 36,
                     "type": [
@@ -25978,7 +25978,7 @@
                     ]
                   },
                   "reference": {
-                    "description": "External reference ID for integration purposes.",
+                    "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
                     "example": "custom_field_1",
                     "maxLength": 36,
                     "type": [
@@ -26813,7 +26813,7 @@
                     ]
                   },
                   "reference": {
-                    "description": "External reference ID for integration purposes.",
+                    "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
                     "example": "custom_field_1",
                     "maxLength": 36,
                     "type": [
@@ -30211,7 +30211,7 @@
                     ]
                   },
                   "reference": {
-                    "description": "External reference ID for integration purposes.",
+                    "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
                     "example": "custom_field_1",
                     "maxLength": 36,
                     "type": [
@@ -31046,7 +31046,7 @@
                     ]
                   },
                   "reference": {
-                    "description": "External reference ID for integration purposes.",
+                    "description": "External reference ID for integration purposes. Generated from the field type or label when omitted.",
                     "example": "custom_field_1",
                     "maxLength": 36,
                     "type": [
