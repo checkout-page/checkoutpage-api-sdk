@@ -409,6 +409,24 @@ describe('ProductResource Integration Tests', () => {
     });
   });
 
+  describe('price references', () => {
+    it('keeps the stored reference for a price resent by id and derives one for a new price', async () => {
+      const productId = await createProductWithPrice({ amount: 1000, currency: 'usd', reference: 'basic-tier' });
+      const { data: product } = await client.products.get(productId);
+      const storedPriceId = product.prices![0].id;
+      expect(product.prices![0].reference).toBe('basic-tier');
+
+      const { data: updated } = await client.products.update(productId, {
+        prices: [
+          { id: storedPriceId, billingType: 'one_time', amount: 1000, currency: 'usd' },
+          { billingType: 'one_time', amount: 2000, currency: 'usd' },
+        ],
+      });
+
+      expect(updated.prices!.map((p) => p.reference)).toEqual(['basic-tier', 'price_one_time_fixed_2000']);
+    });
+  });
+
   describe('fixedTaxRateIds', () => {
     it('sets fixedTaxRateIds on update', async () => {
       if (!testProductId) {
