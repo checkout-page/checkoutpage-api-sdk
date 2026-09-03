@@ -11221,7 +11221,7 @@
                   ]
                 },
                 "reference": {
-                  "description": "External reference ID. Defaults to a UUID v4.",
+                  "description": "External reference ID. Generated from the variant name when omitted.",
                   "example": "fd3136f8-da1f-4a4c-b381-32a097b60c38",
                   "maxLength": 36,
                   "type": [
@@ -12170,7 +12170,7 @@
                   ]
                 },
                 "reference": {
-                  "description": "External reference ID. Defaults to a UUID v4.",
+                  "description": "External reference ID. Generated from the variant name when omitted.",
                   "example": "fd3136f8-da1f-4a4c-b381-32a097b60c38",
                   "maxLength": 36,
                   "type": [
@@ -20381,7 +20381,7 @@
                   ]
                 },
                 "reference": {
-                  "description": "External reference ID. Defaults to a UUID v4.",
+                  "description": "External reference ID. Generated from the variant name when omitted.",
                   "example": "fd3136f8-da1f-4a4c-b381-32a097b60c38",
                   "maxLength": 36,
                   "type": [
