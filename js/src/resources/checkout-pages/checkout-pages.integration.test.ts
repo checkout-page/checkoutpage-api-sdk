@@ -218,6 +218,28 @@ describe('CheckoutPagesResource integration tests', () => {
       expect(data.product?.title).toContain('SDK Product');
     });
 
+    it('derives variant references from the variant name when omitted', async () => {
+      const { data } = await createCheckoutPage({
+        productData: {
+          title: `Variant References ${uniqueSuffix()}`,
+          price: { amount: 2500, currency: 'usd' },
+          variants: [
+            { name: 'Size', options: [{ name: 'S', additionalChargeAmount: 0 }] },
+            { name: 'Size', options: [{ name: 'M', additionalChargeAmount: 0 }] },
+            { name: 'Colour', reference: 'shirt-colour', options: [{ name: 'Red', additionalChargeAmount: 0 }] },
+            { name: '日本', options: [{ name: 'A', additionalChargeAmount: 0 }] },
+          ],
+        },
+      });
+
+      expect(data.product?.variants?.map((variant) => variant.reference)).toEqual([
+        'size',
+        'size-2',
+        'shirt-colour',
+        'variant',
+      ]);
+    });
+
     it('creates a draft checkout page', async () => {
       const { data } = await createCheckoutPage({ status: 'draft' });
 
@@ -2626,11 +2648,10 @@ describe('CheckoutPagesResource integration tests', () => {
         const sizeVariant = data.product?.variants?.find((v) => v.name === 'Size');
         expect(colorVariant?.options).toHaveLength(2);
         expect(colorVariant?.order).toBe(0);
-        expect(colorVariant?.reference).toMatch(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-        );
+        expect(colorVariant?.reference).toBe('color');
         expect(sizeVariant?.options).toHaveLength(3);
         expect(sizeVariant?.order).toBe(1);
+        expect(sizeVariant?.reference).toBe('size');
       });
 
       it('creates variants with multiple selection type and increasesWithQuantity', async () => {

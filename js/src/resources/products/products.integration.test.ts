@@ -497,6 +497,29 @@ describe('ProductResource Integration Tests', () => {
     });
   });
 
+  describe('variant references', () => {
+    it('keeps the stored reference for a variant resent by id and derives one for a new variant', async () => {
+      const productId = await createProductWithPrice({ amount: 1500, currency: 'usd' });
+
+      const { data: seeded } = await client.products.update(productId, {
+        variants: [
+          { name: 'Size', reference: 'shirt-size', options: [{ name: 'S', additionalChargeAmount: 0 }] },
+        ],
+      });
+      const storedVariantId = seeded.variants![0].id;
+      expect(seeded.variants![0].reference).toBe('shirt-size');
+
+      const { data: updated } = await client.products.update(productId, {
+        variants: [
+          { id: storedVariantId, name: 'Size', options: [{ name: 'S', additionalChargeAmount: 0 }] },
+          { name: 'Size', options: [{ name: 'M', additionalChargeAmount: 0 }] },
+        ],
+      });
+
+      expect(updated.variants!.map((variant) => variant.reference)).toEqual(['shirt-size', 'size']);
+    });
+  });
+
   describe('multi-price read path', () => {
     it('reads prices[] and defaultPriceId fields on a product', async () => {
       const { data: product } = await client.products.get(testProductId);
