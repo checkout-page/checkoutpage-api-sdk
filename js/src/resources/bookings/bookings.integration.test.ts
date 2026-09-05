@@ -1,6 +1,12 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import {
+  CheckoutPageClient,
+  createCheckoutPageClient,
+  NotFoundError,
+  ValidationError,
+} from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
+import { uniqueSuffix } from '../../test-helpers/test-lib';
 
 describe('BookingResource Integration Tests', () => {
   let client: CheckoutPageClient;
@@ -379,6 +385,103 @@ describe('BookingResource Integration Tests', () => {
         expect(typeof snapshot.inclusive).toBe('boolean');
         expect(typeof snapshot.percentage).toBe('number');
       }
+    });
+  });
+
+  describe('create', () => {
+    const createdEventIds: string[] = [];
+    let eventId: string;
+    let ticketTypeId: string;
+
+    beforeAll(async () => {
+      const suffix = uniqueSuffix();
+      const response = await client.events.create({
+        name: `SDK Booking Event ${suffix}`,
+        title: `SDK Booking Event ${suffix}`,
+        eventDetails: {
+          type: 'virtual',
+          currency: 'usd',
+          startDate: '2026-11-01T09:00:00Z',
+          endDate: '2026-11-01T17:00:00Z',
+          timezone: 'UTC',
+        },
+        ticketGroups: [
+          {
+            name: 'General Admission',
+            ticketTypes: [{ name: 'GA', pricing: 'paid', price: 2500 }],
+          },
+        ],
+      });
+
+      eventId = response.data.id;
+      createdEventIds.push(eventId);
+      const ticketType = response.data.ticketGroups?.[0]?.ticketTypes?.[0];
+      if (!ticketType?.id) throw new Error('Provisioned event has no ticket type');
+      ticketTypeId = ticketType.id;
+    });
+
+    afterAll(async () => {
+      for (const id of createdEventIds) {
+        try {
+          await client.events.delete(id);
+        } catch {
+          // Best-effort cleanup for integration tests.
+        }
+      }
+    });
+
+    it('creates an unpaid manual booking with hydrated fields', { timeout: 60_000 }, async () => {
+      const email = `sdk-booking-${uniqueSuffix()}@example.com`;
+
+      const result = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 2 },
+        fields: [
+          { reference: 'customer_email', value: email },
+          { reference: 'customer_name', value: 'SDK Booking Test' },
+        ],
+        paymentOption: { manualType: 'invoice' },
+      });
+
+      expect(result.data.status).toBe('unpaid');
+      expect(result.data.amount).toBe(5000);
+      expect(result.data.amountDue).toBe(5000);
+      expect(result.data.customerEmail).toBe(email);
+      expect(result.data.customerName).toBe('SDK Booking Test');
+      expect(result.data.paymentOption?.manualType).toBe('invoice');
+      expect(result.data.tickets?.[0]?.ticketTypeId).toBe(ticketTypeId);
+      expect(result.data.tickets?.[0]?.quantity).toBe(2);
+      // Fields carry the event's own labels, not caller-supplied ones.
+      const emailField = result.data.fields?.find((f) => f.reference === 'customer_email');
+      expect(emailField?.label).toBe('Email address');
+      expect(emailField?.value).toBe(email);
+
+      // Read-back parity with bookings.get.
+      const fetched = await client.bookings.get(result.data.id);
+      expect(fetched.data.status).toBe('unpaid');
+      expect(fetched.data.amount).toBe(5000);
+    });
+
+    it('rejects a ticket type that is not on the event', async () => {
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { '507f1f77bcf86cd799439011': 1 },
+          fields: [{ reference: 'customer_email', value: 'sdk-reject@example.com' }],
+          paymentOption: { manualType: 'invoice' },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('rejects a booking with no email field value', async () => {
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [{ reference: 'customer_name', value: 'No Email' }],
+          paymentOption: { manualType: 'invoice' },
+        })
+      ).rejects.toThrow(ValidationError);
     });
   });
 });

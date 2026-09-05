@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookingResource } from './bookings';
 import { CheckoutPageApiClient } from '../../client';
-import type { BookingList, BookingResponse } from '../../types';
+import type { BookingList, BookingResponse, CreateBookingParams } from '../../types';
 
 const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
 const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
@@ -382,6 +382,48 @@ describe('BookingResource', () => {
         },
         path: '/v1/bookings/',
       });
+    });
+  });
+
+  describe('create', () => {
+    const TICKET_TYPE_ID = '507f1f77bcf86cd799439020';
+
+    const createParams: CreateBookingParams = {
+      eventId: PAGE_ID,
+      tickets: { [TICKET_TYPE_ID]: 2 },
+      fields: [
+        { reference: 'customer_email', value: 'ada@example.com' },
+        { reference: 'customer_name', value: 'Ada Lovelace' },
+      ],
+      paymentOption: { manualType: 'invoice' },
+    };
+
+    it('POSTs the booking body to /v1/bookings/', async () => {
+      const mockResponse: BookingResponse = {
+        data: { ...BASE_BOOKING, status: 'unpaid' },
+      };
+      const requestSpy = vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: createParams,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('returns the wrapped envelope untouched', async () => {
+      const mockResponse: BookingResponse = {
+        data: { ...BASE_BOOKING, status: 'unpaid' },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      expect(result.data.status).toBe('unpaid');
+      expect(result.data.id).toBe(BOOKING_ID_1);
     });
   });
 });
