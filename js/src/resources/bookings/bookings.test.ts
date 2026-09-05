@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookingResource } from './bookings';
 import { CheckoutPageApiClient } from '../../client';
-import type { BookingList, BookingResponse } from '../../types';
+import type { BookingList, BookingResponse, CreateBookingParams } from '../../types';
 
 const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
 const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
@@ -382,6 +382,140 @@ describe('BookingResource', () => {
         },
         path: '/v1/bookings/',
       });
+    });
+  });
+
+  describe('create', () => {
+    const TICKET_TYPE_ID = '507f1f77bcf86cd799439020';
+
+    const createParams: CreateBookingParams = {
+      eventId: PAGE_ID,
+      tickets: { [TICKET_TYPE_ID]: 2 },
+      fields: [
+        { reference: 'customer_email', value: 'ada@example.com' },
+        { reference: 'customer_name', value: 'Ada Lovelace' },
+      ],
+      paymentOption: { manualType: 'invoice' },
+    };
+
+    it('POSTs the booking body to /v1/bookings/', async () => {
+      const mockResponse: BookingResponse = {
+        data: { ...BASE_BOOKING, status: 'unpaid' },
+      };
+      const requestSpy = vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: createParams,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('returns the wrapped envelope untouched', async () => {
+      const mockResponse: BookingResponse = {
+        data: { ...BASE_BOOKING, status: 'unpaid' },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      expect(result.data.status).toBe('unpaid');
+      expect(result.data.id).toBe(BOOKING_ID_1);
+    });
+
+    // Every property the request schema accepts, forwarded verbatim. The body
+    // is passed straight through, so a dropped or renamed key shows up here.
+    it('forwards every supported request property without reshaping it', async () => {
+      const PWYW_TICKET_TYPE_ID = '507f1f77bcf86cd799439021';
+      const CUSTOM_FIELD_ID = '507f1f77bcf86cd799439022';
+      const COUPON_ID = '507f1f77bcf86cd799439023';
+
+      const exhaustiveParams: CreateBookingParams = {
+        eventId: PAGE_ID,
+        tickets: { [TICKET_TYPE_ID]: 2, [PWYW_TICKET_TYPE_ID]: 1 },
+        ticketPwywAmounts: { [PWYW_TICKET_TYPE_ID]: 5000 },
+        couponId: COUPON_ID,
+        fields: [
+          { reference: 'customer_email', value: 'ada@example.com' },
+          { reference: 'customer_name', value: 'Ada Lovelace' },
+          { reference: 'customer_phone', value: '+441234567890' },
+          { fieldId: CUSTOM_FIELD_ID, value: 'Vegan' },
+          { reference: 'tax_id', value: 'GB123456789', meta: { type: 'gb_vat' } },
+          {
+            reference: 'address',
+            value: {
+              billing: {
+                name: 'Ada Lovelace',
+                phone: '+441234567890',
+                line1: '1 Test Street',
+                line2: 'Floor 2',
+                city: 'London',
+                region: 'Greater London',
+                postalCode: 'SW1A 1AA',
+                country: 'GB',
+              },
+              shipping: {
+                name: 'Ada Lovelace',
+                line1: '2 Other Street',
+                city: 'Manchester',
+                postalCode: 'M1 1AA',
+                country: 'GB',
+              },
+              sameAsShipping: false,
+            },
+          },
+        ],
+        paymentOption: {
+          manualType: 'cash_on_delivery',
+          name: 'Pay on arrival',
+          description: 'Settle at the door',
+          instructions: 'Cash or card accepted at the venue.',
+        },
+      };
+
+      const requestSpy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'unpaid' } });
+
+      await bookingResource.create(exhaustiveParams);
+
+      const sent = requestSpy.mock.calls[0][0] as { body: CreateBookingParams };
+      expect(sent.body).toEqual(exhaustiveParams);
+
+      // Named individually so a silently dropped key fails loudly, rather than
+      // relying on toEqual over an object built from the same literal.
+      expect(sent.body.eventId).toBe(PAGE_ID);
+      expect(sent.body.tickets).toEqual({ [TICKET_TYPE_ID]: 2, [PWYW_TICKET_TYPE_ID]: 1 });
+      expect(sent.body.ticketPwywAmounts).toEqual({ [PWYW_TICKET_TYPE_ID]: 5000 });
+      expect(sent.body.couponId).toBe(COUPON_ID);
+      expect(sent.body.paymentOption).toEqual({
+        manualType: 'cash_on_delivery',
+        name: 'Pay on arrival',
+        description: 'Settle at the door',
+        instructions: 'Cash or card accepted at the venue.',
+      });
+      expect(sent.body.fields).toHaveLength(6);
+      expect(sent.body.fields[3]).toEqual({ fieldId: CUSTOM_FIELD_ID, value: 'Vegan' });
+      expect(sent.body.fields[4].meta).toEqual({ type: 'gb_vat' });
+      const addressValue = sent.body.fields[5].value as Record<string, unknown>;
+      expect(addressValue.billing).toMatchObject({ line1: '1 Test Street', country: 'GB' });
+      expect(addressValue.shipping).toMatchObject({ city: 'Manchester' });
+      expect(addressValue.sameAsShipping).toBe(false);
+    });
+
+    it('omits optional properties entirely when not supplied', async () => {
+      const requestSpy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'unpaid' } });
+
+      await bookingResource.create(createParams);
+
+      const sent = requestSpy.mock.calls[0][0] as { body: Record<string, unknown> };
+      expect(sent.body).not.toHaveProperty('couponId');
+      expect(sent.body).not.toHaveProperty('ticketPwywAmounts');
     });
   });
 });

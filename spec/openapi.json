@@ -1266,6 +1266,134 @@
         ],
         "type": "object"
       },
+      "BookingFieldInput": {
+        "description": "A value for one of the event's fields. The field's label, element, type and reference are resolved from the event itself, so only the identifier and the value are supplied here.",
+        "properties": {
+          "fieldId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The ID of a field on this event. Provide either `fieldId` or `reference`."
+              }
+            ]
+          },
+          "meta": {
+            "description": "Extra data for the field. Only meaningful on a tax-ID field; address fields derive their own.",
+            "properties": {
+              "type": {
+                "description": "For a tax-ID field, the tax ID type, e.g. `gb_vat` or `eu_vat`. Required for the number to be registered on the customer and for business tax treatment (reverse charge) to be applied — without it the booking is taxed as a consumer sale.",
+                "example": "gb_vat",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "reference": {
+            "description": "The field's reference. Provide either `fieldId` or `reference`. Default fields use stable references: `customer_email`, `customer_name`, `customer_phone`, `address`.",
+            "example": "customer_email",
+            "minLength": 1,
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "properties": {
+                  "billing": {
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "description": "Two-letter ISO 3166-1 country code.",
+                        "example": "GB",
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                      },
+                      "line1": {
+                        "type": "string"
+                      },
+                      "line2": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
+                      },
+                      "region": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "country"
+                    ],
+                    "type": "object"
+                  },
+                  "sameAsShipping": {
+                    "type": "boolean"
+                  },
+                  "shipping": {
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "description": "Two-letter ISO 3166-1 country code.",
+                        "example": "GB",
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                      },
+                      "line1": {
+                        "type": "string"
+                      },
+                      "line2": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
+                      },
+                      "region": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "country"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              }
+            ],
+            "description": "The submitted value. Address fields take an object of `billing` / `shipping` / `sameAsShipping`; every other field takes a string."
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "type": "object"
+      },
       "BulkDiscountInput": {
         "properties": {
           "maxQuantity": {
@@ -1847,6 +1975,102 @@
       "CouponId": {
         "example": "6812fe6e9f39b6760576f01c",
         "type": "string"
+      },
+      "CreateBookingInput": {
+        "additionalProperties": false,
+        "description": "Creates an event booking without collecting card payment.",
+        "properties": {
+          "couponId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "A coupon to apply to the booking."
+              }
+            ]
+          },
+          "eventId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The ID of the event to book onto."
+              }
+            ]
+          },
+          "fields": {
+            "description": "Values for the event's fields. Must include a value for the event's email field — the booking's customer is created from it.",
+            "items": {
+              "$ref": "#/components/schemas/BookingFieldInput"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "paymentOption": {
+            "description": "How the booking is paid for. This endpoint never collects card payment: bookings with an amount above zero are recorded as unpaid and settled outside checkout. Free bookings are recorded as paid.",
+            "properties": {
+              "description": {
+                "description": "Short description of the payment option. Defaults as `name` does.",
+                "example": "Payment due in 30 days",
+                "type": "string"
+              },
+              "instructions": {
+                "description": "Payment instructions recorded on the booking. Defaults as `name` does.",
+                "example": "Bank details will be sent via email after checkout.",
+                "type": "string"
+              },
+              "manualType": {
+                "description": "How the customer will pay. `invoice` records the booking as unpaid and awaiting an invoice payment; `cash_on_delivery` records it as unpaid and payable on arrival.",
+                "enum": [
+                  "invoice",
+                  "cash_on_delivery"
+                ],
+                "example": "invoice",
+                "type": "string"
+              },
+              "name": {
+                "description": "Label for the payment option. Defaults to the event's configured option of this type, falling back to the platform default.",
+                "example": "Pay via invoice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "manualType"
+            ],
+            "type": "object"
+          },
+          "ticketPwywAmounts": {
+            "additionalProperties": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "description": "Chosen amounts for pay-what-you-want ticket types, keyed by ticket type ID, in the smallest currency unit. Required for any pay-what-you-want ticket type included in `tickets`.",
+            "example": {
+              "65f4a1c2e4a9f3d2b1c0a9e8": 5000
+            },
+            "type": "object"
+          },
+          "tickets": {
+            "additionalProperties": {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use `list_tickets` or the event to discover ticket type IDs.",
+            "example": {
+              "65f4a1c2e4a9f3d2b1c0a9e8": 2
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "eventId",
+          "tickets",
+          "fields",
+          "paymentOption"
+        ],
+        "type": "object"
       },
       "CreateCheckoutPageInput": {
         "properties": {
@@ -21598,6 +21822,110 @@
           }
         ],
         "summary": "List all bookings",
+        "tags": [
+          "Events"
+        ]
+      },
+      "post": {
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, ticket-type capacity is decremented, and booking webhooks fire. Bookings with an amount above zero are recorded as `unpaid` and settled outside checkout via the chosen manual payment option (`invoice` or `cash_on_delivery`); free bookings are recorded as `paid`. Storefront rules are enforced: tickets must be on sale and in stock, and the event registration limit applies. Requires a connected Stripe account.",
+        "operationId": "bookings/create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDetailResponse"
+                }
+              }
+            },
+            "description": "Booking created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Registration limit reached for this customer"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Event not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Tickets are sold out or not on sale"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Create booking",
         "tags": [
           "Events"
         ]
