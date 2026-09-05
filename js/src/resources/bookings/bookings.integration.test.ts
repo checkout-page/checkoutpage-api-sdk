@@ -462,12 +462,200 @@ describe('BookingResource Integration Tests', () => {
       expect(fetched.data.amount).toBe(5000);
     });
 
+    // Every property BookingResponse declares. Grouped by whether an unpaid
+    // manual booking can populate it, so a field that silently stops being
+    // returned fails here rather than going unnoticed.
+    it('returns every declared booking property', { timeout: 60_000 }, async () => {
+      const email = `sdk-booking-full-${uniqueSuffix()}@example.com`;
+
+      const { data: booking } = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 2 },
+        fields: [
+          { reference: 'customer_email', value: email },
+          { reference: 'customer_name', value: 'Exhaustive Booking' },
+        ],
+        paymentOption: {
+          manualType: 'invoice',
+          name: 'Pay via invoice',
+          description: 'Payment due in 30 days',
+          instructions: 'Bank details to follow.',
+        },
+      });
+
+      // Always populated on a created booking.
+      for (const key of [
+        'id',
+        'orderId',
+        'orderStatus',
+        'customerEmail',
+        'customerName',
+        'customerId',
+        'sellerId',
+        'pageId',
+        'pageSlug',
+        'currency',
+        'amount',
+        'amountPaid',
+        'amountDue',
+        'amountRefunded',
+        'amountUsd',
+        'taxAmount',
+        'taxBreakdown',
+        'fees',
+        'billing',
+        'fields',
+        'livemode',
+        'status',
+        'paymentMethod',
+        'paymentOption',
+        'locale',
+        'transactionIds',
+        'isAbandoned',
+        'createdAt',
+        'updatedAt',
+        'eventTitle',
+        'tickets',
+      ]) {
+        expect(booking, `expected booking to carry "${key}"`).toHaveProperty(key);
+      }
+
+      // Values, not just presence.
+      expect(booking.status).toBe('unpaid');
+      expect(booking.amount).toBe(5000);
+      expect(booking.amountPaid).toBe(0);
+      expect(booking.amountDue).toBe(5000);
+      expect(booking.amountRefunded).toBe(0);
+      expect(booking.currency).toBe('usd');
+      expect(booking.orderStatus).toBe('active');
+      expect(booking.livemode).toBe(true);
+      expect(booking.isAbandoned).toBe(false);
+      expect(booking.customerEmail).toBe(email);
+      expect(booking.customerName).toBe('Exhaustive Booking');
+      expect(booking.paymentMethod).toMatchObject({ gateway: 'manual', method: 'manual' });
+      expect(booking.paymentOption).toMatchObject({
+        type: 'manual',
+        manualType: 'invoice',
+        name: 'Pay via invoice',
+        description: 'Payment due in 30 days',
+        instructions: 'Bank details to follow.',
+      });
+      expect(Array.isArray(booking.transactionIds)).toBe(true);
+      expect(booking.transactionIds?.length).toBeGreaterThan(0);
+      expect(Array.isArray(booking.taxBreakdown)).toBe(true);
+      expect(Array.isArray(booking.fees)).toBe(true);
+
+      // Every property of the ticket line.
+      const ticket = booking.tickets?.[0];
+      expect(ticket).toBeDefined();
+      for (const key of [
+        'name',
+        'ticketTypeId',
+        'ticketGroupId',
+        'ticketGroupName',
+        'quantity',
+        'price',
+        'originalPrice',
+        'pricing',
+      ]) {
+        expect(ticket, `expected ticket to carry "${key}"`).toHaveProperty(key);
+      }
+      expect(ticket?.ticketTypeId).toBe(ticketTypeId);
+      expect(ticket?.quantity).toBe(2);
+      expect(ticket?.price).toBe(2500);
+      expect(ticket?.pricing).toBe('paid');
+
+      // Every field entry carries the event's own label/reference, hydrated
+      // server-side rather than echoed from the request.
+      for (const field of booking.fields ?? []) {
+        expect(field).toHaveProperty('fieldId');
+        expect(field).toHaveProperty('label');
+        expect(field).toHaveProperty('value');
+      }
+      const emailField = booking.fields?.find((f) => f.reference === 'customer_email');
+      expect(emailField?.label).toBe('Email address');
+
+      // Not populated by an unpaid manual booking — asserted so that a change
+      // in behaviour surfaces here instead of silently.
+      for (const key of [
+        'stripePaymentIntentId',
+        'stripeChargeId',
+        'paymentError',
+        'lastRefundAt',
+        'lastRefundReason',
+        'canceledAt',
+        'canceledBy',
+        'recoveredAt',
+        'upsellPageId',
+        'upsellChargeId',
+        'upsellSubscriptionId',
+      ]) {
+        expect(
+          (booking as Record<string, unknown>)[key],
+          `expected "${key}" to be absent on an unpaid manual booking`
+        ).toBeUndefined();
+      }
+    });
+
+    it('applies a coupon discount to the booking', { timeout: 60_000 }, async () => {
+      const email = `sdk-booking-coupon-${uniqueSuffix()}@example.com`;
+      const code = `SDKBOOK${uniqueSuffix()}`.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+      const { data: coupon } = await client.coupons.create({
+        type: 'percent',
+        label: `SDK booking coupon ${uniqueSuffix()}`,
+        code,
+        percentOff: 10,
+        duration: 'once',
+      });
+
+      const { data: booking } = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 1 },
+        couponId: coupon.id,
+        fields: [{ reference: 'customer_email', value: email }],
+        paymentOption: { manualType: 'invoice' },
+      });
+
+      expect(booking.coupon).toBeDefined();
+      expect(booking.coupon?.code).toBe(code);
+      expect(booking.coupon?.percentOff).toBe(10);
+      // 2500 less 10%.
+      expect(booking.amount).toBe(2250);
+    });
+
     it('rejects a ticket type that is not on the event', async () => {
       await expect(
         client.bookings.create({
           eventId,
           tickets: { '507f1f77bcf86cd799439011': 1 },
           fields: [{ reference: 'customer_email', value: 'sdk-reject@example.com' }],
+          paymentOption: { manualType: 'invoice' },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('rejects an unknown property rather than dropping it from a 201', async () => {
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [{ reference: 'customer_email', value: 'sdk-strict@example.com' }],
+          paymentOption: { manualType: 'invoice' },
+          notes: 'not a real field',
+        } as never)
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('rejects an unknown tax ID type', async () => {
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [
+            { reference: 'customer_email', value: 'sdk-taxid@example.com' },
+            { reference: 'customer_name', value: 'X', meta: { type: 'not_a_real_type' } },
+          ],
           paymentOption: { manualType: 'invoice' },
         })
       ).rejects.toThrow(ValidationError);

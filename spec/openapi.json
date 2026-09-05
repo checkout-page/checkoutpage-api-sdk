@@ -1279,6 +1279,21 @@
               }
             ]
           },
+          "meta": {
+            "description": "Extra data for the field. Only meaningful on a tax-ID field; address fields derive their own.",
+            "properties": {
+              "type": {
+                "description": "For a tax-ID field, the tax ID type, e.g. `gb_vat` or `eu_vat`. Required for the number to be registered on the customer and for business tax treatment (reverse charge) to be applied — without it the booking is taxed as a consumer sale.",
+                "example": "gb_vat",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
           "reference": {
             "description": "The field's reference. Provide either `fieldId` or `reference`. Default fields use stable references: `customer_email`, `customer_name`, `customer_phone`, `address`.",
             "example": "customer_email",
@@ -1962,6 +1977,7 @@
         "type": "string"
       },
       "CreateBookingInput": {
+        "additionalProperties": false,
         "description": "Creates an event booking without collecting card payment.",
         "properties": {
           "couponId": {
