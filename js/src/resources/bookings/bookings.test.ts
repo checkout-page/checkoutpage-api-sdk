@@ -438,6 +438,7 @@ describe('BookingResource', () => {
         tickets: { [TICKET_TYPE_ID]: 2, [PWYW_TICKET_TYPE_ID]: 1 },
         ticketPwywAmounts: { [PWYW_TICKET_TYPE_ID]: 5000 },
         couponId: COUPON_ID,
+        queryParameters: { utm_source: 'box-office', utm_campaign: 'phone-sales' },
         fields: [
           { reference: 'customer_email', value: 'ada@example.com' },
           { reference: 'customer_name', value: 'Ada Lovelace' },
@@ -491,6 +492,10 @@ describe('BookingResource', () => {
       expect(sent.body.tickets).toEqual({ [TICKET_TYPE_ID]: 2, [PWYW_TICKET_TYPE_ID]: 1 });
       expect(sent.body.ticketPwywAmounts).toEqual({ [PWYW_TICKET_TYPE_ID]: 5000 });
       expect(sent.body.couponId).toBe(COUPON_ID);
+      expect(sent.body.queryParameters).toEqual({
+        utm_source: 'box-office',
+        utm_campaign: 'phone-sales',
+      });
       expect(sent.body.paymentOption).toEqual({
         manualType: 'cash_on_delivery',
         name: 'Pay on arrival',
@@ -516,6 +521,7 @@ describe('BookingResource', () => {
       const sent = requestSpy.mock.calls[0][0] as { body: Record<string, unknown> };
       expect(sent.body).not.toHaveProperty('couponId');
       expect(sent.body).not.toHaveProperty('ticketPwywAmounts');
+      expect(sent.body).not.toHaveProperty('queryParameters');
     });
   });
 });

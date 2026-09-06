@@ -597,6 +597,28 @@ describe('BookingResource Integration Tests', () => {
       }
     });
 
+    it('records queryParameters against the booking', { timeout: 60_000 }, async () => {
+      const queryParameters = {
+        utm_source: 'box-office',
+        utm_campaign: `sdk-${uniqueSuffix()}`,
+      };
+
+      const { data: booking } = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 1 },
+        queryParameters,
+        fields: [
+          { reference: 'customer_email', value: `sdk-booking-qp-${uniqueSuffix()}@example.com` },
+        ],
+        paymentOption: { manualType: 'invoice' },
+      });
+
+      expect(booking.queryParameters).toEqual(queryParameters);
+
+      const fetched = await client.bookings.get(booking.id);
+      expect(fetched.data.queryParameters).toEqual(queryParameters);
+    });
+
     it('applies a coupon discount to the booking', { timeout: 60_000 }, async () => {
       const email = `sdk-booking-coupon-${uniqueSuffix()}@example.com`;
       const code = `SDKBOOK${uniqueSuffix()}`.toUpperCase().replace(/[^A-Z0-9]/g, '');

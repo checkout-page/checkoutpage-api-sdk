@@ -2041,6 +2041,17 @@
             ],
             "type": "object"
           },
+          "queryParameters": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Attribution or tracking parameters to record against the booking, mirroring the query string a storefront checkout captures from its page link. Stored on the booking and included in exports; not used in pricing.",
+            "example": {
+              "utm_campaign": "phone-sales",
+              "utm_source": "box-office"
+            },
+            "type": "object"
+          },
           "ticketPwywAmounts": {
             "additionalProperties": {
               "minimum": 0,
