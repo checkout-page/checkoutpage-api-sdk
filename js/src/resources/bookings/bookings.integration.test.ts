@@ -405,6 +405,18 @@ describe('BookingResource Integration Tests', () => {
           endDate: '2026-11-01T17:00:00Z',
           timezone: 'UTC',
         },
+        // Required fields must all be supplied on create; keep the fixture
+        // minimal (email only) and carry a tax-ID field for the meta tests.
+        fields: [
+          {
+            label: 'Email address',
+            element: 'email',
+            type: 'email',
+            required: true,
+          },
+          { label: 'Name', element: 'text', type: 'name' },
+          { label: 'VAT number', element: 'tax-id' },
+        ],
         ticketGroups: [
           {
             name: 'General Admission',
@@ -516,6 +528,10 @@ describe('BookingResource Integration Tests', () => {
         'updatedAt',
         'eventTitle',
         'tickets',
+        'dynamicPrice',
+        'stripeTaxCalculationId',
+        'upsell',
+        'abandonedCartEmailStatus',
       ]) {
         expect(booking, `expected booking to carry "${key}"`).toHaveProperty(key);
       }
@@ -564,6 +580,15 @@ describe('BookingResource Integration Tests', () => {
       expect(ticket?.quantity).toBe(2);
       expect(ticket?.price).toBe(2500);
       expect(ticket?.pricing).toBe('paid');
+      expect(ticket).toHaveProperty('reference');
+      expect(ticket).toHaveProperty('ticketGroupReference');
+      // Uncapped fixture ticket type with no booking fee or discount.
+      for (const key of ['capacity', 'ticketGroupCapacity', 'bookingFeeAmount', 'discount']) {
+        expect(
+          (ticket as Record<string, unknown>)[key],
+          `expected ticket "${key}" to be absent on this fixture`
+        ).toBeUndefined();
+      }
 
       // Every field entry carries the event's own label/reference, hydrated
       // server-side rather than echoed from the request.
@@ -580,21 +605,48 @@ describe('BookingResource Integration Tests', () => {
       for (const key of [
         'stripePaymentIntentId',
         'stripeChargeId',
+        'stripeTaxTransactionId',
         'paymentError',
         'lastRefundAt',
         'lastRefundReason',
+        'lastRefundReasonNote',
         'canceledAt',
         'canceledBy',
+        'canceledReason',
         'recoveredAt',
+        'abandonmentStatus',
+        'abandonedCartEmailSentAt',
         'upsellPageId',
         'upsellChargeId',
         'upsellSubscriptionId',
+        // The invoice is linked to the charge after the create response is
+        // built — invoiceId appears on bookings.get, not on the 201.
+        'invoiceId',
+        // Not part of this booking: no coupon, no shipping/tax data, and the
+        // browser-session keys an API booking never carries.
+        'coupon',
+        'discount',
+        'shipping',
+        'amountExcludingTax',
+        'taxSource',
+        'taxRates',
+        'clientIp',
+        'sessionId',
+        'userAgent',
+        'screenWidth',
+        'visitId',
+        'queryParameters',
       ]) {
         expect(
           (booking as Record<string, unknown>)[key],
           `expected "${key}" to be absent on an unpaid manual booking`
         ).toBeUndefined();
       }
+
+      // The invoice link lands after creation: absent from the 201 above,
+      // present on a subsequent get (invoicing-enabled sellers).
+      const fetched = await client.bookings.get(booking.id);
+      expect(fetched.data.invoiceId).toBeDefined();
     });
 
     it('records queryParameters against the booking', { timeout: 60_000 }, async () => {
@@ -669,15 +721,57 @@ describe('BookingResource Integration Tests', () => {
       ).rejects.toThrow(ValidationError);
     });
 
-    it('rejects an unknown tax ID type', async () => {
+    it('rejects an unknown tax ID type on the tax-ID field', async () => {
       await expect(
         client.bookings.create({
           eventId,
           tickets: { [ticketTypeId]: 1 },
           fields: [
             { reference: 'customer_email', value: 'sdk-taxid@example.com' },
-            { reference: 'customer_name', value: 'X', meta: { type: 'not_a_real_type' } },
+            { reference: 'vat-number', value: 'GB123', meta: { type: 'not_a_real_type' } },
           ],
+          paymentOption: { manualType: 'invoice' },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('rejects meta on a field that is not a tax-ID field', async () => {
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [
+            { reference: 'customer_email', value: 'x@example.com', meta: { type: 'gb_vat' } },
+          ],
+          paymentOption: { manualType: 'invoice' },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('enforces required fields, matching the storefront form', { timeout: 60_000 }, async () => {
+      // A default-fields event requires name, email and address.
+      const suffix = uniqueSuffix();
+      const { data: defaultEvent } = await client.events.create({
+        name: `SDK Required Fields ${suffix}`,
+        title: `SDK Required Fields ${suffix}`,
+        eventDetails: {
+          type: 'virtual',
+          currency: 'usd',
+          startDate: '2026-11-01T09:00:00Z',
+          endDate: '2026-11-01T17:00:00Z',
+          timezone: 'UTC',
+        },
+        ticketGroups: [{ name: 'GA', ticketTypes: [{ name: 'GA', pricing: 'paid', price: 1000 }] }],
+      });
+      createdEventIds.push(defaultEvent.id);
+      const defaultTicketTypeId = defaultEvent.ticketGroups?.[0]?.ticketTypes?.[0]?.id;
+      if (!defaultTicketTypeId) throw new Error('Provisioned default event has no ticket type');
+
+      await expect(
+        client.bookings.create({
+          eventId: defaultEvent.id,
+          tickets: { [defaultTicketTypeId]: 1 },
+          fields: [{ reference: 'customer_email', value: 'sdk-required@example.com' }],
           paymentOption: { manualType: 'invoice' },
         })
       ).rejects.toThrow(ValidationError);

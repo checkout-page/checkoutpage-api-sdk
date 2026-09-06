@@ -13,14 +13,15 @@ export class BookingResource {
   /**
    * Create an event booking without collecting card payment. This is a real
    * booking: tickets are issued, the customer receives a confirmation email
-   * with the ticket PDF, capacity is decremented, and booking webhooks fire.
-   * A booking with an amount above zero is recorded as `unpaid`, to be
-   * settled outside checkout via the chosen manual payment option; a free
-   * booking is recorded as `paid`.
+   * with the ticket PDF, live-mode bookings decrement capacity, and booking webhooks fire.
+   * Every booking is recorded as `unpaid`, to be settled outside checkout
+   * via the chosen manual payment option; a free booking simply has nothing
+   * due.
    *
    * Field entries carry exactly one of `fieldId` or `reference` plus the
-   * value; the event's email field is required (default reference
-   * `customer_email`).
+   * value. Every required field on the event must be supplied — a stock
+   * event requires name, email and a billing address (default references
+   * `customer_name`, `customer_email`, `address`).
    *
    * @example
    * const { data: booking } = await client.bookings.create({
