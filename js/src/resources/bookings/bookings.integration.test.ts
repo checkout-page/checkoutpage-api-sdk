@@ -392,6 +392,15 @@ describe('BookingResource Integration Tests', () => {
     const createdEventIds: string[] = [];
     let eventId: string;
     let ticketTypeId: string;
+    let fieldIdByReference: Map<string, string>;
+
+    // Bookings address fields by id only, and the event response does not carry
+    // them, so resolve the ids the endpoint expects from the fields list.
+    const fieldId = (reference: string): string => {
+      const id = fieldIdByReference.get(reference);
+      if (!id) throw new Error(`Provisioned event has no field with reference "${reference}"`);
+      return id;
+    };
 
     beforeAll(async () => {
       const suffix = uniqueSuffix();
@@ -430,6 +439,25 @@ describe('BookingResource Integration Tests', () => {
       const ticketType = response.data.ticketGroups?.[0]?.ticketTypes?.[0];
       if (!ticketType?.id) throw new Error('Provisioned event has no ticket type');
       ticketTypeId = ticketType.id;
+
+      // The client exposes no fields resource, and its low-level request method
+      // is private, so read the list over plain HTTP.
+      const fieldsResponse = await fetch(`${config.baseUrl}/v1/events/${eventId}/fields`, {
+        headers: { Authorization: `Bearer ${config.apiKey}` },
+      });
+      if (!fieldsResponse.ok) {
+        throw new Error(`Could not list event fields: ${fieldsResponse.status}`);
+      }
+
+      const fields = (await fieldsResponse.json()) as {
+        data: { id: string; reference?: string | null }[];
+      };
+
+      fieldIdByReference = new Map(
+        fields.data
+          .filter((field): field is { id: string; reference: string } => Boolean(field.reference))
+          .map((field) => [field.reference, field.id])
+      );
     });
 
     afterAll(async () => {
@@ -449,8 +477,8 @@ describe('BookingResource Integration Tests', () => {
         eventId,
         tickets: { [ticketTypeId]: 2 },
         fields: [
-          { reference: 'customer_email', value: email },
-          { reference: 'customer_name', value: 'SDK Booking Test' },
+          { fieldId: fieldId('customer_email'), value: email },
+          { fieldId: fieldId('customer_name'), value: 'SDK Booking Test' },
         ],
         paymentOption: { manualType: 'invoice' },
       });
@@ -484,8 +512,8 @@ describe('BookingResource Integration Tests', () => {
         eventId,
         tickets: { [ticketTypeId]: 2 },
         fields: [
-          { reference: 'customer_email', value: email },
-          { reference: 'customer_name', value: 'Exhaustive Booking' },
+          { fieldId: fieldId('customer_email'), value: email },
+          { fieldId: fieldId('customer_name'), value: 'Exhaustive Booking' },
         ],
         paymentOption: {
           manualType: 'invoice',
@@ -660,7 +688,10 @@ describe('BookingResource Integration Tests', () => {
         tickets: { [ticketTypeId]: 1 },
         queryParameters,
         fields: [
-          { reference: 'customer_email', value: `sdk-booking-qp-${uniqueSuffix()}@example.com` },
+          {
+            fieldId: fieldId('customer_email'),
+            value: `sdk-booking-qp-${uniqueSuffix()}@example.com`,
+          },
         ],
         paymentOption: { manualType: 'invoice' },
       });
@@ -687,7 +718,7 @@ describe('BookingResource Integration Tests', () => {
         eventId,
         tickets: { [ticketTypeId]: 1 },
         couponId: coupon.id,
-        fields: [{ reference: 'customer_email', value: email }],
+        fields: [{ fieldId: fieldId('customer_email'), value: email }],
         paymentOption: { manualType: 'invoice' },
       });
 
@@ -703,7 +734,7 @@ describe('BookingResource Integration Tests', () => {
         client.bookings.create({
           eventId,
           tickets: { '507f1f77bcf86cd799439011': 1 },
-          fields: [{ reference: 'customer_email', value: 'sdk-reject@example.com' }],
+          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-reject@example.com' }],
           paymentOption: { manualType: 'invoice' },
         })
       ).rejects.toThrow(ValidationError);
@@ -714,7 +745,7 @@ describe('BookingResource Integration Tests', () => {
         client.bookings.create({
           eventId,
           tickets: { [ticketTypeId]: 1 },
-          fields: [{ reference: 'customer_email', value: 'sdk-strict@example.com' }],
+          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-strict@example.com' }],
           paymentOption: { manualType: 'invoice' },
           notes: 'not a real field',
         } as never)
@@ -727,8 +758,8 @@ describe('BookingResource Integration Tests', () => {
           eventId,
           tickets: { [ticketTypeId]: 1 },
           fields: [
-            { reference: 'customer_email', value: 'sdk-taxid@example.com' },
-            { reference: 'vat-number', value: 'GB123', meta: { type: 'not_a_real_type' } },
+            { fieldId: fieldId('customer_email'), value: 'sdk-taxid@example.com' },
+            { fieldId: fieldId('vat-number'), value: 'GB123', meta: { type: 'not_a_real_type' } },
           ],
           paymentOption: { manualType: 'invoice' },
         })
@@ -741,7 +772,11 @@ describe('BookingResource Integration Tests', () => {
           eventId,
           tickets: { [ticketTypeId]: 1 },
           fields: [
-            { reference: 'customer_email', value: 'x@example.com', meta: { type: 'gb_vat' } },
+            {
+              fieldId: fieldId('customer_email'),
+              value: 'x@example.com',
+              meta: { type: 'gb_vat' },
+            },
           ],
           paymentOption: { manualType: 'invoice' },
         })
@@ -771,7 +806,7 @@ describe('BookingResource Integration Tests', () => {
         client.bookings.create({
           eventId: defaultEvent.id,
           tickets: { [defaultTicketTypeId]: 1 },
-          fields: [{ reference: 'customer_email', value: 'sdk-required@example.com' }],
+          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-required@example.com' }],
           paymentOption: { manualType: 'invoice' },
         })
       ).rejects.toThrow(ValidationError);
@@ -782,7 +817,7 @@ describe('BookingResource Integration Tests', () => {
         client.bookings.create({
           eventId,
           tickets: { [ticketTypeId]: 1 },
-          fields: [{ reference: 'customer_name', value: 'No Email' }],
+          fields: [{ fieldId: fieldId('customer_name'), value: 'No Email' }],
           paymentOption: { manualType: 'invoice' },
         })
       ).rejects.toThrow(ValidationError);

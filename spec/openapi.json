@@ -1267,7 +1267,7 @@
         "type": "object"
       },
       "BookingFieldInput": {
-        "description": "A value for one of the event's fields. The field's label, element, type and reference are resolved from the event itself, so only the identifier and the value are supplied here.",
+        "description": "A value for one of the event's fields. The field's label, element, type and reference are resolved from the event itself, so only the field ID and the value are supplied here.",
         "properties": {
           "fieldId": {
             "allOf": [
@@ -1275,7 +1275,8 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "The ID of a field on this event. Provide either `fieldId` or `reference`."
+                "description": "The ID of a field on this event. List the event's fields with `GET /v1/events/{eventId}/fields` to find it.",
+                "example": "507f1f77bcf86cd799439011"
               }
             ]
           },
@@ -1283,7 +1284,7 @@
             "description": "Extra data for the field. Only meaningful on a tax-ID field; address fields derive their own.",
             "properties": {
               "type": {
-                "description": "For a tax-ID field, the tax ID type, e.g. `gb_vat` or `eu_vat`. Required for the number to be registered on the customer and for business tax treatment (reverse charge) to be applied — without it the booking is taxed as a consumer sale.",
+                "description": "For a tax-ID field, the tax ID type, e.g. `gb_vat` or `eu_vat`. Required for the number to be registered on the customer and for business tax treatment (reverse charge) to be applied. Without it the booking is taxed as a consumer sale.",
                 "example": "gb_vat",
                 "minLength": 1,
                 "type": "string"
@@ -1293,12 +1294,6 @@
               "type"
             ],
             "type": "object"
-          },
-          "reference": {
-            "description": "The field's reference. Provide either `fieldId` or `reference`. Default fields use stable references: `customer_email`, `customer_name`, `address`.",
-            "example": "customer_email",
-            "minLength": 1,
-            "type": "string"
           },
           "value": {
             "anyOf": [
@@ -1391,6 +1386,7 @@
           }
         },
         "required": [
+          "fieldId",
           "value"
         ],
         "type": "object"

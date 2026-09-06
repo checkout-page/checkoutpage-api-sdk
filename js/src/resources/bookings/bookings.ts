@@ -18,18 +18,18 @@ export class BookingResource {
    * via the chosen manual payment option; a free booking simply has nothing
    * due.
    *
-   * Field entries carry exactly one of `fieldId` or `reference` plus the
-   * value. Every required field on the event must be supplied — a stock
-   * event requires name, email and a billing address (default references
-   * `customer_name`, `customer_email`, `address`).
+   * Field entries carry a `fieldId` plus the value. Every required field on
+   * the event must be supplied, and a stock event requires name, email and a
+   * billing address. The ids come from `GET /v1/events/{eventId}/fields`,
+   * which this client does not yet wrap.
    *
    * @example
    * const { data: booking } = await client.bookings.create({
    *   eventId,
    *   tickets: { [ticketTypeId]: 2 },
    *   fields: [
-   *     { reference: 'customer_email', value: 'ada@example.com' },
-   *     { reference: 'customer_name', value: 'Ada Lovelace' },
+   *     { fieldId: emailFieldId, value: 'ada@example.com' },
+   *     { fieldId: nameFieldId, value: 'Ada Lovelace' },
    *   ],
    *   paymentOption: { manualType: 'invoice' },
    * });

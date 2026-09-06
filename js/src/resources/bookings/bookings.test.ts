@@ -7,6 +7,11 @@ const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
 const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
 const PAGE_ID = '67fcbdac6a91c25ef2d3534a';
 const CUSTOMER_ID = '507f1f77bcf86cd799439010';
+const EMAIL_FIELD_ID = '507f1f77bcf86cd799439030';
+const NAME_FIELD_ID = '507f1f77bcf86cd799439031';
+const PHONE_FIELD_ID = '507f1f77bcf86cd799439032';
+const TAX_ID_FIELD_ID = '507f1f77bcf86cd799439033';
+const ADDRESS_FIELD_ID = '507f1f77bcf86cd799439034';
 const CURSOR_1 = '507f1f77bcf86cd799439011';
 const CURSOR_2 = '507f1f77bcf86cd799439012';
 
@@ -392,8 +397,8 @@ describe('BookingResource', () => {
       eventId: PAGE_ID,
       tickets: { [TICKET_TYPE_ID]: 2 },
       fields: [
-        { reference: 'customer_email', value: 'ada@example.com' },
-        { reference: 'customer_name', value: 'Ada Lovelace' },
+        { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
+        { fieldId: NAME_FIELD_ID, value: 'Ada Lovelace' },
       ],
       paymentOption: { manualType: 'invoice' },
     };
@@ -440,13 +445,13 @@ describe('BookingResource', () => {
         couponId: COUPON_ID,
         queryParameters: { utm_source: 'box-office', utm_campaign: 'phone-sales' },
         fields: [
-          { reference: 'customer_email', value: 'ada@example.com' },
-          { reference: 'customer_name', value: 'Ada Lovelace' },
-          { reference: 'customer_phone', value: '+441234567890' },
+          { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
+          { fieldId: NAME_FIELD_ID, value: 'Ada Lovelace' },
+          { fieldId: PHONE_FIELD_ID, value: '+441234567890' },
           { fieldId: CUSTOM_FIELD_ID, value: 'Vegan' },
-          { reference: 'tax_id', value: 'GB123456789', meta: { type: 'gb_vat' } },
+          { fieldId: TAX_ID_FIELD_ID, value: 'GB123456789', meta: { type: 'gb_vat' } },
           {
-            reference: 'address',
+            fieldId: ADDRESS_FIELD_ID,
             value: {
               billing: {
                 name: 'Ada Lovelace',
