@@ -1392,20 +1392,9 @@
         "type": "object"
       },
       "BookingPaymentOptionInput": {
+        "additionalProperties": false,
         "description": "How the booking is paid for. This endpoint never collects card payment: every booking is recorded as unpaid with the amount as its balance due — for a free booking that balance is zero. Settlement happens outside checkout.",
         "properties": {
-          "description": {
-            "description": "Short description of the payment option. Defaults as `name` does.",
-            "example": "Payment due in 30 days",
-            "maxLength": 1000,
-            "type": "string"
-          },
-          "instructions": {
-            "description": "Payment instructions recorded on the booking. Defaults as `name` does.",
-            "example": "Bank details will be sent via email after checkout.",
-            "maxLength": 5000,
-            "type": "string"
-          },
           "manualType": {
             "description": "How the customer will pay. `invoice` records the booking as unpaid and awaiting an invoice payment; `cash_on_delivery` records it as unpaid and payable on arrival.",
             "enum": [
@@ -1413,12 +1402,6 @@
               "cash_on_delivery"
             ],
             "example": "invoice",
-            "type": "string"
-          },
-          "name": {
-            "description": "Label for the payment option. Defaults to the event's option of this type when one is configured (enabled or not), falling back to the platform default.",
-            "example": "Pay via invoice",
-            "maxLength": 200,
             "type": "string"
           }
         },
@@ -2011,7 +1994,7 @@
       },
       "CreateBookingInput": {
         "additionalProperties": false,
-        "description": "Creates an event booking without collecting card payment. The booking is recorded as unpaid; a free booking simply has nothing due.",
+        "description": "Creates an event booking without collecting card payment. The booking is recorded as unpaid; a free booking simply has nothing due. Requires a paid plan.",
         "properties": {
           "couponId": {
             "allOf": [
@@ -21844,7 +21827,7 @@
         ]
       },
       "post": {
-        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. Every booking is recorded as `unpaid` and settled outside checkout via the chosen manual payment option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a connected Stripe account.",
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. Every booking is recorded as `unpaid` and settled outside checkout via the chosen manual payment option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
         "operationId": "bookings/create",
         "requestBody": {
           "content": {
@@ -21894,7 +21877,7 @@
                 }
               }
             },
-            "description": "Registration limit reached for this customer, account disabled or over its plan limit, or the API key lacks the required permission"
+            "description": "Registration limit reached for this customer; account disabled, on the free plan, or over its plan limit; or the API key lacks the required permission"
           },
           "404": {
             "content": {

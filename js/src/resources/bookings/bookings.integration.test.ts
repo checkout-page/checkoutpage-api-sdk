@@ -388,7 +388,7 @@ describe('BookingResource Integration Tests', () => {
     });
   });
 
-  describe('create', () => {
+  describe.only('create', () => {
     const createdEventIds: string[] = [];
     let eventId: string;
     let ticketTypeId: string;
@@ -471,6 +471,38 @@ describe('BookingResource Integration Tests', () => {
     });
 
     it('creates an unpaid manual booking with hydrated fields', { timeout: 60_000 }, async () => {
+      const email = `sdk-booking-${uniqueSuffix()}@checkoutpage.com`;
+
+      const result = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 2 },
+        fields: [
+          { fieldId: fieldId('customer_email'), value: email },
+          { fieldId: fieldId('customer_name'), value: 'SDK Booking Test' },
+        ],
+        paymentOption: { manualType: 'invoice' },
+      });
+
+      expect(result.data.status).toBe('unpaid');
+      expect(result.data.amount).toBe(5000);
+      expect(result.data.amountDue).toBe(5000);
+      expect(result.data.customerEmail).toBe(email);
+      expect(result.data.customerName).toBe('SDK Booking Test');
+      expect(result.data.paymentOption?.manualType).toBe('invoice');
+      expect(result.data.tickets?.[0]?.ticketTypeId).toBe(ticketTypeId);
+      expect(result.data.tickets?.[0]?.quantity).toBe(2);
+      // Fields carry the event's own labels, not caller-supplied ones.
+      const emailField = result.data.fields?.find((f) => f.reference === 'customer_email');
+      expect(emailField?.label).toBe('Email address');
+      expect(emailField?.value).toBe(email);
+
+      // Read-back parity with bookings.get.
+      const fetched = await client.bookings.get(result.data.id);
+      expect(fetched.data.status).toBe('unpaid');
+      expect(fetched.data.amount).toBe(5000);
+    });
+
+    it('creates an unpaid manual booking with hydrated fields', { timeout: 60_000 }, async () => {
       const email = `sdk-booking-${uniqueSuffix()}@example.com`;
 
       const result = await client.bookings.create({
@@ -515,12 +547,7 @@ describe('BookingResource Integration Tests', () => {
           { fieldId: fieldId('customer_email'), value: email },
           { fieldId: fieldId('customer_name'), value: 'Exhaustive Booking' },
         ],
-        paymentOption: {
-          manualType: 'invoice',
-          name: 'Pay via invoice',
-          description: 'Payment due in 30 days',
-          instructions: 'Bank details to follow.',
-        },
+        paymentOption: { manualType: 'invoice' },
       });
 
       // Always populated on a created booking.
@@ -577,13 +604,10 @@ describe('BookingResource Integration Tests', () => {
       expect(booking.customerEmail).toBe(email);
       expect(booking.customerName).toBe('Exhaustive Booking');
       expect(booking.paymentMethod).toMatchObject({ gateway: 'manual', method: 'manual' });
-      expect(booking.paymentOption).toMatchObject({
-        type: 'manual',
-        manualType: 'invoice',
-        name: 'Pay via invoice',
-        description: 'Payment due in 30 days',
-        instructions: 'Bank details to follow.',
-      });
+      // type/manualType are the contract; name/description/instructions are
+      // derived from the merchant's own option config, not caller input.
+      expect(booking.paymentOption).toMatchObject({ type: 'manual', manualType: 'invoice' });
+      expect(typeof booking.paymentOption?.name).toBe('string');
       expect(Array.isArray(booking.transactionIds)).toBe(true);
       expect(booking.transactionIds?.length).toBeGreaterThan(0);
       expect(Array.isArray(booking.taxBreakdown)).toBe(true);

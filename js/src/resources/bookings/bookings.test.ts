@@ -476,9 +476,6 @@ describe('BookingResource', () => {
         ],
         paymentOption: {
           manualType: 'cash_on_delivery',
-          name: 'Pay on arrival',
-          description: 'Settle at the door',
-          instructions: 'Cash or card accepted at the venue.',
         },
       };
 
@@ -501,12 +498,7 @@ describe('BookingResource', () => {
         utm_source: 'box-office',
         utm_campaign: 'phone-sales',
       });
-      expect(sent.body.paymentOption).toEqual({
-        manualType: 'cash_on_delivery',
-        name: 'Pay on arrival',
-        description: 'Settle at the door',
-        instructions: 'Cash or card accepted at the venue.',
-      });
+      expect(sent.body.paymentOption).toEqual({ manualType: 'cash_on_delivery' });
       expect(sent.body.fields).toHaveLength(6);
       expect(sent.body.fields[3]).toEqual({ fieldId: CUSTOM_FIELD_ID, value: 'Vegan' });
       expect(sent.body.fields[4].meta).toEqual({ type: 'gb_vat' });
