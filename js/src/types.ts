@@ -193,6 +193,13 @@ export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit'> & {
   limit?: number;
 };
 
+export type CreateBookingParams = NonNullable<
+  operations['bookings/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateBookingResponse =
+  operations['bookings/create']['responses'][201]['content']['application/json'];
+
 // Tickets
 export type ValidateTicketData =
   operations['tickets/validate']['responses'][200]['content']['application/json'];
@@ -203,7 +210,8 @@ export type ValidateTicketParams = NonNullable<
   operations['tickets/validate']['requestBody']
 >['content']['application/json'];
 
-export type TicketList = operations['tickets/list']['responses'][200]['content']['application/json'];
+export type TicketList =
+  operations['tickets/list']['responses'][200]['content']['application/json'];
 
 export type Ticket = TicketList['data'][number];
 

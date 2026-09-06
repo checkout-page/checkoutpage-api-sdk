@@ -1,8 +1,46 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { BookingList, BookingListParams, BookingResponse } from '../../types';
+import type {
+  BookingList,
+  BookingListParams,
+  BookingResponse,
+  CreateBookingParams,
+  CreateBookingResponse,
+} from '../../types';
 
 export class BookingResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  /**
+   * Create an event booking without collecting card payment. This is a real
+   * booking: tickets are issued, the customer receives a confirmation email
+   * with the ticket PDF, live-mode bookings decrement capacity, and booking webhooks fire.
+   * Every booking is recorded as `unpaid`, to be settled outside checkout
+   * via the chosen manual payment option; a free booking simply has nothing
+   * due.
+   *
+   * Field entries carry a `fieldId` plus the value. Every required field on
+   * the event must be supplied, and a stock event requires name, email and a
+   * billing address. The ids come from `GET /v1/events/{eventId}/fields`,
+   * which this client does not yet wrap.
+   *
+   * @example
+   * const { data: booking } = await client.bookings.create({
+   *   eventId,
+   *   tickets: { [ticketTypeId]: 2 },
+   *   fields: [
+   *     { fieldId: emailFieldId, value: 'ada@example.com' },
+   *     { fieldId: nameFieldId, value: 'Ada Lovelace' },
+   *   ],
+   *   paymentOption: { manualType: 'invoice' },
+   * });
+   */
+  async create(params: CreateBookingParams): Promise<CreateBookingResponse> {
+    return this.client.request<CreateBookingResponse>({
+      method: 'POST',
+      path: '/v1/bookings/',
+      body: params,
+    });
+  }
 
   /**
    * Retrieve a single booking by ID. Only event bookings are returned —
