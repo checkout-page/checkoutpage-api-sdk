@@ -587,6 +587,7 @@ describe('BookingResource Integration Tests', () => {
         'stripeTaxCalculationId',
         'upsell',
         'abandonedCartEmailStatus',
+        'isComplimentary',
       ]) {
         expect(booking, `expected booking to carry "${key}"`).toHaveProperty(key);
       }
@@ -601,6 +602,7 @@ describe('BookingResource Integration Tests', () => {
       expect(booking.orderStatus).toBe('active');
       expect(booking.livemode).toBe(true);
       expect(booking.isAbandoned).toBe(false);
+      expect(booking.isComplimentary).toBe(false);
       expect(booking.customerEmail).toBe(email);
       expect(booking.customerName).toBe('Exhaustive Booking');
       expect(booking.paymentMethod).toMatchObject({ gateway: 'manual', method: 'manual' });
@@ -677,6 +679,7 @@ describe('BookingResource Integration Tests', () => {
         // Not part of this booking: no coupon, no shipping/tax data, and the
         // browser-session keys an API booking never carries.
         'coupon',
+        'complimentaryDiscountAmount',
         'discount',
         'shipping',
         'amountExcludingTax',
@@ -751,6 +754,111 @@ describe('BookingResource Integration Tests', () => {
       expect(booking.coupon?.percentOff).toBe(10);
       // 2500 less 10%.
       expect(booking.amount).toBe(2250);
+    });
+
+    it(
+      'creates a complimentary booking as paid at zero with tickets at face value',
+      { timeout: 60_000 },
+      async () => {
+        const email = `sdk-booking-comp-${uniqueSuffix()}@example.com`;
+
+        const { data: booking } = await client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 2 },
+          fields: [
+            { fieldId: fieldId('customer_email'), value: email },
+            { fieldId: fieldId('customer_name'), value: 'Complimentary Booking' },
+          ],
+          complimentary: true,
+        });
+
+        expect(booking.status).toBe('paid');
+        expect(booking.amount).toBe(0);
+        expect(booking.amountPaid).toBe(0);
+        expect(booking.amountDue).toBe(0);
+        expect(booking.isComplimentary).toBe(true);
+        // The ticket lines keep their face value, so the discount that zeroed
+        // the booking is the 2 x 2500 they would have cost.
+        expect(booking.complimentaryDiscountAmount).toBe(5000);
+        expect(booking.tickets?.[0]?.ticketTypeId).toBe(ticketTypeId);
+        expect(booking.tickets?.[0]?.quantity).toBe(2);
+        expect(booking.tickets?.[0]?.price).toBe(2500);
+        expect(booking.paymentOption).toBeFalsy();
+        expect(booking.customerEmail).toBe(email);
+
+        // Read-back parity with bookings.get.
+        const fetched = await client.bookings.get(booking.id);
+        expect(fetched.data.status).toBe('paid');
+        expect(fetched.data.amount).toBe(0);
+        expect(fetched.data.isComplimentary).toBe(true);
+      }
+    );
+
+    it('filters complimentary bookings', { timeout: 60_000 }, async () => {
+      const { data: complimentary } = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 1 },
+        fields: [
+          {
+            fieldId: fieldId('customer_email'),
+            value: `sdk-booking-comp-filter-${uniqueSuffix()}@example.com`,
+          },
+        ],
+        complimentary: true,
+      });
+
+      const { data: manual } = await client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 1 },
+        fields: [
+          {
+            fieldId: fieldId('customer_email'),
+            value: `sdk-booking-manual-filter-${uniqueSuffix()}@example.com`,
+          },
+        ],
+        paymentOption: { manualType: 'invoice' },
+      });
+
+      const onlyComplimentary = await client.bookings.list({
+        pageId: eventId,
+        isComplimentary: 'true',
+        limit: 100,
+      });
+      expect(onlyComplimentary.data.map((b) => b.id)).toContain(complimentary.id);
+      expect(onlyComplimentary.data.map((b) => b.id)).not.toContain(manual.id);
+      for (const booking of onlyComplimentary.data) {
+        expect(booking.isComplimentary).toBe(true);
+      }
+
+      const withoutComplimentary = await client.bookings.list({
+        pageId: eventId,
+        isComplimentary: 'false',
+        limit: 100,
+      });
+      expect(withoutComplimentary.data.map((b) => b.id)).toContain(manual.id);
+      expect(withoutComplimentary.data.map((b) => b.id)).not.toContain(complimentary.id);
+    });
+
+    it('rejects both strategies and a coupon on a complimentary booking', async () => {
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-comp-both@example.com' }],
+          complimentary: true,
+          paymentOption: { manualType: 'invoice' },
+        })
+      ).rejects.toThrow(ValidationError);
+
+      await expect(
+        client.bookings.create({
+          eventId,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-comp-coupon@example.com' }],
+          complimentary: true,
+          couponId: '65f4a1c2e4a9f3d2b1c0a9ec',
+        })
+      ).rejects.toThrow(ValidationError);
     });
 
     it('rejects a ticket type that is not on the event', async () => {
