@@ -839,26 +839,33 @@ describe('BookingResource Integration Tests', () => {
       expect(withoutComplimentary.data.map((b) => b.id)).not.toContain(complimentary.id);
     });
 
-    it('rejects both strategies and a coupon on a complimentary booking', async () => {
-      await expect(
-        client.bookings.create({
-          eventId,
-          tickets: { [ticketTypeId]: 1 },
-          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-comp-both@example.com' }],
-          complimentary: true,
-          paymentOption: { manualType: 'invoice' },
-        })
-      ).rejects.toThrow(ValidationError);
+    it('rejects a complimentary booking that also carries a paymentOption', async () => {
+      const attempt = client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 1 },
+        fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-comp-both@example.com' }],
+        complimentary: true,
+        paymentOption: { manualType: 'invoice' },
+      });
 
-      await expect(
-        client.bookings.create({
-          eventId,
-          tickets: { [ticketTypeId]: 1 },
-          fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-comp-coupon@example.com' }],
-          complimentary: true,
-          couponId: '65f4a1c2e4a9f3d2b1c0a9ec',
-        })
-      ).rejects.toThrow(ValidationError);
+      await expect(attempt).rejects.toThrow(ValidationError);
+      await expect(attempt).rejects.toThrow(/either paymentOption or complimentary/i);
+    });
+
+    it('rejects a coupon on a complimentary booking', async () => {
+      // The coupon id below does not exist, so assert the message: a plain
+      // "coupon not found" 400 would otherwise keep this green if the
+      // mutual-exclusion rule were dropped.
+      const attempt = client.bookings.create({
+        eventId,
+        tickets: { [ticketTypeId]: 1 },
+        fields: [{ fieldId: fieldId('customer_email'), value: 'sdk-comp-coupon@example.com' }],
+        complimentary: true,
+        couponId: '65f4a1c2e4a9f3d2b1c0a9ec',
+      });
+
+      await expect(attempt).rejects.toThrow(ValidationError);
+      await expect(attempt).rejects.toThrow(/coupon cannot be applied to a complimentary booking/i);
     });
 
     it('rejects a ticket type that is not on the event', async () => {

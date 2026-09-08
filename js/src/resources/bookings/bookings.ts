@@ -21,7 +21,8 @@ export class BookingResource {
    * recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and
    * `isComplimentary: true`, while the ticket lines keep their face value and
    * `complimentaryDiscountAmount` records what they would have cost.
-   * `complimentary` is mutually exclusive with `paymentOption` and `couponId`.
+   * `complimentary` is mutually exclusive with `paymentOption` and `couponId`,
+   * and one of `paymentOption` or `complimentary` is required.
    *
    * Field entries carry a `fieldId` plus the value. Every required field on
    * the event must be supplied, and a stock event requires name, email and a
