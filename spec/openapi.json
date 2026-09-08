@@ -316,6 +316,13 @@
               "null"
             ]
           },
+          "complimentaryDiscountAmount": {
+            "description": "On a complimentary booking, the discount that brought the total to 0, in the smallest currency unit. Equal to the pre-discount subtotal of the ticket lines. Absent otherwise.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
           "coupon": {
             "description": "Coupon details when a coupon was applied. `amountOff` is the fixed discount configured on the coupon, `percentOff` is the configured percentage discount, and `discount` is the total discount actually applied to this record.",
             "properties": {
@@ -607,6 +614,13 @@
           },
           "isAbandoned": {
             "description": "Whether the checkout flow was abandoned.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isComplimentary": {
+            "description": "Whether this is a complimentary booking: issued by the merchant at no charge, recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 while the ticket lines keep their face value. Always false on payments.",
             "type": [
               "boolean",
               "null"
@@ -1275,7 +1289,7 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "The ID of a field on this event. List the event's fields with `GET /v1/events/{eventId}/fields` to find it.",
+                "description": "The ID of a field on this event. Use the event to discover field IDs.",
                 "example": "507f1f77bcf86cd799439011"
               }
             ]
@@ -1302,8 +1316,10 @@
                 "type": "string"
               },
               {
+                "additionalProperties": false,
                 "properties": {
                   "billing": {
+                    "additionalProperties": false,
                     "properties": {
                       "city": {
                         "type": "string"
@@ -1331,6 +1347,11 @@
                         "type": "string"
                       },
                       "region": {
+                        "description": "State, province or region. The booking RESPONSE returns this as `state`, so `state` is accepted here as an alias when round-tripping an address back in.",
+                        "type": "string"
+                      },
+                      "state": {
+                        "description": "Alias for `region`, accepted so an address read from a booking can be posted back unchanged.",
                         "type": "string"
                       }
                     },
@@ -1343,6 +1364,7 @@
                     "type": "boolean"
                   },
                   "shipping": {
+                    "additionalProperties": false,
                     "properties": {
                       "city": {
                         "type": "string"
@@ -1370,6 +1392,11 @@
                         "type": "string"
                       },
                       "region": {
+                        "description": "State, province or region. The booking RESPONSE returns this as `state`, so `state` is accepted here as an alias when round-tripping an address back in.",
+                        "type": "string"
+                      },
+                      "state": {
+                        "description": "Alias for `region`, accepted so an address read from a booking can be posted back unchanged.",
                         "type": "string"
                       }
                     },
@@ -1393,7 +1420,7 @@
       },
       "BookingPaymentOptionInput": {
         "additionalProperties": false,
-        "description": "How the booking is paid for. This endpoint never collects card payment: every booking is recorded as unpaid with the amount as its balance due — for a free booking that balance is zero. Settlement happens outside checkout.",
+        "description": "How a manually settled booking is paid for. This endpoint never collects card payment: the booking is recorded as unpaid with the amount as its balance due - for a free booking that balance is zero. Settlement happens outside checkout. Omit it and pass `complimentary: true` instead to issue the tickets at no charge.",
         "properties": {
           "manualType": {
             "description": "How the customer will pay. `invoice` records the booking as unpaid and awaiting an invoice payment; `cash_on_delivery` records it as unpaid and payable on arrival.",
@@ -1994,8 +2021,13 @@
       },
       "CreateBookingInput": {
         "additionalProperties": false,
-        "description": "Creates an event booking without collecting card payment. The booking is recorded as unpaid; a free booking simply has nothing due. Requires a paid plan.",
+        "description": "Creates an event booking without collecting card payment. With `paymentOption` the booking is recorded as unpaid and settled outside checkout; with `complimentary: true` it is recorded as paid at no charge. Requires a paid plan.",
         "properties": {
+          "complimentary": {
+            "description": "Issue the tickets at no charge. The booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0, `isComplimentary: true`, and the ticket lines at their face value with a matching complimentary discount. Mutually exclusive with `paymentOption` and `couponId`.",
+            "example": true,
+            "type": "boolean"
+          },
           "couponId": {
             "allOf": [
               {
@@ -2017,7 +2049,7 @@
             ]
           },
           "fields": {
-            "description": "Values for the event's fields. Must include a value for the event's email field — the booking's customer is created from it.",
+            "description": "Values for the event's fields. Must include a value for the event's email field - the booking's customer is created from it.",
             "items": {
               "$ref": "#/components/schemas/BookingFieldInput"
             },
@@ -2057,7 +2089,7 @@
               "maximum": 1000,
               "type": "integer"
             },
-            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use `list_tickets` or the event to discover ticket type IDs.",
+            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs.",
             "example": {
               "65f4a1c2e4a9f3d2b1c0a9e8": 2
             },
@@ -2067,8 +2099,7 @@
         "required": [
           "eventId",
           "tickets",
-          "fields",
-          "paymentOption"
+          "fields"
         ],
         "type": "object"
       },
@@ -3563,6 +3594,14 @@
           },
           "sendPaymentNotification": {
             "description": "Send payment/submission notification emails to the store owner.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showConfirmationAddToCalendar": {
+            "description": "Show the add to calendar button on payment confirmation page. Defaults to `true`.",
             "example": true,
             "type": [
               "boolean",
@@ -5979,6 +6018,13 @@
           },
           "sendPaymentNotification": {
             "description": "Send notification emails to the store owner.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showConfirmationAddToCalendar": {
+            "description": "Whether the add to calendar button is shown on the confirmation page.",
             "type": [
               "boolean",
               "null"
@@ -8866,6 +8912,13 @@
               "null"
             ]
           },
+          "complimentaryDiscountAmount": {
+            "description": "On a complimentary booking, the discount that brought the total to 0, in the smallest currency unit. Equal to the pre-discount subtotal of the ticket lines. Absent otherwise.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
           "coupon": {
             "description": "Coupon details when a coupon was applied. `amountOff` is the fixed discount configured on the coupon, `percentOff` is the configured percentage discount, and `discount` is the total discount actually applied to this record.",
             "properties": {
@@ -9157,6 +9210,13 @@
           },
           "isAbandoned": {
             "description": "Whether the checkout flow was abandoned.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isComplimentary": {
+            "description": "Whether this is a complimentary booking: issued by the merchant at no charge, recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 while the ticket lines keep their face value. Always false on payments.",
             "type": [
               "boolean",
               "null"
@@ -15143,6 +15203,13 @@
                 },
                 "type": "array"
               },
+              "complimentaryAmount": {
+                "description": "Face value forgone on a complimentary booking, in the smallest currency unit. 0 otherwise.",
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
               "couponAmount": {
                 "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                 "type": "number"
@@ -15316,7 +15383,7 @@
                 "type": "string"
               },
               "revenue": {
-                "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount - complimentaryAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                 "type": "number"
               },
               "seller": {
@@ -16850,6 +16917,9 @@
           },
           "checkIns": {
             "$ref": "#/components/schemas/TicketCheckIn[]"
+          },
+          "complimentaryAmount": {
+            "type": "number"
           },
           "couponAmount": {
             "type": "number"
@@ -18990,6 +19060,14 @@
           },
           "sendPaymentNotification": {
             "description": "Send payment/submission notification emails to the store owner.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showConfirmationAddToCalendar": {
+            "description": "Show the add to calendar button on payment confirmation page. Defaults to `true`.",
             "example": true,
             "type": [
               "boolean",
@@ -21576,6 +21654,20 @@
             }
           },
           {
+            "description": "Filter by complimentary bookings. `true` returns only complimentary bookings, `false` excludes them.",
+            "in": "query",
+            "name": "isComplimentary",
+            "required": false,
+            "schema": {
+              "description": "Filter by complimentary bookings. `true` returns only complimentary bookings, `false` excludes them.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "status",
             "required": false,
@@ -21827,7 +21919,7 @@
         ]
       },
       "post": {
-        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. Every booking is recorded as `unpaid` and settled outside checkout via the chosen manual payment option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
         "operationId": "bookings/create",
         "requestBody": {
           "content": {
@@ -21857,7 +21949,7 @@
                 }
               }
             },
-            "description": "Bad request - Invalid request parameters"
+            "description": "Bad request - Invalid request parameters, or a complimentary booking sent with a coupon or with a payment option"
           },
           "401": {
             "content": {
@@ -32060,6 +32152,13 @@
                               "null"
                             ]
                           },
+                          "complimentaryDiscountAmount": {
+                            "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
                           "coupon": {
                             "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
                             "properties": {
@@ -32397,7 +32496,7 @@
                             ]
                           },
                           "subtotalAfterDiscount": {
-                            "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                            "description": "Subtotal after bulk, coupon and complimentary discounts, before tax, in the smallest currency unit.",
                             "type": [
                               "number",
                               "null"
@@ -32805,6 +32904,13 @@
                             "null"
                           ]
                         },
+                        "complimentaryDiscountAmount": {
+                          "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
                         "coupon": {
                           "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
                           "properties": {
@@ -33142,7 +33248,7 @@
                           ]
                         },
                         "subtotalAfterDiscount": {
-                          "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                          "description": "Subtotal after bulk, coupon and complimentary discounts, before tax, in the smallest currency unit.",
                           "type": [
                             "number",
                             "null"
@@ -33560,6 +33666,13 @@
                             "null"
                           ]
                         },
+                        "complimentaryDiscountAmount": {
+                          "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
                         "coupon": {
                           "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
                           "properties": {
@@ -33897,7 +34010,7 @@
                           ]
                         },
                         "subtotalAfterDiscount": {
-                          "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                          "description": "Subtotal after bulk, coupon and complimentary discounts, before tax, in the smallest currency unit.",
                           "type": [
                             "number",
                             "null"
@@ -37308,6 +37421,13 @@
                             },
                             "type": "array"
                           },
+                          "complimentaryAmount": {
+                            "description": "Face value forgone on a complimentary booking, in the smallest currency unit. 0 otherwise.",
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
                           "couponAmount": {
                             "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                             "type": "number"
@@ -37481,7 +37601,7 @@
                             "type": "string"
                           },
                           "revenue": {
-                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount - complimentaryAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
                           },
                           "seller": {
@@ -39530,7 +39650,7 @@
                   "data": {
                     "properties": {
                       "booking": {
-                        "$ref": "#/components/schemas/Payment"
+                        "$ref": "#/components/schemas/Booking"
                       }
                     },
                     "required": [
@@ -39612,7 +39732,7 @@
                   "data": {
                     "properties": {
                       "booking": {
-                        "$ref": "#/components/schemas/Payment"
+                        "$ref": "#/components/schemas/Booking"
                       }
                     },
                     "required": [
@@ -46936,6 +47056,13 @@
                             },
                             "type": "array"
                           },
+                          "complimentaryAmount": {
+                            "description": "Face value forgone on a complimentary booking, in the smallest currency unit. 0 otherwise.",
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
                           "couponAmount": {
                             "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                             "type": "number"
@@ -47109,7 +47236,7 @@
                             "type": "string"
                           },
                           "revenue": {
-                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount - complimentaryAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
                           },
                           "seller": {
