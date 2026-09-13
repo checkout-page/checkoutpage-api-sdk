@@ -380,14 +380,39 @@ describe('ProductResource', () => {
       });
     });
 
+    it('sends pricePicker on update', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: {} });
+
+      await productResource.update('product_123', {
+        pricePicker: {
+          title: 'Pick a plan',
+          description: 'Cancel any time.\nNo card needed.',
+          shortenDescription: false,
+        },
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/products/product_123',
+        body: {
+          pricePicker: {
+            title: 'Pick a plan',
+            description: 'Cancel any time.\nNo card needed.',
+            shortenDescription: false,
+          },
+        },
+      });
+    });
+
     it('omits the product-behaviour fields when they are undefined', async () => {
       vi.spyOn(client, 'request').mockResolvedValue({ data: {} });
 
-      await productResource.update('product_123', { title: 'Only Title' });
+      await productResource.update('product_123', { title: 'Only Title', pricePicker: undefined });
 
       const body = vi.mocked(client.request).mock.calls[0][0].body as Record<string, unknown>;
       expect(body).not.toHaveProperty('enableFileAccessForInactiveSubscriptions');
       expect(body).not.toHaveProperty('limitSubscriptions');
+      expect(body).not.toHaveProperty('pricePicker');
     });
 
     it('creates a request body with prices[] — one-time + monthly + yearly', async () => {
