@@ -11004,6 +11004,13 @@
           "pricePicker": {
             "description": "Price-picker presentation config.",
             "properties": {
+              "description": {
+                "description": "Text shown above the price options.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "priceDisplayDefaults": {
                 "additionalProperties": {
                   "type": "string"
@@ -11037,6 +11044,20 @@
                 "description": "Per-axis tab display order.",
                 "type": [
                   "object",
+                  "null"
+                ]
+              },
+              "shortenDescription": {
+                "description": "Whether long price descriptions are cut behind a Show more link.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Heading shown above the price options.",
+                "type": [
+                  "string",
                   "null"
                 ]
               }
@@ -12003,8 +12024,15 @@
             "$ref": "#/components/schemas/SinglePriceInput"
           },
           "pricePicker": {
-            "description": "Price-picker presentation config (grouping, layout, tab labels/order).",
+            "description": "Price picker settings: the heading and description above the options, Show more / less, and tab labels, defaults and order.",
             "properties": {
+              "description": {
+                "description": "Text shown under the heading, above the price options. Line breaks are kept.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "priceDisplayDefaults": {
                 "additionalProperties": {
                   "type": "string"
@@ -12038,6 +12066,20 @@
                 "description": "Per-axis tab display order. Keyed by grouping axis, value is ordered array of group names. E.g. `{ interval: [\"Monthly\", \"Yearly\"] }`.",
                 "type": [
                   "object",
+                  "null"
+                ]
+              },
+              "shortenDescription": {
+                "description": "Cut long price descriptions to their first lines behind a Show more link. Defaults to `true`.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Heading shown above the price options.",
+                "type": [
+                  "string",
                   "null"
                 ]
               }
@@ -20315,8 +20357,15 @@
             ]
           },
           "pricePicker": {
-            "description": "Price-picker presentation config (grouping, layout, tab labels/order).",
+            "description": "Price picker settings: the heading and description above the options, Show more / less, and tab labels, defaults and order.",
             "properties": {
+              "description": {
+                "description": "Text shown under the heading, above the price options. Line breaks are kept.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "priceDisplayDefaults": {
                 "additionalProperties": {
                   "type": "string"
@@ -20350,6 +20399,20 @@
                 "description": "Per-axis tab display order. Keyed by grouping axis, value is ordered array of group names. E.g. `{ interval: [\"Monthly\", \"Yearly\"] }`.",
                 "type": [
                   "object",
+                  "null"
+                ]
+              },
+              "shortenDescription": {
+                "description": "Cut long price descriptions to their first lines behind a Show more link. Defaults to `true`.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Heading shown above the price options.",
+                "type": [
+                  "string",
                   "null"
                 ]
               }
