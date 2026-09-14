@@ -409,6 +409,51 @@ describe('ProductResource Integration Tests', () => {
     });
   });
 
+  describe('price picker heading and description', () => {
+    it('updates the price picker heading and description', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      const { data: updated } = await client.products.update(testProductId, {
+        pricePicker: {
+          title: 'Pick a plan',
+          description: 'Cancel any time.\nNo card needed.',
+          shortenDescription: false,
+        },
+      });
+
+      expect(updated.pricePicker?.title).toBe('Pick a plan');
+      expect(updated.pricePicker?.description).toBe('Cancel any time.\nNo card needed.');
+      expect(updated.pricePicker?.shortenDescription).toBe(false);
+
+      const { data: reread } = await client.products.get(testProductId);
+      expect(reread.pricePicker?.title).toBe('Pick a plan');
+      expect(reread.pricePicker?.description).toBe('Cancel any time.\nNo card needed.');
+      expect(reread.pricePicker?.shortenDescription).toBe(false);
+    });
+
+    it('keeps the heading when a later update carries only tab settings', async () => {
+      if (!testProductId) {
+        console.log('Skipping: No test product ID available');
+        return;
+      }
+
+      await client.products.update(testProductId, {
+        pricePicker: { title: 'Pick a plan', description: 'Cancel any time.' },
+      });
+
+      const { data: afterTabUpdate } = await client.products.update(testProductId, {
+        pricePicker: { priceDisplayDefaults: { billing: 'One-time' } },
+      });
+
+      expect(afterTabUpdate.pricePicker?.priceDisplayDefaults).toEqual({ billing: 'One-time' });
+      expect(afterTabUpdate.pricePicker?.title).toBe('Pick a plan');
+      expect(afterTabUpdate.pricePicker?.description).toBe('Cancel any time.');
+    });
+  });
+
   describe('price references', () => {
     it('keeps the stored reference for a price resent by id and derives one for a new price', async () => {
       const productId = await createProductWithPrice({ amount: 1000, currency: 'usd', reference: 'basic-tier' });
