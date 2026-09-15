@@ -23159,16 +23159,24 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "success": {
-                      "type": "boolean"
+                    "data": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
-                    "success",
-                    "message"
+                    "data"
                   ],
                   "type": "object"
                 }
@@ -26358,16 +26366,24 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "success": {
-                      "type": "boolean"
+                    "data": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
-                    "success",
-                    "message"
+                    "data"
                   ],
                   "type": "object"
                 }
@@ -30623,16 +30639,24 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "success": {
-                      "type": "boolean"
+                    "data": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message"
+                      ],
+                      "type": "object"
                     }
                   },
                   "required": [
-                    "success",
-                    "message"
+                    "data"
                   ],
                   "type": "object"
                 }
