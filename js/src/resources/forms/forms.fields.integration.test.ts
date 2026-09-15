@@ -1,6 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
-  APIError,
   CheckoutPageClient,
   CreateFormFieldParams,
   NotFoundError,
@@ -354,7 +353,7 @@ describe('FormsResource fields integration tests', () => {
           },
         },
       })
-    ).rejects.toThrow(APIError);
+    ).rejects.toThrow(ValidationError);
   });
 
   it('fails for an unknown form id on create', async () => {

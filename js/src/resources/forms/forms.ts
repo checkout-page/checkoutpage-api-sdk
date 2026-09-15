@@ -76,7 +76,7 @@ export class FormFieldsResource {
     });
   }
 
-  async delete(pageId: string, fieldId: string): Promise<{ data: FormFieldDeleteResponse }> {
+  async delete(pageId: string, fieldId: string): Promise<FormFieldDeleteResponse> {
     if (!pageId) {
       throw new Error('Page ID is required');
     }
@@ -85,7 +85,7 @@ export class FormFieldsResource {
       throw new Error('Field ID is required');
     }
 
-    return this.client.request<{ data: FormFieldDeleteResponse }>({
+    return this.client.request<FormFieldDeleteResponse>({
       method: 'DELETE',
       path: `/v1/forms/${pageId}/fields/${fieldId}`,
     });

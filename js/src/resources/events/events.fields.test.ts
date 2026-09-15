@@ -166,7 +166,7 @@ describe('EventsResource fields', () => {
   });
 
   it('deletes an event field', async () => {
-    const mockResponse: { data: EventFieldDeleteResponse } = {
+    const mockResponse: EventFieldDeleteResponse = {
       data: {
         success: true,
         message: 'Field deleted successfully',

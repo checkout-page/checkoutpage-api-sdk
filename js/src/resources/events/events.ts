@@ -90,7 +90,7 @@ export class EventFieldsResource {
     });
   }
 
-  async delete(pageId: string, fieldId: string): Promise<{ data: EventFieldDeleteResponse }> {
+  async delete(pageId: string, fieldId: string): Promise<EventFieldDeleteResponse> {
     if (!pageId) {
       throw new Error('Page ID is required');
     }
@@ -99,7 +99,7 @@ export class EventFieldsResource {
       throw new Error('Field ID is required');
     }
 
-    return this.client.request<{ data: EventFieldDeleteResponse }>({
+    return this.client.request<EventFieldDeleteResponse>({
       method: 'DELETE',
       path: `/v1/events/${pageId}/fields/${fieldId}`,
     });

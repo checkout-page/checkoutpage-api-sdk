@@ -79,10 +79,7 @@ export class CheckoutPageFieldsResource {
     });
   }
 
-  async delete(
-    pageId: string,
-    fieldId: string
-  ): Promise<{ data: CheckoutPageFieldDeleteResponse }> {
+  async delete(pageId: string, fieldId: string): Promise<CheckoutPageFieldDeleteResponse> {
     if (!pageId) {
       throw new Error('Page ID is required');
     }
@@ -91,12 +88,10 @@ export class CheckoutPageFieldsResource {
       throw new Error('Field ID is required');
     }
 
-    const response = await this.client.request<{ data: CheckoutPageFieldDeleteResponse }>({
+    return this.client.request<CheckoutPageFieldDeleteResponse>({
       method: 'DELETE',
       path: `/v1/checkout-pages/${pageId}/fields/${fieldId}`,
     });
-
-    return response;
   }
 }
 
