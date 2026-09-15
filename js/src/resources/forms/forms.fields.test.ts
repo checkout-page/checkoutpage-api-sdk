@@ -155,7 +155,7 @@ describe('FormsResource fields', () => {
   });
 
   it('deletes a form field and keeps the response wrapped', async () => {
-    const mockResponse: { data: FormFieldDeleteResponse } = {
+    const mockResponse: FormFieldDeleteResponse = {
       data: {
         success: true,
         message: 'Field deleted successfully',
