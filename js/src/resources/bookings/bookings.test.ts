@@ -1,12 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookingResource } from './bookings';
 import { CheckoutPageApiClient } from '../../client';
-import type { BookingList, BookingResponse } from '../../types';
+import type {
+  BookingList,
+  BookingResponse,
+  BookingTicket,
+  BookingTicketFee,
+  CreateBookingParams,
+} from '../../types';
 
 const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
 const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
 const PAGE_ID = '67fcbdac6a91c25ef2d3534a';
 const CUSTOMER_ID = '507f1f77bcf86cd799439010';
+const EMAIL_FIELD_ID = '507f1f77bcf86cd799439030';
+const NAME_FIELD_ID = '507f1f77bcf86cd799439031';
+const PHONE_FIELD_ID = '507f1f77bcf86cd799439032';
+const TAX_ID_FIELD_ID = '507f1f77bcf86cd799439033';
+const ADDRESS_FIELD_ID = '507f1f77bcf86cd799439034';
 const CURSOR_1 = '507f1f77bcf86cd799439011';
 const CURSOR_2 = '507f1f77bcf86cd799439012';
 
@@ -25,6 +36,36 @@ const BASE_BOOKING: BookingList['data'][number] = {
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
 
+// $10 + $2 fee and $10 + $3 fee, $22 order coupon applying to fees: it spends the $20 of
+// prices first, so only ticketFeesAmount (not the line fee totals) shows the $2 off the fees.
+const FEE_BOOKING: BookingList['data'][number] = {
+  ...BASE_BOOKING,
+  id: BOOKING_ID_2,
+  amount: 300,
+  coupon: { code: 'BOX22', amountOff: 2200, discount: 2200 },
+  ticketFeesAmount: 300,
+  tickets: [
+    {
+      name: 'Standard',
+      ticketTypeId: '507f1f77bcf86cd799439040',
+      quantity: 1,
+      price: 1000,
+      originalPrice: 1000,
+      pricing: 'paid',
+      fee: { name: 'Booking fee', amount: 200, totalAmount: 200, display: 'separate' },
+    },
+    {
+      name: 'Premium',
+      ticketTypeId: '507f1f77bcf86cd799439041',
+      quantity: 1,
+      price: 1000,
+      originalPrice: 1000,
+      pricing: 'paid',
+      fee: { name: 'Booking fee', amount: 300, totalAmount: 300, display: 'separate' },
+    },
+  ],
+};
+
 const DEFAULT_QUERY = {
   search: undefined,
   status: undefined,
@@ -35,6 +76,7 @@ const DEFAULT_QUERY = {
   createdAfter: undefined,
   createdBefore: undefined,
   abandonmentStatus: undefined,
+  isComplimentary: undefined,
   limit: undefined,
   starting_after: undefined,
   ending_before: undefined,
@@ -62,6 +104,25 @@ describe('BookingResource', () => {
         method: 'GET',
         path: `/v1/bookings/${BOOKING_ID_1}`,
       });
+    });
+
+    it('should return ticketFeesAmount and the fee on each ticket line', async () => {
+      const mockBooking: BookingResponse = { data: FEE_BOOKING };
+      vi.spyOn(client, 'request').mockResolvedValue(mockBooking);
+
+      const res = await bookingResource.get(BOOKING_ID_2);
+
+      expect(res).toEqual(mockBooking);
+      const fee: BookingTicketFee | null | undefined = res.data.tickets?.[0]?.fee;
+      const charged: number | null | undefined = res.data.ticketFeesAmount;
+      expect(fee).toEqual({
+        name: 'Booking fee',
+        amount: 200,
+        totalAmount: 200,
+        display: 'separate',
+      });
+      expect(res.data.tickets?.[1]?.fee?.totalAmount).toBe(300);
+      expect(charged).toBe(300);
     });
 
     it('should throw error for missing booking id', async () => {
@@ -117,6 +178,31 @@ describe('BookingResource', () => {
 
       expect(result).toEqual(mockBookingList);
       expect(result.data).toHaveLength(2);
+    });
+
+    it('should return ticketFeesAmount and ticket line fees on each booking', async () => {
+      const noFeeBooking: BookingList['data'][number] = {
+        ...BASE_BOOKING,
+        amount: 1000,
+        ticketFeesAmount: 0,
+        tickets: [{ name: 'Plain ticket', quantity: 1, price: 1000, pricing: 'paid' }],
+      };
+      const mockBookingList: BookingList = {
+        data: [FEE_BOOKING, noFeeBooking],
+        total: 2,
+        has_more: false,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
+
+      const result = await bookingResource.list();
+
+      expect(result).toEqual(mockBookingList);
+      const [withFees, withoutFees] = result.data;
+      const lines: BookingTicket[] = withFees.tickets ?? [];
+      expect(lines.map((line) => line.fee?.totalAmount)).toEqual([200, 300]);
+      expect(withFees.ticketFeesAmount).toBe(300);
+      expect(withoutFees.tickets?.[0]).not.toHaveProperty('fee');
+      expect(withoutFees.ticketFeesAmount).toBe(0);
     });
 
     it('should return empty list when no bookings exist', async () => {
@@ -335,6 +421,30 @@ describe('BookingResource', () => {
       });
     });
 
+    it('should pass isComplimentary=true', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ isComplimentary: 'true' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, isComplimentary: 'true' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should pass isComplimentary=false', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ isComplimentary: 'false' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, isComplimentary: 'false' },
+        path: '/v1/bookings/',
+      });
+    });
+
     it('should not include productId (payments-only field) in the query', async () => {
       vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
 
@@ -360,6 +470,7 @@ describe('BookingResource', () => {
         createdAfter: '2025-01-01T00:00:00Z',
         createdBefore: '2025-01-31T23:59:59Z',
         abandonmentStatus: 'abandoned',
+        isComplimentary: 'false',
         limit: 20,
         starting_after: CURSOR_1,
       });
@@ -376,12 +487,202 @@ describe('BookingResource', () => {
           createdAfter: '2025-01-01T00:00:00Z',
           createdBefore: '2025-01-31T23:59:59Z',
           abandonmentStatus: 'abandoned',
+          isComplimentary: 'false',
           limit: '20',
           starting_after: CURSOR_1,
           ending_before: undefined,
         },
         path: '/v1/bookings/',
       });
+    });
+  });
+
+  describe('create', () => {
+    const TICKET_TYPE_ID = '507f1f77bcf86cd799439020';
+
+    const createParams: CreateBookingParams = {
+      eventId: PAGE_ID,
+      tickets: { [TICKET_TYPE_ID]: 2 },
+      fields: [
+        { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
+        { fieldId: NAME_FIELD_ID, value: 'Ada Lovelace' },
+      ],
+      paymentOption: { manualType: 'invoice' },
+    };
+
+    it('POSTs the booking body to /v1/bookings/', async () => {
+      const mockResponse: BookingResponse = {
+        data: { ...BASE_BOOKING, status: 'unpaid' },
+      };
+      const requestSpy = vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: createParams,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('returns the wrapped envelope untouched', async () => {
+      const mockResponse: BookingResponse = {
+        data: { ...BASE_BOOKING, status: 'unpaid' },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      expect(result.data.status).toBe('unpaid');
+      expect(result.data.id).toBe(BOOKING_ID_1);
+    });
+
+    // Every property the request schema accepts, forwarded verbatim. The body
+    // is passed straight through, so a dropped or renamed key shows up here.
+    it('forwards every supported request property without reshaping it', async () => {
+      const PWYW_TICKET_TYPE_ID = '507f1f77bcf86cd799439021';
+      const CUSTOM_FIELD_ID = '507f1f77bcf86cd799439022';
+      const COUPON_ID = '507f1f77bcf86cd799439023';
+
+      const exhaustiveParams: CreateBookingParams = {
+        eventId: PAGE_ID,
+        tickets: { [TICKET_TYPE_ID]: 2, [PWYW_TICKET_TYPE_ID]: 1 },
+        ticketPwywAmounts: { [PWYW_TICKET_TYPE_ID]: 5000 },
+        couponId: COUPON_ID,
+        queryParameters: { utm_source: 'box-office', utm_campaign: 'phone-sales' },
+        fields: [
+          { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
+          { fieldId: NAME_FIELD_ID, value: 'Ada Lovelace' },
+          { fieldId: PHONE_FIELD_ID, value: '+441234567890' },
+          { fieldId: CUSTOM_FIELD_ID, value: 'Vegan' },
+          { fieldId: TAX_ID_FIELD_ID, value: 'GB123456789', meta: { type: 'gb_vat' } },
+          {
+            fieldId: ADDRESS_FIELD_ID,
+            value: {
+              billing: {
+                name: 'Ada Lovelace',
+                phone: '+441234567890',
+                line1: '1 Test Street',
+                line2: 'Floor 2',
+                city: 'London',
+                region: 'Greater London',
+                postalCode: 'SW1A 1AA',
+                country: 'GB',
+              },
+              shipping: {
+                name: 'Ada Lovelace',
+                line1: '2 Other Street',
+                city: 'Manchester',
+                postalCode: 'M1 1AA',
+                country: 'GB',
+              },
+              sameAsShipping: false,
+            },
+          },
+        ],
+        paymentOption: {
+          manualType: 'cash_on_delivery',
+        },
+      };
+
+      const requestSpy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'unpaid' } });
+
+      await bookingResource.create(exhaustiveParams);
+
+      const sent = requestSpy.mock.calls[0][0] as { body: CreateBookingParams };
+      expect(sent.body).toEqual(exhaustiveParams);
+
+      // Named individually so a silently dropped key fails loudly, rather than
+      // relying on toEqual over an object built from the same literal.
+      expect(sent.body.eventId).toBe(PAGE_ID);
+      expect(sent.body.tickets).toEqual({ [TICKET_TYPE_ID]: 2, [PWYW_TICKET_TYPE_ID]: 1 });
+      expect(sent.body.ticketPwywAmounts).toEqual({ [PWYW_TICKET_TYPE_ID]: 5000 });
+      expect(sent.body.couponId).toBe(COUPON_ID);
+      expect(sent.body.queryParameters).toEqual({
+        utm_source: 'box-office',
+        utm_campaign: 'phone-sales',
+      });
+      expect(sent.body.paymentOption).toEqual({ manualType: 'cash_on_delivery' });
+      expect(sent.body.fields).toHaveLength(6);
+      expect(sent.body.fields[3]).toEqual({ fieldId: CUSTOM_FIELD_ID, value: 'Vegan' });
+      expect(sent.body.fields[4].meta).toEqual({ type: 'gb_vat' });
+      const addressValue = sent.body.fields[5].value as Record<string, unknown>;
+      expect(addressValue.billing).toMatchObject({ line1: '1 Test Street', country: 'GB' });
+      expect(addressValue.shipping).toMatchObject({ city: 'Manchester' });
+      expect(addressValue.sameAsShipping).toBe(false);
+    });
+
+    it('forwards a complimentary booking body without a paymentOption', async () => {
+      const complimentaryParams: CreateBookingParams = {
+        eventId: PAGE_ID,
+        tickets: { [TICKET_TYPE_ID]: 2 },
+        fields: [
+          { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
+          { fieldId: NAME_FIELD_ID, value: 'Ada Lovelace' },
+        ],
+        complimentary: true,
+      };
+
+      const requestSpy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'paid' } });
+
+      await bookingResource.create(complimentaryParams);
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: complimentaryParams,
+      });
+
+      const sent = requestSpy.mock.calls[0][0] as { body: Record<string, unknown> };
+      expect(sent.body.complimentary).toBe(true);
+      expect(sent.body).not.toHaveProperty('paymentOption');
+    });
+
+    it('returns a complimentary booking response untouched', async () => {
+      const mockResponse: BookingResponse = {
+        data: {
+          ...BASE_BOOKING,
+          status: 'paid',
+          amount: 0,
+          amountPaid: 0,
+          amountDue: 0,
+          isComplimentary: true,
+          complimentaryDiscountAmount: 5000,
+        },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create({
+        eventId: PAGE_ID,
+        tickets: { [TICKET_TYPE_ID]: 2 },
+        fields: [{ fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' }],
+        complimentary: true,
+      });
+
+      expect(result).toEqual(mockResponse);
+      expect(result.data.status).toBe('paid');
+      expect(result.data.amount).toBe(0);
+      expect(result.data.isComplimentary).toBe(true);
+      expect(result.data.complimentaryDiscountAmount).toBe(5000);
+    });
+
+    it('omits optional properties entirely when not supplied', async () => {
+      const requestSpy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'unpaid' } });
+
+      await bookingResource.create(createParams);
+
+      const sent = requestSpy.mock.calls[0][0] as { body: Record<string, unknown> };
+      expect(sent.body).not.toHaveProperty('couponId');
+      expect(sent.body).not.toHaveProperty('ticketPwywAmounts');
+      expect(sent.body).not.toHaveProperty('queryParameters');
+      expect(sent.body).not.toHaveProperty('complimentary');
     });
   });
 });

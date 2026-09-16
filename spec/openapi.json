@@ -316,6 +316,13 @@
               "null"
             ]
           },
+          "complimentaryDiscountAmount": {
+            "description": "On a complimentary booking, the discount that brought the total to 0, in the smallest currency unit. Equal to the pre-discount subtotal of the ticket lines. Absent otherwise.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
           "coupon": {
             "description": "Coupon details when a coupon was applied. `amountOff` is the fixed discount configured on the coupon, `percentOff` is the configured percentage discount, and `discount` is the total discount actually applied to this record.",
             "properties": {
@@ -607,6 +614,13 @@
           },
           "isAbandoned": {
             "description": "Whether the checkout flow was abandoned.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isComplimentary": {
+            "description": "Whether this is a complimentary booking: issued by the merchant at no charge, recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 while the ticket lines keep their face value. Always false on payments.",
             "type": [
               "boolean",
               "null"
@@ -1037,17 +1051,17 @@
               "null"
             ]
           },
+          "ticketFeesAmount": {
+            "description": "Booking fees actually charged on this booking, in the smallest currency unit. Starts from the sum of `tickets[].fee.totalAmount`; an order-level coupon that applies to fees reaches them only after it has used up the ticket prices. 0 on a complimentary booking or when no ticket had a fee.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
           "tickets": {
             "description": "Array of ticket objects.",
             "items": {
               "properties": {
-                "bookingFeeAmount": {
-                  "description": "Booking fee charged for this ticket line item, in the smallest currency unit.",
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
                 "capacity": {
                   "description": "Ticket type capacity. If not set ticket capacity is unlimited.",
                   "type": [
@@ -1087,6 +1101,48 @@
                     },
                     "percentOff": {
                       "description": "Percentage off the original price. Cannot be combined with `amountOff`.",
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "fee": {
+                  "description": "The ticket type fee charged on this line item, kept separate from `price`. Null when the ticket type had no fee.",
+                  "properties": {
+                    "amount": {
+                      "description": "Fee per ticket at the time of purchase, in the smallest currency unit.",
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "display": {
+                      "description": "How the fee was presented at checkout.",
+                      "enum": [
+                        "included",
+                        "separate",
+                        null
+                      ],
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "description": "Name of the fee.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "totalAmount": {
+                      "description": "Total fee for this line item, in the smallest currency unit: `amount` × `quantity`, less the share of a ticket-scoped coupon that applied to fees. An order-level coupon is not reflected here; see `ticketFeesAmount`.",
                       "type": [
                         "number",
                         "null"
@@ -1263,6 +1319,144 @@
         },
         "required": [
           "data"
+        ],
+        "type": "object"
+      },
+      "BookingFieldInput": {
+        "description": "A value for one of the event's fields. The field's label, element, type and reference are resolved from the event itself, so only the field ID and the value are supplied here.",
+        "properties": {
+          "fieldId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The ID of a field on this event. Use the event to discover field IDs.",
+                "example": "507f1f77bcf86cd799439011"
+              }
+            ]
+          },
+          "meta": {
+            "description": "Extra data for the field. Only meaningful on a tax-ID field; address fields derive their own.",
+            "properties": {
+              "type": {
+                "description": "For a tax-ID field, the tax ID type, e.g. `gb_vat` or `eu_vat`. Required for the number to be registered on the customer and for business tax treatment (reverse charge) to be applied. Without it the booking is taxed as a consumer sale.",
+                "example": "gb_vat",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maxLength": 5000,
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "billing": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "description": "Two-letter ISO 3166-1 country code.",
+                        "example": "GB",
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                      },
+                      "line1": {
+                        "type": "string"
+                      },
+                      "line2": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
+                      },
+                      "region": {
+                        "description": "State, province or region. The booking RESPONSE returns this as `state`, so `state` is accepted here as an alias when round-tripping an address back in.",
+                        "type": "string"
+                      },
+                      "state": {
+                        "description": "Alias for `region`, accepted so an address read from a booking can be posted back unchanged.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "country"
+                    ],
+                    "type": "object"
+                  },
+                  "sameAsShipping": {
+                    "type": "boolean"
+                  },
+                  "shipping": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "city": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "description": "Two-letter ISO 3166-1 country code.",
+                        "example": "GB",
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                      },
+                      "line1": {
+                        "type": "string"
+                      },
+                      "line2": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "phone": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
+                      },
+                      "region": {
+                        "description": "State, province or region. The booking RESPONSE returns this as `state`, so `state` is accepted here as an alias when round-tripping an address back in.",
+                        "type": "string"
+                      },
+                      "state": {
+                        "description": "Alias for `region`, accepted so an address read from a booking can be posted back unchanged.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "country"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              }
+            ],
+            "description": "The submitted value. Address fields take an object of `billing` / `shipping` / `sameAsShipping`; every other field takes a string."
+          }
+        },
+        "required": [
+          "fieldId",
+          "value"
         ],
         "type": "object"
       },
@@ -1735,6 +1929,10 @@
             "description": "When enabled, applies this coupon discount to the setup fee.",
             "type": "boolean"
           },
+          "appliesToTicketFees": {
+            "description": "When enabled, applies this coupon discount to ticket-level fees on event pages as well as the ticket prices.",
+            "type": "boolean"
+          },
           "code": {
             "description": "The coupon code a customer enters.",
             "example": "10Off",
@@ -1847,6 +2045,106 @@
       "CouponId": {
         "example": "6812fe6e9f39b6760576f01c",
         "type": "string"
+      },
+      "CreateBookingInput": {
+        "additionalProperties": false,
+        "description": "Creates an event booking without collecting card payment. With `paymentOption` the booking is recorded as unpaid and settled outside checkout; with `complimentary: true` it is recorded as paid at no charge. Requires a paid plan.",
+        "properties": {
+          "complimentary": {
+            "description": "Issue the tickets at no charge. The booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0, `isComplimentary: true`, and the ticket lines at their face value with a matching complimentary discount. Mutually exclusive with `paymentOption` and `couponId`.",
+            "example": true,
+            "type": "boolean"
+          },
+          "couponId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "A coupon to apply to the booking."
+              }
+            ]
+          },
+          "eventId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The ID of the event to book onto."
+              }
+            ]
+          },
+          "fields": {
+            "description": "Values for the event's fields. Must include a value for the event's email field - the booking's customer is created from it.",
+            "items": {
+              "$ref": "#/components/schemas/BookingFieldInput"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "paymentOption": {
+            "additionalProperties": false,
+            "description": "How a manually settled booking is paid for. This endpoint never collects card payment: the booking is recorded as unpaid with the amount as its balance due - for a free booking that balance is zero. Settlement happens outside checkout. Omit it and pass `complimentary: true` instead to issue the tickets at no charge.",
+            "properties": {
+              "manualType": {
+                "description": "How the customer will pay. `invoice` records the booking as unpaid and awaiting an invoice payment; `cash_on_delivery` records it as unpaid and payable on arrival.",
+                "enum": [
+                  "invoice",
+                  "cash_on_delivery"
+                ],
+                "example": "invoice",
+                "type": "string"
+              }
+            },
+            "required": [
+              "manualType"
+            ],
+            "type": "object"
+          },
+          "queryParameters": {
+            "additionalProperties": {
+              "maxLength": 500,
+              "type": "string"
+            },
+            "description": "Attribution or tracking parameters to record against the booking, mirroring the query string a storefront checkout captures from its page link. Stored on the booking and included in exports; not used in pricing.",
+            "example": {
+              "utm_campaign": "phone-sales",
+              "utm_source": "box-office"
+            },
+            "type": "object"
+          },
+          "ticketPwywAmounts": {
+            "additionalProperties": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "description": "Chosen amounts for pay-what-you-want ticket types, keyed by ticket type ID, in the smallest currency unit. Required for any pay-what-you-want ticket type included in `tickets`.",
+            "example": {
+              "65f4a1c2e4a9f3d2b1c0a9e8": 5000
+            },
+            "type": "object"
+          },
+          "tickets": {
+            "additionalProperties": {
+              "exclusiveMinimum": 0,
+              "maximum": 1000,
+              "type": "integer"
+            },
+            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs.",
+            "example": {
+              "65f4a1c2e4a9f3d2b1c0a9e8": 2
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "eventId",
+          "tickets",
+          "fields"
+        ],
+        "type": "object"
       },
       "CreateCheckoutPageInput": {
         "properties": {
@@ -3345,6 +3643,14 @@
               "null"
             ]
           },
+          "showConfirmationAddToCalendar": {
+            "description": "Show the add to calendar button on payment confirmation page. Defaults to `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -4552,6 +4858,15 @@
               "null"
             ]
           },
+          "feeAmount": {
+            "description": "A booking fee charged once per ticket of this type, on top of `price`, in the smallest currency unit of the event currency. Customers see it under the name set by the page theme label `bookingFeeText` (\"Booking fee\" by default), shown the way the ticket group's `feeDisplay` says. Pass `null` to remove an existing fee.",
+            "example": 300,
+            "exclusiveMinimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
           "hidden": {
             "description": "Whether the ticket type is hidden from customers.",
             "example": false,
@@ -5755,6 +6070,13 @@
           },
           "sendPaymentNotification": {
             "description": "Send notification emails to the store owner.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showConfirmationAddToCalendar": {
+            "description": "Whether the add to calendar button is shown on the confirmation page.",
             "type": [
               "boolean",
               "null"
@@ -8642,6 +8964,13 @@
               "null"
             ]
           },
+          "complimentaryDiscountAmount": {
+            "description": "On a complimentary booking, the discount that brought the total to 0, in the smallest currency unit. Equal to the pre-discount subtotal of the ticket lines. Absent otherwise.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
           "coupon": {
             "description": "Coupon details when a coupon was applied. `amountOff` is the fixed discount configured on the coupon, `percentOff` is the configured percentage discount, and `discount` is the total discount actually applied to this record.",
             "properties": {
@@ -8933,6 +9262,13 @@
           },
           "isAbandoned": {
             "description": "Whether the checkout flow was abandoned.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isComplimentary": {
+            "description": "Whether this is a complimentary booking: issued by the merchant at no charge, recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 while the ticket lines keep their face value. Always false on payments.",
             "type": [
               "boolean",
               "null"
@@ -10720,6 +11056,13 @@
           "pricePicker": {
             "description": "Price-picker presentation config.",
             "properties": {
+              "description": {
+                "description": "Text shown above the price options.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "priceDisplayDefaults": {
                 "additionalProperties": {
                   "type": "string"
@@ -10753,6 +11096,20 @@
                 "description": "Per-axis tab display order.",
                 "type": [
                   "object",
+                  "null"
+                ]
+              },
+              "shortenDescription": {
+                "description": "Whether long price descriptions are cut behind a Show more link.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Heading shown above the price options.",
+                "type": [
+                  "string",
                   "null"
                 ]
               }
@@ -11719,8 +12076,15 @@
             "$ref": "#/components/schemas/SinglePriceInput"
           },
           "pricePicker": {
-            "description": "Price-picker presentation config (grouping, layout, tab labels/order).",
+            "description": "Price picker settings: the heading and description above the options, Show more / less, and tab labels, defaults and order.",
             "properties": {
+              "description": {
+                "description": "Text shown under the heading, above the price options. Line breaks are kept.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "priceDisplayDefaults": {
                 "additionalProperties": {
                   "type": "string"
@@ -11754,6 +12118,20 @@
                 "description": "Per-axis tab display order. Keyed by grouping axis, value is ordered array of group names. E.g. `{ interval: [\"Monthly\", \"Yearly\"] }`.",
                 "type": [
                   "object",
+                  "null"
+                ]
+              },
+              "shortenDescription": {
+                "description": "Cut long price descriptions to their first lines behind a Show more link. Defaults to `true`.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Heading shown above the price options.",
+                "type": [
+                  "string",
                   "null"
                 ]
               }
@@ -14919,6 +15297,13 @@
                 },
                 "type": "array"
               },
+              "complimentaryAmount": {
+                "description": "Face value and booking fee forgone on a complimentary booking, in the smallest currency unit. 0 otherwise.",
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
               "couponAmount": {
                 "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                 "type": "number"
@@ -15092,7 +15477,7 @@
                 "type": "string"
               },
               "revenue": {
-                "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount - complimentaryAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                 "type": "number"
               },
               "seller": {
@@ -15264,6 +15649,19 @@
               "null"
             ]
           },
+          "feeDisplay": {
+            "description": "How the ticket fees in this group are presented. `included` shows one price with the fee folded in (e.g. \"$102\", \"Includes $3 booking fee\"); `separate` shows the price and fee side by side (e.g. \"$99 + $3 booking fee\"). Fees are stored and reported separately from prices either way. Defaults to `included`.",
+            "enum": [
+              "included",
+              "separate",
+              null
+            ],
+            "example": "included",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "hidden": {
             "description": "Whether the ticket group is hidden from customers.",
             "example": false,
@@ -15356,6 +15754,14 @@
               },
               "showPwywPlaceholder": {
                 "description": "Show the amount placeholder in the pay-what-you-want ticket input.",
+                "example": true,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "showTicketFee": {
+                "description": "Show the booking fee under each ticket price.",
                 "example": true,
                 "type": [
                   "boolean",
@@ -15605,6 +16011,18 @@
               "null"
             ]
           },
+          "feeDisplay": {
+            "description": "How the ticket fees in this group are presented: `included` folds each fee into the shown price, `separate` shows it beside the price.",
+            "enum": [
+              "included",
+              "separate",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "hidden": {
             "description": "Whether the ticket group is hidden from customers.",
             "type": [
@@ -15690,6 +16108,13 @@
               },
               "showPwywPlaceholder": {
                 "description": "Whether the amount placeholder is shown in the pay-what-you-want ticket input.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "showTicketFee": {
+                "description": "Whether the booking fee is shown under each ticket price.",
                 "type": [
                   "boolean",
                   "null"
@@ -15931,6 +16356,19 @@
               "null"
             ]
           },
+          "feeDisplay": {
+            "description": "How the ticket fees in this group are presented. `included` shows one price with the fee folded in (e.g. \"$102\", \"Includes $3 booking fee\"); `separate` shows the price and fee side by side (e.g. \"$99 + $3 booking fee\"). Fees are stored and reported separately from prices either way. Defaults to `included`.",
+            "enum": [
+              "included",
+              "separate",
+              null
+            ],
+            "example": "included",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "hidden": {
             "description": "Whether the ticket group is hidden from customers.",
             "example": false,
@@ -16031,6 +16469,14 @@
               },
               "showPwywPlaceholder": {
                 "description": "Show the amount placeholder in the pay-what-you-want ticket input.",
+                "example": true,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "showTicketFee": {
+                "description": "Show the booking fee under each ticket price.",
                 "example": true,
                 "type": [
                   "boolean",
@@ -16297,6 +16743,18 @@
               "null"
             ]
           },
+          "feeDisplay": {
+            "description": "How the ticket fees in this group are presented: `included` folds each fee into the shown price, `separate` shows it beside the price.",
+            "enum": [
+              "included",
+              "separate",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "hidden": {
             "description": "Whether the ticket group is hidden from customers.",
             "type": [
@@ -16382,6 +16840,13 @@
               },
               "showPwywPlaceholder": {
                 "description": "Whether the amount placeholder is shown in the pay-what-you-want ticket input.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "showTicketFee": {
+                "description": "Whether the booking fee is shown under each ticket price.",
                 "type": [
                   "boolean",
                   "null"
@@ -16627,6 +17092,9 @@
           "checkIns": {
             "$ref": "#/components/schemas/TicketCheckIn[]"
           },
+          "complimentaryAmount": {
+            "type": "number"
+          },
           "couponAmount": {
             "type": "number"
           },
@@ -16809,6 +17277,15 @@
             "minimum": 0,
             "type": [
               "number",
+              "null"
+            ]
+          },
+          "feeAmount": {
+            "description": "A booking fee charged once per ticket of this type, on top of `price`, in the smallest currency unit of the event currency. Customers see it under the name set by the page theme label `bookingFeeText` (\"Booking fee\" by default), shown the way the ticket group's `feeDisplay` says. Pass `null` to remove an existing fee.",
+            "example": 300,
+            "exclusiveMinimum": 0,
+            "type": [
+              "integer",
               "null"
             ]
           },
@@ -17056,6 +17533,13 @@
           },
           "discountedFromPrice": {
             "description": "Strike-through price in smallest currency unit.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "feeAmount": {
+            "description": "Booking fee charged once per ticket of this type, on top of `price`, in the smallest currency unit. Null when the ticket type has no fee.",
             "type": [
               "number",
               "null"
@@ -18772,6 +19256,14 @@
               "null"
             ]
           },
+          "showConfirmationAddToCalendar": {
+            "description": "Show the add to calendar button on payment confirmation page. Defaults to `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -20013,8 +20505,15 @@
             ]
           },
           "pricePicker": {
-            "description": "Price-picker presentation config (grouping, layout, tab labels/order).",
+            "description": "Price picker settings: the heading and description above the options, Show more / less, and tab labels, defaults and order.",
             "properties": {
+              "description": {
+                "description": "Text shown under the heading, above the price options. Line breaks are kept.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "priceDisplayDefaults": {
                 "additionalProperties": {
                   "type": "string"
@@ -20048,6 +20547,20 @@
                 "description": "Per-axis tab display order. Keyed by grouping axis, value is ordered array of group names. E.g. `{ interval: [\"Monthly\", \"Yearly\"] }`.",
                 "type": [
                   "object",
+                  "null"
+                ]
+              },
+              "shortenDescription": {
+                "description": "Cut long price descriptions to their first lines behind a Show more link. Defaults to `true`.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Heading shown above the price options.",
+                "type": [
+                  "string",
                   "null"
                 ]
               }
@@ -20664,6 +21177,19 @@
               "null"
             ]
           },
+          "feeDisplay": {
+            "description": "How the ticket fees in this group are presented. `included` shows one price with the fee folded in (e.g. \"$102\", \"Includes $3 booking fee\"); `separate` shows the price and fee side by side (e.g. \"$99 + $3 booking fee\"). Fees are stored and reported separately from prices either way. Defaults to `included`.",
+            "enum": [
+              "included",
+              "separate",
+              null
+            ],
+            "example": "included",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "hidden": {
             "description": "Whether the ticket group is hidden from customers.",
             "example": false,
@@ -20756,6 +21282,14 @@
               },
               "showPwywPlaceholder": {
                 "description": "Show the amount placeholder in the pay-what-you-want ticket input.",
+                "example": true,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "showTicketFee": {
+                "description": "Show the booking fee under each ticket price.",
                 "example": true,
                 "type": [
                   "boolean",
@@ -20982,6 +21516,15 @@
             "minimum": 0,
             "type": [
               "number",
+              "null"
+            ]
+          },
+          "feeAmount": {
+            "description": "A booking fee charged once per ticket of this type, on top of `price`, in the smallest currency unit of the event currency. Customers see it under the name set by the page theme label `bookingFeeText` (\"Booking fee\" by default), shown the way the ticket group's `feeDisplay` says. Pass `null` to remove an existing fee.",
+            "example": 300,
+            "exclusiveMinimum": 0,
+            "type": [
+              "integer",
               "null"
             ]
           },
@@ -21352,6 +21895,20 @@
             }
           },
           {
+            "description": "Filter by complimentary bookings. `true` returns only complimentary bookings, `false` excludes them.",
+            "in": "query",
+            "name": "isComplimentary",
+            "required": false,
+            "schema": {
+              "description": "Filter by complimentary bookings. `true` returns only complimentary bookings, `false` excludes them.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "status",
             "required": false,
@@ -21598,6 +22155,110 @@
           }
         ],
         "summary": "List all bookings",
+        "tags": [
+          "Events"
+        ]
+      },
+      "post": {
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
+        "operationId": "bookings/create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDetailResponse"
+                }
+              }
+            },
+            "description": "Booking created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters, or a complimentary booking sent with a coupon or with a payment option"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Registration limit reached for this customer; account disabled, on the free plan, or over its plan limit; or the API key lacks the required permission"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Event not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Tickets are sold out or not on sale"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Create booking",
         "tags": [
           "Events"
         ]
@@ -24127,6 +24788,11 @@
                   "appliesToSetupFee": {
                     "description": "When enabled, applies this coupon discount to the setup fee.",
                     "example": true,
+                    "type": "boolean"
+                  },
+                  "appliesToTicketFees": {
+                    "description": "When enabled, applies this coupon discount to ticket-level fees on event pages as well as the ticket prices. Defaults to false, which leaves ticket fees undiscounted.",
+                    "example": false,
                     "type": "boolean"
                   },
                   "code": {
@@ -28525,6 +29191,16 @@
             },
             "description": "File not found or not owned by your account"
           },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "File is still attached to a product, page, store logo or theme. Detach it there first."
+          },
           "429": {
             "content": {
               "application/json": {
@@ -31756,6 +32432,13 @@
                               "null"
                             ]
                           },
+                          "complimentaryDiscountAmount": {
+                            "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
                           "coupon": {
                             "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
                             "properties": {
@@ -31952,12 +32635,13 @@
                                   ]
                                 },
                                 "type": {
-                                  "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket.",
+                                  "description": "Line item type. \"product\": a product or variant. \"setupFee\": one-time setup fee on a subscription. \"variantOption\": line for a chosen variant option. \"ticket\": event ticket. \"ticketFee\": the per-ticket fee of the ticket line above it.",
                                   "enum": [
                                     "product",
                                     "setupFee",
                                     "variantOption",
                                     "ticket",
+                                    "ticketFee",
                                     null
                                   ],
                                   "type": [
@@ -32093,7 +32777,7 @@
                             ]
                           },
                           "subtotalAfterDiscount": {
-                            "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                            "description": "Subtotal after bulk, coupon and complimentary discounts, before tax, in the smallest currency unit.",
                             "type": [
                               "number",
                               "null"
@@ -32501,6 +33185,13 @@
                             "null"
                           ]
                         },
+                        "complimentaryDiscountAmount": {
+                          "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
                         "coupon": {
                           "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
                           "properties": {
@@ -32697,12 +33388,13 @@
                                 ]
                               },
                               "type": {
-                                "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket.",
+                                "description": "Line item type. \"product\": a product or variant. \"setupFee\": one-time setup fee on a subscription. \"variantOption\": line for a chosen variant option. \"ticket\": event ticket. \"ticketFee\": the per-ticket fee of the ticket line above it.",
                                 "enum": [
                                   "product",
                                   "setupFee",
                                   "variantOption",
                                   "ticket",
+                                  "ticketFee",
                                   null
                                 ],
                                 "type": [
@@ -32838,7 +33530,7 @@
                           ]
                         },
                         "subtotalAfterDiscount": {
-                          "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                          "description": "Subtotal after bulk, coupon and complimentary discounts, before tax, in the smallest currency unit.",
                           "type": [
                             "number",
                             "null"
@@ -33256,6 +33948,13 @@
                             "null"
                           ]
                         },
+                        "complimentaryDiscountAmount": {
+                          "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
                         "coupon": {
                           "description": "Coupon applied to the invoice. Use when a customer asks about a discount on their invoice — `code` and `label` identify it; `amountOff` or `percentOff` describe the discount.",
                           "properties": {
@@ -33452,12 +34151,13 @@
                                 ]
                               },
                               "type": {
-                                "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket.",
+                                "description": "Line item type. \"product\": a product or variant. \"setupFee\": one-time setup fee on a subscription. \"variantOption\": line for a chosen variant option. \"ticket\": event ticket. \"ticketFee\": the per-ticket fee of the ticket line above it.",
                                 "enum": [
                                   "product",
                                   "setupFee",
                                   "variantOption",
                                   "ticket",
+                                  "ticketFee",
                                   null
                                 ],
                                 "type": [
@@ -33593,7 +34293,7 @@
                           ]
                         },
                         "subtotalAfterDiscount": {
-                          "description": "Subtotal after coupon and bulk discount, before tax, in the smallest currency unit.",
+                          "description": "Subtotal after bulk, coupon and complimentary discounts, before tax, in the smallest currency unit.",
                           "type": [
                             "number",
                             "null"
@@ -37004,6 +37704,13 @@
                             },
                             "type": "array"
                           },
+                          "complimentaryAmount": {
+                            "description": "Face value and booking fee forgone on a complimentary booking, in the smallest currency unit. 0 otherwise.",
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
                           "couponAmount": {
                             "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                             "type": "number"
@@ -37177,7 +37884,7 @@
                             "type": "string"
                           },
                           "revenue": {
-                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount - complimentaryAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
                           },
                           "seller": {
@@ -39226,7 +39933,7 @@
                   "data": {
                     "properties": {
                       "booking": {
-                        "$ref": "#/components/schemas/Payment"
+                        "$ref": "#/components/schemas/Booking"
                       }
                     },
                     "required": [
@@ -39308,7 +40015,7 @@
                   "data": {
                     "properties": {
                       "booking": {
-                        "$ref": "#/components/schemas/Payment"
+                        "$ref": "#/components/schemas/Booking"
                       }
                     },
                     "required": [
@@ -46632,6 +47339,13 @@
                             },
                             "type": "array"
                           },
+                          "complimentaryAmount": {
+                            "description": "Face value and booking fee forgone on a complimentary booking, in the smallest currency unit. 0 otherwise.",
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
                           "couponAmount": {
                             "description": "Coupon discount allocated to this ticket, in the smallest currency unit. Booking-level coupon discounts are apportioned across the tickets in the booking.",
                             "type": "number"
@@ -46805,7 +47519,7 @@
                             "type": "string"
                           },
                           "revenue": {
-                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
+                            "description": "Revenue attributed to this ticket, in the smallest currency unit: `originalPrice - discountAmount - couponAmount - complimentaryAmount + taxAmount + feeAmount`. Use this rather than summing the parts yourself.",
                             "type": "number"
                           },
                           "seller": {

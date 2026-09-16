@@ -184,6 +184,12 @@ export type BookingList =
 
 export type Booking = BookingList['data'][number];
 
+/** One ticket line on a booking, priced as it was at the point of purchase. */
+export type BookingTicket = NonNullable<Booking['tickets']>[number];
+
+/** The ticket type fee charged on a booking line, kept separate from the ticket `price`. */
+export type BookingTicketFee = NonNullable<BookingTicket['fee']>;
+
 export type BookingResponse =
   operations['bookings/get']['responses'][200]['content']['application/json'];
 
@@ -192,6 +198,13 @@ export type BookingListArgs = operations['bookings/list']['parameters']['query']
 export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit'> & {
   limit?: number;
 };
+
+export type CreateBookingParams = NonNullable<
+  operations['bookings/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateBookingResponse =
+  operations['bookings/create']['responses'][201]['content']['application/json'];
 
 // Tickets
 export type ValidateTicketData =
@@ -203,7 +216,8 @@ export type ValidateTicketParams = NonNullable<
   operations['tickets/validate']['requestBody']
 >['content']['application/json'];
 
-export type TicketList = operations['tickets/list']['responses'][200]['content']['application/json'];
+export type TicketList =
+  operations['tickets/list']['responses'][200]['content']['application/json'];
 
 export type Ticket = TicketList['data'][number];
 
