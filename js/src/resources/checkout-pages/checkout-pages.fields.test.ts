@@ -158,10 +158,12 @@ describe('CheckoutPagesResource fields', () => {
     });
   });
 
-  it('deletes a checkout page field', async () => {
+  it('deletes a checkout page field and keeps the response wrapped', async () => {
     const mockResponse: CheckoutPageFieldDeleteResponse = {
-      success: true,
-      message: 'Field deleted successfully',
+      data: {
+        success: true,
+        message: 'Field deleted successfully',
+      },
     };
 
     vi.spyOn(client, 'request').mockResolvedValue(mockResponse);

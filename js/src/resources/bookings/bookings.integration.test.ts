@@ -603,6 +603,7 @@ describe('BookingResource Integration Tests', () => {
       expect(booking.livemode).toBe(true);
       expect(booking.isAbandoned).toBe(false);
       expect(booking.isComplimentary).toBe(false);
+      expect(booking.ticketFeesAmount).toBe(0);
       expect(booking.customerEmail).toBe(email);
       expect(booking.customerName).toBe('Exhaustive Booking');
       expect(booking.paymentMethod).toMatchObject({ gateway: 'manual', method: 'manual' });
@@ -637,7 +638,7 @@ describe('BookingResource Integration Tests', () => {
       expect(ticket).toHaveProperty('reference');
       expect(ticket).toHaveProperty('ticketGroupReference');
       // Uncapped fixture ticket type with no booking fee or discount.
-      for (const key of ['capacity', 'ticketGroupCapacity', 'bookingFeeAmount', 'discount']) {
+      for (const key of ['capacity', 'ticketGroupCapacity', 'fee', 'discount']) {
         expect(
           (ticket as Record<string, unknown>)[key],
           `expected ticket "${key}" to be absent on this fixture`

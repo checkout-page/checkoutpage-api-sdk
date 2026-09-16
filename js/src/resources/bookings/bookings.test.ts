@@ -1,7 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookingResource } from './bookings';
 import { CheckoutPageApiClient } from '../../client';
-import type { BookingList, BookingResponse, CreateBookingParams } from '../../types';
+import type {
+  BookingList,
+  BookingResponse,
+  BookingTicket,
+  BookingTicketFee,
+  CreateBookingParams,
+} from '../../types';
 
 const BOOKING_ID_1 = '6812fe6e9f39b6760576f01c';
 const BOOKING_ID_2 = '6812fe6e9f39b6760576f01d';
@@ -28,6 +34,36 @@ const BASE_BOOKING: BookingList['data'][number] = {
   taxBreakdown: [],
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
+};
+
+// $10 + $2 fee and $10 + $3 fee, $22 order coupon applying to fees: it spends the $20 of
+// prices first, so only ticketFeesAmount (not the line fee totals) shows the $2 off the fees.
+const FEE_BOOKING: BookingList['data'][number] = {
+  ...BASE_BOOKING,
+  id: BOOKING_ID_2,
+  amount: 300,
+  coupon: { code: 'BOX22', amountOff: 2200, discount: 2200 },
+  ticketFeesAmount: 300,
+  tickets: [
+    {
+      name: 'Standard',
+      ticketTypeId: '507f1f77bcf86cd799439040',
+      quantity: 1,
+      price: 1000,
+      originalPrice: 1000,
+      pricing: 'paid',
+      fee: { name: 'Booking fee', amount: 200, totalAmount: 200, display: 'separate' },
+    },
+    {
+      name: 'Premium',
+      ticketTypeId: '507f1f77bcf86cd799439041',
+      quantity: 1,
+      price: 1000,
+      originalPrice: 1000,
+      pricing: 'paid',
+      fee: { name: 'Booking fee', amount: 300, totalAmount: 300, display: 'separate' },
+    },
+  ],
 };
 
 const DEFAULT_QUERY = {
@@ -68,6 +104,25 @@ describe('BookingResource', () => {
         method: 'GET',
         path: `/v1/bookings/${BOOKING_ID_1}`,
       });
+    });
+
+    it('should return ticketFeesAmount and the fee on each ticket line', async () => {
+      const mockBooking: BookingResponse = { data: FEE_BOOKING };
+      vi.spyOn(client, 'request').mockResolvedValue(mockBooking);
+
+      const res = await bookingResource.get(BOOKING_ID_2);
+
+      expect(res).toEqual(mockBooking);
+      const fee: BookingTicketFee | null | undefined = res.data.tickets?.[0]?.fee;
+      const charged: number | null | undefined = res.data.ticketFeesAmount;
+      expect(fee).toEqual({
+        name: 'Booking fee',
+        amount: 200,
+        totalAmount: 200,
+        display: 'separate',
+      });
+      expect(res.data.tickets?.[1]?.fee?.totalAmount).toBe(300);
+      expect(charged).toBe(300);
     });
 
     it('should throw error for missing booking id', async () => {
@@ -123,6 +178,31 @@ describe('BookingResource', () => {
 
       expect(result).toEqual(mockBookingList);
       expect(result.data).toHaveLength(2);
+    });
+
+    it('should return ticketFeesAmount and ticket line fees on each booking', async () => {
+      const noFeeBooking: BookingList['data'][number] = {
+        ...BASE_BOOKING,
+        amount: 1000,
+        ticketFeesAmount: 0,
+        tickets: [{ name: 'Plain ticket', quantity: 1, price: 1000, pricing: 'paid' }],
+      };
+      const mockBookingList: BookingList = {
+        data: [FEE_BOOKING, noFeeBooking],
+        total: 2,
+        has_more: false,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockBookingList);
+
+      const result = await bookingResource.list();
+
+      expect(result).toEqual(mockBookingList);
+      const [withFees, withoutFees] = result.data;
+      const lines: BookingTicket[] = withFees.tickets ?? [];
+      expect(lines.map((line) => line.fee?.totalAmount)).toEqual([200, 300]);
+      expect(withFees.ticketFeesAmount).toBe(300);
+      expect(withoutFees.tickets?.[0]).not.toHaveProperty('fee');
+      expect(withoutFees.ticketFeesAmount).toBe(0);
     });
 
     it('should return empty list when no bookings exist', async () => {

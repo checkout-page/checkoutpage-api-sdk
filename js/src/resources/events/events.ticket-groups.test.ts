@@ -119,6 +119,69 @@ describe('EventsResource ticketGroups', () => {
     });
   });
 
+  it('creates a ticket group that shows its booking fee separately', async () => {
+    const params: CreateEventTicketGroupParams = {
+      name: 'General admission',
+      feeDisplay: 'separate',
+      layout: { showTicketFee: true },
+    };
+
+    const mockResponse: CreateEventTicketGroupResponse = {
+      data: {
+        id: 'group_123',
+        name: 'General admission',
+        feeDisplay: 'separate',
+        layout: { showTicketFee: true },
+        ticketTypeIds: [],
+      },
+    };
+
+    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+    const result = await eventsResource.ticketGroups.create('event_123', params);
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'POST',
+      path: '/v1/events/event_123/ticket-groups',
+      body: {
+        name: 'General admission',
+        feeDisplay: 'separate',
+        layout: { showTicketFee: true },
+      },
+    });
+    expect(result.data.feeDisplay).toBe('separate');
+    expect(result.data.layout?.showTicketFee).toBe(true);
+  });
+
+  it('updates how a ticket group shows its booking fee', async () => {
+    const params: UpdateEventTicketGroupParams = {
+      feeDisplay: 'separate',
+      layout: { showTicketFee: true },
+    };
+
+    const mockResponse: UpdateEventTicketGroupResponse = {
+      data: {
+        id: 'group_123',
+        name: 'General admission',
+        feeDisplay: 'separate',
+        layout: { showTicketFee: true },
+        ticketTypeIds: [],
+      },
+    };
+
+    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+    const result = await eventsResource.ticketGroups.update('event_123', 'group_123', params);
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'PATCH',
+      path: '/v1/events/event_123/ticket-groups/group_123',
+      body: { feeDisplay: 'separate', layout: { showTicketFee: true } },
+    });
+    expect(result.data.feeDisplay).toBe('separate');
+    expect(result.data.layout?.showTicketFee).toBe(true);
+  });
+
   it('archives a ticket group', async () => {
     const mockResponse: DeleteEventTicketGroupResponse = {
       data: {

@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
-  APIError,
   CheckoutPageClient,
   CreateEventFieldParams,
   NotFoundError,
+  ValidationError,
   createCheckoutPageClient,
 } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
@@ -354,7 +354,7 @@ describe('EventsResource fields integration tests', () => {
           },
         },
       })
-    ).rejects.toThrow(APIError);
+    ).rejects.toThrow(ValidationError);
   });
 
   it('gets an existing event field', async () => {
