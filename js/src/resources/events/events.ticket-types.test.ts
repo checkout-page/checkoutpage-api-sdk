@@ -129,6 +129,69 @@ describe('EventsResource ticketGroups.ticketTypes', () => {
     });
   });
 
+  it('creates a ticket type with a booking fee', async () => {
+    const params: CreateEventTicketTypeParams = {
+      name: 'General admission',
+      pricing: 'paid',
+      price: 1000,
+      feeAmount: 300,
+    };
+
+    const mockResponse: CreateEventTicketTypeResponse = {
+      data: {
+        id: 'ticket_123',
+        name: 'General admission',
+        pricing: 'paid',
+        price: 1000,
+        feeAmount: 300,
+      },
+    };
+
+    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+    const result = await eventsResource.ticketGroups.ticketTypes.create(
+      'event_123',
+      'group_123',
+      params
+    );
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'POST',
+      path: '/v1/events/event_123/ticket-groups/group_123/ticket-types',
+      body: { name: 'General admission', pricing: 'paid', price: 1000, feeAmount: 300 },
+    });
+    const feeAmount: number | null | undefined = result.data.feeAmount;
+    expect(feeAmount).toBe(300);
+  });
+
+  it('removes a booking fee by sending feeAmount: null', async () => {
+    const params: UpdateEventTicketTypeParams = { feeAmount: null };
+
+    const mockResponse: UpdateEventTicketTypeResponse = {
+      data: {
+        id: 'ticket_123',
+        name: 'General admission',
+        feeAmount: null,
+      },
+    };
+
+    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+    const result = await eventsResource.ticketGroups.ticketTypes.update(
+      'event_123',
+      'group_123',
+      'ticket_123',
+      params
+    );
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'PATCH',
+      path: '/v1/events/event_123/ticket-groups/group_123/ticket-types/ticket_123',
+      body: { feeAmount: null },
+    });
+    expect(result.data.feeAmount).toBeNull();
+  });
+
   it('archives a ticket type', async () => {
     const mockResponse: DeleteEventTicketTypeResponse = {
       data: {

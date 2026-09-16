@@ -166,6 +166,35 @@ describe('EventsResource', () => {
         body: params,
       });
     });
+
+    it('forwards booking fee settings on nested ticket groups and ticket types', async () => {
+      const params: CreateEventParams = {
+        name: 'Fee event',
+        ticketGroups: [
+          {
+            name: 'General admission',
+            feeDisplay: 'separate',
+            layout: { showTicketFee: true },
+            ticketTypes: [
+              { name: 'Standard', pricing: 'paid', price: 1000, feeAmount: 200 },
+              { name: 'Premium', pricing: 'paid', price: 1000, feeAmount: 300 },
+            ],
+          },
+        ],
+      };
+
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { id: 'event_123' } } as never);
+
+      await eventsResource.create(params);
+
+      const sent = spy.mock.calls[0][0] as { body: CreateEventParams };
+      const group = sent.body.ticketGroups?.[0];
+      expect(group?.feeDisplay).toBe('separate');
+      expect(group?.layout).toEqual({ showTicketFee: true });
+      expect(group?.ticketTypes.map((ticketType) => ticketType.feeAmount)).toEqual([200, 300]);
+    });
   });
 
   describe('get', () => {
