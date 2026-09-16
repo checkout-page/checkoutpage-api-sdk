@@ -32635,7 +32635,7 @@
                                   ]
                                 },
                                 "type": {
-                                  "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket. \"ticketFee\" — the per-ticket fee of the ticket line above it.",
+                                  "description": "Line item type. \"product\": a product or variant. \"setupFee\": one-time setup fee on a subscription. \"variantOption\": line for a chosen variant option. \"ticket\": event ticket. \"ticketFee\": the per-ticket fee of the ticket line above it.",
                                   "enum": [
                                     "product",
                                     "setupFee",
@@ -33388,7 +33388,7 @@
                                 ]
                               },
                               "type": {
-                                "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket. \"ticketFee\" — the per-ticket fee of the ticket line above it.",
+                                "description": "Line item type. \"product\": a product or variant. \"setupFee\": one-time setup fee on a subscription. \"variantOption\": line for a chosen variant option. \"ticket\": event ticket. \"ticketFee\": the per-ticket fee of the ticket line above it.",
                                 "enum": [
                                   "product",
                                   "setupFee",
@@ -34151,7 +34151,7 @@
                                 ]
                               },
                               "type": {
-                                "description": "Line item type. \"product\" — a product or variant. \"setupFee\" — one-time setup fee on a subscription. \"variantOption\" — line for a chosen variant option. \"ticket\" — event ticket. \"ticketFee\" — the per-ticket fee of the ticket line above it.",
+                                "description": "Line item type. \"product\": a product or variant. \"setupFee\": one-time setup fee on a subscription. \"variantOption\": line for a chosen variant option. \"ticket\": event ticket. \"ticketFee\": the per-ticket fee of the ticket line above it.",
                                 "enum": [
                                   "product",
                                   "setupFee",
