@@ -65,6 +65,9 @@ export class CouponResource {
     if (params.appliesToSetupFee !== undefined) {
       body.appliesToSetupFee = params.appliesToSetupFee;
     }
+    if (params.appliesToTicketFees !== undefined) {
+      body.appliesToTicketFees = params.appliesToTicketFees;
+    }
     if (params.pageIds !== undefined) {
       body.pageIds = params.pageIds;
     }

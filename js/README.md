@@ -241,6 +241,67 @@ const pageBookings = await checkoutpage.bookings.list({
 });
 ```
 
+#### Create a booking
+
+`bookings.create` issues a real booking without collecting card payment: tickets
+are issued, the customer gets a confirmation email with the ticket PDF, and
+booking webhooks fire. Field values are addressed by `fieldId`, and every field
+the event marks as required must be supplied.
+
+```typescript
+const { data: booking } = await checkoutpage.bookings.create({
+  eventId: '67fcbdac6a91c25ef2d3534a',
+  tickets: { '65f4a1c2e4a9f3d2b1c0a9e8': 2 },
+  fields: [
+    { fieldId: '507f1f77bcf86cd799439030', value: 'ada@example.com' },
+    { fieldId: '507f1f77bcf86cd799439031', value: 'Ada Lovelace' },
+  ],
+  paymentOption: { manualType: 'invoice' },
+});
+
+console.log(booking.status); // 'unpaid'
+console.log(booking.amountDue); // 5000, settled outside checkout
+```
+
+#### Create a complimentary booking
+
+There are two ways to settle a booking, and exactly one of them is required.
+Pass `paymentOption`, as above, and the booking is recorded as `unpaid` with the
+amount as its balance due, settled outside checkout. Pass `complimentary: true`
+instead and the tickets are issued at no charge: the booking is recorded as
+`paid` with `amount`, `amountPaid` and `amountDue` of 0 and
+`isComplimentary: true`, while the ticket lines keep their face value and
+`complimentaryDiscountAmount` records what they would have cost. `complimentary`
+cannot be combined with `paymentOption` or `couponId`.
+
+```typescript
+const { data: booking } = await checkoutpage.bookings.create({
+  eventId: '67fcbdac6a91c25ef2d3534a',
+  tickets: { '65f4a1c2e4a9f3d2b1c0a9e8': 2 },
+  fields: [
+    { fieldId: '507f1f77bcf86cd799439030', value: 'ada@example.com' },
+    { fieldId: '507f1f77bcf86cd799439031', value: 'Ada Lovelace' },
+  ],
+  complimentary: true,
+});
+
+console.log(booking.status); // 'paid'
+console.log(booking.amount); // 0
+console.log(booking.complimentaryDiscountAmount); // 5000 (2 x 2500 face value)
+```
+
+#### Filter complimentary bookings
+
+```typescript
+const complimentary = await checkoutpage.bookings.list({
+  isComplimentary: 'true',
+});
+
+const paidFor = await checkoutpage.bookings.list({
+  isComplimentary: 'false',
+});
+```
+
 ### Products
 
 #### Get a product

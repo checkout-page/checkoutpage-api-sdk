@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CouponResource } from './coupons';
 import { CheckoutPageApiClient } from '../../client';
-import { CouponList, CreateCouponResponse, UpdateCouponResponse } from '../../types';
+import {
+  AmountNonRepeating,
+  CouponList,
+  CreateCouponResponse,
+  UpdateCouponResponse,
+} from '../../types';
 
 describe('CouponResource', () => {
   let client: CheckoutPageApiClient;
@@ -553,6 +558,88 @@ describe('CouponResource', () => {
           maxRedemptions: 100,
           redeemBy: '2025-12-31T23:59:59.000Z',
         },
+      });
+    });
+
+    describe('appliesToTicketFees', () => {
+      const ticketFeeParams: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Box office',
+        code: 'BOX22',
+        amountOff: 2200,
+        currency: 'usd',
+        duration: 'once',
+        ticketTypeIds: ['ticket_type_1', 'ticket_type_2'],
+      };
+
+      it.each([true, false])('should send appliesToTicketFees: %s when given', async (value) => {
+        const spy = vi
+          .spyOn(client, 'request')
+          .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+
+        await couponResource.create({
+          ...ticketFeeParams,
+          appliesToTicketFees: value,
+        });
+
+        const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
+        expect(sent.body).toHaveProperty('appliesToTicketFees', value);
+        expect(sent.body).toEqual({
+          label: 'Box office',
+          code: 'BOX22',
+          amountOff: 2200,
+          currency: 'usd',
+          duration: 'once',
+          ticketTypeIds: ['ticket_type_1', 'ticket_type_2'],
+          appliesToTicketFees: value,
+        });
+      });
+
+      it('should omit appliesToTicketFees when it is not given', async () => {
+        const spy = vi
+          .spyOn(client, 'request')
+          .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+
+        await couponResource.create({
+          ...ticketFeeParams,
+          appliesToTicketFees: undefined,
+        });
+
+        const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
+        expect(sent.body).not.toHaveProperty('appliesToTicketFees');
+      });
+
+      it('should return appliesToTicketFees from the create response unchanged', async () => {
+        const mockCoupon: CreateCouponResponse = {
+          data: {
+            id: '67ee075004de439ab0b675ba',
+            label: 'Box office',
+            code: 'BOX22',
+            amountOff: 2200,
+            currency: 'usd',
+            percentOff: null,
+            appliesToSetupFee: false,
+            appliesToTicketFees: true,
+            duration: 'once',
+            timesRedeemed: 0,
+            deleted: false,
+            stripeCouponId: 'kNU1XKVE',
+            sellerId: 'seller123',
+            ticketTypeIds: ['ticket_type_1', 'ticket_type_2'],
+            createdAt: '2024-01-05T00:00:00.000Z',
+            updatedAt: '2024-01-05T00:00:00.000Z',
+          },
+        };
+        vi.spyOn(client, 'request').mockResolvedValue(mockCoupon);
+
+        const result = await couponResource.create({
+          ...ticketFeeParams,
+          appliesToTicketFees: true,
+        });
+
+        expect(result).toEqual(mockCoupon);
+        const appliesToTicketFees: boolean | undefined = result.data.appliesToTicketFees;
+        expect(appliesToTicketFees).toBe(true);
       });
     });
   });

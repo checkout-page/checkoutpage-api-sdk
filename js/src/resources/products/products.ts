@@ -80,6 +80,9 @@ export class ProductResource {
     if (params.defaultPriceId !== undefined) {
       body.defaultPriceId = params.defaultPriceId;
     }
+    if (params.pricePicker !== undefined) {
+      body.pricePicker = params.pricePicker;
+    }
 
     return this.client.request<Product>({
       method: 'PATCH',
