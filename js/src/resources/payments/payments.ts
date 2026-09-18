@@ -10,6 +10,10 @@ export class PaymentResource {
    *
    * @example
    * const { data: payment } = await client.payments.get(paymentId);
+   *
+   * @example
+   * // A test payment
+   * const { data: testPayment } = await client.payments.get(paymentId, { livemode: false });
    */
   async get(paymentId: string, options: ReadOptions = {}): Promise<PaymentResponse> {
     if (!paymentId) {

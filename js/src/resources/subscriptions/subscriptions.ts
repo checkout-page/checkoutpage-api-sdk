@@ -16,6 +16,12 @@ export class SubscriptionResource {
    *
    * @example
    * const { data: subscription } = await client.subscriptions.get(subscriptionId);
+   *
+   * @example
+   * // A test subscription
+   * const { data: testSubscription } = await client.subscriptions.get(subscriptionId, {
+   *   livemode: false,
+   * });
    */
   async get(subscriptionId: string, options: ReadOptions = {}): Promise<SubscriptionResponse> {
     if (!subscriptionId) {

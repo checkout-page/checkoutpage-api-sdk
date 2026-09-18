@@ -63,6 +63,10 @@ export class BookingResource {
    *
    * @example
    * const { data: booking } = await client.bookings.get(bookingId);
+   *
+   * @example
+   * // A test booking
+   * const { data: testBooking } = await client.bookings.get(bookingId, { livemode: false });
    */
   async get(bookingId: string, options: ReadOptions = {}): Promise<BookingResponse> {
     if (!bookingId) {
@@ -85,6 +89,10 @@ export class BookingResource {
    * @example
    * const pdf = await client.bookings.downloadTicketPdf(bookingId);
    * fs.writeFileSync('tickets.pdf', Buffer.from(pdf));
+   *
+   * @example
+   * // The tickets of a test booking
+   * const testPdf = await client.bookings.downloadTicketPdf(bookingId, { livemode: false });
    */
   async downloadTicketPdf(bookingId: string, options: ReadOptions = {}): Promise<ArrayBuffer> {
     if (!bookingId) {
