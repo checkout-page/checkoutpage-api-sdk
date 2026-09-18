@@ -16,6 +16,12 @@ export class SubscriptionPaymentResource {
    *
    * @example
    * const { data: payment } = await client.subscriptionPayments.get(paymentId);
+   *
+   * @example
+   * // A test subscription payment
+   * const { data: testPayment } = await client.subscriptionPayments.get(paymentId, {
+   *   livemode: false,
+   * });
    */
   async get(
     subscriptionPaymentId: string,

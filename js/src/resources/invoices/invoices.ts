@@ -17,6 +17,10 @@ export class InvoiceResource {
    *
    * @example
    * const { data: invoice } = await client.invoices.get(invoiceId);
+   *
+   * @example
+   * // A test invoice
+   * const { data: testInvoice } = await client.invoices.get(invoiceId, { livemode: false });
    */
   async get(id: string, options: ReadOptions = {}): Promise<InvoiceResponse> {
     if (!id) {
