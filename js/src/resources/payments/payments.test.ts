@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PaymentResource } from './payments';
 import { CheckoutPageApiClient } from '../../client';
 import type { PaymentList, PaymentResponse } from '../../types';
@@ -32,6 +32,7 @@ const DEFAULT_QUERY = {
   createdAfter: undefined,
   createdBefore: undefined,
   abandonmentStatus: undefined,
+  livemode: undefined,
   limit: undefined,
   starting_after: undefined,
   ending_before: undefined,
@@ -58,7 +59,28 @@ describe('PaymentResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: `/v1/payments/${PAYMENT_ID_1}`,
+        query: { livemode: undefined },
       });
+    });
+
+    it('should send livemode as a string to read a test-mode payment', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_PAYMENT });
+
+      await paymentResource.get(PAYMENT_ID_1, { livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/payments/${PAYMENT_ID_1}`,
+        query: { livemode: 'false' },
+      });
+    });
+
+    it('should send no livemode when it is omitted', async () => {
+      const spy = vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_PAYMENT });
+
+      await paymentResource.get(PAYMENT_ID_1);
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     it('should throw error for missing payment id', async () => {
@@ -320,6 +342,38 @@ describe('PaymentResource', () => {
       });
     });
 
+    it('should pass livemode false as a string to list test-mode payments', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await paymentResource.list({ livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, livemode: 'false' },
+        path: '/v1/payments/',
+      });
+    });
+
+    it('should pass livemode true as a string', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await paymentResource.list({ livemode: true });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ query: expect.objectContaining({ livemode: 'true' }) })
+      );
+    });
+
+    it('should send no livemode when it is omitted from a list', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await paymentResource.list({ status: 'paid' });
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
+    });
+
     it('should pass all filters together', async () => {
       const mockList: PaymentList = { data: [BASE_PAYMENT], total: 1, has_more: false };
       vi.spyOn(client, 'request').mockResolvedValue(mockList);
@@ -421,5 +475,45 @@ describe('PaymentResource', () => {
 
       expect(result.data[0].priceSnapshot).toEqual(priceSnapshot);
     });
+  });
+});
+
+describe('PaymentResource livemode on the wire', () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+  let paymentResource: PaymentResource;
+
+  beforeEach(() => {
+    fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: { get: () => 'application/json' },
+      json: async () => ({ data: [], has_more: false, total: 0 }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    paymentResource = new PaymentResource(
+      new CheckoutPageApiClient({ apiKey: 'k', baseUrl: 'https://api.example.com' })
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('puts livemode=false in the query string', async () => {
+    await paymentResource.list({ livemode: false });
+    await paymentResource.get(PAYMENT_ID_1, { livemode: false });
+
+    expect(fetchMock.mock.calls[0][0]).toBe('https://api.example.com/v1/payments/?livemode=false');
+    expect(fetchMock.mock.calls[1][0]).toBe(
+      `https://api.example.com/v1/payments/${PAYMENT_ID_1}?livemode=false`
+    );
+  });
+
+  it('leaves livemode off the URL when it is omitted', async () => {
+    await paymentResource.list();
+    await paymentResource.get(PAYMENT_ID_1);
+
+    expect(fetchMock.mock.calls[0][0]).toBe('https://api.example.com/v1/payments/');
+    expect(fetchMock.mock.calls[1][0]).toBe(`https://api.example.com/v1/payments/${PAYMENT_ID_1}`);
   });
 });

@@ -434,6 +434,39 @@ const { data: deleted } = await checkoutpage.webhooks.delete(webhook.id);
 
 Deliveries stop immediately and the endpoint no longer appears in `list()`.
 
+### Test mode
+
+Switch a checkout page, event or form into test mode with `testmode: true`. While it is on, every
+purchase on that page is a test purchase: no money is taken, the buyer gets the product for free,
+and the records are created with `livemode: false`.
+
+```typescript
+await checkoutpage.checkoutPages.update(pageId, { testmode: true });
+
+const { data: pagesInTestMode } = await checkoutpage.checkoutPages.list({ testmode: true });
+
+// Turn it off to take real payments again
+await checkoutpage.checkoutPages.update(pageId, { testmode: false });
+```
+
+`events` and `forms` take the same field on `create`, `update` and `list`. Page responses carry
+`testmode` and `testmodeEnabledAt` (when test mode was switched on, `null` while it is off).
+
+#### Read test records
+
+Pass `livemode: false` to read test records from payments, bookings, subscriptions, subscription
+payments, invoices, submissions and tickets:
+
+```typescript
+const { data: testPayments } = await checkoutpage.payments.list({ pageId, livemode: false });
+const { data: testPayment } = await checkoutpage.payments.get(paymentId, { livemode: false });
+const pdf = await checkoutpage.bookings.downloadTicketPdf(bookingId, { livemode: false });
+```
+
+Without `livemode`, reads return records in the mode of your API key. A live key (`sk_live_`)
+reads live data by default and test data with `livemode: false`. A test key (`sk_test_`) only
+reads test data: `livemode: true` with a test key throws an `AuthenticationError` (403).
+
 ## Error Handling
 
 The SDK provides typed error classes for different error scenarios:

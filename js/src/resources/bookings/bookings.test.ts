@@ -77,6 +77,7 @@ const DEFAULT_QUERY = {
   createdBefore: undefined,
   abandonmentStatus: undefined,
   isComplimentary: undefined,
+  livemode: undefined,
   limit: undefined,
   starting_after: undefined,
   ending_before: undefined,
@@ -103,7 +104,28 @@ describe('BookingResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: `/v1/bookings/${BOOKING_ID_1}`,
+        query: { livemode: undefined },
       });
+    });
+
+    it('should send livemode as a string to read a test-mode booking', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_BOOKING });
+
+      await bookingResource.get(BOOKING_ID_1, { livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/bookings/${BOOKING_ID_1}`,
+        query: { livemode: 'false' },
+      });
+    });
+
+    it('should send no livemode when it is omitted', async () => {
+      const spy = vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_BOOKING });
+
+      await bookingResource.get(BOOKING_ID_1);
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     it('should return ticketFeesAmount and the fee on each ticket line', async () => {
@@ -140,8 +162,21 @@ describe('BookingResource', () => {
       expect(client.requestRaw).toHaveBeenCalledWith({
         method: 'GET',
         path: `/v1/bookings/${BOOKING_ID_1}/ticket-pdf`,
+        query: { livemode: undefined },
       });
       expect(result).toBe(bytes);
+    });
+
+    it('should send livemode as a string to download a test-mode booking PDF', async () => {
+      vi.spyOn(client, 'requestRaw').mockResolvedValue(new ArrayBuffer(0));
+
+      await bookingResource.downloadTicketPdf(BOOKING_ID_1, { livemode: false });
+
+      expect(client.requestRaw).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/bookings/${BOOKING_ID_1}/ticket-pdf`,
+        query: { livemode: 'false' },
+      });
     });
 
     it('should throw error for missing booking id', async () => {
@@ -443,6 +478,28 @@ describe('BookingResource', () => {
         query: { ...DEFAULT_QUERY, isComplimentary: 'false' },
         path: '/v1/bookings/',
       });
+    });
+
+    it('should pass livemode false as a string to list test-mode bookings', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, livemode: 'false' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it('should send no livemode when it is omitted from a list', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ status: 'paid' });
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     it('should not include productId (payments-only field) in the query', async () => {

@@ -61,6 +61,7 @@ const DEFAULT_LIST_QUERY = {
   createdAfter: undefined,
   createdBefore: undefined,
   search: undefined,
+  livemode: undefined,
   limit: undefined,
   starting_after: undefined,
   ending_before: undefined,
@@ -126,6 +127,26 @@ describe('TicketResource', () => {
           starting_after: CURSOR,
         },
       });
+    });
+
+    it('passes livemode false as a string to list test-mode tickets', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(LIST_RESPONSE);
+
+      await ticketResource.list({ livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/tickets/',
+        query: { ...DEFAULT_LIST_QUERY, livemode: 'false' },
+      });
+    });
+
+    it('sends no livemode when it is omitted', async () => {
+      const spy = vi.spyOn(client, 'request').mockResolvedValue(LIST_RESPONSE);
+
+      await ticketResource.list({ pageId: PAGE_ID });
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
   });
 
