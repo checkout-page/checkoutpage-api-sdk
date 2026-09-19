@@ -54,6 +54,34 @@ describe('FormsResource', () => {
       });
     });
 
+    it('sends testmode as a string to filter forms by test mode', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+      await formsResource.list({ testmode: true });
+      await formsResource.list({ testmode: false });
+
+      expect(client.request).toHaveBeenNthCalledWith(1, {
+        method: 'GET',
+        path: '/v1/forms/',
+        query: expect.objectContaining({ testmode: 'true' }),
+      });
+      expect(client.request).toHaveBeenNthCalledWith(2, {
+        method: 'GET',
+        path: '/v1/forms/',
+        query: expect.objectContaining({ testmode: 'false' }),
+      });
+    });
+
+    it('sends no testmode when it is omitted', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+      await formsResource.list({ status: 'published' });
+
+      expect(spy.mock.calls[0][0].query?.testmode).toBeUndefined();
+    });
+
     /**
      * Demonstrates how a consumer drives forward/backward pagination
      * through the SDK: walk forward with `starting_after`, walk back with
@@ -120,6 +148,23 @@ describe('FormsResource', () => {
       const result = await formsResource.create(params);
 
       expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/forms/',
+        body: params,
+      });
+    });
+
+    it('forwards testmode when creating a form', async () => {
+      const params: CreateFormParams = {
+        name: 'Test mode form',
+        testmode: true,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } });
+
+      await formsResource.create(params);
+
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v1/forms/',
@@ -230,6 +275,26 @@ describe('FormsResource', () => {
         path: '/v1/forms/form_123',
         body: params,
       });
+    });
+
+    it('switches test mode on and returns when it was enabled', async () => {
+      const params: UpdateFormParams = { testmode: true };
+
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: { id: 'form_123', testmode: true, testmodeEnabledAt: '2026-09-18T11:03:11.723Z' },
+      });
+
+      const result = await formsResource.update('form_123', params);
+
+      const testmode: boolean = result.data.testmode;
+      const testmodeEnabledAt: string | null = result.data.testmodeEnabledAt;
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/forms/form_123',
+        body: { testmode: true },
+      });
+      expect(testmode).toBe(true);
+      expect(testmodeEnabledAt).toBe('2026-09-18T11:03:11.723Z');
     });
 
     it('forwards slug, redirectPageId, and funnelSteps when updating a form', async () => {
