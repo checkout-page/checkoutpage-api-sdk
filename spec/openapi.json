@@ -1267,19 +1267,21 @@
             ]
           },
           "upsellChargeId": {
+            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellPageId": {
-            "description": "The page ID that is redirected to for the upsell.",
+            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellSubscriptionId": {
+            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
             "type": [
               "string",
               "null"
@@ -2815,6 +2817,10 @@
               "null"
             ]
           },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts to include on the page. Supports HTML `<script>` tags.",
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n",
@@ -3761,6 +3767,10 @@
               "null"
             ]
           },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
+          },
           "ticketGroups": {
             "description": "Ticket groups with their ticket types. If not provided, a default ticket group with a free ticket will be created.",
             "items": {
@@ -4272,6 +4282,10 @@
               "string",
               "null"
             ]
+          },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
           },
           "title": {
             "description": "Public title shown to customers on the page.",
@@ -6178,6 +6192,18 @@
             },
             "type": [
               "object",
+              "null"
+            ]
+          },
+          "testmode": {
+            "description": "Whether the page is in test mode. While it is on, every purchase on this page is a test purchase and its records are created with `livemode: false`.",
+            "type": "boolean"
+          },
+          "testmodeEnabledAt": {
+            "description": "When test mode was switched on. `null` while the page is not in test mode.",
+            "format": "date-time",
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -9787,19 +9813,21 @@
             ]
           },
           "upsellChargeId": {
+            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellPageId": {
-            "description": "The page ID that is redirected to for the upsell.",
+            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellSubscriptionId": {
+            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
             "type": [
               "string",
               "null"
@@ -13352,6 +13380,18 @@
             ],
             "type": "string"
           },
+          "testmode": {
+            "description": "Whether the page is in test mode. While it is on, every purchase on this page is a test purchase and its records are created with `livemode: false`.",
+            "type": "boolean"
+          },
+          "testmodeEnabledAt": {
+            "description": "When test mode was switched on. `null` while the page is not in test mode.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts for the page.",
             "type": [
@@ -13392,6 +13432,8 @@
           "sellerId",
           "type",
           "status",
+          "testmode",
+          "testmodeEnabledAt",
           "createdAt",
           "updatedAt"
         ],
@@ -14674,12 +14716,15 @@
                 "type": "boolean"
               },
               "upsellChargeId": {
+                "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                 "type": "string"
               },
               "upsellPageId": {
+                "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                 "type": "string"
               },
               "upsellSubscriptionId": {
+                "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                 "type": "string"
               },
               "userAgent": {
@@ -18446,6 +18491,10 @@
               "null"
             ]
           },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts to include on the page. Supports HTML `<script>` tags.",
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n",
@@ -19373,6 +19422,10 @@
               "object",
               "null"
             ]
+          },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
           },
           "title": {
             "description": "Public title shown to customers on the page.",
@@ -22594,6 +22647,20 @@
               "description": "Case-insensitive search matched against page name, title, and product title.",
               "type": "string"
             }
+          },
+          {
+            "description": "Set to `true` to return only checkout pages in test mode, or `false` for only checkout pages not in test mode.",
+            "in": "query",
+            "name": "testmode",
+            "required": false,
+            "schema": {
+              "description": "Set to `true` to return only checkout pages in test mode, or `false` for only checkout pages not in test mode.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -25803,6 +25870,20 @@
             "required": false,
             "schema": {
               "description": "Case-insensitive search matched against page name and title.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `true` to return only events in test mode, or `false` for only events not in test mode.",
+            "in": "query",
+            "name": "testmode",
+            "required": false,
+            "schema": {
+              "description": "Set to `true` to return only events in test mode, or `false` for only events not in test mode.",
+              "enum": [
+                "true",
+                "false"
+              ],
               "type": "string"
             }
           }
@@ -29595,6 +29676,20 @@
               "description": "Case-insensitive search matched against page name and title.",
               "type": "string"
             }
+          },
+          {
+            "description": "Set to `true` to return only forms in test mode, or `false` for only forms not in test mode.",
+            "in": "query",
+            "name": "testmode",
+            "required": false,
+            "schema": {
+              "description": "Set to `true` to return only forms in test mode, or `false` for only forms not in test mode.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -30516,6 +30611,10 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "testmode": {
+                    "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+                    "type": "boolean"
                   },
                   "title": {
                     "description": "Public title shown to customers on the page.",
@@ -36691,12 +36790,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -41483,12 +41585,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -42304,12 +42409,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -43125,12 +43233,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -43946,12 +44057,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -44767,12 +44881,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -45588,12 +45705,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -46409,12 +46529,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -47230,12 +47353,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
