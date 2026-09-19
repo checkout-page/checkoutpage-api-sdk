@@ -66,6 +66,7 @@ export const createCheckoutPageClient = (options: CheckoutPageApiClientOptions) 
 // Export types and errors for convenience
 export type { CheckoutPageApiClientOptions } from './client';
 export type {
+  ReadOptions,
   Account,
   AccountLogo,
   Customer,

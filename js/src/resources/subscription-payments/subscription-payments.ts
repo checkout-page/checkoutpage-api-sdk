@@ -3,6 +3,7 @@ import type {
   SubscriptionPaymentList,
   SubscriptionPaymentListParams,
   SubscriptionPaymentResponse,
+  ReadOptions,
 } from '../../types';
 
 export class SubscriptionPaymentResource {
@@ -16,7 +17,10 @@ export class SubscriptionPaymentResource {
    * @example
    * const { data: payment } = await client.subscriptionPayments.get(paymentId);
    */
-  async get(subscriptionPaymentId: string): Promise<SubscriptionPaymentResponse> {
+  async get(
+    subscriptionPaymentId: string,
+    options: ReadOptions = {}
+  ): Promise<SubscriptionPaymentResponse> {
     if (!subscriptionPaymentId) {
       throw new Error('Subscription payment ID is required');
     }
@@ -24,6 +28,7 @@ export class SubscriptionPaymentResource {
     return this.client.request<SubscriptionPaymentResponse>({
       method: 'GET',
       path: `/v1/subscription-payments/${subscriptionPaymentId}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -41,6 +46,7 @@ export class SubscriptionPaymentResource {
       billingReason: args.billingReason,
       createdAfter: args.createdAfter,
       createdBefore: args.createdBefore,
+      livemode: args.livemode?.toString(),
     };
 
     return this.client.request<SubscriptionPaymentList>({

@@ -338,6 +338,15 @@ describe('PaymentResource Integration Tests', () => {
       }
     });
 
+    it('should return only test-mode payments when livemode is false', async () => {
+      const result = await listPayments({ livemode: false, limit: 25 });
+      if (!result) throw Error();
+
+      for (const payment of result.data) {
+        expect(payment.livemode).toBe(false);
+      }
+    });
+
     it('should combine multiple filters', async () => {
       const result = await listPayments({ status: 'paid', limit: 5 });
       if (!result) throw Error();

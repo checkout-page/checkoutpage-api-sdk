@@ -13,6 +13,16 @@ export type Schemas = components['schemas'];
 // Export all operations
 export type Operations = operations;
 
+// Test mode
+/** Options for reading records that belong to live or test mode. */
+export type ReadOptions = {
+  /**
+   * Set to `false` to read test-mode records, created while a page was in test mode.
+   * Defaults to the mode of the API key. Test API keys can only read test data.
+   */
+  livemode?: boolean;
+};
+
 // Account
 /** The seller account an API key belongs to. */
 export type Account = operations['account/get']['responses'][200]['content']['application/json'];
@@ -52,9 +62,10 @@ export type SubmissionList =
 
 export type SubmissionListArgs = operations['submissions/list']['parameters']['query'];
 
-export type SubmissionListParams = Omit<NonNullable<SubmissionListArgs>, 'limit'> & {
-  limit?: number;
-};
+export type SubmissionListParams = Omit<NonNullable<SubmissionListArgs>, 'limit' | 'livemode'> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 // Coupons
 export type CouponList =
@@ -125,9 +136,10 @@ export type PaymentResponse =
 
 export type PaymentListArgs = operations['payments/list']['parameters']['query'];
 
-export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit'> & {
-  limit?: number;
-};
+export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit' | 'livemode'> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 // Subscriptions
 export type SubscriptionList =
@@ -137,9 +149,10 @@ export type Subscription = SubscriptionList['data'][number];
 
 export type SubscriptionListArgs = operations['subscriptions/list']['parameters']['query'];
 
-export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'limit'> & {
-  limit?: number;
-};
+export type SubscriptionListParams = Omit<NonNullable<SubscriptionListArgs>, 'limit' | 'livemode'> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 export type SubscriptionResponse =
   operations['subscriptions/get']['responses'][200]['content']['application/json'];
@@ -195,9 +208,10 @@ export type BookingResponse =
 
 export type BookingListArgs = operations['bookings/list']['parameters']['query'];
 
-export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit'> & {
-  limit?: number;
-};
+export type BookingListParams = Omit<NonNullable<BookingListArgs>, 'limit' | 'livemode'> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 export type CreateBookingParams = NonNullable<
   operations['bookings/create']['requestBody']
@@ -223,9 +237,10 @@ export type Ticket = TicketList['data'][number];
 
 export type TicketListArgs = operations['tickets/list']['parameters']['query'];
 
-export type TicketListParams = Omit<NonNullable<TicketListArgs>, 'limit'> & {
-  limit?: number;
-};
+export type TicketListParams = Omit<NonNullable<TicketListArgs>, 'limit' | 'livemode'> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 export type UpdateTicketParams = NonNullable<
   operations['tickets/update']['requestBody']
@@ -248,10 +263,11 @@ export type SubscriptionPaymentListArgs =
 
 export type SubscriptionPaymentListParams = Omit<
   NonNullable<SubscriptionPaymentListArgs>,
-  'limit'
-> & {
-  limit?: number;
-};
+  'limit' | 'livemode'
+> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 // Products
 export type Product = operations['products/get']['responses'][200]['content']['application/json'];
@@ -536,9 +552,10 @@ export type InvoiceResponse =
 
 export type InvoiceListArgs = operations['invoices/list']['parameters']['query'];
 
-export type InvoiceListParams = Omit<NonNullable<InvoiceListArgs>, 'limit'> & {
-  limit?: number;
-};
+export type InvoiceListParams = Omit<NonNullable<InvoiceListArgs>, 'limit' | 'livemode'> &
+  ReadOptions & {
+    limit?: number;
+  };
 
 // Webhooks
 export type WebhookList =

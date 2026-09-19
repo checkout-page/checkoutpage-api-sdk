@@ -1,5 +1,11 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { Invoice, InvoiceList, InvoiceListParams, InvoiceResponse } from '../../types';
+import type {
+  Invoice,
+  InvoiceList,
+  InvoiceListParams,
+  InvoiceResponse,
+  ReadOptions,
+} from '../../types';
 
 export class InvoiceResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -12,7 +18,7 @@ export class InvoiceResource {
    * @example
    * const { data: invoice } = await client.invoices.get(invoiceId);
    */
-  async get(id: string): Promise<InvoiceResponse> {
+  async get(id: string, options: ReadOptions = {}): Promise<InvoiceResponse> {
     if (!id) {
       throw new Error('Invoice ID is required');
     }
@@ -20,6 +26,7 @@ export class InvoiceResource {
     return this.client.request<InvoiceResponse>({
       method: 'GET',
       path: `/v1/invoices/${id}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -35,6 +42,7 @@ export class InvoiceResource {
       poNumber: args.poNumber,
       createdAfter: args.createdAfter,
       createdBefore: args.createdBefore,
+      livemode: args.livemode?.toString(),
     };
 
     return this.client.request<InvoiceList>({
