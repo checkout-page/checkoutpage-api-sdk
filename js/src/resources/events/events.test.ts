@@ -54,6 +54,34 @@ describe('EventsResource', () => {
       });
     });
 
+    it('sends testmode as a string to filter events by test mode', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+      await eventsResource.list({ testmode: true });
+      await eventsResource.list({ testmode: false });
+
+      expect(client.request).toHaveBeenNthCalledWith(1, {
+        method: 'GET',
+        path: '/v1/events/',
+        query: expect.objectContaining({ testmode: 'true' }),
+      });
+      expect(client.request).toHaveBeenNthCalledWith(2, {
+        method: 'GET',
+        path: '/v1/events/',
+        query: expect.objectContaining({ testmode: 'false' }),
+      });
+    });
+
+    it('sends no testmode when it is omitted', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+      await eventsResource.list({ status: 'published' });
+
+      expect(spy.mock.calls[0][0].query?.testmode).toBeUndefined();
+    });
+
     /**
      * Demonstrates how a consumer drives forward/backward pagination
      * through the SDK: walk forward with `starting_after`, walk back with
@@ -120,6 +148,23 @@ describe('EventsResource', () => {
       const result = await eventsResource.create(params);
 
       expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/events/',
+        body: params,
+      });
+    });
+
+    it('forwards testmode when creating an event', async () => {
+      const params: CreateEventParams = {
+        name: 'Test mode event',
+        testmode: true,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } });
+
+      await eventsResource.create(params);
+
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v1/events/',
@@ -259,6 +304,26 @@ describe('EventsResource', () => {
         path: '/v1/events/event_123',
         body: params,
       });
+    });
+
+    it('switches test mode on and returns when it was enabled', async () => {
+      const params: UpdateEventParams = { testmode: true };
+
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: { id: 'event_123', testmode: true, testmodeEnabledAt: '2026-09-18T11:03:11.723Z' },
+      });
+
+      const result = await eventsResource.update('event_123', params);
+
+      const testmode: boolean | undefined = result.data.testmode;
+      const testmodeEnabledAt: string | null | undefined = result.data.testmodeEnabledAt;
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/events/event_123',
+        body: { testmode: true },
+      });
+      expect(testmode).toBe(true);
+      expect(testmodeEnabledAt).toBe('2026-09-18T11:03:11.723Z');
     });
 
     it('forwards slug, redirectPageId, and funnelSteps when updating an event', async () => {
