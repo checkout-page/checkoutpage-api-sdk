@@ -1,5 +1,5 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { PaymentList, PaymentListParams, PaymentResponse } from '../../types';
+import type { PaymentList, PaymentListParams, PaymentResponse, ReadOptions } from '../../types';
 
 export class PaymentResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -10,8 +10,12 @@ export class PaymentResource {
    *
    * @example
    * const { data: payment } = await client.payments.get(paymentId);
+   *
+   * @example
+   * // A test payment
+   * const { data: testPayment } = await client.payments.get(paymentId, { livemode: false });
    */
-  async get(paymentId: string): Promise<PaymentResponse> {
+  async get(paymentId: string, options: ReadOptions = {}): Promise<PaymentResponse> {
     if (!paymentId) {
       throw new Error('Payment ID is required');
     }
@@ -19,6 +23,7 @@ export class PaymentResource {
     return this.client.request<PaymentResponse>({
       method: 'GET',
       path: `/v1/payments/${paymentId}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -34,6 +39,7 @@ export class PaymentResource {
       createdAfter: args.createdAfter,
       createdBefore: args.createdBefore,
       abandonmentStatus: args.abandonmentStatus,
+      livemode: args.livemode?.toString(),
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
       ending_before: args.ending_before,

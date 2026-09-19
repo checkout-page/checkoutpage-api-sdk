@@ -39,7 +39,30 @@ describe('SubscriptionResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v1/subscriptions/6812fe6e9f39b6760576f01c',
+        query: { livemode: undefined },
       });
+    });
+
+    it('should send livemode as a string to read a test-mode subscription', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: '6812fe6e9f39b6760576f01c' } });
+
+      await subscriptionResource.get('6812fe6e9f39b6760576f01c', { livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c',
+        query: { livemode: 'false' },
+      });
+    });
+
+    it('should send no livemode when it is omitted', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { id: '6812fe6e9f39b6760576f01c' } });
+
+      await subscriptionResource.get('6812fe6e9f39b6760576f01c');
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     it('should throw error for missing subscription id', async () => {
@@ -339,6 +362,28 @@ describe('SubscriptionResource', () => {
       expect(result.data).toHaveLength(0);
       expect(result.total).toBe(0);
       expect(result.has_more).toBe(false);
+    });
+
+    it('should pass livemode false as a string to list test-mode subscriptions', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await subscriptionResource.list({ livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/subscriptions/',
+        query: expect.objectContaining({ livemode: 'false' }),
+      });
+    });
+
+    it('should send no livemode when it is omitted from a list', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await subscriptionResource.list({ limit: 5 });
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     // priceId field

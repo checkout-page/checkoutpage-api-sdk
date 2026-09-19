@@ -22021,6 +22021,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -22285,6 +22299,20 @@
                 }
               ]
             }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -22390,6 +22418,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -32257,6 +32299,20 @@
               "format": "date-time",
               "type": "string"
             }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -33010,6 +33066,20 @@
                   "description": "The ID of the invoice to retrieve. Use `list_invoices` first if you need to discover the invoice ID by customer email, customer name, invoice number, PO number, or the payment it belongs to (`chargeId`)."
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -34639,6 +34709,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -34798,6 +34882,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -35185,6 +35283,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -35323,6 +35435,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -35535,6 +35661,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -35673,6 +35813,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -35863,6 +36017,20 @@
                 "unpaid",
                 "failed",
                 "completed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
               ],
               "type": "string"
             }
@@ -36767,6 +36935,20 @@
                 }
               ]
             }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -37606,6 +37788,20 @@
             "schema": {
               "description": "Inclusive upper bound on ticket createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-12-31T23:59:59Z`). Never use a local timezone offset — tickets are stored and compared in UTC.",
               "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
               "type": "string"
             }
           }

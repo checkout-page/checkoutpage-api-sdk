@@ -5,6 +5,7 @@ import type {
   BookingResponse,
   CreateBookingParams,
   CreateBookingResponse,
+  ReadOptions,
 } from '../../types';
 
 export class BookingResource {
@@ -62,8 +63,12 @@ export class BookingResource {
    *
    * @example
    * const { data: booking } = await client.bookings.get(bookingId);
+   *
+   * @example
+   * // A test booking
+   * const { data: testBooking } = await client.bookings.get(bookingId, { livemode: false });
    */
-  async get(bookingId: string): Promise<BookingResponse> {
+  async get(bookingId: string, options: ReadOptions = {}): Promise<BookingResponse> {
     if (!bookingId) {
       throw new Error('Booking ID is required');
     }
@@ -71,6 +76,7 @@ export class BookingResource {
     return this.client.request<BookingResponse>({
       method: 'GET',
       path: `/v1/bookings/${bookingId}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -83,8 +89,12 @@ export class BookingResource {
    * @example
    * const pdf = await client.bookings.downloadTicketPdf(bookingId);
    * fs.writeFileSync('tickets.pdf', Buffer.from(pdf));
+   *
+   * @example
+   * // The tickets of a test booking
+   * const testPdf = await client.bookings.downloadTicketPdf(bookingId, { livemode: false });
    */
-  async downloadTicketPdf(bookingId: string): Promise<ArrayBuffer> {
+  async downloadTicketPdf(bookingId: string, options: ReadOptions = {}): Promise<ArrayBuffer> {
     if (!bookingId) {
       throw new Error('Booking ID is required');
     }
@@ -92,6 +102,7 @@ export class BookingResource {
     return this.client.requestRaw({
       method: 'GET',
       path: `/v1/bookings/${bookingId}/ticket-pdf`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -107,6 +118,7 @@ export class BookingResource {
       createdBefore: args.createdBefore,
       abandonmentStatus: args.abandonmentStatus,
       isComplimentary: args.isComplimentary,
+      livemode: args.livemode?.toString(),
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
       ending_before: args.ending_before,

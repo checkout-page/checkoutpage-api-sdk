@@ -5,6 +5,7 @@ import type {
   SubscriptionList,
   SubscriptionListParams,
   SubscriptionResponse,
+  ReadOptions,
 } from '../../types';
 
 export class SubscriptionResource {
@@ -15,8 +16,14 @@ export class SubscriptionResource {
    *
    * @example
    * const { data: subscription } = await client.subscriptions.get(subscriptionId);
+   *
+   * @example
+   * // A test subscription
+   * const { data: testSubscription } = await client.subscriptions.get(subscriptionId, {
+   *   livemode: false,
+   * });
    */
-  async get(subscriptionId: string): Promise<SubscriptionResponse> {
+  async get(subscriptionId: string, options: ReadOptions = {}): Promise<SubscriptionResponse> {
     if (!subscriptionId) {
       throw new Error('Subscription ID is required');
     }
@@ -24,6 +31,7 @@ export class SubscriptionResource {
     return this.client.request<SubscriptionResponse>({
       method: 'GET',
       path: `/v1/subscriptions/${subscriptionId}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -32,6 +40,7 @@ export class SubscriptionResource {
       search: args.search,
       pageId: args.pageId,
       status: args.status,
+      livemode: args.livemode?.toString(),
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
       ending_before: args.ending_before,
