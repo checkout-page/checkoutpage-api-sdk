@@ -28,6 +28,7 @@ import type {
   UpdateEventFieldParams,
   EventFieldDeleteResponse,
 } from '../../types';
+import { OrderBumpsResource } from '../order-bumps/order-bumps';
 
 export class EventFieldsResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -303,10 +304,13 @@ export class EventTicketGroupsResource {
 export class EventsResource {
   public readonly ticketGroups: EventTicketGroupsResource;
   public readonly fields: EventFieldsResource;
+  /** Shown to customers as add-ons on an event. */
+  public readonly orderBumps: OrderBumpsResource;
 
   constructor(private client: CheckoutPageApiClient) {
     this.ticketGroups = new EventTicketGroupsResource(client);
     this.fields = new EventFieldsResource(client);
+    this.orderBumps = new OrderBumpsResource(client, 'events');
   }
 
   async list(args: EventListParams = {}): Promise<EventList> {

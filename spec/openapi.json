@@ -4815,6 +4815,833 @@
         ],
         "type": "object"
       },
+      "CreateOrderBumpRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allowQuantity": {
+            "description": "Let the customer pick a quantity. Off, the order bump is bought once.",
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Whether the order bump is offered. A disabled order bump stays on the page but is not shown.",
+            "type": "boolean"
+          },
+          "hidden": {
+            "description": "Hide the order bump unless the page URL reveals it with `?show_order_bumps=` and the product price reference.",
+            "type": "boolean"
+          },
+          "preselected": {
+            "description": "Whether the order bump is ticked when the page loads.",
+            "type": "boolean"
+          },
+          "productId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "ID of a product with `role: orderbump` (create one with create_product, find one with list_products). It must share the page currency, have one enabled price that is not a payment plan, and not already be sold or offered on this page."
+              }
+            ]
+          },
+          "shortenDescription": {
+            "description": "Clamp a long description behind a Show more toggle.",
+            "type": "boolean"
+          },
+          "showHideLogic": {
+            "description": "Rule that shows the order bump only for some selections. Sent whole: it replaces the stored rule.",
+            "properties": {
+              "comparison": {
+                "description": "Defaults to `is`.",
+                "enum": [
+                  "is",
+                  "is_not"
+                ],
+                "example": "is",
+                "type": "string"
+              },
+              "enabled": {
+                "description": "Whether the rule is on. Off, the order bump shows regardless of the fields below.",
+                "type": "boolean"
+              },
+              "orderBumpProductIds": {
+                "description": "For `subject: order_bump`: product IDs of other order bumps on the same page. The rule matches while any of them is ticked. The order bump's own ID is ignored.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              "priceId": {
+                "description": "For `subject: price`: the page product price ID to watch (from get_product). A rule without one is stored but never hides anything.",
+                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                "pattern": "^[0-9a-fA-F]{24}$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject": {
+                "description": "What the rule watches. Defaults to `price` on a checkout page and `ticket` on an event.",
+                "enum": [
+                  "price",
+                  "ticket",
+                  "order_bump"
+                ],
+                "example": "price",
+                "type": "string"
+              },
+              "ticketTypeIds": {
+                "description": "For `subject: ticket`: the ticket type IDs to watch. The rule matches while any of them is in the basket.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "productId"
+        ],
+        "type": "object"
+      },
+      "CreateProductRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "callToActionText": {
+            "description": "Accept copy on the order bump card, e.g. \"Yes! Add gift wrapping\". Send null to clear. Order bump products only.",
+            "example": "Yes! Add gift wrapping",
+            "maxLength": 200,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "calloutIcon": {
+            "description": "Icon leading the call out box. Send null to clear. Order bump products only.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
+            "example": "star",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "calloutText": {
+            "description": "Call out box under the description on the order bump card. HTML: links and inline emphasis are kept, anything else is removed. Send null to clear. Order bump products only.",
+            "example": "Only <strong>20</strong> left at this price.",
+            "maxLength": 2000,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "Description of the product. Accepts HTML or plain text.",
+            "example": "Join our premium course today learn more at <a href=\"https://checkoutpage.com\">Checkout Page</a>.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "features": {
+            "description": "Short list of what the customer gets, shown above the description on the order bump card. Replaces the whole list; send [] or null to clear. Order bump products only.",
+            "items": {
+              "properties": {
+                "icon": {
+                  "description": "Icon leading the line. Unset, the line leads with a check.",
+                  "enum": [
+                    "star",
+                    "sparkles",
+                    "fire",
+                    "bolt",
+                    "rocket",
+                    "trophy",
+                    "check",
+                    "x-mark",
+                    "plus",
+                    "arrow-right",
+                    "check-badge",
+                    "check-circle",
+                    "shield-check",
+                    "thumbs-up",
+                    "heart",
+                    "smile",
+                    "light-bulb",
+                    "sun",
+                    "moon",
+                    "gift",
+                    "tag",
+                    "percent",
+                    "dollar",
+                    "banknotes",
+                    "credit-card",
+                    "shopping-bag",
+                    "shopping-cart",
+                    "truck",
+                    "clock",
+                    "calendar",
+                    "bell",
+                    "megaphone",
+                    "trending-up",
+                    "chart",
+                    "refresh",
+                    "lock",
+                    "key",
+                    "ticket",
+                    "users",
+                    "academic-cap",
+                    "book",
+                    "music",
+                    "video",
+                    "document",
+                    "download",
+                    "mobile",
+                    "camera",
+                    "paint-brush",
+                    "puzzle",
+                    "cube",
+                    "globe",
+                    "map-pin",
+                    "storefront",
+                    "tools",
+                    "beaker",
+                    "lifebuoy",
+                    "chat",
+                    "envelope",
+                    "phone",
+                    "cake",
+                    "scale",
+                    "eye",
+                    null
+                  ],
+                  "example": "star",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "description": "One line of the list.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "maxItems": 10,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "fileIds": {
+            "description": "Files for the product. Available to the customer after purchase.",
+            "example": [
+              "507f1f77bcf86cd799439011"
+            ],
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "fixedTaxRateIds": {
+            "description": "Tax Rate IDs applied to this product (at most one). Call `list_tax_rates` to find an existing rate.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "maxItems": 1,
+            "type": "array"
+          },
+          "hasUnlimitedStock": {
+            "description": "Whether or not the stock of the product is unlimited. If set to `true`, the `stock` field is ignored.",
+            "example": false,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "headingText": {
+            "description": "Heading shown above the order bump card, e.g. \"Special one time offer\". Send null to clear. Order bump products only.",
+            "example": "Special one time offer",
+            "maxLength": 200,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "imageIds": {
+            "description": "Image file IDs for the product (upload with `upload_file`). The first is shown on the card.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "price": {
+            "description": "The order bump price. One-time or recurring; pay what you want and payment plans are not available for order bumps. A recurring order bump can only be added to a page that sells a price with the same interval. Defaults to a one-time price of 0 in `usd`.",
+            "properties": {
+              "amount": {
+                "description": "Price in smallest currency unit (cents). Defaults to `0`.",
+                "example": 4900,
+                "minimum": 0,
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "badge": {
+                "description": "Optional short label shown over the price card (e.g. \"Save $50\", \"Most popular\").",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "badgeIcon": {
+                "description": "Optional icon shown before the badge text. `null` removes it.",
+                "enum": [
+                  "star",
+                  "sparkles",
+                  "fire",
+                  "bolt",
+                  "rocket",
+                  "trophy",
+                  "check",
+                  "x-mark",
+                  "plus",
+                  "arrow-right",
+                  "check-badge",
+                  "check-circle",
+                  "shield-check",
+                  "thumbs-up",
+                  "heart",
+                  "smile",
+                  "light-bulb",
+                  "sun",
+                  "moon",
+                  "gift",
+                  "tag",
+                  "percent",
+                  "dollar",
+                  "banknotes",
+                  "credit-card",
+                  "shopping-bag",
+                  "shopping-cart",
+                  "truck",
+                  "clock",
+                  "calendar",
+                  "bell",
+                  "megaphone",
+                  "trending-up",
+                  "chart",
+                  "refresh",
+                  "lock",
+                  "key",
+                  "ticket",
+                  "users",
+                  "academic-cap",
+                  "book",
+                  "music",
+                  "video",
+                  "document",
+                  "download",
+                  "mobile",
+                  "camera",
+                  "paint-brush",
+                  "puzzle",
+                  "cube",
+                  "globe",
+                  "map-pin",
+                  "storefront",
+                  "tools",
+                  "beaker",
+                  "lifebuoy",
+                  "chat",
+                  "envelope",
+                  "phone",
+                  "cake",
+                  "scale",
+                  "eye",
+                  null
+                ],
+                "example": "star",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "billingType": {
+                "description": "Billing type. Derived when omitted: `recurring`/`paymentPlan` present → recurring, else one_time. Part of the pricing-type identity fixed at creation — cannot change on an existing price.",
+                "enum": [
+                  "one_time",
+                  "recurring",
+                  null
+                ],
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "currency": {
+                "description": "Currency code (lowercase). Defaults to `usd`.",
+                "example": "usd",
+                "maxLength": 3,
+                "minLength": 3,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "discountedFromPrice": {
+                "description": "The original price of the product in the smallest currency unit (cents).",
+                "example": 9900,
+                "minimum": 0,
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "enabled": {
+                "description": "Whether this price is selectable by customers. Defaults to `true`. At least one price must remain enabled.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "hidden": {
+                "description": "Hide this price. Hidden prices can still be shown using query parameters.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "id": {
+                "description": "Existing price id (omit when creating a new price).",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "label": {
+                "description": "Optional seller-facing label for this price (e.g. \"Monthly\", \"Annual\").",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "order": {
+                "description": "Dashboard display order. Lower numbers appear first.",
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "payWhatYouWant": {
+                "description": "If enabled `amount` field becomes the minimum price and customers can choose to pay what they want. If `amount` is empty or `0` customer can purchase the product for free. Pay What You Want applies to one-time prices and subscriptions, but not payment plans.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "paymentPlan": {
+                "description": "The payment plan components of a price such as `interval` and `intervalCount`",
+                "properties": {
+                  "billingCycleAnchorConfig": {
+                    "properties": {
+                      "dayOfMonth": {
+                        "description": "The first billing period will be prorated based on the remaining days in the month. Defaults to `1`.",
+                        "example": 1,
+                        "maximum": 31,
+                        "minimum": 1,
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "enabled": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "month": {
+                        "maximum": 12,
+                        "minimum": 1,
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "interval": {
+                    "description": "Billing interval for subscriptions.",
+                    "enum": [
+                      "day",
+                      "week",
+                      "month",
+                      "year",
+                      null
+                    ],
+                    "example": "month",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "intervalCount": {
+                    "description": "Number of intervals between billings.",
+                    "example": 1,
+                    "minimum": 1,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "planIterations": {
+                    "description": "The number of times a subscription renews. After set number of renewals the payment plan is complete.",
+                    "example": 3,
+                    "minimum": 1,
+                    "type": "number"
+                  },
+                  "startDate": {
+                    "description": "The date on which the subscription begins.",
+                    "example": "2026-02-25T06:40:09.463Z",
+                    "format": "date-time",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trialPeriodDays": {
+                    "description": "Trial period in days for subscriptions.",
+                    "minimum": 0,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "planIterations"
+                ],
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "pricingType": {
+                "deprecated": true,
+                "description": "Deprecated — superseded by `prices[]`. Accepted and ignored.",
+                "enum": [
+                  "single",
+                  "multiple",
+                  null
+                ],
+                "example": "single",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pwywSuggestedPrice": {
+                "description": "Suggested price in cents shown to customers when `payWhatYouWant` is `true`.",
+                "example": 2500,
+                "minimum": 0,
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "recurring": {
+                "description": "The recurring components of a price such as `interval` and `intervalCount`",
+                "properties": {
+                  "billingCycleAnchorConfig": {
+                    "properties": {
+                      "dayOfMonth": {
+                        "description": "The first billing period will be prorated based on the remaining days in the month. Defaults to `1`.",
+                        "example": 1,
+                        "maximum": 31,
+                        "minimum": 1,
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "enabled": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "month": {
+                        "maximum": 12,
+                        "minimum": 1,
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "interval": {
+                    "description": "Billing interval for subscriptions.",
+                    "enum": [
+                      "day",
+                      "week",
+                      "month",
+                      "year",
+                      null
+                    ],
+                    "example": "month",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "intervalCount": {
+                    "description": "Number of intervals between billings.",
+                    "example": 1,
+                    "minimum": 1,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "startDate": {
+                    "description": "The date on which the subscription begins.",
+                    "example": "2026-02-25T06:40:09.463Z",
+                    "format": "date-time",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "trialPeriodDays": {
+                    "description": "Trial period in days for subscriptions.",
+                    "minimum": 0,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "reference": {
+                "description": "Merchant-facing internal id used in exports and reports (SKU-like). Derived from the price data when omitted, e.g. `price_one_time_fixed_5000`. A price resent by id keeps its stored reference.",
+                "example": "price_one_time_fixed_5000",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "setupFee": {
+                "description": "One-time setup fee in cents.",
+                "minimum": 0,
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "setupFeeMultipliesWithQuantity": {
+                "description": "Whether or not the setup fee is multipled by the selected quantity. Applies to `one-time` and `pwyw` only. Defaults to `false`.",
+                "example": false,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "role": {
+            "description": "Must be `orderbump`: only order bump products are created on their own. A page product is created with its page (create_checkout_page, create_event).",
+            "enum": [
+              "orderbump"
+            ],
+            "example": "orderbump",
+            "type": "string"
+          },
+          "shortDescription": {
+            "description": "Plain-text one-liner shown under the title on the order bump card. Send null to clear. Order bump products only.",
+            "example": "Wrapped in recycled paper with a handwritten note.",
+            "maxLength": 500,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sku": {
+            "description": "SKU of the product.",
+            "maxLength": 200,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stock": {
+            "description": "Available stock of the product.",
+            "example": 100,
+            "minimum": 0,
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "taxBehavior": {
+            "description": "If Stripe Tax is enabled, determines the behaviour of Stripe Tax. Defaults to your Stripe Tax settings.",
+            "enum": [
+              "inclusive",
+              "exclusive",
+              "automatic",
+              "",
+              null
+            ],
+            "example": "",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxCode": {
+            "description": "If Stripe Tax is enabled, determines the tax code used when calculating tax. Defaults to your Stripe Tax settings.",
+            "pattern": "^(txcd_[a-zA-Z0-9]+)?$",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "description": "Product title, shown on the order bump card.",
+            "example": "Gift wrapping",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "title"
+        ],
+        "type": "object"
+      },
       "CreateTicketTypeRequest": {
         "properties": {
           "availabilityBehavior": {
@@ -8078,6 +8905,200 @@
           "message"
         ],
         "title": "NotFoundResponse",
+        "type": "object"
+      },
+      "OrderBump": {
+        "properties": {
+          "addedAt": {
+            "description": "ISO 8601 timestamp when the order bump was added to this page.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "allowQuantity": {
+            "description": "Whether the customer can pick a quantity.",
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Whether the order bump is offered.",
+            "type": "boolean"
+          },
+          "hasPurchases": {
+            "description": "Whether the product has been bought. A bought product cannot be deleted.",
+            "type": "boolean"
+          },
+          "hidden": {
+            "description": "Whether it is hidden unless the page URL reveals it with `?show_order_bumps=`.",
+            "type": "boolean"
+          },
+          "preselected": {
+            "description": "Whether it is ticked when the page loads.",
+            "type": "boolean"
+          },
+          "price": {
+            "description": "The price the order bump is offered at. Null when it is unavailable.",
+            "properties": {
+              "amount": {
+                "description": "Price in the smallest currency unit.",
+                "type": "number"
+              },
+              "billingType": {
+                "enum": [
+                  "one_time",
+                  "recurring"
+                ],
+                "type": "string"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "interval": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "intervalCount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "amount",
+              "currency",
+              "billingType",
+              "interval",
+              "intervalCount"
+            ],
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "product": {
+            "description": "Summary of the order bump product. Read the full product with get_product.",
+            "properties": {
+              "currency": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "imageUrl": {
+                "description": "First product image, if any.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "title": {
+                "description": "Product title, or the product ID when the product no longer exists.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "currency",
+              "imageUrl"
+            ],
+            "type": "object"
+          },
+          "productId": {
+            "description": "ID of the order bump product.",
+            "type": "string"
+          },
+          "shortenDescription": {
+            "description": "Whether a long description is clamped behind a Show more toggle.",
+            "type": "boolean"
+          },
+          "showHideLogic": {
+            "description": "Rule that shows the order bump only for some selections.",
+            "properties": {
+              "comparison": {
+                "description": "`is` shows the order bump while the watched selection matches; `is_not` shows it while it does not.",
+                "enum": [
+                  "is",
+                  "is_not"
+                ],
+                "example": "is",
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "orderBumpProductIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "priceId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject": {
+                "description": "What the rule watches. `price`: the page product price the customer picked (checkout pages). `ticket`: the ticket types in the basket (events). `order_bump`: whether other order bumps on the page are ticked.",
+                "enum": [
+                  "price",
+                  "ticket",
+                  "order_bump"
+                ],
+                "example": "price",
+                "type": "string"
+              },
+              "ticketTypeIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "enabled",
+              "subject",
+              "comparison",
+              "priceId",
+              "ticketTypeIds",
+              "orderBumpProductIds"
+            ],
+            "type": "object"
+          },
+          "unavailableReason": {
+            "description": "Why the order bump cannot be offered on this page right now (e.g. a currency mismatch or a deleted product), or null when it can. An unavailable order bump stays on the page until removed.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "usedOnPageCount": {
+            "description": "How many of your pages offer this product as an order bump.",
+            "type": "number"
+          }
+        },
+        "required": [
+          "productId",
+          "addedAt",
+          "enabled",
+          "preselected",
+          "hidden",
+          "showHideLogic",
+          "allowQuantity",
+          "shortenDescription",
+          "product",
+          "price",
+          "unavailableReason",
+          "usedOnPageCount",
+          "hasPurchases"
+        ],
         "type": "object"
       },
       "PageCheckoutAbandonmentSettingsInput": {
@@ -12934,6 +13955,29 @@
         "required": [
           "amount",
           "currency"
+        ],
+        "type": "object"
+      },
+      "ReorderOrderBumpsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "productIds": {
+            "description": "Every order bump product ID on the page, each exactly once, in the order to show them.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "productIds"
         ],
         "type": "object"
       },
@@ -19967,8 +21011,194 @@
         ],
         "type": "object"
       },
+      "UpdateOrderBumpRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allowQuantity": {
+            "description": "Let the customer pick a quantity. Off, the order bump is bought once.",
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Whether the order bump is offered. A disabled order bump stays on the page but is not shown.",
+            "type": "boolean"
+          },
+          "hidden": {
+            "description": "Hide the order bump unless the page URL reveals it with `?show_order_bumps=` and the product price reference.",
+            "type": "boolean"
+          },
+          "preselected": {
+            "description": "Whether the order bump is ticked when the page loads.",
+            "type": "boolean"
+          },
+          "shortenDescription": {
+            "description": "Clamp a long description behind a Show more toggle.",
+            "type": "boolean"
+          },
+          "showHideLogic": {
+            "description": "Rule that shows the order bump only for some selections. Sent whole: it replaces the stored rule.",
+            "properties": {
+              "comparison": {
+                "description": "Defaults to `is`.",
+                "enum": [
+                  "is",
+                  "is_not"
+                ],
+                "example": "is",
+                "type": "string"
+              },
+              "enabled": {
+                "description": "Whether the rule is on. Off, the order bump shows regardless of the fields below.",
+                "type": "boolean"
+              },
+              "orderBumpProductIds": {
+                "description": "For `subject: order_bump`: product IDs of other order bumps on the same page. The rule matches while any of them is ticked. The order bump's own ID is ignored.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              "priceId": {
+                "description": "For `subject: price`: the page product price ID to watch (from get_product). A rule without one is stored but never hides anything.",
+                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
+                "pattern": "^[0-9a-fA-F]{24}$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject": {
+                "description": "What the rule watches. Defaults to `price` on a checkout page and `ticket` on an event.",
+                "enum": [
+                  "price",
+                  "ticket",
+                  "order_bump"
+                ],
+                "example": "price",
+                "type": "string"
+              },
+              "ticketTypeIds": {
+                "description": "For `subject: ticket`: the ticket type IDs to watch. The rule matches while any of them is in the basket.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
       "UpdateProductRequest": {
         "properties": {
+          "callToActionText": {
+            "description": "Accept copy on the order bump card, e.g. \"Yes! Add gift wrapping\". Send null to clear. Order bump products only.",
+            "example": "Yes! Add gift wrapping",
+            "maxLength": 200,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "calloutIcon": {
+            "description": "Icon leading the call out box. Send null to clear. Order bump products only.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
+            "example": "star",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "calloutText": {
+            "description": "Call out box under the description on the order bump card. HTML: links and inline emphasis are kept, anything else is removed. Send null to clear. Order bump products only.",
+            "example": "Only <strong>20</strong> left at this price.",
+            "maxLength": 2000,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "defaultPriceId": {
             "description": "Id of the default price.",
             "type": [
@@ -20081,6 +21311,101 @@
               "null"
             ]
           },
+          "features": {
+            "description": "Short list of what the customer gets, shown above the description on the order bump card. Replaces the whole list; send [] or null to clear. Order bump products only.",
+            "items": {
+              "properties": {
+                "icon": {
+                  "description": "Icon leading the line. Unset, the line leads with a check.",
+                  "enum": [
+                    "star",
+                    "sparkles",
+                    "fire",
+                    "bolt",
+                    "rocket",
+                    "trophy",
+                    "check",
+                    "x-mark",
+                    "plus",
+                    "arrow-right",
+                    "check-badge",
+                    "check-circle",
+                    "shield-check",
+                    "thumbs-up",
+                    "heart",
+                    "smile",
+                    "light-bulb",
+                    "sun",
+                    "moon",
+                    "gift",
+                    "tag",
+                    "percent",
+                    "dollar",
+                    "banknotes",
+                    "credit-card",
+                    "shopping-bag",
+                    "shopping-cart",
+                    "truck",
+                    "clock",
+                    "calendar",
+                    "bell",
+                    "megaphone",
+                    "trending-up",
+                    "chart",
+                    "refresh",
+                    "lock",
+                    "key",
+                    "ticket",
+                    "users",
+                    "academic-cap",
+                    "book",
+                    "music",
+                    "video",
+                    "document",
+                    "download",
+                    "mobile",
+                    "camera",
+                    "paint-brush",
+                    "puzzle",
+                    "cube",
+                    "globe",
+                    "map-pin",
+                    "storefront",
+                    "tools",
+                    "beaker",
+                    "lifebuoy",
+                    "chat",
+                    "envelope",
+                    "phone",
+                    "cake",
+                    "scale",
+                    "eye",
+                    null
+                  ],
+                  "example": "star",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "description": "One line of the list.",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "maxItems": 10,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "fileIds": {
             "description": "Files for the product. Available to the customer after purchase.",
             "example": [
@@ -20128,6 +21453,15 @@
           "hasUnlimitedStock": {
             "type": [
               "boolean",
+              "null"
+            ]
+          },
+          "headingText": {
+            "description": "Heading shown above the order bump card, e.g. \"Special one time offer\". Send null to clear. Order bump products only.",
+            "example": "Special one time offer",
+            "maxLength": 200,
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -20212,6 +21546,78 @@
               },
               "badge": {
                 "description": "Optional short label shown over the price card (e.g. \"Save $50\", \"Most popular\").",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "badgeIcon": {
+                "description": "Optional icon shown before the badge text. `null` removes it.",
+                "enum": [
+                  "star",
+                  "sparkles",
+                  "fire",
+                  "bolt",
+                  "rocket",
+                  "trophy",
+                  "check",
+                  "x-mark",
+                  "plus",
+                  "arrow-right",
+                  "check-badge",
+                  "check-circle",
+                  "shield-check",
+                  "thumbs-up",
+                  "heart",
+                  "smile",
+                  "light-bulb",
+                  "sun",
+                  "moon",
+                  "gift",
+                  "tag",
+                  "percent",
+                  "dollar",
+                  "banknotes",
+                  "credit-card",
+                  "shopping-bag",
+                  "shopping-cart",
+                  "truck",
+                  "clock",
+                  "calendar",
+                  "bell",
+                  "megaphone",
+                  "trending-up",
+                  "chart",
+                  "refresh",
+                  "lock",
+                  "key",
+                  "ticket",
+                  "users",
+                  "academic-cap",
+                  "book",
+                  "music",
+                  "video",
+                  "document",
+                  "download",
+                  "mobile",
+                  "camera",
+                  "paint-brush",
+                  "puzzle",
+                  "cube",
+                  "globe",
+                  "map-pin",
+                  "storefront",
+                  "tools",
+                  "beaker",
+                  "lifebuoy",
+                  "chat",
+                  "envelope",
+                  "phone",
+                  "cake",
+                  "scale",
+                  "eye",
+                  null
+                ],
                 "type": [
                   "string",
                   "null"
@@ -20576,6 +21982,15 @@
               "$ref": "#/components/schemas/PriceInput"
             },
             "type": "array"
+          },
+          "shortDescription": {
+            "description": "Plain-text one-liner shown under the title on the order bump card. Send null to clear. Order bump products only.",
+            "example": "Wrapped in recycled paper with a handwritten note.",
+            "maxLength": 500,
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "sku": {
             "maxLength": 200,
@@ -24616,6 +26031,649 @@
         ]
       }
     },
+    "/v1/checkout-pages/:pageId/order-bumps": {
+      "get": {
+        "description": "Returns the order bumps on the specified checkout page, in display order, including any that cannot currently be offered (see `unavailableReason`).",
+        "operationId": "checkout-pages/order-bumps/list",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "The order bumps on a checkout page or event, in display order.",
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/OrderBump"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bumps retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "checkout page not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List order bumps for checkout page",
+        "tags": [
+          "Checkout Pages"
+        ]
+      },
+      "post": {
+        "description": "Offers an order bump product on the specified checkout page. It is added last and enabled unless `enabled` is false.",
+        "operationId": "checkout-pages/order-bumps/create",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderBumpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "An order bump placed on a checkout page or event.",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/OrderBump"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bump added successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - the product cannot be offered as an order bump on this page"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "checkout page not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Add order bump to checkout page",
+        "tags": [
+          "Checkout Pages"
+        ]
+      }
+    },
+    "/v1/checkout-pages/:pageId/order-bumps/:productId": {
+      "delete": {
+        "description": "Stops offering the order bump on the specified checkout page. The product is kept and can be added again.",
+        "operationId": "checkout-pages/order-bumps/delete",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          },
+          {
+            "description": "The ID of the order bump product placed on the page.",
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the order bump product placed on the page."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Confirms the order bump was removed from the page. The product itself is kept.",
+                  "properties": {
+                    "data": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bump removed successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "checkout page or order bump not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Remove order bump from checkout page",
+        "tags": [
+          "Checkout Pages"
+        ]
+      },
+      "patch": {
+        "description": "Updates how an order bump is offered on the specified checkout page. Only the fields provided change; `showHideLogic` is replaced whole. The product's own copy and price are edited on the product.",
+        "operationId": "checkout-pages/order-bumps/update",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          },
+          {
+            "description": "The ID of the order bump product placed on the page.",
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the order bump product placed on the page."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderBumpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "An order bump placed on a checkout page or event.",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/OrderBump"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bump updated successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "checkout page or order bump not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Update order bump on checkout page",
+        "tags": [
+          "Checkout Pages"
+        ]
+      }
+    },
+    "/v1/checkout-pages/:pageId/order-bumps/reorder": {
+      "post": {
+        "description": "Sets the display order of the order bumps on the specified checkout page. `productIds` must list every order bump on the page exactly once.",
+        "operationId": "checkout-pages/order-bumps/reorder",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderOrderBumpsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "The order bumps on a checkout page or event, in display order.",
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/OrderBump"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bumps reordered successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "checkout page not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Reorder order bumps on checkout page",
+        "tags": [
+          "Checkout Pages"
+        ]
+      }
+    },
     "/v1/coupons/": {
       "get": {
         "description": "Returns a paginated list of your coupons. The coupons are sorted in order, with the most recent coupons appearing first.",
@@ -27823,6 +29881,649 @@
           }
         ],
         "summary": "Update field for event",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/v1/events/:pageId/order-bumps": {
+      "get": {
+        "description": "Returns the order bumps on the specified event, in display order, including any that cannot currently be offered (see `unavailableReason`). On an event, order bumps are shown to customers as add-ons.",
+        "operationId": "events/order-bumps/list",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "The order bumps on a checkout page or event, in display order.",
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/OrderBump"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bumps retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "event not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List order bumps for event",
+        "tags": [
+          "Events"
+        ]
+      },
+      "post": {
+        "description": "Offers an order bump product on the specified event. It is added last and enabled unless `enabled` is false. On an event, order bumps are shown to customers as add-ons.",
+        "operationId": "events/order-bumps/create",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderBumpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "An order bump placed on a checkout page or event.",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/OrderBump"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bump added successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - the product cannot be offered as an order bump on this page"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "event not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Add order bump to event",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/v1/events/:pageId/order-bumps/:productId": {
+      "delete": {
+        "description": "Stops offering the order bump on the specified event. The product is kept and can be added again.",
+        "operationId": "events/order-bumps/delete",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          },
+          {
+            "description": "The ID of the order bump product placed on the page.",
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the order bump product placed on the page."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Confirms the order bump was removed from the page. The product itself is kept.",
+                  "properties": {
+                    "data": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bump removed successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "event or order bump not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Remove order bump from event",
+        "tags": [
+          "Events"
+        ]
+      },
+      "patch": {
+        "description": "Updates how an order bump is offered on the specified event. Only the fields provided change; `showHideLogic` is replaced whole. The product's own copy and price are edited on the product.",
+        "operationId": "events/order-bumps/update",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          },
+          {
+            "description": "The ID of the order bump product placed on the page.",
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the order bump product placed on the page."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrderBumpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "An order bump placed on a checkout page or event.",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/OrderBump"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bump updated successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "event or order bump not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Update order bump on event",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/v1/events/:pageId/order-bumps/reorder": {
+      "post": {
+        "description": "Sets the display order of the order bumps on the specified event. `productIds` must list every order bump on the page exactly once.",
+        "operationId": "events/order-bumps/reorder",
+        "parameters": [
+          {
+            "description": "The ID of the checkout page or event.",
+            "in": "path",
+            "name": "pageId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the checkout page or event."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderOrderBumpsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "The order bumps on a checkout page or event, in display order.",
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/OrderBump"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order bumps reordered successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "event not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Reorder order bumps on event",
         "tags": [
           "Events"
         ]
@@ -34884,7 +37585,399 @@
         ]
       }
     },
+    "/v1/products/": {
+      "get": {
+        "description": "Returns a paginated list of your products, newest first. Filter by `role=orderbump` to find the products you can offer as order bumps.",
+        "operationId": "products/list",
+        "parameters": [
+          {
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+              "example": 20,
+              "type": "string"
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "in": "query",
+            "name": "ending_before",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            }
+          },
+          {
+            "description": "Only return products with this role. `orderbump` lists the products you can add to a page as order bumps; `product` lists page products. Omit for both.",
+            "in": "query",
+            "name": "role",
+            "required": false,
+            "schema": {
+              "description": "Only return products with this role. `orderbump` lists the products you can add to a page as order bumps; `product` lists page products. Omit for both.",
+              "enum": [
+                "product",
+                "orderbump"
+              ],
+              "example": "orderbump",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Case-insensitive contains match against the product title and SKU.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "description": "Case-insensitive contains match against the product title and SKU.",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      },
+                      "type": "array"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "has_more",
+                    "total"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Products retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List all products",
+        "tags": [
+          "Products"
+        ]
+      },
+      "post": {
+        "description": "Creates an order bump product (`role: orderbump`) that can then be offered on checkout pages and events. Page products are created with their page.",
+        "operationId": "products/create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDetailResponse"
+                }
+              }
+            },
+            "description": "Product created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - invalid input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Create order bump product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
     "/v1/products/:productId": {
+      "delete": {
+        "description": "Permanently deletes an order bump product that has never been bought. A product still offered on a page is refused unless `fromAllPages=true`, which removes it from those pages first. Page products are deleted with their page.",
+        "operationId": "products/delete",
+        "parameters": [
+          {
+            "description": "Unique identifier. Must be in BSON ObjectId format.",
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Also remove the order bump from every page that offers it. Without it, deleting a product that is still offered on a page is refused.",
+            "in": "query",
+            "name": "fromAllPages",
+            "required": false,
+            "schema": {
+              "description": "Also remove the order bump from every page that offers it. Without it, deleting a product that is still offered on a page is refused.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Confirms the product was deleted.",
+                  "properties": {
+                    "data": {
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Product deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - the product cannot be deleted"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Order bumps are not enabled for this store"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Product not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Delete order bump product",
+        "tags": [
+          "Products"
+        ]
+      },
       "get": {
         "description": "Retrieves the details of an existing product by its ID.",
         "operationId": "products/get",
@@ -34989,7 +38082,7 @@
         ]
       },
       "patch": {
-        "description": "Updates the specified product with the provided values. Only the fields provided will be updated.",
+        "description": "Updates the specified product with the provided values. Only the fields provided will be updated. Order bump products keep to a single price without variants, bulk discounts, license keys, pay what you want or payment plans, and can only be updated while order bumps are enabled for the store.",
         "operationId": "products/update",
         "parameters": [
           {
@@ -35057,7 +38150,7 @@
                 }
               }
             },
-            "description": "Forbidden - Insufficient permissions or validation error"
+            "description": "Order bumps are not enabled for this store"
           },
           "404": {
             "content": {
