@@ -24,6 +24,7 @@ const BASE_PAYMENT: PaymentList['data'][number] = {
 const DEFAULT_QUERY = {
   search: undefined,
   status: undefined,
+  orderStatus: undefined,
   pageId: undefined,
   customerId: undefined,
   orderId: undefined,
@@ -193,6 +194,16 @@ describe('PaymentResource', () => {
       );
     });
 
+    it('should pass orderStatus filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await paymentResource.list({ orderStatus: 'archived' });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ query: expect.objectContaining({ orderStatus: 'archived' }) }),
+      );
+    });
+
     it('should pass pageId filter', async () => {
       vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
 
@@ -327,6 +338,7 @@ describe('PaymentResource', () => {
       await paymentResource.list({
         search: 'test@example.com',
         status: 'paid',
+        orderStatus: 'active',
         pageId: PAGE_ID,
         customerId: CUSTOMER_ID,
         orderId: 'ORD-9182',
@@ -344,6 +356,7 @@ describe('PaymentResource', () => {
         query: {
           search: 'test@example.com',
           status: 'paid',
+          orderStatus: 'active',
           pageId: PAGE_ID,
           customerId: CUSTOMER_ID,
           orderId: 'ORD-9182',

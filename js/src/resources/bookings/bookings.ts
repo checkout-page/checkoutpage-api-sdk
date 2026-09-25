@@ -99,6 +99,7 @@ export class BookingResource {
     const query: Record<string, string | undefined> = {
       search: args.search,
       status: args.status,
+      orderStatus: args.orderStatus,
       pageId: args.pageId,
       customerId: args.customerId,
       orderId: args.orderId,

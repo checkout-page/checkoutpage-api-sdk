@@ -243,6 +243,31 @@ describe('CustomerResource', () => {
       });
     });
 
+    it('should pass all filters together', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await customerResource.list({
+        search: 'search@example.com',
+        createdAfter: '2025-01-01T00:00:00Z',
+        createdBefore: '2025-01-31T23:59:59Z',
+        limit: 10,
+        starting_after: '507f1f77bcf86cd799439011',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: 'search@example.com',
+          createdAfter: '2025-01-01T00:00:00Z',
+          createdBefore: '2025-01-31T23:59:59Z',
+          limit: '10',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
+        },
+        path: '/v1/customers/',
+      });
+    });
+
     it('should return empty list when no customers exist', async () => {
       const mockCustomerList: CustomerList = {
         data: [],

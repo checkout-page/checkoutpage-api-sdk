@@ -69,6 +69,7 @@ const FEE_BOOKING: BookingList['data'][number] = {
 const DEFAULT_QUERY = {
   search: undefined,
   status: undefined,
+  orderStatus: undefined,
   pageId: undefined,
   customerId: undefined,
   orderId: undefined,
@@ -306,6 +307,16 @@ describe('BookingResource', () => {
       );
     });
 
+    it('should pass orderStatus filter', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ orderStatus: 'canceled' });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ query: expect.objectContaining({ orderStatus: 'canceled' }) })
+      );
+    });
+
     it('should pass pageId filter', async () => {
       vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
 
@@ -463,6 +474,7 @@ describe('BookingResource', () => {
       await bookingResource.list({
         search: 'customer@example.com',
         status: 'paid',
+        orderStatus: 'active',
         pageId: PAGE_ID,
         customerId: CUSTOMER_ID,
         orderId: 'ORD-9182',
@@ -480,6 +492,7 @@ describe('BookingResource', () => {
         query: {
           search: 'customer@example.com',
           status: 'paid',
+          orderStatus: 'active',
           pageId: PAGE_ID,
           customerId: CUSTOMER_ID,
           orderId: 'ORD-9182',

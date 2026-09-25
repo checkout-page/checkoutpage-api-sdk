@@ -31,6 +31,11 @@ export class SubscriptionResource {
     const query: Record<string, string | undefined> = {
       search: args.search,
       pageId: args.pageId,
+      customerId: args.customerId,
+      orderId: args.orderId,
+      createdAfter: args.createdAfter,
+      createdBefore: args.createdBefore,
+      abandonmentStatus: args.abandonmentStatus,
       status: args.status,
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
