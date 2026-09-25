@@ -61,6 +61,17 @@ export default [
         ...globals.es2022,
       },
     },
+    rules: {
+      // Vitest only rejects .only under CI for files it loads, and CI never loads
+      // *.integration.test.ts, so a committed .only there silently skips the rest.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'MemberExpression[property.name="only"]',
+          message: 'Remove .only before committing: it skips every other test in the file.',
+        },
+      ],
+    },
   },
 
   // Script files
