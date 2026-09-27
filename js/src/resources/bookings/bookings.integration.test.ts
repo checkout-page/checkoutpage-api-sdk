@@ -4,6 +4,7 @@ import {
   createCheckoutPageClient,
   NotFoundError,
   ValidationError,
+  type Booking,
 } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { uniqueSuffix } from '../../test-helpers/test-lib';
@@ -20,6 +21,25 @@ describe('BookingResource Integration Tests', () => {
       baseUrl: config.baseUrl,
     });
   });
+
+  // bookings.create runs keep adding manual and complimentary bookings to the
+  // test seller, so the newest page alone cannot be relied on to hold one.
+  const findBooking = async (
+    predicate: (booking: Booking) => boolean,
+    description: string
+  ): Promise<Booking> => {
+    let startingAfter: string | undefined;
+
+    for (let page = 0; page < 10; page += 1) {
+      const result = await client.bookings.list({ limit: 100, starting_after: startingAfter });
+      const match = result.data.find(predicate);
+      if (match) return match;
+      if (!result.has_more || result.data.length === 0) break;
+      startingAfter = result.data[result.data.length - 1].id;
+    }
+
+    throw new Error(`No booking ${description} in the newest 1000`);
+  };
 
   describe('get', () => {
     it('should fetch a single booking by id', async () => {
@@ -111,17 +131,11 @@ describe('BookingResource Integration Tests', () => {
     });
 
     it('should expose both deprecated snake_case and camelCase payment method expiry fields when available', async () => {
-      const result = await client.bookings.list({ limit: 25 });
-      const bookingWithExpiryFields = result.data.find(
+      const bookingWithExpiryFields = await findBooking(
         (booking) =>
-          booking.paymentMethod?.expMonth != null && booking.paymentMethod?.expYear != null
+          booking.paymentMethod?.expMonth != null && booking.paymentMethod?.expYear != null,
+        'with a payment method expMonth/expYear'
       );
-
-      if (!bookingWithExpiryFields?.paymentMethod) {
-        throw new Error(
-          'No booking with expMonth/expYear found for payment method expiry field test'
-        );
-      }
 
       const paymentMethod = bookingWithExpiryFields.paymentMethod as Record<string, unknown>;
 
@@ -353,9 +367,9 @@ describe('BookingResource Integration Tests', () => {
     });
 
     it('should expose taxSource on bookings when set', async () => {
-      const result = await client.bookings.list({ limit: 25 });
-      const bookingWithTaxSource = result.data.find(
-        (booking) => (booking as Record<string, unknown>).taxSource != null
+      const bookingWithTaxSource = await findBooking(
+        (booking) => (booking as Record<string, unknown>).taxSource != null,
+        'with a taxSource'
       );
 
       const taxSource = (bookingWithTaxSource as Record<string, unknown>).taxSource;
@@ -363,13 +377,11 @@ describe('BookingResource Integration Tests', () => {
     });
 
     it('should expose a structured taxRates snapshot when fixed_tax_rate is used', async () => {
-      const result = await client.bookings.list({ limit: 50 });
-
-      const bookingWithFixedTaxRates = result.data.find((booking) => {
+      const bookingWithFixedTaxRates = await findBooking((booking) => {
         const b = booking as Record<string, unknown>;
         const taxRates = b.taxRates as unknown[] | undefined;
         return b.taxSource === 'fixed_tax_rate' && Array.isArray(taxRates) && taxRates.length > 0;
-      });
+      }, 'with a fixed_tax_rate taxRates snapshot');
 
       const taxRates = (bookingWithFixedTaxRates as Record<string, unknown>).taxRates as Record<
         string,
@@ -388,7 +400,7 @@ describe('BookingResource Integration Tests', () => {
     });
   });
 
-  describe.only('create', () => {
+  describe('create', () => {
     const createdEventIds: string[] = [];
     let eventId: string;
     let ticketTypeId: string;
