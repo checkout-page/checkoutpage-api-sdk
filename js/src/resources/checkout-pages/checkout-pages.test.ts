@@ -54,6 +54,34 @@ describe('CheckoutPagesResource', () => {
       });
     });
 
+    it('sends testmode as a string to filter checkout pages by test mode', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+      await checkoutPagesResource.list({ testmode: true });
+      await checkoutPagesResource.list({ testmode: false });
+
+      expect(client.request).toHaveBeenNthCalledWith(1, {
+        method: 'GET',
+        path: '/v1/checkout-pages/',
+        query: expect.objectContaining({ testmode: 'true' }),
+      });
+      expect(client.request).toHaveBeenNthCalledWith(2, {
+        method: 'GET',
+        path: '/v1/checkout-pages/',
+        query: expect.objectContaining({ testmode: 'false' }),
+      });
+    });
+
+    it('sends no testmode when it is omitted', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+      await checkoutPagesResource.list({ status: 'published' });
+
+      expect(spy.mock.calls[0][0].query?.testmode).toBeUndefined();
+    });
+
     /**
      * Demonstrates how a consumer drives forward/backward pagination
      * through the SDK: walk forward with `starting_after`, walk back with
@@ -162,6 +190,24 @@ describe('CheckoutPagesResource', () => {
       const result = await checkoutPagesResource.create(params);
 
       expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/checkout-pages/',
+        body: params,
+      });
+    });
+
+    it('forwards testmode when creating a checkout page', async () => {
+      const params: CreateCheckoutPageParams = {
+        name: 'Test mode checkout',
+        productData: { title: 'Test product', price: { amount: 4900, currency: 'usd' } },
+        testmode: true,
+      };
+
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } });
+
+      await checkoutPagesResource.create(params);
+
       expect(client.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v1/checkout-pages/',
@@ -335,6 +381,26 @@ describe('CheckoutPagesResource', () => {
         path: '/v1/checkout-pages/page_123',
         body: params,
       });
+    });
+
+    it('switches test mode on and returns when it was enabled', async () => {
+      const params: UpdateCheckoutPageParams = { testmode: true };
+
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: { id: 'page_123', testmode: true, testmodeEnabledAt: '2026-09-18T11:03:11.723Z' },
+      });
+
+      const result = await checkoutPagesResource.update('page_123', params);
+
+      const testmode: boolean = result.data.testmode;
+      const testmodeEnabledAt: string | null = result.data.testmodeEnabledAt;
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/checkout-pages/page_123',
+        body: { testmode: true },
+      });
+      expect(testmode).toBe(true);
+      expect(testmodeEnabledAt).toBe('2026-09-18T11:03:11.723Z');
     });
 
     it('throws for missing page id', async () => {

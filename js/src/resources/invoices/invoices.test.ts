@@ -25,7 +25,28 @@ describe('InvoiceResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: `/v1/invoices/${INVOICE_ID}`,
+        query: { livemode: undefined },
       });
+    });
+
+    it('should send livemode as a string to read a test-mode invoice', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: INVOICE_ID } });
+
+      await resource.get(INVOICE_ID, { livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/invoices/${INVOICE_ID}`,
+        query: { livemode: 'false' },
+      });
+    });
+
+    it('should send no livemode when it is omitted', async () => {
+      const spy = vi.spyOn(client, 'request').mockResolvedValue({ data: { id: INVOICE_ID } });
+
+      await resource.get(INVOICE_ID);
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     it('should throw error for missing invoice id', async () => {
@@ -111,6 +132,28 @@ describe('InvoiceResource', () => {
       expect(result.data).toHaveLength(2);
       expect(result.has_more).toBe(true);
       expect(result.total).toBe(42);
+    });
+
+    it('should pass livemode false as a string to list test-mode invoices', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await resource.list({ livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/invoices/',
+        query: expect.objectContaining({ livemode: 'false' }),
+      });
+    });
+
+    it('should send no livemode when it is omitted from a list', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await resource.list({ limit: 5 });
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
   });
 });
