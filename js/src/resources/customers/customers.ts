@@ -24,6 +24,8 @@ export class CustomerResource {
   async list(args: CustomerListParams = {}): Promise<CustomerList> {
     const query: Record<string, string | undefined> = {
       search: args.search,
+      createdAfter: args.createdAfter,
+      createdBefore: args.createdBefore,
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
       ending_before: args.ending_before,

@@ -324,6 +324,41 @@ describe('SubscriptionResource', () => {
       });
     });
 
+    it('should pass all filters together', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await subscriptionResource.list({
+        search: 'test@example.com',
+        pageId: '67fcbdac6a91c25ef2d3534a',
+        customerId: '507f1f77bcf86cd799439010',
+        orderId: 'ORD-9182',
+        createdAfter: '2025-01-01T00:00:00Z',
+        createdBefore: '2025-01-31T23:59:59Z',
+        abandonmentStatus: 'recovered',
+        status: 'active',
+        limit: 20,
+        starting_after: '507f1f77bcf86cd799439011',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: 'test@example.com',
+          pageId: '67fcbdac6a91c25ef2d3534a',
+          customerId: '507f1f77bcf86cd799439010',
+          orderId: 'ORD-9182',
+          createdAfter: '2025-01-01T00:00:00Z',
+          createdBefore: '2025-01-31T23:59:59Z',
+          abandonmentStatus: 'recovered',
+          status: 'active',
+          limit: '20',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
+        },
+        path: '/v1/subscriptions/',
+      });
+    });
+
     it('should return empty list when no subscriptions exist', async () => {
       const mockSubscriptionList: SubscriptionList = {
         data: [],
