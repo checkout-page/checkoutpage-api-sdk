@@ -312,8 +312,10 @@ export type Event = EventList['data'][number];
 
 export type EventListArgs = operations['events/list']['parameters']['query'];
 
-export type EventListParams = Omit<NonNullable<EventListArgs>, 'limit'> & {
+export type EventListParams = Omit<NonNullable<EventListArgs>, 'limit' | 'testmode'> & {
   limit?: number;
+  /** `true` returns only pages in test mode, `false` only pages not in test mode. */
+  testmode?: boolean;
 };
 
 export type CreateEventParams = NonNullable<
@@ -393,8 +395,10 @@ export type Form = FormList['data'][number];
 
 export type FormListArgs = operations['forms/list']['parameters']['query'];
 
-export type FormListParams = Omit<NonNullable<FormListArgs>, 'limit'> & {
+export type FormListParams = Omit<NonNullable<FormListArgs>, 'limit' | 'testmode'> & {
   limit?: number;
+  /** `true` returns only pages in test mode, `false` only pages not in test mode. */
+  testmode?: boolean;
 };
 
 export type CreateFormParams = NonNullable<
@@ -444,8 +448,13 @@ export type CheckoutPage = CheckoutPageList['data'][number];
 
 export type CheckoutPageListArgs = operations['checkout-pages/list']['parameters']['query'];
 
-export type CheckoutPageListParams = Omit<NonNullable<CheckoutPageListArgs>, 'limit'> & {
+export type CheckoutPageListParams = Omit<
+  NonNullable<CheckoutPageListArgs>,
+  'limit' | 'testmode'
+> & {
   limit?: number;
+  /** `true` returns only pages in test mode, `false` only pages not in test mode. */
+  testmode?: boolean;
 };
 
 export type CreateCheckoutPageParams = NonNullable<

@@ -111,6 +111,7 @@ export class CheckoutPagesResource {
       ending_before: args.ending_before,
       status: args.status,
       search: args.search,
+      testmode: args.testmode?.toString(),
     };
 
     return this.client.request<CheckoutPageList>({

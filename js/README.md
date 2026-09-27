@@ -434,10 +434,27 @@ const { data: deleted } = await checkoutpage.webhooks.delete(webhook.id);
 
 Deliveries stop immediately and the endpoint no longer appears in `list()`.
 
-### Test mode records
+### Test mode
 
-A purchase on a page that is in test mode creates its records with `livemode: false`. Pass
-`livemode: false` to read those records from payments, bookings, subscriptions, subscription
+Switch a checkout page, event or form into test mode with `testmode: true`. While it is on, every
+purchase on that page is a test purchase: no money is taken, the buyer gets the product for free,
+and the records are created with `livemode: false`.
+
+```typescript
+await checkoutpage.checkoutPages.update(pageId, { testmode: true });
+
+const { data: pagesInTestMode } = await checkoutpage.checkoutPages.list({ testmode: true });
+
+// Turn it off to take real payments again
+await checkoutpage.checkoutPages.update(pageId, { testmode: false });
+```
+
+`events` and `forms` take the same field on `create`, `update` and `list`. Page responses carry
+`testmode` and `testmodeEnabledAt` (when test mode was switched on, `null` while it is off).
+
+#### Read test records
+
+Pass `livemode: false` to read test records from payments, bookings, subscriptions, subscription
 payments, invoices, submissions and tickets:
 
 ```typescript
