@@ -977,6 +977,8 @@ describe('CheckoutPagesResource integration tests', () => {
           enabled: true,
           mode: expect.any(String),
         },
+        testmode: false,
+        testmodeEnabledAt: null,
         type: 'checkout',
         updatedAt: expect.any(String),
         url: expect.any(String),
