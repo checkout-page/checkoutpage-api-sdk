@@ -2134,7 +2134,7 @@
               "maximum": 1000,
               "type": "integer"
             },
-            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs.",
+            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs. A disabled ticket type, or one in a disabled ticket group, cannot be booked.",
             "example": {
               "65f4a1c2e4a9f3d2b1c0a9e8": 2
             },
@@ -3657,6 +3657,14 @@
               "null"
             ]
           },
+          "showConfirmationEventAddOns": {
+            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -3782,7 +3790,7 @@
             ]
           },
           "title": {
-            "description": "Public title shown to customers on the page.",
+            "description": "Public title shown to customers on the page. Defaults to `name` when omitted.",
             "example": "Get The Premium Course Today",
             "maxLength": 500,
             "type": "string"
@@ -4941,7 +4949,7 @@
         "additionalProperties": false,
         "properties": {
           "callToActionText": {
-            "description": "Accept copy on the order bump card, e.g. \"Yes! Add gift wrapping\". Send null to clear. Order bump products only.",
+            "description": "Accept copy on the order bump card, e.g. \"Yes! Add gift wrapping\". Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Yes! Add gift wrapping",
             "maxLength": 200,
             "type": [
@@ -4950,7 +4958,7 @@
             ]
           },
           "calloutIcon": {
-            "description": "Icon leading the call out box. Send null to clear. Order bump products only.",
+            "description": "Icon leading the call out box. Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "enum": [
               "star",
               "sparkles",
@@ -5023,7 +5031,7 @@
             ]
           },
           "calloutText": {
-            "description": "Call out box under the description on the order bump card. HTML: links and inline emphasis are kept, anything else is removed. Send null to clear. Order bump products only.",
+            "description": "Call out box under the description on the order bump card. HTML: links and inline emphasis are kept, anything else is removed. Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Only <strong>20</strong> left at this price.",
             "maxLength": 2000,
             "type": [
@@ -5040,7 +5048,7 @@
             ]
           },
           "features": {
-            "description": "Short list of what the customer gets, shown above the description on the order bump card. Replaces the whole list; send [] or null to clear. Order bump products only.",
+            "description": "Short list of what the customer gets, shown above the description on the order bump card. Replaces the whole list; send [] or null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "items": {
               "properties": {
                 "icon": {
@@ -5175,7 +5183,7 @@
             ]
           },
           "headingText": {
-            "description": "Heading shown above the order bump card, e.g. \"Special one time offer\". Send null to clear. Order bump products only.",
+            "description": "Heading shown above the order bump card, e.g. \"Special one time offer\". Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Special one time offer",
             "maxLength": 200,
             "type": [
@@ -5594,7 +5602,7 @@
             "type": "string"
           },
           "shortDescription": {
-            "description": "Plain-text one-liner shown under the title on the order bump card. Send null to clear. Order bump products only.",
+            "description": "Plain-text one-liner shown under the title on the order bump card. Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Wrapped in recycled paper with a handwritten note.",
             "maxLength": 500,
             "type": [
@@ -6923,6 +6931,13 @@
               "null"
             ]
           },
+          "showConfirmationEventAddOns": {
+            "description": "Whether purchased add-ons are shown on the confirmation page.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Whether the event date and time is shown on the confirmation page.",
             "type": [
@@ -7090,6 +7105,8 @@
           "sellerId",
           "type",
           "status",
+          "testmode",
+          "testmodeEnabledAt",
           "createdAt",
           "updatedAt"
         ],
@@ -11037,6 +11054,78 @@
               "null"
             ]
           },
+          "badgeIcon": {
+            "description": "Optional icon shown before the badge text.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "billingType": {
             "description": "Billing type. Immutable once the price exists (see the pricing-type identity lock).",
             "enum": [
@@ -11321,6 +11410,78 @@
           },
           "badge": {
             "description": "Optional short label shown over the price card (e.g. \"Save $50\", \"Most popular\").",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "badgeIcon": {
+            "description": "Optional icon shown before the badge text. `null` removes it.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
             "type": [
               "string",
               "null"
@@ -11830,7 +11991,86 @@
       "Product": {
         "properties": {
           "callToActionText": {
-            "description": "Accept copy shown on an order-bump card, e.g. \"Yes! Add gift wrapping\".",
+            "description": "Accept copy shown on an order-bump card, e.g. \"Yes! Add gift wrapping\". Only available for beta testing of the order bump feature.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "calloutIcon": {
+            "description": "Icon leading the call out box on an order-bump card. Only available for beta testing of the order bump feature.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "calloutText": {
+            "description": "Call out box shown on an order-bump card under the description. Sanitised HTML: links and inline emphasis only. Only available for beta testing of the order bump feature.",
             "type": [
               "string",
               "null"
@@ -11938,6 +12178,97 @@
               "null"
             ]
           },
+          "features": {
+            "description": "Short list of what the customer gets, shown on an order-bump card above the description. Only available for beta testing of the order bump feature.",
+            "items": {
+              "properties": {
+                "icon": {
+                  "description": "Icon leading the line. Unset, the line leads with a check.",
+                  "enum": [
+                    "star",
+                    "sparkles",
+                    "fire",
+                    "bolt",
+                    "rocket",
+                    "trophy",
+                    "check",
+                    "x-mark",
+                    "plus",
+                    "arrow-right",
+                    "check-badge",
+                    "check-circle",
+                    "shield-check",
+                    "thumbs-up",
+                    "heart",
+                    "smile",
+                    "light-bulb",
+                    "sun",
+                    "moon",
+                    "gift",
+                    "tag",
+                    "percent",
+                    "dollar",
+                    "banknotes",
+                    "credit-card",
+                    "shopping-bag",
+                    "shopping-cart",
+                    "truck",
+                    "clock",
+                    "calendar",
+                    "bell",
+                    "megaphone",
+                    "trending-up",
+                    "chart",
+                    "refresh",
+                    "lock",
+                    "key",
+                    "ticket",
+                    "users",
+                    "academic-cap",
+                    "book",
+                    "music",
+                    "video",
+                    "document",
+                    "download",
+                    "mobile",
+                    "camera",
+                    "paint-brush",
+                    "puzzle",
+                    "cube",
+                    "globe",
+                    "map-pin",
+                    "storefront",
+                    "tools",
+                    "beaker",
+                    "lifebuoy",
+                    "chat",
+                    "envelope",
+                    "phone",
+                    "cake",
+                    "scale",
+                    "eye",
+                    null
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "description": "One line of the list.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
           "fileIds": {
             "description": "List of file ids attached to this product.",
             "example": [
@@ -11980,6 +12311,13 @@
             "description": "Whether stock is unlimited.",
             "type": [
               "boolean",
+              "null"
+            ]
+          },
+          "headingText": {
+            "description": "Heading shown above an order-bump card, e.g. \"Special one time offer\". Only available for beta testing of the order bump feature.",
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -12179,7 +12517,7 @@
             ]
           },
           "role": {
-            "description": "What the product is for. `orderbump` products are the simplified add-ons a checkout page can offer; they can never be sold as a page product, and a product cannot be converted between roles. Read-only.",
+            "description": "What the product is for. `orderbump` products are the simplified add-ons a checkout page can offer; they can never be sold as a page product, and a product cannot be converted between roles. `orderbump` products are only available for beta testing of the order bump feature. Read-only.",
             "enum": [
               "product",
               "orderbump"
@@ -14497,6 +14835,78 @@
           },
           "badge": {
             "description": "Optional short label shown over the price card (e.g. \"Save $50\", \"Most popular\").",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "badgeIcon": {
+            "description": "Optional icon shown before the badge text. `null` removes it.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
             "type": [
               "string",
               "null"
@@ -20357,6 +20767,14 @@
               "null"
             ]
           },
+          "showConfirmationEventAddOns": {
+            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -20472,7 +20890,7 @@
             "type": "boolean"
           },
           "title": {
-            "description": "Public title shown to customers on the page.",
+            "description": "Public title shown to customers on the page. Defaults to `name` when omitted.",
             "example": "Get The Premium Course Today",
             "maxLength": 500,
             "type": "string"
@@ -21162,7 +21580,7 @@
       "UpdateProductRequest": {
         "properties": {
           "callToActionText": {
-            "description": "Accept copy on the order bump card, e.g. \"Yes! Add gift wrapping\". Send null to clear. Order bump products only.",
+            "description": "Accept copy on the order bump card, e.g. \"Yes! Add gift wrapping\". Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Yes! Add gift wrapping",
             "maxLength": 200,
             "type": [
@@ -21171,7 +21589,7 @@
             ]
           },
           "calloutIcon": {
-            "description": "Icon leading the call out box. Send null to clear. Order bump products only.",
+            "description": "Icon leading the call out box. Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "enum": [
               "star",
               "sparkles",
@@ -21244,7 +21662,7 @@
             ]
           },
           "calloutText": {
-            "description": "Call out box under the description on the order bump card. HTML: links and inline emphasis are kept, anything else is removed. Send null to clear. Order bump products only.",
+            "description": "Call out box under the description on the order bump card. HTML: links and inline emphasis are kept, anything else is removed. Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Only <strong>20</strong> left at this price.",
             "maxLength": 2000,
             "type": [
@@ -21365,7 +21783,7 @@
             ]
           },
           "features": {
-            "description": "Short list of what the customer gets, shown above the description on the order bump card. Replaces the whole list; send [] or null to clear. Order bump products only.",
+            "description": "Short list of what the customer gets, shown above the description on the order bump card. Replaces the whole list; send [] or null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "items": {
               "properties": {
                 "icon": {
@@ -21510,7 +21928,7 @@
             ]
           },
           "headingText": {
-            "description": "Heading shown above the order bump card, e.g. \"Special one time offer\". Send null to clear. Order bump products only.",
+            "description": "Heading shown above the order bump card, e.g. \"Special one time offer\". Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Special one time offer",
             "maxLength": 200,
             "type": [
@@ -22037,7 +22455,7 @@
             "type": "array"
           },
           "shortDescription": {
-            "description": "Plain-text one-liner shown under the title on the order bump card. Send null to clear. Order bump products only.",
+            "description": "Plain-text one-liner shown under the title on the order bump card. Send null to clear. Order bump products only. Only available for beta testing of the order bump feature.",
             "example": "Wrapped in recycled paper with a handwritten note.",
             "maxLength": 500,
             "type": [
@@ -23642,7 +24060,7 @@
         ]
       },
       "post": {
-        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be enabled, on sale and in stock (a disabled ticket type, or any ticket in a disabled ticket group, cannot be booked, not even as a complimentary booking), and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
         "operationId": "bookings/create",
         "requestBody": {
           "content": {
@@ -23712,7 +24130,7 @@
                 }
               }
             },
-            "description": "Tickets are sold out or not on sale"
+            "description": "Tickets are sold out or not on sale, including a disabled ticket type or a ticket in a disabled ticket group"
           },
           "429": {
             "content": {
@@ -27210,10 +27628,13 @@
                     "type": "string"
                   },
                   "maxRedemptions": {
-                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times.",
+                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times. Send `null` to remove the limit.",
                     "example": 5,
                     "minimum": 0,
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "pageIds": {
                     "description": "A list of pageIds that this coupon can be used within.",
@@ -27228,10 +27649,13 @@
                     "type": "array"
                   },
                   "redeemBy": {
-                    "description": "The ISO datetime that this coupon must be used before.",
+                    "description": "The ISO datetime that this coupon must be used before. Send `null` to remove the expiry.",
                     "example": "2025-10-04T07:36:45.122Z",
                     "format": "date-time",
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "ticketTypeIds": {
                     "description": "A list of ticketTypeIds that this coupon can be used with. Empty array will clear the list.",
@@ -38279,7 +38703,7 @@
         ]
       },
       "patch": {
-        "description": "Updates the specified product with the provided values. Only the fields provided will be updated. Order bump products keep to a single price without variants, bulk discounts, license keys, pay what you want or payment plans, and can only be updated while order bumps are enabled for the store.",
+        "description": "Updates the specified product with the provided values. Only the fields provided will be updated. Order bump products keep to a single price without variants, bulk discounts, license keys, pay what you want or payment plans. Only available for beta testing of the order bump feature.",
         "operationId": "products/update",
         "parameters": [
           {
@@ -38347,7 +38771,7 @@
                 }
               }
             },
-            "description": "Order bumps are not enabled for this store"
+            "description": "Order bumps are not enabled for this store (beta testing only)"
           },
           "404": {
             "content": {
@@ -42101,7 +42525,7 @@
         ]
       },
       "post": {
-        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This response is the only place the signing `secret` is ever returned - store it immediately. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
+        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This is the only API response that returns the signing `secret`; it can be viewed or rotated later in the dashboard. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
         "operationId": "webhooks/create",
         "requestBody": {
           "content": {
@@ -42161,7 +42585,7 @@
                     "type": "string"
                   },
                   "secret": {
-                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. It is returned once, in the create response, and cannot be retrieved later.",
+                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. The API returns it only in the create response; it can be viewed or rotated later in the dashboard.",
                     "maxLength": 100,
                     "minLength": 10,
                     "type": "string"
@@ -42278,7 +42702,7 @@
                           "type": "string"
                         },
                         "secret": {
-                          "description": "Signing secret for this endpoint. Returned only in the create response - store it now, it cannot be retrieved later.",
+                          "description": "Signing secret for this endpoint. The API returns it only in this response; it can be viewed or rotated later in the dashboard.",
                           "type": "string"
                         },
                         "status": {
@@ -42644,7 +43068,7 @@
         ]
       },
       "get": {
-        "description": "Returns one webhook by id, including its subscribed events, status and delivery counters. The signing secret is never returned - it is only available in the create response.",
+        "description": "Returns one webhook by id, including its subscribed events, status and delivery counters. The signing secret is not returned. The API returns it only when the webhook is created, and it can be viewed or rotated in the dashboard.",
         "operationId": "webhooks/get",
         "parameters": [
           {
