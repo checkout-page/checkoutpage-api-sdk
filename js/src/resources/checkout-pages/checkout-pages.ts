@@ -14,6 +14,7 @@ import type {
   UpdateCheckoutPageFieldParams,
   CheckoutPageFieldResponse,
 } from '../../types';
+import { OrderBumpsResource } from '../order-bumps/order-bumps';
 
 export class CheckoutPageFieldsResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -97,11 +98,13 @@ export class CheckoutPageFieldsResource {
 
 export class CheckoutPagesResource {
   public readonly fields: CheckoutPageFieldsResource;
+  public readonly orderBumps: OrderBumpsResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(client: CheckoutPageApiClient) {
     this.client = client;
     this.fields = new CheckoutPageFieldsResource(client);
+    this.orderBumps = new OrderBumpsResource(client, 'checkout-pages');
   }
 
   async list(args: CheckoutPageListParams = {}): Promise<CheckoutPageList> {

@@ -444,6 +444,18 @@ describe('BookingResource Integration Tests', () => {
             ticketTypes: [{ name: 'GA', pricing: 'paid', price: 2500 }],
           },
         ],
+        // A booking's paymentOption wording comes only from an option the
+        // event has enabled, so the invoice option carries it here.
+        paymentOptions: [
+          { type: 'full', name: 'Pay in full', enabled: true },
+          {
+            type: 'manual',
+            manualType: 'invoice',
+            name: 'Pay via invoice',
+            description: 'Payment due in 30 days',
+            enabled: true,
+          },
+        ],
       });
 
       eventId = response.data.id;
@@ -620,9 +632,13 @@ describe('BookingResource Integration Tests', () => {
       expect(booking.customerName).toBe('Exhaustive Booking');
       expect(booking.paymentMethod).toMatchObject({ gateway: 'manual', method: 'manual' });
       // type/manualType are the contract; name/description/instructions are
-      // derived from the merchant's own option config, not caller input.
-      expect(booking.paymentOption).toMatchObject({ type: 'manual', manualType: 'invoice' });
-      expect(typeof booking.paymentOption?.name).toBe('string');
+      // derived from the event's own enabled option, not caller input.
+      expect(booking.paymentOption).toMatchObject({
+        type: 'manual',
+        manualType: 'invoice',
+        name: 'Pay via invoice',
+        description: 'Payment due in 30 days',
+      });
       expect(Array.isArray(booking.transactionIds)).toBe(true);
       expect(booking.transactionIds?.length).toBeGreaterThan(0);
       expect(Array.isArray(booking.taxBreakdown)).toBe(true);

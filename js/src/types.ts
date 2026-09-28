@@ -305,6 +305,57 @@ export type UpdateProductParams = UpdateProductRequestBase & {
   defaultPriceId?: string | null;
 };
 
+export type ProductList =
+  operations['products/list']['responses'][200]['content']['application/json'];
+
+export type ProductListArgs = operations['products/list']['parameters']['query'];
+
+export type ProductListParams = Omit<NonNullable<ProductListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateProductParams = NonNullable<
+  operations['products/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateProductResponse =
+  operations['products/create']['responses'][201]['content']['application/json'];
+
+export type DeleteProductParams = {
+  /** Also remove the order bump from every page that offers it. */
+  fromAllPages?: boolean;
+};
+
+export type DeleteProductResponse =
+  operations['products/delete']['responses'][200]['content']['application/json'];
+
+// Order bumps. Checkout pages and events share one shape (events show them as add-ons).
+export type OrderBumpList =
+  operations['checkout-pages/order-bumps/list']['responses'][200]['content']['application/json'];
+
+export type OrderBump = OrderBumpList['data'][number];
+
+export type OrderBumpResponse =
+  operations['checkout-pages/order-bumps/update']['responses'][200]['content']['application/json'];
+
+export type CreateOrderBumpParams = NonNullable<
+  operations['checkout-pages/order-bumps/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateOrderBumpResponse =
+  operations['checkout-pages/order-bumps/create']['responses'][201]['content']['application/json'];
+
+export type UpdateOrderBumpParams = NonNullable<
+  operations['checkout-pages/order-bumps/update']['requestBody']
+>['content']['application/json'];
+
+export type ReorderOrderBumpsParams = NonNullable<
+  operations['checkout-pages/order-bumps/reorder']['requestBody']
+>['content']['application/json'];
+
+export type OrderBumpDeleteResponse =
+  operations['checkout-pages/order-bumps/delete']['responses'][200]['content']['application/json'];
+
 // Events
 export type EventList = operations['events/list']['responses'][200]['content']['application/json'];
 
