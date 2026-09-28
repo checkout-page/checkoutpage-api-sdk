@@ -1,10 +1,15 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { SubmissionList, SubmissionListParams, SubmissionResponse } from '../../types';
+import type {
+  ReadOptions,
+  SubmissionList,
+  SubmissionListParams,
+  SubmissionResponse,
+} from '../../types';
 
 export class SubmissionResource {
   constructor(private client: CheckoutPageApiClient) {}
 
-  async get(submissionId: string): Promise<SubmissionResponse> {
+  async get(submissionId: string, options: ReadOptions = {}): Promise<SubmissionResponse> {
     if (!submissionId) {
       throw new Error('Submission ID is required');
     }
@@ -12,6 +17,7 @@ export class SubmissionResource {
     return this.client.request<SubmissionResponse>({
       method: 'GET',
       path: `/v1/submissions/${submissionId}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 
@@ -23,6 +29,7 @@ export class SubmissionResource {
       status: args.status,
       createdAfter: args.createdAfter,
       createdBefore: args.createdBefore,
+      livemode: args.livemode?.toString(),
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
       ending_before: args.ending_before,

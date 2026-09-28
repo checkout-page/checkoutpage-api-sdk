@@ -1267,19 +1267,21 @@
             ]
           },
           "upsellChargeId": {
+            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellPageId": {
-            "description": "The page ID that is redirected to for the upsell.",
+            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellSubscriptionId": {
+            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
             "type": [
               "string",
               "null"
@@ -2815,6 +2817,10 @@
               "null"
             ]
           },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts to include on the page. Supports HTML `<script>` tags.",
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n",
@@ -3761,6 +3767,10 @@
               "null"
             ]
           },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
+          },
           "ticketGroups": {
             "description": "Ticket groups with their ticket types. If not provided, a default ticket group with a free ticket will be created.",
             "items": {
@@ -4272,6 +4282,10 @@
               "string",
               "null"
             ]
+          },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
           },
           "title": {
             "description": "Public title shown to customers on the page.",
@@ -7005,6 +7019,18 @@
             },
             "type": [
               "object",
+              "null"
+            ]
+          },
+          "testmode": {
+            "description": "Whether the page is in test mode. While it is on, every purchase on this page is a test purchase and its records are created with `livemode: false`.",
+            "type": "boolean"
+          },
+          "testmodeEnabledAt": {
+            "description": "When test mode was switched on. `null` while the page is not in test mode.",
+            "format": "date-time",
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -10808,19 +10834,21 @@
             ]
           },
           "upsellChargeId": {
+            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellPageId": {
-            "description": "The page ID that is redirected to for the upsell.",
+            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
             "type": [
               "string",
               "null"
             ]
           },
           "upsellSubscriptionId": {
+            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
             "type": [
               "string",
               "null"
@@ -14396,6 +14424,18 @@
             ],
             "type": "string"
           },
+          "testmode": {
+            "description": "Whether the page is in test mode. While it is on, every purchase on this page is a test purchase and its records are created with `livemode: false`.",
+            "type": "boolean"
+          },
+          "testmodeEnabledAt": {
+            "description": "When test mode was switched on. `null` while the page is not in test mode.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts for the page.",
             "type": [
@@ -14436,6 +14476,8 @@
           "sellerId",
           "type",
           "status",
+          "testmode",
+          "testmodeEnabledAt",
           "createdAt",
           "updatedAt"
         ],
@@ -15718,12 +15760,15 @@
                 "type": "boolean"
               },
               "upsellChargeId": {
+                "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                 "type": "string"
               },
               "upsellPageId": {
+                "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                 "type": "string"
               },
               "upsellSubscriptionId": {
+                "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                 "type": "string"
               },
               "userAgent": {
@@ -19490,6 +19535,10 @@
               "null"
             ]
           },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
+          },
           "trackingCodes": {
             "description": "Custom tracking scripts to include on the page. Supports HTML `<script>` tags.",
             "example": "\n    <!-- Google Tag Manager -->\n<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://www.googletagmanager.com;\n})(window,document,'script','dataLayer','GTM-XXXXXX');</script>\n<!-- End Google Tag Manager -->\n",
@@ -20417,6 +20466,10 @@
               "object",
               "null"
             ]
+          },
+          "testmode": {
+            "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+            "type": "boolean"
           },
           "title": {
             "description": "Public title shown to customers on the page.",
@@ -23436,6 +23489,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -23700,6 +23767,20 @@
                 }
               ]
             }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -23805,6 +23886,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -23965,6 +24060,20 @@
             "required": false,
             "schema": {
               "description": "Case-insensitive search matched against page name, title, and product title.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `true` to return only checkout pages in test mode, or `false` for only checkout pages not in test mode.",
+            "in": "query",
+            "name": "testmode",
+            "required": false,
+            "schema": {
+              "description": "Set to `true` to return only checkout pages in test mode, or `false` for only checkout pages not in test mode.",
+              "enum": [
+                "true",
+                "false"
+              ],
               "type": "string"
             }
           }
@@ -27819,6 +27928,20 @@
             "required": false,
             "schema": {
               "description": "Case-insensitive search matched against page name and title.",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `true` to return only events in test mode, or `false` for only events not in test mode.",
+            "in": "query",
+            "name": "testmode",
+            "required": false,
+            "schema": {
+              "description": "Set to `true` to return only events in test mode, or `false` for only events not in test mode.",
+              "enum": [
+                "true",
+                "false"
+              ],
               "type": "string"
             }
           }
@@ -32254,6 +32377,20 @@
               "description": "Case-insensitive search matched against page name and title.",
               "type": "string"
             }
+          },
+          {
+            "description": "Set to `true` to return only forms in test mode, or `false` for only forms not in test mode.",
+            "in": "query",
+            "name": "testmode",
+            "required": false,
+            "schema": {
+              "description": "Set to `true` to return only forms in test mode, or `false` for only forms not in test mode.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -33175,6 +33312,10 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "testmode": {
+                    "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
+                    "type": "boolean"
                   },
                   "title": {
                     "description": "Public title shown to customers on the page.",
@@ -34958,6 +35099,20 @@
               "format": "date-time",
               "type": "string"
             }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -35711,6 +35866,20 @@
                   "description": "The ID of the invoice to retrieve. Use `list_invoices` first if you need to discover the invoice ID by customer email, customer name, invoice number, PO number, or the payment it belongs to (`chargeId`)."
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -37340,6 +37509,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -37499,6 +37682,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -38278,6 +38475,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -38416,6 +38627,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -38628,6 +38853,20 @@
             }
           },
           {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
             "in": "query",
             "name": "limit",
@@ -38766,6 +39005,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -38956,6 +39209,20 @@
                 "unpaid",
                 "failed",
                 "completed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
               ],
               "type": "string"
             }
@@ -39616,12 +39883,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -39859,6 +40129,20 @@
                   "example": "6812fe6e9f39b6760576f01c"
                 }
               ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -40699,6 +40983,20 @@
             "schema": {
               "description": "Inclusive upper bound on ticket createdAt. ISO-8601 UTC datetime with the `Z` suffix (e.g. `2026-12-31T23:59:59Z`). Never use a local timezone offset — tickets are stored and compared in UTC.",
               "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
               "type": "string"
             }
           }
@@ -44380,12 +44678,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -45201,12 +45502,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -46022,12 +46326,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -46843,12 +47150,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -47664,12 +47974,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -48485,12 +48798,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -49306,12 +49622,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {
@@ -50127,12 +50446,15 @@
                             "type": "boolean"
                           },
                           "upsellChargeId": {
+                            "description": "For an upsell record, the ID of the payment made on the page before the upsell.",
                             "type": "string"
                           },
                           "upsellPageId": {
+                            "description": "For an upsell record, the ID of the page the buyer paid on before accepting the upsell (the start of the funnel).",
                             "type": "string"
                           },
                           "upsellSubscriptionId": {
+                            "description": "For an upsell record, the ID of the subscription created on the page before the upsell.",
                             "type": "string"
                           },
                           "userAgent": {

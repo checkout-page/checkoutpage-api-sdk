@@ -39,7 +39,30 @@ describe('SubscriptionResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v1/subscriptions/6812fe6e9f39b6760576f01c',
+        query: { livemode: undefined },
       });
+    });
+
+    it('should send livemode as a string to read a test-mode subscription', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: '6812fe6e9f39b6760576f01c' } });
+
+      await subscriptionResource.get('6812fe6e9f39b6760576f01c', { livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/subscriptions/6812fe6e9f39b6760576f01c',
+        query: { livemode: 'false' },
+      });
+    });
+
+    it('should send no livemode when it is omitted', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { id: '6812fe6e9f39b6760576f01c' } });
+
+      await subscriptionResource.get('6812fe6e9f39b6760576f01c');
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     it('should throw error for missing subscription id', async () => {
@@ -324,6 +347,41 @@ describe('SubscriptionResource', () => {
       });
     });
 
+    it('should pass all filters together', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await subscriptionResource.list({
+        search: 'test@example.com',
+        pageId: '67fcbdac6a91c25ef2d3534a',
+        customerId: '507f1f77bcf86cd799439010',
+        orderId: 'ORD-9182',
+        createdAfter: '2025-01-01T00:00:00Z',
+        createdBefore: '2025-01-31T23:59:59Z',
+        abandonmentStatus: 'recovered',
+        status: 'active',
+        limit: 20,
+        starting_after: '507f1f77bcf86cd799439011',
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: {
+          search: 'test@example.com',
+          pageId: '67fcbdac6a91c25ef2d3534a',
+          customerId: '507f1f77bcf86cd799439010',
+          orderId: 'ORD-9182',
+          createdAfter: '2025-01-01T00:00:00Z',
+          createdBefore: '2025-01-31T23:59:59Z',
+          abandonmentStatus: 'recovered',
+          status: 'active',
+          limit: '20',
+          starting_after: '507f1f77bcf86cd799439011',
+          ending_before: undefined,
+        },
+        path: '/v1/subscriptions/',
+      });
+    });
+
     it('should return empty list when no subscriptions exist', async () => {
       const mockSubscriptionList: SubscriptionList = {
         data: [],
@@ -339,6 +397,28 @@ describe('SubscriptionResource', () => {
       expect(result.data).toHaveLength(0);
       expect(result.total).toBe(0);
       expect(result.has_more).toBe(false);
+    });
+
+    it('should pass livemode false as a string to list test-mode subscriptions', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await subscriptionResource.list({ livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/subscriptions/',
+        query: expect.objectContaining({ livemode: 'false' }),
+      });
+    });
+
+    it('should send no livemode when it is omitted from a list', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await subscriptionResource.list({ limit: 5 });
+
+      expect(spy.mock.calls[0][0].query?.livemode).toBeUndefined();
     });
 
     // priceId field

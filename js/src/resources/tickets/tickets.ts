@@ -24,6 +24,7 @@ export class TicketResource {
       createdAfter: args.createdAfter,
       createdBefore: args.createdBefore,
       search: args.search,
+      livemode: args.livemode?.toString(),
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
       ending_before: args.ending_before,
