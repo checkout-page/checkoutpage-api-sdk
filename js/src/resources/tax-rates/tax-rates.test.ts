@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TaxRateResource } from './tax-rates';
 import { CheckoutPageApiClient } from '../../client';
-import type { TaxRateList, TaxRateResponse } from '../../types';
+import type { DeleteTaxRateResponse, TaxRateList, TaxRateResponse } from '../../types';
 
 const mockTaxRate = {
   id: '507f1f77bcf86cd799439011',
@@ -191,6 +191,29 @@ describe('TaxRateResource', () => {
 
     it('should throw error for missing tax rate id', async () => {
       await expect(taxRateResource.update('', {})).rejects.toThrow('Tax rate ID is required');
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a tax rate by id and return the response unchanged', async () => {
+      const mockResponse: DeleteTaxRateResponse = { data: mockTaxRate };
+
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await taxRateResource.delete('507f1f77bcf86cd799439011');
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'DELETE',
+        path: '/v1/tax-rates/507f1f77bcf86cd799439011',
+      });
+    });
+
+    it('should throw error for missing tax rate id', async () => {
+      const requestSpy = vi.spyOn(client, 'request');
+
+      await expect(taxRateResource.delete('')).rejects.toThrow('Tax rate ID is required');
+      expect(requestSpy).not.toHaveBeenCalled();
     });
   });
 });

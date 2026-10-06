@@ -558,6 +558,9 @@ export type UpdateTaxRateParams = NonNullable<
   operations['tax-rates/update']['requestBody']
 >['content']['application/json'];
 
+export type DeleteTaxRateResponse =
+  operations['tax-rates/delete']['responses'][200]['content']['application/json'];
+
 // Invoices
 export type Invoice =
   operations['invoices/list']['responses'][200]['content']['application/json']['data'][number];

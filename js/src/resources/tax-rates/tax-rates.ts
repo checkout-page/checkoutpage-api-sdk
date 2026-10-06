@@ -4,6 +4,7 @@ import type {
   TaxRateResponse,
   CreateTaxRateParams,
   UpdateTaxRateParams,
+  DeleteTaxRateResponse,
 } from '../../types';
 
 export class TaxRateResource {
@@ -52,6 +53,18 @@ export class TaxRateResource {
       method: 'PATCH',
       path: `/v1/tax-rates/${taxRateId}`,
       body,
+    });
+  }
+
+  /** Removes the rate from list(); pages and products that used it stop charging that tax. */
+  async delete(taxRateId: string): Promise<DeleteTaxRateResponse> {
+    if (!taxRateId) {
+      throw new Error('Tax rate ID is required');
+    }
+
+    return this.client.request<DeleteTaxRateResponse>({
+      method: 'DELETE',
+      path: `/v1/tax-rates/${taxRateId}`,
     });
   }
 }

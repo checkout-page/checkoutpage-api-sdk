@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
-import { uniqueSuffix } from '../../test-helpers/test-lib';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
+import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('TaxRateResource Integration Tests', () => {
@@ -72,5 +72,48 @@ describe('TaxRateResource Integration Tests', () => {
     });
 
     expect(updated.data.default).toBe(true);
+  });
+
+  describe('delete', () => {
+    const createdIds: string[] = [];
+
+    afterAll(async () => {
+      // Deleting an already-deleted rate is a no-op on the API, so this is safe after a passing test.
+      for (const id of createdIds.splice(0)) {
+        try {
+          await client.taxRates.delete(id);
+        } catch {
+          // Best-effort cleanup for integration tests.
+        }
+      }
+    });
+
+    it('should delete a tax rate and drop it from list', async () => {
+      const created = await client.taxRates.create({
+        displayName: `sdk-it-delete ${uniqueSuffix()}`,
+        inclusive: false,
+        percentage: 7.5,
+      });
+      createdIds.push(created.data.id);
+
+      const before = await client.taxRates.list();
+      expect(before.data.map((taxRate) => taxRate.id)).toContain(created.data.id);
+
+      const deleted = await client.taxRates.delete(created.data.id);
+
+      expect(deleted.data.id).toBe(created.data.id);
+      expect(deleted.data.displayName).toBe(created.data.displayName);
+      expect(deleted.data.stripeId).toBe(created.data.stripeId);
+      expect(deleted.data.default).toBe(false);
+
+      const after = await client.taxRates.list();
+      expect(after.data.map((taxRate) => taxRate.id)).not.toContain(created.data.id);
+    });
+
+    it('should throw NotFoundError for an unknown tax rate id', async () => {
+      await expect(client.taxRates.delete(fakeObjectId('missing-tax-rate'))).rejects.toThrow(
+        NotFoundError
+      );
+    });
   });
 });
