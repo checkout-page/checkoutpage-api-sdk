@@ -165,6 +165,7 @@ export type {
   TaxRateResponse,
   CreateTaxRateParams,
   UpdateTaxRateParams,
+  DeleteTaxRateResponse,
   Invoice,
   InvoiceList,
   InvoiceListParams,
