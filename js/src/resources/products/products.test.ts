@@ -625,3 +625,31 @@ describe('ProductResource', () => {
     });
   });
 });
+
+describe('ProductResource list', () => {
+  let client: CheckoutPageApiClient;
+  let productResource: ProductResource;
+
+  beforeEach(() => {
+    client = new CheckoutPageApiClient({ apiKey: 'test_api_key' });
+    productResource = new ProductResource(client);
+  });
+
+  it('lists products with the role and search filters', async () => {
+    vi.spyOn(client, 'request').mockResolvedValue({ data: [], has_more: false, total: 0 });
+
+    await productResource.list({ role: 'product', search: 'shirt', limit: 5 });
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'GET',
+      path: '/v1/products/',
+      query: {
+        limit: '5',
+        starting_after: undefined,
+        ending_before: undefined,
+        role: 'product',
+        search: 'shirt',
+      },
+    });
+  });
+});

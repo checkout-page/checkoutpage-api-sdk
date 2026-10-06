@@ -12,7 +12,7 @@ describe('ProductResource Integration Tests', () => {
 
   const createProductWithPrice = async (price: Record<string, unknown>) => {
     const { data: page } = await client.checkoutPages.create({
-      name: `Product Price Test Page ${uniqueSuffix()}`,
+      name: `sdk-it-product-price ${uniqueSuffix()}`,
       productData: {
         price: price as never,
       },
@@ -54,6 +54,7 @@ describe('ProductResource Integration Tests', () => {
         },
       },
     });
+    createdPageIds.push(page.id);
 
     if (page.product?.id) {
       testProductId = page.product.id;
@@ -409,6 +410,25 @@ describe('ProductResource Integration Tests', () => {
     });
   });
 
+  describe('limitPayments', () => {
+    it('turns duplicate-payment prevention on and off', async () => {
+      const productId = await createProductWithPrice({ amount: 2500, currency: 'usd' });
+
+      const { data: enabled } = await client.products.update(productId, {
+        limitPayments: { enabled: true },
+      });
+      expect(enabled.limitPayments?.enabled).toBe(true);
+
+      const { data: reread } = await client.products.get(productId);
+      expect(reread.limitPayments?.enabled).toBe(true);
+
+      const { data: disabled } = await client.products.update(productId, {
+        limitPayments: { enabled: false },
+      });
+      expect(disabled.limitPayments?.enabled).toBe(false);
+    });
+  });
+
   describe('price picker heading and description', () => {
     it('updates the price picker heading and description', async () => {
       if (!testProductId) {
@@ -756,6 +776,35 @@ describe('ProductResource Integration Tests', () => {
         expect(err.message).toMatch(/400|enabled/i);
       }
       expect(threw).toBe(true);
+    });
+  });
+
+  describe('list', () => {
+    it('filters by role and search', async () => {
+      const productId = await createProductWithPrice({ amount: 1500, currency: 'usd' });
+      const { data: product } = await client.products.get(productId);
+
+      const pageProducts = await client.products.list({ role: 'product', limit: 100 });
+      expect(pageProducts.data.length).toBeGreaterThan(0);
+      for (const entry of pageProducts.data) {
+        expect(entry.role).toBe('product');
+      }
+
+      const searched = await client.products.list({ role: 'product', search: product.title });
+      expect(searched.data.map((entry) => entry.id)).toContain(productId);
+    });
+
+    it('pages through products with limit, starting_after and ending_before', async () => {
+      const firstPage = await client.products.list({ limit: 2 });
+      expect(firstPage).toMatchObject({ has_more: expect.any(Boolean), total: expect.any(Number) });
+      expect(firstPage.data).toHaveLength(2);
+      const [first, second] = firstPage.data;
+
+      const after = await client.products.list({ limit: 1, starting_after: first.id });
+      expect(after.data.map((entry) => entry.id)).toEqual([second.id]);
+
+      const before = await client.products.list({ limit: 1, ending_before: second.id });
+      expect(before.data.map((entry) => entry.id)).toEqual([first.id]);
     });
   });
 });

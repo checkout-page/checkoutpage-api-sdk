@@ -305,6 +305,15 @@ export type UpdateProductParams = UpdateProductRequestBase & {
   defaultPriceId?: string | null;
 };
 
+export type ProductList =
+  operations['products/list']['responses'][200]['content']['application/json'];
+
+export type ProductListArgs = operations['products/list']['parameters']['query'];
+
+export type ProductListParams = Omit<NonNullable<ProductListArgs>, 'limit'> & {
+  limit?: number;
+};
+
 // Events
 export type EventList = operations['events/list']['responses'][200]['content']['application/json'];
 

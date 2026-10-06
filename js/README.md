@@ -310,6 +310,15 @@ const paidFor = await checkoutpage.bookings.list({
 const product = await checkoutpage.products.get('product_id');
 ```
 
+#### List products
+
+```typescript
+const products = await checkoutpage.products.list({
+  search: 'shirt',
+  limit: 20,
+});
+```
+
 #### Update a product
 
 ```typescript

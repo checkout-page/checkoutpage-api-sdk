@@ -1,8 +1,24 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { Product, UpdateProductParams } from '../../types';
+import type { Product, ProductList, ProductListParams, UpdateProductParams } from '../../types';
 
 export class ProductResource {
   constructor(private client: CheckoutPageApiClient) {}
+
+  async list(args: ProductListParams = {}): Promise<ProductList> {
+    const query: Record<string, string | undefined> = {
+      limit: args.limit?.toString(),
+      starting_after: args.starting_after,
+      ending_before: args.ending_before,
+      role: args.role,
+      search: args.search,
+    };
+
+    return this.client.request<ProductList>({
+      method: 'GET',
+      path: '/v1/products/',
+      query,
+    });
+  }
 
   async get(productId: string): Promise<Product> {
     if (!productId) {
@@ -63,6 +79,9 @@ export class ProductResource {
     }
     if (params.limitSubscriptions !== undefined) {
       body.limitSubscriptions = params.limitSubscriptions;
+    }
+    if (params.limitPayments !== undefined) {
+      body.limitPayments = params.limitPayments;
     }
     if (params.enableFileAccessForInactiveSubscriptions !== undefined) {
       body.enableFileAccessForInactiveSubscriptions =

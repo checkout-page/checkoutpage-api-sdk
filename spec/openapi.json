@@ -10087,6 +10087,78 @@
               "null"
             ]
           },
+          "badgeIcon": {
+            "description": "Optional icon shown before the badge text.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "billingType": {
             "description": "Billing type. Immutable once the price exists (see the pricing-type identity lock).",
             "enum": [
@@ -10371,6 +10443,78 @@
           },
           "badge": {
             "description": "Optional short label shown over the price card (e.g. \"Save $50\", \"Most popular\").",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "badgeIcon": {
+            "description": "Optional icon shown before the badge text. `null` removes it.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
             "type": [
               "string",
               "null"
@@ -11229,7 +11373,7 @@
             ]
           },
           "role": {
-            "description": "What the product is for. `orderbump` products are the simplified add-ons a checkout page can offer; they can never be sold as a page product, and a product cannot be converted between roles. Read-only.",
+            "description": "What the product is for. `orderbump` products are the simplified add-ons a checkout page can offer; they can never be sold as a page product, and a product cannot be converted between roles. `orderbump` products are only available for beta testing of the order bump feature. Read-only.",
             "enum": [
               "product",
               "orderbump"
@@ -11424,7 +11568,7 @@
                     "variantOptionColumns": {
                       "description": "Number of columns for grid layout. Defaults to `2`.",
                       "example": 2,
-                      "maximum": 4,
+                      "maximum": 10,
                       "minimum": 1,
                       "type": [
                         "number",
@@ -12420,7 +12564,7 @@
                     "variantOptionColumns": {
                       "description": "Number of columns for grid layout. Defaults to `2`.",
                       "example": 2,
-                      "maximum": 4,
+                      "maximum": 10,
                       "minimum": 1,
                       "type": [
                         "number",
@@ -13542,6 +13686,78 @@
           },
           "badge": {
             "description": "Optional short label shown over the price card (e.g. \"Save $50\", \"Most popular\").",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "badgeIcon": {
+            "description": "Optional icon shown before the badge text. `null` removes it.",
+            "enum": [
+              "star",
+              "sparkles",
+              "fire",
+              "bolt",
+              "rocket",
+              "trophy",
+              "check",
+              "x-mark",
+              "plus",
+              "arrow-right",
+              "check-badge",
+              "check-circle",
+              "shield-check",
+              "thumbs-up",
+              "heart",
+              "smile",
+              "light-bulb",
+              "sun",
+              "moon",
+              "gift",
+              "tag",
+              "percent",
+              "dollar",
+              "banknotes",
+              "credit-card",
+              "shopping-bag",
+              "shopping-cart",
+              "truck",
+              "clock",
+              "calendar",
+              "bell",
+              "megaphone",
+              "trending-up",
+              "chart",
+              "refresh",
+              "lock",
+              "key",
+              "ticket",
+              "users",
+              "academic-cap",
+              "book",
+              "music",
+              "video",
+              "document",
+              "download",
+              "mobile",
+              "camera",
+              "paint-brush",
+              "puzzle",
+              "cube",
+              "globe",
+              "map-pin",
+              "storefront",
+              "tools",
+              "beaker",
+              "lifebuoy",
+              "chat",
+              "envelope",
+              "phone",
+              "cake",
+              "scale",
+              "eye",
+              null
+            ],
             "type": [
               "string",
               "null"
@@ -42050,6 +42266,78 @@
                   "null"
                 ]
               },
+              "badgeIcon": {
+                "description": "Optional icon shown before the badge text. `null` removes it.",
+                "enum": [
+                  "star",
+                  "sparkles",
+                  "fire",
+                  "bolt",
+                  "rocket",
+                  "trophy",
+                  "check",
+                  "x-mark",
+                  "plus",
+                  "arrow-right",
+                  "check-badge",
+                  "check-circle",
+                  "shield-check",
+                  "thumbs-up",
+                  "heart",
+                  "smile",
+                  "light-bulb",
+                  "sun",
+                  "moon",
+                  "gift",
+                  "tag",
+                  "percent",
+                  "dollar",
+                  "banknotes",
+                  "credit-card",
+                  "shopping-bag",
+                  "shopping-cart",
+                  "truck",
+                  "clock",
+                  "calendar",
+                  "bell",
+                  "megaphone",
+                  "trending-up",
+                  "chart",
+                  "refresh",
+                  "lock",
+                  "key",
+                  "ticket",
+                  "users",
+                  "academic-cap",
+                  "book",
+                  "music",
+                  "video",
+                  "document",
+                  "download",
+                  "mobile",
+                  "camera",
+                  "paint-brush",
+                  "puzzle",
+                  "cube",
+                  "globe",
+                  "map-pin",
+                  "storefront",
+                  "tools",
+                  "beaker",
+                  "lifebuoy",
+                  "chat",
+                  "envelope",
+                  "phone",
+                  "cake",
+                  "scale",
+                  "eye",
+                  null
+                ],
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "billingType": {
                 "description": "Billing type. Derived when omitted: `recurring`/`paymentPlan` present → recurring, else one_time. Part of the pricing-type identity fixed at creation — cannot change on an existing price.",
                 "enum": [
@@ -42586,7 +42874,7 @@
                     "variantOptionColumns": {
                       "description": "Number of columns for grid layout. Defaults to `2`.",
                       "example": 2,
-                      "maximum": 4,
+                      "maximum": 10,
                       "minimum": 1,
                       "type": [
                         "number",
@@ -56920,6 +57208,176 @@
         ]
       }
     },
+    "/v1/products/": {
+      "get": {
+        "description": "Returns a paginated list of your products, newest first. Filter by `role=orderbump` to find the products you can offer as order bumps.",
+        "operationId": "products/list",
+        "parameters": [
+          {
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+              "example": 20,
+              "type": "string"
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "in": "query",
+            "name": "ending_before",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            }
+          },
+          {
+            "description": "Only return products with this role. `orderbump` lists the products you can add to a page as order bumps; `product` lists page products. Omit for both.",
+            "in": "query",
+            "name": "role",
+            "required": false,
+            "schema": {
+              "description": "Only return products with this role. `orderbump` lists the products you can add to a page as order bumps; `product` lists page products. Omit for both.",
+              "enum": [
+                "product",
+                "orderbump"
+              ],
+              "example": "orderbump",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Case-insensitive contains match against the product title and SKU.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "description": "Case-insensitive contains match against the product title and SKU.",
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      },
+                      "type": "array"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "has_more",
+                    "total"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Products retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List all products",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
     "/v1/products/:productId": {
       "get": {
         "description": "Retrieves the details of an existing product by its ID.",
@@ -57025,7 +57483,7 @@
         ]
       },
       "patch": {
-        "description": "Updates the specified product with the provided values. Only the fields provided will be updated.",
+        "description": "Updates the specified product with the provided values. Only the fields provided will be updated. Order bump products keep to a single price without variants, bulk discounts, license keys, pay what you want or payment plans. Only available for beta testing of the order bump feature.",
         "operationId": "products/update",
         "parameters": [
           {
@@ -57093,7 +57551,7 @@
                 }
               }
             },
-            "description": "Forbidden - Insufficient permissions or validation error"
+            "description": "Order bumps are not enabled for this store (beta testing only)"
           },
           "404": {
             "content": {

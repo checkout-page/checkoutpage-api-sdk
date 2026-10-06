@@ -97,6 +97,8 @@ export type {
   PriceInput,
   ProductVariant,
   UpdateProductParams,
+  ProductList,
+  ProductListParams,
   Event,
   EventList,
   EventListParams,
