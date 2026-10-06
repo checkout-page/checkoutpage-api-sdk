@@ -353,6 +353,9 @@ export type ReorderOrderBumpsParams = NonNullable<
   operations['checkout-pages/order-bumps/reorder']['requestBody']
 >['content']['application/json'];
 
+export type ReorderOrderBumpsResponse =
+  operations['checkout-pages/order-bumps/reorder']['responses'][200]['content']['application/json'];
+
 export type OrderBumpDeleteResponse =
   operations['checkout-pages/order-bumps/delete']['responses'][200]['content']['application/json'];
 

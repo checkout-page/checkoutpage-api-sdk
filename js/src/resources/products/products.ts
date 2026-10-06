@@ -98,6 +98,9 @@ export class ProductResource {
     if (params.limitSubscriptions !== undefined) {
       body.limitSubscriptions = params.limitSubscriptions;
     }
+    if (params.limitPayments !== undefined) {
+      body.limitPayments = params.limitPayments;
+    }
     if (params.enableFileAccessForInactiveSubscriptions !== undefined) {
       body.enableFileAccessForInactiveSubscriptions =
         params.enableFileAccessForInactiveSubscriptions;

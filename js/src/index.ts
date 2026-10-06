@@ -110,6 +110,7 @@ export type {
   CreateOrderBumpResponse,
   UpdateOrderBumpParams,
   ReorderOrderBumpsParams,
+  ReorderOrderBumpsResponse,
   OrderBumpDeleteResponse,
   Event,
   EventList,

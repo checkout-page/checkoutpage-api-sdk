@@ -6,6 +6,7 @@ import type {
   OrderBumpList,
   OrderBumpResponse,
   ReorderOrderBumpsParams,
+  ReorderOrderBumpsResponse,
   UpdateOrderBumpParams,
 } from '../../types';
 
@@ -73,8 +74,11 @@ export class OrderBumpsResource {
     });
   }
 
-  async reorder(pageId: string, params: ReorderOrderBumpsParams): Promise<OrderBumpList> {
-    return this.client.request<OrderBumpList>({
+  async reorder(
+    pageId: string,
+    params: ReorderOrderBumpsParams
+  ): Promise<ReorderOrderBumpsResponse> {
+    return this.client.request<ReorderOrderBumpsResponse>({
       method: 'POST',
       path: `${this.basePath(pageId)}/reorder`,
       body: params,

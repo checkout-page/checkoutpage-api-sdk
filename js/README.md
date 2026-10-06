@@ -310,6 +310,17 @@ const paidFor = await checkoutpage.bookings.list({
 const product = await checkoutpage.products.get('product_id');
 ```
 
+#### List products
+
+```typescript
+// role: 'orderbump' for order bump products, 'product' for page products, omit for both
+const products = await checkoutpage.products.list({
+  role: 'orderbump',
+  search: 'gift',
+  limit: 20,
+});
+```
+
 #### Update a product
 
 ```typescript
@@ -359,6 +370,51 @@ await checkoutpage.checkoutPages.create({
 > still accepted and are applied to the page's product, and page responses still
 > report them by mirroring the product — but new integrations should set them
 > under `productData` or via `products.update()`.
+
+#### Order bump products
+
+Order bump products are offered on checkout pages and events (see [Order bumps](#order-bumps)).
+Page products are created and deleted with their page. Order bumps need to be enabled for
+your store.
+
+```typescript
+const { data: giftWrap } = await checkoutpage.products.create({
+  role: 'orderbump',
+  title: 'Gift wrapping',
+  price: { amount: 500, currency: 'usd' },
+  headingText: 'Make it a gift',
+  features: [{ text: 'Recycled paper', icon: 'check' }],
+});
+
+// Only a product that has never been bought can be deleted. One still offered on a
+// page is refused unless fromAllPages removes it from those pages first.
+await checkoutpage.products.delete(giftWrap.id, { fromAllPages: true });
+```
+
+### Order bumps
+
+Offer order bump products on a checkout page with `checkoutPages.orderBumps`, or on an
+event with `events.orderBumps`. Both take the page or event ID first.
+
+```typescript
+await checkoutpage.checkoutPages.orderBumps.create('page_id', {
+  productId: 'product_id',
+  preselected: true,
+});
+
+await checkoutpage.checkoutPages.orderBumps.update('page_id', 'product_id', {
+  allowQuantity: true,
+});
+
+const { data: orderBumps } = await checkoutpage.checkoutPages.orderBumps.list('page_id');
+
+await checkoutpage.checkoutPages.orderBumps.reorder('page_id', {
+  productIds: ['second_product_id', 'product_id'],
+});
+
+// Takes the order bump off the page. The product is kept.
+await checkoutpage.checkoutPages.orderBumps.delete('page_id', 'product_id');
+```
 
 ### Files
 
