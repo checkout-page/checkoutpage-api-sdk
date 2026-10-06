@@ -2134,7 +2134,7 @@
               "maximum": 1000,
               "type": "integer"
             },
-            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs. A disabled ticket type, or one in a disabled ticket group, cannot be booked.",
+            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs.",
             "example": {
               "65f4a1c2e4a9f3d2b1c0a9e8": 2
             },
@@ -3688,14 +3688,6 @@
               "null"
             ]
           },
-          "showConfirmationEventAddOns": {
-            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
-            "example": true,
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -3824,7 +3816,7 @@
             ]
           },
           "title": {
-            "description": "Public title shown to customers on the page. Defaults to `name` when omitted.",
+            "description": "Public title shown to customers on the page.",
             "example": "Get The Premium Course Today",
             "maxLength": 500,
             "type": "string"
@@ -5103,7 +5095,7 @@
             "items": {
               "properties": {
                 "icon": {
-                  "description": "Icon leading the line. Unset, the line leads with a check.",
+                  "description": "Icon leading the line. Unset, the line leads with a check; `none` draws no icon.",
                   "enum": [
                     "star",
                     "sparkles",
@@ -5167,9 +5159,10 @@
                     "cake",
                     "scale",
                     "eye",
+                    "none",
                     null
                   ],
-                  "example": "star",
+                  "example": "check-circle",
                   "type": [
                     "string",
                     "null"
@@ -6997,13 +6990,6 @@
               "null"
             ]
           },
-          "showConfirmationEventAddOns": {
-            "description": "Whether purchased add-ons are shown on the confirmation page.",
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
           "showConfirmationEventDateTime": {
             "description": "Whether the event date and time is shown on the confirmation page.",
             "type": [
@@ -7174,8 +7160,6 @@
           "sellerId",
           "type",
           "status",
-          "testmode",
-          "testmodeEnabledAt",
           "createdAt",
           "updatedAt"
         ],
@@ -12252,7 +12236,7 @@
             "items": {
               "properties": {
                 "icon": {
-                  "description": "Icon leading the line. Unset, the line leads with a check.",
+                  "description": "Icon leading the line. Unset, the line leads with a check; `none` draws no icon.",
                   "enum": [
                     "star",
                     "sparkles",
@@ -12316,6 +12300,7 @@
                     "cake",
                     "scale",
                     "eye",
+                    "none",
                     null
                   ],
                   "type": [
@@ -12781,7 +12766,7 @@
                     "variantOptionColumns": {
                       "description": "Number of columns for grid layout. Defaults to `2`.",
                       "example": 2,
-                      "maximum": 4,
+                      "maximum": 10,
                       "minimum": 1,
                       "type": [
                         "number",
@@ -13777,7 +13762,7 @@
                     "variantOptionColumns": {
                       "description": "Number of columns for grid layout. Defaults to `2`.",
                       "example": 2,
-                      "maximum": 4,
+                      "maximum": 10,
                       "minimum": 1,
                       "type": [
                         "number",
@@ -42542,14 +42527,6 @@
               "null"
             ]
           },
-          "showConfirmationEventAddOns": {
-            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
-            "example": true,
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -42668,7 +42645,7 @@
             "$ref": "#/components/schemas/ThemeOverridesInput"
           },
           "title": {
-            "description": "Public title shown to customers on the page. Defaults to `name` when omitted.",
+            "description": "Public title shown to customers on the page.",
             "example": "Get The Premium Course Today",
             "maxLength": 500,
             "type": "string"
@@ -43565,7 +43542,7 @@
             "items": {
               "properties": {
                 "icon": {
-                  "description": "Icon leading the line. Unset, the line leads with a check.",
+                  "description": "Icon leading the line. Unset, the line leads with a check; `none` draws no icon.",
                   "enum": [
                     "star",
                     "sparkles",
@@ -43629,9 +43606,10 @@
                     "cake",
                     "scale",
                     "eye",
+                    "none",
                     null
                   ],
-                  "example": "star",
+                  "example": "check-circle",
                   "type": [
                     "string",
                     "null"
@@ -44417,7 +44395,7 @@
                     "variantOptionColumns": {
                       "description": "Number of columns for grid layout. Defaults to `2`.",
                       "example": 2,
-                      "maximum": 4,
+                      "maximum": 10,
                       "minimum": 1,
                       "type": [
                         "number",
@@ -45838,7 +45816,7 @@
         ]
       },
       "post": {
-        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be enabled, on sale and in stock (a disabled ticket type, or any ticket in a disabled ticket group, cannot be booked, not even as a complimentary booking), and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
         "operationId": "bookings/create",
         "requestBody": {
           "content": {
@@ -45908,7 +45886,7 @@
                 }
               }
             },
-            "description": "Tickets are sold out or not on sale, including a disabled ticket type or a ticket in a disabled ticket group"
+            "description": "Tickets are sold out or not on sale"
           },
           "429": {
             "content": {
@@ -49406,13 +49384,10 @@
                     "type": "string"
                   },
                   "maxRedemptions": {
-                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times. Send `null` to remove the limit.",
+                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times.",
                     "example": 5,
                     "minimum": 0,
-                    "type": [
-                      "number",
-                      "null"
-                    ]
+                    "type": "number"
                   },
                   "pageIds": {
                     "description": "A list of pageIds that this coupon can be used within.",
@@ -49427,13 +49402,10 @@
                     "type": "array"
                   },
                   "redeemBy": {
-                    "description": "The ISO datetime that this coupon must be used before. Send `null` to remove the expiry.",
+                    "description": "The ISO datetime that this coupon must be used before.",
                     "example": "2025-10-04T07:36:45.122Z",
                     "format": "date-time",
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "ticketTypeIds": {
                     "description": "A list of ticketTypeIds that this coupon can be used with. Empty array will clear the list.",
@@ -64320,7 +64292,7 @@
         ]
       },
       "post": {
-        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This is the only API response that returns the signing `secret`; it can be viewed or rotated later in the dashboard. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
+        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This response is the only place the signing `secret` is ever returned - store it immediately. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
         "operationId": "webhooks/create",
         "requestBody": {
           "content": {
@@ -64380,7 +64352,7 @@
                     "type": "string"
                   },
                   "secret": {
-                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. The API returns it only in the create response; it can be viewed or rotated later in the dashboard.",
+                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. It is returned once, in the create response, and cannot be retrieved later.",
                     "maxLength": 100,
                     "minLength": 10,
                     "type": "string"
@@ -64497,7 +64469,7 @@
                           "type": "string"
                         },
                         "secret": {
-                          "description": "Signing secret for this endpoint. The API returns it only in this response; it can be viewed or rotated later in the dashboard.",
+                          "description": "Signing secret for this endpoint. Returned only in the create response - store it now, it cannot be retrieved later.",
                           "type": "string"
                         },
                         "status": {
@@ -64863,7 +64835,7 @@
         ]
       },
       "get": {
-        "description": "Returns one webhook by id, including its subscribed events, status and delivery counters. The signing secret is not returned. The API returns it only when the webhook is created, and it can be viewed or rotated in the dashboard.",
+        "description": "Returns one webhook by id, including its subscribed events, status and delivery counters. The signing secret is never returned - it is only available in the create response.",
         "operationId": "webhooks/get",
         "parameters": [
           {
