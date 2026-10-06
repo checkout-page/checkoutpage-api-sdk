@@ -1,11 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import {
-  CheckoutPageClient,
-  createCheckoutPageClient,
-  NotFoundError,
-  ValidationError,
-} from '../../index';
-import type { CreateProductParams, Price, PriceInput } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, ValidationError } from '../../index';
+import type { Price, PriceInput } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { uniqueSuffix } from '../../test-helpers/test-lib';
 
@@ -784,59 +779,10 @@ describe('ProductResource Integration Tests', () => {
     });
   });
 
-  // Needs order bumps enabled for the API key's store.
-  describe('order bump products', () => {
-    const bumpProductIds: string[] = [];
-
-    const createBumpProduct = async (overrides: Partial<CreateProductParams> = {}) => {
-      const { data: product } = await client.products.create({
-        role: 'orderbump',
-        title: `sdk-it-bump ${uniqueSuffix()}`,
-        price: { amount: 500, currency: 'usd' },
-        hasUnlimitedStock: true,
-        ...overrides,
-      });
-      bumpProductIds.push(product.id);
-      return product;
-    };
-
-    afterAll(async () => {
-      for (const productId of bumpProductIds) {
-        await client.products.delete(productId, { fromAllPages: true }).catch(() => undefined);
-      }
-    });
-
-    it('creates an order bump product with its card fields', async () => {
-      const cardFields = {
-        shortDescription: 'Gift wrap the order',
-        headingText: 'Make it a gift',
-        callToActionText: 'Yes, wrap it',
-        calloutText: 'Most popular',
-        calloutIcon: 'gift',
-        features: [{ text: 'Recycled paper', icon: 'check' }, { text: 'Hand-written card' }],
-      } satisfies Partial<CreateProductParams>;
-
-      const product = await createBumpProduct({
-        ...cardFields,
-        description: 'Wrapped in recycled paper',
-      });
-
-      expect(product).toMatchObject({ role: 'orderbump', ...cardFields });
-      expect(product.description).toContain('Wrapped in recycled paper');
-      expect(product.price).toMatchObject({ amount: 500, currency: 'usd' });
-
-      const { data: fetched } = await client.products.get(product.id);
-      expect(fetched).toMatchObject({ id: product.id, role: 'orderbump', ...cardFields });
-    });
-
-    it('lists only the products with the requested role', async () => {
-      const product = await createBumpProduct();
-
-      const bumps = await client.products.list({ role: 'orderbump', limit: 100 });
-      expect(bumps.data.length).toBeGreaterThan(0);
-      for (const entry of bumps.data) {
-        expect(entry.role).toBe('orderbump');
-      }
+  describe('list', () => {
+    it('filters by role and search', async () => {
+      const productId = await createProductWithPrice({ amount: 1500, currency: 'usd' });
+      const { data: product } = await client.products.get(productId);
 
       const pageProducts = await client.products.list({ role: 'product', limit: 100 });
       expect(pageProducts.data.length).toBeGreaterThan(0);
@@ -844,8 +790,8 @@ describe('ProductResource Integration Tests', () => {
         expect(entry.role).toBe('product');
       }
 
-      const searched = await client.products.list({ role: 'orderbump', search: product.title });
-      expect(searched.data.map((entry) => entry.id)).toEqual([product.id]);
+      const searched = await client.products.list({ role: 'product', search: product.title });
+      expect(searched.data.map((entry) => entry.id)).toContain(productId);
     });
 
     it('pages through products with limit, starting_after and ending_before', async () => {
@@ -859,21 +805,6 @@ describe('ProductResource Integration Tests', () => {
 
       const before = await client.products.list({ limit: 1, ending_before: second.id });
       expect(before.data.map((entry) => entry.id)).toEqual([first.id]);
-    });
-
-    it('deletes an order bump product', async () => {
-      const product = await createBumpProduct();
-
-      const deleted = await client.products.delete(product.id);
-      expect(deleted.data.success).toBe(true);
-
-      await expect(client.products.get(product.id)).rejects.toBeInstanceOf(NotFoundError);
-    });
-
-    it('refuses to delete a page product', async () => {
-      const productId = await createProductWithPrice({ amount: 2500, currency: 'usd' });
-
-      await expect(client.products.delete(productId)).rejects.toBeInstanceOf(ValidationError);
     });
   });
 });

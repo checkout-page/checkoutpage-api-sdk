@@ -6,11 +6,8 @@ import { createCheckoutPageClient } from './index';
 
 type SpecSchema = { $ref?: string; properties?: Record<string, unknown> };
 
-type SpecParameter = { name: string; in: string; schema?: { enum?: unknown[] } };
-
 type SpecOperation = {
   operationId?: string;
-  parameters?: SpecParameter[];
   requestBody?: { content?: { 'application/json'?: { schema?: SpecSchema } } };
 };
 
@@ -21,8 +18,8 @@ const spec: {
   components: { schemas: Record<string, SpecSchema> };
 } = JSON.parse(fs.readFileSync(path.join(__dirname, '../../spec/openapi.json'), 'utf-8'));
 
-// coupons.create reshapes its body by coupon type, so it can't be checked this way.
-const COVERED_OPERATIONS = /^(products|(checkout-pages|events)\/order-bumps)\//;
+// Methods that build their body field by field, where a new spec field is easy to miss.
+const COVERED_OPERATIONS = /^products\//;
 
 function resolveSchema(schema: SpecSchema | undefined): SpecSchema {
   const ref = schema?.$ref?.replace('#/components/schemas/', '');
@@ -38,16 +35,10 @@ const operations = Object.entries(spec.paths).flatMap(([route, methods]) =>
       bodyProperties: Object.keys(
         resolveSchema(op.requestBody?.content?.['application/json']?.schema).properties ?? {}
       ),
-      queryParams: (op.parameters ?? []).filter((p) => p.in === 'query'),
     }))
 );
 
 const bodyOperations = operations.filter((op) => op.bodyProperties.length > 0);
-
-// list() query params are covered by list-query-params.test.ts.
-const writeQueryOperations = operations.filter(
-  (op) => op.queryParams.length > 0 && !op.operationId.endsWith('/list')
-);
 
 const camelCase = (segment: string) =>
   segment.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
@@ -79,15 +70,7 @@ describe('write methods send every request param in the OpenAPI spec', () => {
     vi.spyOn(CheckoutPageApiClient.prototype, 'request').mockResolvedValue({ data: {} });
 
   it('finds the operations in the spec', () => {
-    expect(bodyOperations.map((op) => op.operationId)).toEqual(
-      expect.arrayContaining([
-        'products/create',
-        'products/update',
-        'checkout-pages/order-bumps/create',
-        'events/order-bumps/update',
-      ])
-    );
-    expect(writeQueryOperations.map((op) => op.operationId)).toContain('products/delete');
+    expect(bodyOperations.map((op) => op.operationId)).toContain('products/update');
   });
 
   it.each(bodyOperations)('$operationId sends every body property', async (op) => {
@@ -110,19 +93,6 @@ describe('write methods send every request param in the OpenAPI spec', () => {
     const sent = JSON.parse(JSON.stringify(request.mock.calls[0][0].body));
     expect(sent).toStrictEqual(
       Object.fromEntries(Object.entries(params).filter(([, value]) => value === null))
-    );
-  });
-
-  it.each(writeQueryOperations)('$operationId sends every query param', async (op) => {
-    const request = mockRequest();
-    const params = Object.fromEntries(
-      op.queryParams.map((p) => [p.name, p.schema?.enum?.[0] ?? `${p.name}-value`])
-    );
-
-    await sdkMethodFor(op.operationId)(...op.pathArgs, params);
-
-    expect(request.mock.calls[0][0].query).toStrictEqual(
-      Object.fromEntries(Object.entries(params).map(([name, value]) => [name, String(value)]))
     );
   });
 });

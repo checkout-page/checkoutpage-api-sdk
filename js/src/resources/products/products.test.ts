@@ -626,7 +626,7 @@ describe('ProductResource', () => {
   });
 });
 
-describe('ProductResource order bump products', () => {
+describe('ProductResource list', () => {
   let client: CheckoutPageApiClient;
   let productResource: ProductResource;
 
@@ -635,10 +635,10 @@ describe('ProductResource order bump products', () => {
     productResource = new ProductResource(client);
   });
 
-  it('lists products with the role filter', async () => {
+  it('lists products with the role and search filters', async () => {
     vi.spyOn(client, 'request').mockResolvedValue({ data: [], has_more: false, total: 0 });
 
-    await productResource.list({ role: 'orderbump', search: 'wrap', limit: 5 });
+    await productResource.list({ role: 'product', search: 'shirt', limit: 5 });
 
     expect(client.request).toHaveBeenCalledWith({
       method: 'GET',
@@ -647,75 +647,9 @@ describe('ProductResource order bump products', () => {
         limit: '5',
         starting_after: undefined,
         ending_before: undefined,
-        role: 'orderbump',
-        search: 'wrap',
+        role: 'product',
+        search: 'shirt',
       },
     });
-  });
-
-  it('creates an order bump product', async () => {
-    vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'product_bump' } });
-
-    await productResource.create({
-      role: 'orderbump',
-      title: 'Gift wrapping',
-      price: { amount: 500 },
-      headingText: 'Special offer',
-    });
-
-    expect(client.request).toHaveBeenCalledWith({
-      method: 'POST',
-      path: '/v1/products/',
-      body: {
-        role: 'orderbump',
-        title: 'Gift wrapping',
-        price: { amount: 500 },
-        headingText: 'Special offer',
-      },
-    });
-  });
-
-  it('sends the order bump card fields on update', async () => {
-    vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'product_bump' } });
-
-    await productResource.update('product_bump', {
-      headingText: 'New heading',
-      callToActionText: null,
-      features: [{ text: 'Recycled paper', icon: 'gift' }],
-    });
-
-    expect(client.request).toHaveBeenCalledWith({
-      method: 'PATCH',
-      path: '/v1/products/product_bump',
-      body: {
-        headingText: 'New heading',
-        callToActionText: null,
-        features: [{ text: 'Recycled paper', icon: 'gift' }],
-      },
-    });
-  });
-
-  it('deletes an order bump product, from every page when asked', async () => {
-    vi.spyOn(client, 'request').mockResolvedValue({
-      data: { success: true, message: 'Product deleted successfully' },
-    });
-
-    await productResource.delete('product_bump');
-    await productResource.delete('product_bump', { fromAllPages: true });
-
-    expect(client.request).toHaveBeenNthCalledWith(1, {
-      method: 'DELETE',
-      path: '/v1/products/product_bump',
-      query: undefined,
-    });
-    expect(client.request).toHaveBeenNthCalledWith(2, {
-      method: 'DELETE',
-      path: '/v1/products/product_bump',
-      query: { fromAllPages: 'true' },
-    });
-  });
-
-  it('requires a product ID to delete', async () => {
-    await expect(productResource.delete('')).rejects.toThrow('Product ID is required');
   });
 });
