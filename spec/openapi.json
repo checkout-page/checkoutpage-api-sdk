@@ -3688,14 +3688,6 @@
               "null"
             ]
           },
-          "showConfirmationEventAddOns": {
-            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
-            "example": true,
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -6165,13 +6157,6 @@
           },
           "showConfirmationAddToCalendar": {
             "description": "Whether the add to calendar button is shown on the confirmation page.",
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
-          "showConfirmationEventAddOns": {
-            "description": "Whether purchased add-ons are shown on the confirmation page.",
             "type": [
               "boolean",
               "null"
@@ -41099,14 +41084,6 @@
           },
           "showConfirmationAddToCalendar": {
             "description": "Show the add to calendar button on payment confirmation page. Defaults to `true`.",
-            "example": true,
-            "type": [
-              "boolean",
-              "null"
-            ]
-          },
-          "showConfirmationEventAddOns": {
-            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
             "example": true,
             "type": [
               "boolean",
