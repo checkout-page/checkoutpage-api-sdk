@@ -70,7 +70,7 @@ npx ts-node get-customer.ts
 
 ### Webhooks
 
-- `webhooks.ts` - Create, list, and delete webhook endpoints
+- `webhooks.ts` - Create, list, get, update, and delete webhook endpoints
 
 ## Getting Your API Key
 

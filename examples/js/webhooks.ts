@@ -31,6 +31,22 @@ async function main() {
 
   console.log(`${active.data.length} active endpoint(s) receive payment.paid`);
 
+  // Get a webhook endpoint by id. The secret is not included.
+  const { data: webhook } = await client.webhooks.get(created.data.id);
+
+  console.log(`${webhook.name} is ${webhook.status} with ${webhook.deliveryCount} deliveries`);
+
+  // Update a webhook endpoint. Only the fields you send change, and events
+  // replaces the existing list.
+  await client.webhooks.update(created.data.id, {
+    events: ['payment.paid', 'checkout_page.updated', 'product.updated'],
+  });
+
+  // Pause deliveries without deleting the endpoint. Send 'active' to resume.
+  const paused = await client.webhooks.update(created.data.id, { status: 'inactive' });
+
+  console.log('Webhook status:', paused.data.status);
+
   // Delete a webhook endpoint. Deliveries stop immediately.
   const deleted = await client.webhooks.delete(created.data.id);
 

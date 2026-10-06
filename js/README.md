@@ -423,8 +423,36 @@ saveSecret(webhook.secret);
 > and a URL already registered on the account is rejected with a `ConflictError`.
 
 > The create response is the **only** place the signing `secret` is ever returned.
-> It is not included in `list()` responses and cannot be retrieved later — store it
-> when you create the endpoint. Omit `secret` to have one generated for you.
+> It is not included in `list()` or `get()` responses and cannot be retrieved later, so store
+> it when you create the endpoint. Omit `secret` to have one generated for you.
+
+#### Get a webhook endpoint
+
+```typescript
+const { data: webhook } = await checkoutpage.webhooks.get(webhookId);
+
+console.log(webhook.status, webhook.deliveryCount, webhook.lastFailureAt);
+```
+
+The signing `secret` is not included.
+
+#### Update a webhook endpoint
+
+```typescript
+const { data: updated } = await checkoutpage.webhooks.update(webhookId, {
+  url: 'https://example.com/hooks/checkoutpage-v2',
+  events: ['payment.paid', 'checkout_page.updated', 'product.updated'],
+});
+
+// Pause deliveries without deleting the endpoint, then resume them
+await checkoutpage.webhooks.update(webhookId, { status: 'inactive' });
+await checkoutpage.webhooks.update(webhookId, { status: 'active' });
+```
+
+Only the fields you send change. `events` and `customHeaders` replace the existing values rather
+than merging with them. A new `url` must use https and must not already be registered on another of
+your webhooks (`ValidationError` / `ConflictError`). The signing secret cannot be changed through
+the API.
 
 #### Delete a webhook endpoint
 
