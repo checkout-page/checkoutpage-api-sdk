@@ -3,10 +3,11 @@ import {
   CheckoutPageClient,
   createCheckoutPageClient,
   ConflictError,
+  NotFoundError,
   ValidationError,
 } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
-import { uniqueSuffix } from '../../test-helpers/test-lib';
+import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
 
 describe('WebhookResource Integration Tests', () => {
   let client: CheckoutPageClient;
@@ -97,6 +98,111 @@ describe('WebhookResource Integration Tests', () => {
     expect(active.data.some((w) => w.id === webhook.id)).toBe(true);
     const inactive = await client.webhooks.list({ status: 'inactive', limit: 100 });
     expect(inactive.data.some((w) => w.id === webhook.id)).toBe(false);
+  });
+
+  it('gets a webhook by id without the secret', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `sdk-it-get ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid', 'checkout_page.created'],
+      customHeaders: { Authorization: 'Bearer receiver-token' },
+    });
+    createdIds.push(created.id);
+
+    const { data: fetched } = await client.webhooks.get(created.id);
+
+    const { secret, ...createdWithoutSecret } = created;
+    expect(secret.length).toBeGreaterThanOrEqual(10);
+    expect(fetched).toEqual(createdWithoutSecret);
+    expect(fetched).not.toHaveProperty('secret');
+  });
+
+  it('updates a webhook, reads the update back, then deletes it', async () => {
+    const { data: created } = await client.webhooks.create({
+      name: `sdk-it-update ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+      customHeaders: { 'X-Old': 'old' },
+    });
+    createdIds.push(created.id);
+
+    const name = `sdk-it-updated ${uniqueSuffix()}`;
+    const url = hookUrl();
+    const { data: updated } = await client.webhooks.update(created.id, {
+      name,
+      url,
+      events: ['checkout_page.updated', 'product.created', 'product.created'],
+      customHeaders: { 'X-New': 'new' },
+      status: 'inactive',
+    });
+
+    expect(updated).toMatchObject({
+      id: created.id,
+      name,
+      url,
+      events: ['checkout_page.updated', 'product.created'],
+      customHeaders: { 'X-New': 'new' },
+      status: 'inactive',
+    });
+    expect(updated).not.toHaveProperty('secret');
+    expect(await client.webhooks.get(created.id)).toEqual({ data: updated });
+
+    const { data: resumed } = await client.webhooks.update(created.id, { status: 'active' });
+    expect(resumed).toMatchObject({
+      name,
+      url,
+      events: ['checkout_page.updated', 'product.created'],
+      customHeaders: { 'X-New': 'new' },
+      status: 'active',
+    });
+    expect(await client.webhooks.get(created.id)).toEqual({ data: resumed });
+
+    await client.webhooks.delete(created.id);
+    await expect(client.webhooks.get(created.id)).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it('returns a NotFoundError for an unknown id on get and update', async () => {
+    const missingId = fakeObjectId('missing');
+
+    const get = client.webhooks.get(missingId);
+    await expect(get).rejects.toBeInstanceOf(NotFoundError);
+    await expect(get).rejects.toThrow('Webhook not found');
+
+    const update = client.webhooks.update(missingId, { status: 'inactive' });
+    await expect(update).rejects.toBeInstanceOf(NotFoundError);
+    await expect(update).rejects.toThrow('Webhook not found');
+  });
+
+  it('rejects updating to a URL another webhook uses with a ConflictError', async () => {
+    const { data: first } = await client.webhooks.create({
+      name: `sdk-it-conflict-a ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(first.id);
+    const { data: second } = await client.webhooks.create({
+      name: `sdk-it-conflict-b ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(second.id);
+
+    await expect(client.webhooks.update(second.id, { url: first.url })).rejects.toBeInstanceOf(
+      ConflictError
+    );
+  });
+
+  it('rejects an http URL on update with a ValidationError', async () => {
+    const { data: webhook } = await client.webhooks.create({
+      name: `sdk-it-http ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.paid'],
+    });
+    createdIds.push(webhook.id);
+
+    await expect(
+      client.webhooks.update(webhook.id, { url: 'http://example.com/hooks' })
+    ).rejects.toBeInstanceOf(ValidationError);
   });
 
   it('deletes a webhook so it no longer lists', async () => {

@@ -5,8 +5,11 @@ import type {
   CreateWebhookParams,
   CreateWebhookResponse,
   DeleteWebhookResponse,
+  UpdateWebhookParams,
+  UpdateWebhookResponse,
   Webhook,
   WebhookList,
+  WebhookResponse,
 } from '../../types';
 
 const WEBHOOK_ID = '507f1f77bcf86cd799439011';
@@ -105,6 +108,102 @@ describe('WebhookResource', () => {
         path: '/v1/webhooks/',
         body: params,
       });
+    });
+  });
+
+  describe('get', () => {
+    it('GETs the webhook by id and returns the response', async () => {
+      const mockResponse: WebhookResponse = { data: mockWebhook };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await webhooks.get(WEBHOOK_ID);
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/webhooks/${WEBHOOK_ID}`,
+      });
+    });
+
+    it('encodes the id in the path', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: mockWebhook });
+
+      await webhooks.get('a/b?c');
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v1/webhooks/a%2Fb%3Fc',
+      });
+    });
+
+    it('throws when the id is empty', async () => {
+      const spy = vi.spyOn(client, 'request');
+
+      await expect(webhooks.get('')).rejects.toThrow('Webhook ID is required');
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('update', () => {
+    it('PATCHes the params as the body and returns the response', async () => {
+      const mockResponse: UpdateWebhookResponse = {
+        data: {
+          ...mockWebhook,
+          url: 'https://example.com/hooks/v2',
+          events: ['checkout_page.updated', 'product.created'],
+          status: 'inactive',
+        },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const params: UpdateWebhookParams = {
+        name: 'CRM sync v2',
+        url: 'https://example.com/hooks/v2',
+        events: ['checkout_page.updated', 'product.created'],
+        customHeaders: {},
+        status: 'inactive',
+      };
+      const result = await webhooks.update(WEBHOOK_ID, params);
+
+      expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/webhooks/${WEBHOOK_ID}`,
+        body: params,
+      });
+    });
+
+    it('sends an empty body as-is', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: mockWebhook });
+
+      await webhooks.update(WEBHOOK_ID, {});
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/webhooks/${WEBHOOK_ID}`,
+        body: {},
+      });
+    });
+
+    it('encodes the id in the path', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: mockWebhook });
+
+      await webhooks.update('a/b?c', { status: 'active' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/webhooks/a%2Fb%3Fc',
+        body: { status: 'active' },
+      });
+    });
+
+    it('throws when the id is empty', async () => {
+      const spy = vi.spyOn(client, 'request');
+
+      await expect(webhooks.update('', { status: 'inactive' })).rejects.toThrow(
+        'Webhook ID is required'
+      );
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 

@@ -61072,6 +61072,10 @@
                 "ticket.created",
                 "submission.created",
                 "submission.updated",
+                "checkout_page.created",
+                "checkout_page.updated",
+                "product.created",
+                "product.updated",
                 "subscription.abandoned",
                 "subscription.created",
                 "subscription.trialing",
@@ -61120,7 +61124,7 @@
                           "events": {
                             "description": "Events this endpoint receives.",
                             "items": {
-                              "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                              "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                               "enum": [
                                 "webhook.test",
                                 "customer.created",
@@ -61134,6 +61138,10 @@
                                 "ticket.created",
                                 "submission.created",
                                 "submission.updated",
+                                "checkout_page.created",
+                                "checkout_page.updated",
+                                "product.created",
+                                "product.updated",
                                 "subscription.abandoned",
                                 "subscription.created",
                                 "subscription.trialing",
@@ -61305,7 +61313,7 @@
         ]
       },
       "post": {
-        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This response is the only place the signing `secret` is ever returned - store it immediately. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
+        "description": "Creates a webhook endpoint that receives the selected events at an https URL. This is the only API response that returns the signing `secret`; it can be viewed or rotated later in the dashboard. A seller can have at most 10 webhooks and each URL can be registered once. See the event pages in this section for payload shapes and the Signature page for verifying deliveries.",
         "operationId": "webhooks/create",
         "requestBody": {
           "content": {
@@ -61330,7 +61338,7 @@
                       "subscription.created"
                     ],
                     "items": {
-                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
                       "enum": [
                         "customer.created",
                         "customer.updated",
@@ -61343,6 +61351,10 @@
                         "ticket.created",
                         "submission.created",
                         "submission.updated",
+                        "checkout_page.created",
+                        "checkout_page.updated",
+                        "product.created",
+                        "product.updated",
                         "subscription.abandoned",
                         "subscription.created",
                         "subscription.trialing",
@@ -61365,7 +61377,7 @@
                     "type": "string"
                   },
                   "secret": {
-                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. It is returned once, in the create response, and cannot be retrieved later.",
+                    "description": "Secret used to sign deliveries (`X-Webhook-Signature`), 10–100 characters. Omit to have Checkout Page generate one. The API returns it only in the create response; it can be viewed or rotated later in the dashboard.",
                     "maxLength": 100,
                     "minLength": 10,
                     "type": "string"
@@ -61421,7 +61433,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -61435,6 +61447,10 @@
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "checkout_page.created",
+                              "checkout_page.updated",
+                              "product.created",
+                              "product.updated",
                               "subscription.abandoned",
                               "subscription.created",
                               "subscription.trialing",
@@ -61482,7 +61498,7 @@
                           "type": "string"
                         },
                         "secret": {
-                          "description": "Signing secret for this endpoint. Returned only in the create response - store it now, it cannot be retrieved later.",
+                          "description": "Signing secret for this endpoint. The API returns it only in this response; it can be viewed or rotated later in the dashboard.",
                           "type": "string"
                         },
                         "status": {
@@ -61665,7 +61681,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -61679,6 +61695,10 @@
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "checkout_page.created",
+                              "checkout_page.updated",
+                              "product.created",
+                              "product.updated",
                               "subscription.abandoned",
                               "subscription.created",
                               "subscription.trialing",
@@ -61848,7 +61868,7 @@
         ]
       },
       "get": {
-        "description": "Returns one webhook by id, including its subscribed events, status and delivery counters. The signing secret is never returned - it is only available in the create response.",
+        "description": "Returns one webhook by id, including its subscribed events, status and delivery counters. The signing secret is not returned. The API returns it only when the webhook is created, and it can be viewed or rotated in the dashboard.",
         "operationId": "webhooks/get",
         "parameters": [
           {
@@ -61902,7 +61922,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -61916,6 +61936,10 @@
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "checkout_page.created",
+                              "checkout_page.updated",
+                              "product.created",
+                              "product.updated",
                               "subscription.abandoned",
                               "subscription.created",
                               "subscription.trialing",
@@ -62129,7 +62153,7 @@
                       "subscription.created"
                     ],
                     "items": {
-                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
                       "enum": [
                         "customer.created",
                         "customer.updated",
@@ -62142,6 +62166,10 @@
                         "ticket.created",
                         "submission.created",
                         "submission.updated",
+                        "checkout_page.created",
+                        "checkout_page.updated",
+                        "product.created",
+                        "product.updated",
                         "subscription.abandoned",
                         "subscription.created",
                         "subscription.trialing",
@@ -62218,7 +62246,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -62232,6 +62260,10 @@
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "checkout_page.created",
+                              "checkout_page.updated",
+                              "product.created",
+                              "product.updated",
                               "subscription.abandoned",
                               "subscription.created",
                               "subscription.trialing",
@@ -62680,6 +62712,170 @@
         "summary": "booking.paid"
       }
     },
+    "/webhook/checkout_page_created_webhook": {
+      "post": {
+        "description": "Triggered when a checkout page is created",
+        "operationId": "webhooks/checkout_page.created",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "checkoutPage": {
+                        "$ref": "#/components/schemas/CheckoutPageResponse"
+                      }
+                    },
+                    "required": [
+                      "checkoutPage"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "checkout_page.created"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "checkout_page.created"
+      }
+    },
+    "/webhook/checkout_page_updated_webhook": {
+      "post": {
+        "description": "Triggered when a checkout page is updated and when it is archived or restored. Changes to the checkout page's product trigger product.updated instead. Check status for the current state.",
+        "operationId": "webhooks/checkout_page.updated",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "checkoutPage": {
+                        "$ref": "#/components/schemas/CheckoutPageResponse"
+                      }
+                    },
+                    "required": [
+                      "checkoutPage"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "checkout_page.updated"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "checkout_page.updated"
+      }
+    },
     "/webhook/customer_created_webhook": {
       "post": {
         "description": "Triggered when a customer is created",
@@ -63095,6 +63291,170 @@
           }
         },
         "summary": "payment.paid"
+      }
+    },
+    "/webhook/product_created_webhook": {
+      "post": {
+        "description": "Triggered when a product is created",
+        "operationId": "webhooks/product.created",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "product": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "required": [
+                      "product"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "product.created"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "product.created"
+      }
+    },
+    "/webhook/product_updated_webhook": {
+      "post": {
+        "description": "Triggered when a product is updated",
+        "operationId": "webhooks/product.updated",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "product": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "required": [
+                      "product"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "product.updated"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "product.updated"
       }
     },
     "/webhook/submission_created_webhook": {

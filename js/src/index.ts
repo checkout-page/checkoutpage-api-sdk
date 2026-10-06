@@ -176,6 +176,9 @@ export type {
   WebhookListParams,
   CreateWebhookParams,
   CreateWebhookResponse,
+  WebhookResponse,
+  UpdateWebhookParams,
+  UpdateWebhookResponse,
   DeleteWebhookResponse,
 } from './types';
 export {
