@@ -2050,7 +2050,7 @@
       },
       "CreateBookingInput": {
         "additionalProperties": false,
-        "description": "Creates an event booking without collecting card payment. With `paymentOption` the booking is recorded as unpaid and settled outside checkout; with `complimentary: true` it is recorded as paid at no charge. Requires a paid plan.",
+        "description": "Creates an event booking without collecting card payment. With `paymentOption` the booking is recorded as unpaid and settled outside checkout; with `complimentary: true` it is recorded as paid at no charge.",
         "properties": {
           "complimentary": {
             "description": "Issue the tickets at no charge. The booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0, `isComplimentary: true`, and the ticket lines at their face value with a matching complimentary discount. Mutually exclusive with `paymentOption` and `couponId`.",
@@ -2134,7 +2134,7 @@
               "maximum": 1000,
               "type": "integer"
             },
-            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs.",
+            "description": "Ticket types to book, keyed by ticket type ID with the quantity as the value. Use the event to discover ticket type IDs. A disabled ticket type, or one in a disabled ticket group, cannot be booked.",
             "example": {
               "65f4a1c2e4a9f3d2b1c0a9e8": 2
             },
@@ -2519,7 +2519,7 @@
             "type": "string"
           },
           "notifyEmail": {
-            "description": "Email addresses to send notifications to. Supports comma separated emails.",
+            "description": "Extra email addresses to send notifications to, alongside the store's team members. Up to 20, comma separated. Only used for stores on a paid plan.",
             "example": "owner@example.com,owner2@example.com",
             "type": [
               "string",
@@ -3688,6 +3688,14 @@
               "null"
             ]
           },
+          "showConfirmationEventAddOns": {
+            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -3816,7 +3824,7 @@
             ]
           },
           "title": {
-            "description": "Public title shown to customers on the page.",
+            "description": "Public title shown to customers on the page. Defaults to `name` when omitted.",
             "example": "Get The Premium Course Today",
             "maxLength": 500,
             "type": "string"
@@ -4152,7 +4160,7 @@
             "type": "string"
           },
           "notifyEmail": {
-            "description": "Email addresses to send notifications to. Supports comma separated emails.",
+            "description": "Extra email addresses to send notifications to, alongside the store's team members. Up to 20, comma separated. Only used for stores on a paid plan.",
             "example": "owner@example.com,owner2@example.com",
             "type": [
               "string",
@@ -6162,6 +6170,13 @@
               "null"
             ]
           },
+          "showConfirmationEventAddOns": {
+            "description": "Whether purchased add-ons are shown on the confirmation page.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Whether the event date and time is shown on the confirmation page.",
             "type": [
@@ -6332,6 +6347,8 @@
           "sellerId",
           "type",
           "status",
+          "testmode",
+          "testmodeEnabledAt",
           "createdAt",
           "updatedAt"
         ],
@@ -41088,6 +41105,14 @@
               "null"
             ]
           },
+          "showConfirmationEventAddOns": {
+            "description": "Show the purchased add-ons on payment confirmation page. Defaults to `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "showConfirmationEventDateTime": {
             "description": "Show the event date on payment confirmation page. Defaults to `true`.",
             "example": true,
@@ -41206,7 +41231,7 @@
             "$ref": "#/components/schemas/ThemeOverridesInput"
           },
           "title": {
-            "description": "Public title shown to customers on the page.",
+            "description": "Public title shown to customers on the page. Defaults to `name` when omitted.",
             "example": "Get The Premium Course Today",
             "maxLength": 500,
             "type": "string"
@@ -44005,7 +44030,7 @@
         ]
       },
       "post": {
-        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be on sale and in stock, and the event registration limit applies. Requires a paid plan and a connected Stripe account.",
+        "description": "Creates an event booking without collecting card payment. The full booking flow runs: tickets are issued, a confirmation email with the ticket PDF is sent to the customer, live-mode bookings decrement ticket-type capacity, and booking webhooks fire. With a `paymentOption` the booking is recorded as `unpaid` and settled outside checkout via the chosen manual option (`invoice` or `cash_on_delivery`); a free booking simply has nothing due. With `complimentary: true` the booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0 and `isComplimentary: true`, while the ticket lines keep their face value and `complimentaryDiscountAmount` records what they would have cost. Storefront rules are enforced: every required field on the event must be supplied, tickets must be enabled, on sale and in stock (a disabled ticket type, or any ticket in a disabled ticket group, cannot be booked, not even as a complimentary booking), and the event registration limit applies. Requires a connected Stripe account.",
         "operationId": "bookings/create",
         "requestBody": {
           "content": {
@@ -44055,7 +44080,7 @@
                 }
               }
             },
-            "description": "Registration limit reached for this customer; account disabled, on the free plan, or over its plan limit; or the API key lacks the required permission"
+            "description": "Registration limit reached for this customer; account disabled or over its plan limit; or the API key lacks the required permission"
           },
           "404": {
             "content": {
@@ -44075,7 +44100,7 @@
                 }
               }
             },
-            "description": "Tickets are sold out or not on sale"
+            "description": "Tickets are sold out or not on sale, including a disabled ticket type or a ticket in a disabled ticket group"
           },
           "429": {
             "content": {
@@ -44085,7 +44110,7 @@
                 }
               }
             },
-            "description": "Rate Limit Exceeded - Please try again later."
+            "description": "The store has reached its daily limit on added bookings"
           },
           "500": {
             "content": {
@@ -46930,10 +46955,13 @@
                     "type": "string"
                   },
                   "maxRedemptions": {
-                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times.",
+                    "description": "The total amount of times this coupon can be used. Doesn't limit a single customer from redeeming multiple times. Send `null` to remove the limit.",
                     "example": 5,
                     "minimum": 0,
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "pageIds": {
                     "description": "A list of pageIds that this coupon can be used within.",
@@ -46948,10 +46976,13 @@
                     "type": "array"
                   },
                   "redeemBy": {
-                    "description": "The ISO datetime that this coupon must be used before.",
+                    "description": "The ISO datetime that this coupon must be used before. Send `null` to remove the expiry.",
                     "example": "2025-10-04T07:36:45.122Z",
                     "format": "date-time",
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "ticketTypeIds": {
                     "description": "A list of ticketTypeIds that this coupon can be used with. Empty array will clear the list.",
@@ -54382,6 +54413,18 @@
                               "null"
                             ]
                           },
+                          "chargeType": {
+                            "description": "Whether `chargeId` is a payment (from a checkout page) or a booking (from an event page). Absent when the invoice has no charge.",
+                            "enum": [
+                              "payment",
+                              "booking",
+                              null
+                            ],
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "complimentaryDiscountAmount": {
                             "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
                             "type": [
@@ -55149,6 +55192,18 @@
                             "null"
                           ]
                         },
+                        "chargeType": {
+                          "description": "Whether `chargeId` is a payment (from a checkout page) or a booking (from an event page). Absent when the invoice has no charge.",
+                          "enum": [
+                            "payment",
+                            "booking",
+                            null
+                          ],
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "complimentaryDiscountAmount": {
                           "description": "Discount that brought a complimentary booking's total to 0, in the smallest currency unit. Absent otherwise.",
                           "type": [
@@ -55907,6 +55962,18 @@
                           "description": "Originating payment (Charge) that generated this invoice. For refund details (amountRefunded, lastRefundAt, lastRefundReason) look up the Charge via list_payments — the invoice itself does not carry refund metadata.",
                           "example": "65f4a1c2e4a9f3d2b1c0a9e8",
                           "pattern": "^[0-9a-fA-F]{24}$",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "chargeType": {
+                          "description": "Whether `chargeId` is a payment (from a checkout page) or a booking (from an event page). Absent when the invoice has no charge.",
+                          "enum": [
+                            "payment",
+                            "booking",
+                            null
+                          ],
                           "type": [
                             "string",
                             "null"
