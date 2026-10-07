@@ -397,6 +397,69 @@ const result = await checkoutpage.files.upload({
 console.log('File uploaded:', result.data.id);
 ```
 
+### Themes
+
+A theme is a page design you can reuse across checkout pages, events and forms. `list()` returns
+your own themes (`scope: 'seller'`) and the built-in ones (`scope: 'global'`), which are read-only.
+
+#### List themes
+
+```typescript
+const { data: themes, has_more } = await checkoutpage.themes.list();
+
+const builtIn = await checkoutpage.themes.list({ scope: 'global' });
+```
+
+#### Create a theme
+
+```typescript
+const { data: theme } = await checkoutpage.themes.create({
+  name: 'Brand',
+  // Optional: start from a copy of a built-in theme or one of yours
+  baseThemeId: builtIn.data[0].id,
+  variables: { tokens: { colorPrimary: { light: '#4f46e5' } } },
+});
+```
+
+`variables` takes the same shape as a page's `themeOverrides`. A copy of a built-in theme does not
+follow your store's brand colour, so set `tokens.colorPrimary` if you want it. A name another of
+your themes already uses is rejected with a `ConflictError`.
+
+#### Get and update a theme
+
+```typescript
+const { data: theme } = await checkoutpage.themes.get(themeId);
+
+const { data: updated } = await checkoutpage.themes.update(themeId, {
+  name: 'Brand v2',
+  variables: { tokens: { colorPrimary: { light: '#0f766e' }, radius: null } },
+});
+```
+
+Every page that uses the theme changes too. Keys you leave out keep their value, and `null` resets a
+property, or everything under a key. Built-in themes can't be changed: copy one with `baseThemeId`.
+
+#### Use a theme on a page
+
+```typescript
+await checkoutpage.checkoutPages.update(pageId, { themeId: theme.id });
+```
+
+`events` and `forms` take `themeId` on `create` and `update` too, and page responses include it.
+Changing a page's theme replaces the page's own theme settings, including ones set in the
+dashboard such as custom CSS, so the page looks like the theme. `themeOverrides` sent in the same
+request apply on top, and the page's locale is kept.
+
+#### Delete a theme
+
+```typescript
+const { data: deleted } = await checkoutpage.themes.delete(themeId);
+```
+
+A theme that any of your pages uses, archived ones included, or that is your store's default theme,
+can't be deleted and throws a `ConflictError`. Move those pages to another theme with `themeId`
+first.
+
 ### Webhooks
 
 #### List webhook endpoints

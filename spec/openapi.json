@@ -2835,6 +2835,16 @@
             "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
             "type": "boolean"
           },
+          "themeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+              }
+            ]
+          },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverridesInput"
           },
@@ -3802,6 +3812,16 @@
             "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
             "type": "boolean"
           },
+          "themeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+              }
+            ]
+          },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverridesInput"
           },
@@ -4334,6 +4354,16 @@
           "testmode": {
             "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
             "type": "boolean"
+          },
+          "themeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+              }
+            ]
           },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverridesInput"
@@ -6273,6 +6303,13 @@
               "null"
             ]
           },
+          "themeId": {
+            "description": "The theme the page uses.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverrides"
           },
@@ -6334,6 +6371,7 @@
           "status",
           "testmode",
           "testmodeEnabledAt",
+          "themeId",
           "createdAt",
           "updatedAt"
         ],
@@ -13622,6 +13660,13 @@
               "null"
             ]
           },
+          "themeId": {
+            "description": "The theme the page uses.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverrides"
           },
@@ -13667,6 +13712,7 @@
           "status",
           "testmode",
           "testmodeEnabledAt",
+          "themeId",
           "createdAt",
           "updatedAt"
         ],
@@ -15514,6 +15560,58 @@
           "default",
           "createdAt",
           "updatedAt"
+        ],
+        "type": "object"
+      },
+      "Theme": {
+        "description": "A reusable page design. Pages use one theme and can override parts of it. `variables` holds the theme's design and labels in the same shape as a page's `themeOverrides`: only the properties the API can set are returned, settings made in the dashboard that the API does not expose are kept but not shown, and it is `null` when the theme sets none.",
+        "properties": {
+          "createdAt": {
+            "description": "ISO-8601 time the theme was created.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deprecated": {
+            "description": "A retired built-in theme. It is only listed while one of your pages uses it, and it cannot be applied to another page.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Unique identifier for the theme.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Theme name, unique within your account.",
+            "type": "string"
+          },
+          "scope": {
+            "description": "`global`: a built-in theme every account can use. It is read-only; copy it with `baseThemeId` to change it. `seller`: a theme your account created.",
+            "enum": [
+              "global",
+              "seller"
+            ],
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "ISO-8601 time the theme was last changed.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variables": {
+            "$ref": "#/components/schemas/ThemeOverrides"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "scope",
+          "deprecated",
+          "createdAt",
+          "updatedAt",
+          "variables"
         ],
         "type": "object"
       },
@@ -40471,6 +40569,16 @@
             "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
             "type": "boolean"
           },
+          "themeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+              }
+            ]
+          },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverridesInput"
           },
@@ -41419,6 +41527,16 @@
           "testmode": {
             "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
             "type": "boolean"
+          },
+          "themeId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+              }
+            ]
           },
           "themeOverrides": {
             "$ref": "#/components/schemas/ThemeOverridesInput"
@@ -52704,6 +52822,16 @@
                     "description": "Puts the page in test mode. While it is on, every purchase on this page is a test purchase: no money is taken, the buyer still receives everything the page delivers, and the records are created with `livemode: false`. Turn it off to take real payments again.",
                     "type": "boolean"
                   },
+                  "themeId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+                      }
+                    ]
+                  },
                   "themeOverrides": {
                     "$ref": "#/components/schemas/ThemeOverridesInput"
                   },
@@ -60003,6 +60131,666 @@
         "summary": "Update a tax rate",
         "tags": [
           "Tax Rates"
+        ]
+      }
+    },
+    "/v1/themes/": {
+      "get": {
+        "description": "Returns the themes your pages can use, newest first: the themes your account created and the built-in (`global`) themes. A retired built-in theme is only listed while one of your pages uses it.",
+        "operationId": "themes/list",
+        "parameters": [
+          {
+            "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "description": "The number of results per page. Minimum value is 1 and maximum is 100. Defaults to 20.",
+              "example": 20,
+              "type": "string"
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+            "in": "query",
+            "name": "starting_after",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to start before. Retrieves items that appear after this cursor in the list. Cannot be used together with `ending_before`.",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              ]
+            }
+          },
+          {
+            "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+            "in": "query",
+            "name": "ending_before",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "A cursor value specifying the id of a resource to end after. Retrieves items that appear before this cursor in the list. Cannot be used together with `starting_after`.",
+                  "example": "507f1f77bcf86cd799439012"
+                }
+              ]
+            }
+          },
+          {
+            "description": "Only return built-in themes (`global`) or themes your account created (`seller`).",
+            "in": "query",
+            "name": "scope",
+            "required": false,
+            "schema": {
+              "description": "Only return built-in themes (`global`) or themes your account created (`seller`).",
+              "enum": [
+                "global",
+                "seller"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "$ref": "#/components/schemas/Theme"
+                      },
+                      "type": "array"
+                    },
+                    "has_more": {
+                      "description": "Whether more records exist beyond the current page.",
+                      "type": "boolean"
+                    },
+                    "total": {
+                      "description": "Total number of records matching the query across all pages.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "has_more"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "A page of themes"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "List themes",
+        "tags": [
+          "Themes"
+        ]
+      },
+      "post": {
+        "description": "Creates a theme your pages can use. Start from an existing theme with `baseThemeId` to keep its full design, then set what should differ in `variables`. `variables` takes the same shape as a page's `themeOverrides`: keys you leave out keep their value, and `null` resets a property, or everything under a key. Settings only the dashboard can change are kept.",
+        "operationId": "themes/create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "baseThemeId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "A theme to start from: one of your themes or a built-in one. The new theme copies all of its settings, including ones only the dashboard can change, and `variables` is applied on top. A copy of a built-in theme does not pick up your store's brand colour automatically; set `tokens.colorPrimary` if you want it."
+                      }
+                    ]
+                  },
+                  "name": {
+                    "description": "Theme name, unique within your account.",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "variables": {
+                    "$ref": "#/components/schemas/ThemeOverridesInput"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Theme"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The created theme"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "A theme with this name already exists"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Create a theme",
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/:themeId": {
+      "delete": {
+        "description": "Deletes a theme your account created. A theme that pages still use, or that is your store's default theme, can't be deleted: move those pages to another theme first. Built-in themes can't be deleted.",
+        "operationId": "themes/delete",
+        "parameters": [
+          {
+            "description": "The theme ID, as returned by list or create.",
+            "in": "path",
+            "name": "themeId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The theme ID, as returned by list or create."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Theme"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The deleted theme"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Theme not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Theme is still in use"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Delete a theme",
+        "tags": [
+          "Themes"
+        ]
+      },
+      "get": {
+        "description": "Returns one theme: a theme your account created or a built-in (`global`) theme.",
+        "operationId": "themes/get",
+        "parameters": [
+          {
+            "description": "The theme ID, as returned by list or create.",
+            "in": "path",
+            "name": "themeId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The theme ID, as returned by list or create."
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Theme"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The theme"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Theme not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Retrieve a theme",
+        "tags": [
+          "Themes"
+        ]
+      },
+      "patch": {
+        "description": "Changes a theme your account created. Every page using it changes too. `variables` takes the same shape as a page's `themeOverrides`: keys you leave out keep their value, and `null` resets a property, or everything under a key. Settings only the dashboard can change are kept. Built-in themes are read-only.",
+        "operationId": "themes/update",
+        "parameters": [
+          {
+            "description": "The theme ID, as returned by list or create.",
+            "in": "path",
+            "name": "themeId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The theme ID, as returned by list or create."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "description": "Theme name, unique within your account.",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "variables": {
+                    "$ref": "#/components/schemas/ThemeOverridesInput"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Theme"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The updated theme"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Theme not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "A theme with this name already exists"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Update a theme",
+        "tags": [
+          "Themes"
         ]
       }
     },

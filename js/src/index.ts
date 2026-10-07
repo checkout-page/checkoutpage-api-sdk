@@ -16,6 +16,7 @@ import { SubmissionResource } from './resources/submissions/submissions';
 import { TaxRateResource } from './resources/tax-rates/tax-rates';
 import { InvoiceResource } from './resources/invoices/invoices';
 import { WebhookResource } from './resources/webhooks/webhooks';
+import { ThemeResource } from './resources/themes/themes';
 
 export class CheckoutPageClient {
   public readonly accounts: AccountResource;
@@ -35,6 +36,7 @@ export class CheckoutPageClient {
   public readonly taxRates: TaxRateResource;
   public readonly invoices: InvoiceResource;
   public readonly webhooks: WebhookResource;
+  public readonly themes: ThemeResource;
   private readonly client: CheckoutPageApiClient;
 
   constructor(options: CheckoutPageApiClientOptions) {
@@ -56,6 +58,7 @@ export class CheckoutPageClient {
     this.taxRates = new TaxRateResource(this.client);
     this.invoices = new InvoiceResource(this.client);
     this.webhooks = new WebhookResource(this.client);
+    this.themes = new ThemeResource(this.client);
   }
 }
 
@@ -180,6 +183,15 @@ export type {
   UpdateWebhookParams,
   UpdateWebhookResponse,
   DeleteWebhookResponse,
+  Theme,
+  ThemeList,
+  ThemeListParams,
+  CreateThemeParams,
+  CreateThemeResponse,
+  ThemeResponse,
+  UpdateThemeParams,
+  UpdateThemeResponse,
+  DeleteThemeResponse,
 } from './types';
 export {
   CheckoutPageError,

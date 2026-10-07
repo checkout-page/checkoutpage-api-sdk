@@ -611,5 +611,37 @@ export type UpdateWebhookResponse =
 export type DeleteWebhookResponse =
   operations['webhooks/delete']['responses'][200]['content']['application/json'];
 
+// Themes
+export type ThemeList = operations['themes/list']['responses'][200]['content']['application/json'];
+
+/** A reusable page design. `global` themes are built in and read-only; `seller` themes are yours. */
+export type Theme = ThemeList['data'][number];
+
+export type ThemeListArgs = operations['themes/list']['parameters']['query'];
+
+export type ThemeListParams = Omit<NonNullable<ThemeListArgs>, 'limit'> & {
+  limit?: number;
+};
+
+export type CreateThemeParams = NonNullable<
+  operations['themes/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateThemeResponse =
+  operations['themes/create']['responses'][201]['content']['application/json'];
+
+export type ThemeResponse =
+  operations['themes/get']['responses'][200]['content']['application/json'];
+
+export type UpdateThemeParams = NonNullable<
+  operations['themes/update']['requestBody']
+>['content']['application/json'];
+
+export type UpdateThemeResponse =
+  operations['themes/update']['responses'][200]['content']['application/json'];
+
+export type DeleteThemeResponse =
+  operations['themes/delete']['responses'][200]['content']['application/json'];
+
 // Re-export the generated types for advanced usage
 export type { components, operations, paths } from './generated/schema';
