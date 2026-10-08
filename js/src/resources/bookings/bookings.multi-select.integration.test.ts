@@ -90,26 +90,28 @@ describe('BookingResource multi-select integration tests', () => {
   });
 
   it(
-    'books a multi-select through values, stored in the option order',
+    'books a multi-select through option values, stored in the option order with the labels in meta',
     { timeout: 60_000 },
     async () => {
-      const { data: booking } = await book({ values: ['Facebook', 'Google'] });
+      const { data: booking } = await book({ values: ['facebook', 'google'] });
 
       const row = booking.fields?.find((field) => field.fieldId === sourceFieldId);
       expect(row?.element).toBe('multi-select');
-      expect(row?.value).toBe('Google, Facebook');
-      expect(row?.values).toEqual(['Google', 'Facebook']);
-      expect(row?.meta ?? {}).not.toHaveProperty('selectedOptionValues');
+      expect(row?.value).toBe('google, facebook');
+      expect(row?.values).toEqual(['google', 'facebook']);
+      expect(row?.meta?.selectedOptionLabel).toBe('Google, Facebook');
+      expect(row?.meta?.selectedOptionLabels).toEqual(['Google', 'Facebook']);
 
       const fetched = await client.bookings.get(booking.id);
       const fetchedRow = fetched.data.fields?.find((field) => field.fieldId === sourceFieldId);
-      expect(fetchedRow?.value).toBe('Google, Facebook');
-      expect(fetchedRow?.values).toEqual(['Google', 'Facebook']);
+      expect(fetchedRow?.value).toBe('google, facebook');
+      expect(fetchedRow?.values).toEqual(['google', 'facebook']);
+      expect(fetchedRow?.meta?.selectedOptionLabels).toEqual(['Google', 'Facebook']);
     }
   );
 
   it('takes an answer row read from the API straight back', { timeout: 120_000 }, async () => {
-    const { data: first } = await book({ values: ['A friend', 'Google'] });
+    const { data: first } = await book({ values: ['A friend', 'google'] });
     const { data: fetched } = await client.bookings.get(first.id);
     const row = fetched.fields?.find((field) => field.fieldId === sourceFieldId);
     if (!row?.values) throw new Error('The booking read back has no multi-select values');
@@ -117,16 +119,17 @@ describe('BookingResource multi-select integration tests', () => {
     const { data: second } = await book({ value: row.value, values: row.values });
 
     const posted = second.fields?.find((field) => field.fieldId === sourceFieldId);
-    expect(posted?.value).toBe('Google, A friend');
-    expect(posted?.values).toEqual(['Google', 'A friend']);
+    expect(posted?.value).toBe('google, A friend');
+    expect(posted?.values).toEqual(['google', 'A friend']);
+    expect(posted?.meta?.selectedOptionLabels).toEqual(['Google', 'A friend']);
   });
 
   it('rebuilds value from values when the two disagree', { timeout: 60_000 }, async () => {
-    const { data: booking } = await book({ value: 'Something else', values: ['Facebook'] });
+    const { data: booking } = await book({ value: 'Something else', values: ['facebook'] });
 
     const row = booking.fields?.find((field) => field.fieldId === sourceFieldId);
-    expect(row?.value).toBe('Facebook');
-    expect(row?.values).toEqual(['Facebook']);
+    expect(row?.value).toBe('facebook');
+    expect(row?.values).toEqual(['facebook']);
   });
 
   it('stores no answer for an optional multi-select left empty', { timeout: 60_000 }, async () => {
@@ -136,10 +139,15 @@ describe('BookingResource multi-select integration tests', () => {
   });
 
   it('refuses a multi-select answered in value', async () => {
-    await expect(book({ value: 'Google' })).rejects.toThrow(ValidationError);
-    await expect(book({ value: 'Google' })).rejects.toThrow(
-      /is a multi-select; send its option labels as a list in "values"/
+    await expect(book({ value: 'google' })).rejects.toThrow(ValidationError);
+    await expect(book({ value: 'google' })).rejects.toThrow(
+      /is a multi-select; send its option values as a list in "values"/
     );
+  });
+
+  it('refuses the label of an option that has a value', async () => {
+    await expect(book({ values: ['Google'] })).rejects.toThrow(ValidationError);
+    await expect(book({ values: ['Google'] })).rejects.toThrow(/has no option value "Google"/);
   });
 
   it('refuses values on a field that is not a multi-select', async () => {
@@ -157,12 +165,14 @@ describe('BookingResource multi-select integration tests', () => {
   });
 
   it('refuses more options than the field allows', async () => {
-    await expect(book({ values: ['Google', 'Facebook', 'A friend'] })).rejects.toThrow(
+    await expect(book({ values: ['google', 'facebook', 'A friend'] })).rejects.toThrow(
       /takes at most 2 options/
     );
   });
 
-  it('refuses a label that is not one of the options', async () => {
-    await expect(book({ values: ['Google', 'Bing'] })).rejects.toThrow(/has no option "Bing"/);
+  it('refuses a value that is not one of the options', async () => {
+    await expect(book({ values: ['google', 'bing'] })).rejects.toThrow(
+      /has no option value "bing"/
+    );
   });
 });

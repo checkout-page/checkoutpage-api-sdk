@@ -46,14 +46,14 @@ describe('EventsResource multi-select field integration tests', () => {
     }
   });
 
-  it('creates a multi-select with its look, counts and default ticks', async () => {
+  it('creates a multi-select with its look, counts and default ticks as option values', async () => {
     const { data: created } = await client.events.fields.create(
       eventId,
       multiSelect({
         layout: 'list',
         minValue: { enabled: true, value: '2' },
         maxValue: { enabled: true, value: '3' },
-        defaultValue: { enabled: true, values: ['Google', 'Facebook'] },
+        defaultValue: { enabled: true, values: ['google', 'facebook'] },
       })
     );
 
@@ -61,7 +61,7 @@ describe('EventsResource multi-select field integration tests', () => {
     expect(created.layout).toBe('list');
     expect(created.minValue).toMatchObject({ enabled: true, value: '2' });
     expect(created.maxValue).toMatchObject({ enabled: true, value: '3' });
-    expect(created.defaultValue?.values).toEqual(['Google', 'Facebook']);
+    expect(created.defaultValue?.values).toEqual(['google', 'facebook']);
     expect(created.options?.map((option) => option.label)).toEqual([
       'Google',
       'Facebook',
@@ -70,7 +70,7 @@ describe('EventsResource multi-select field integration tests', () => {
 
     const { data: fetched } = await client.events.fields.get(eventId, created.id);
     expect(fetched.layout).toBe('list');
-    expect(fetched.defaultValue?.values).toEqual(['Google', 'Facebook']);
+    expect(fetched.defaultValue?.values).toEqual(['google', 'facebook']);
   });
 
   it('refuses a maximum of 1, which is a single choice', async () => {
@@ -109,7 +109,7 @@ describe('EventsResource multi-select field integration tests', () => {
         eventId,
         multiSelect({
           maxValue: { enabled: true, value: '2' },
-          defaultValue: { enabled: true, values: ['Google', 'Facebook', 'A friend'] },
+          defaultValue: { enabled: true, values: ['google', 'facebook', 'A friend'] },
         })
       )
     ).rejects.toThrow(/default value has 3 options but the maximum is 2/);
@@ -119,8 +119,26 @@ describe('EventsResource multi-select field integration tests', () => {
     await expect(
       client.events.fields.create(
         eventId,
-        multiSelect({ defaultValue: { enabled: true, values: ['Bing'] } })
+        multiSelect({ defaultValue: { enabled: true, values: ['bing'] } })
       )
-    ).rejects.toThrow(/default value "Bing" is not one of the options/);
+    ).rejects.toThrow(/default value "bing" is not one of the options/);
+  });
+
+  it('refuses the label of an option that has a value as a default', async () => {
+    await expect(
+      client.events.fields.create(
+        eventId,
+        multiSelect({ defaultValue: { enabled: true, values: ['Google'] } })
+      )
+    ).rejects.toThrow(/default value "Google" is not one of the options/);
+  });
+
+  it('takes the label of an option without a value as its default', async () => {
+    const { data: created } = await client.events.fields.create(
+      eventId,
+      multiSelect({ defaultValue: { enabled: true, values: ['A friend'] } })
+    );
+
+    expect(created.defaultValue?.values).toEqual(['A friend']);
   });
 });

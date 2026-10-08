@@ -596,7 +596,7 @@ describe('BookingResource', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('sends a multi-select answer as values', async () => {
+    it('sends a multi-select answer as option values', async () => {
       const requestSpy = vi
         .spyOn(client, 'request')
         .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'unpaid' } });
@@ -604,7 +604,7 @@ describe('BookingResource', () => {
         ...createParams,
         fields: [
           { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
-          { fieldId: NAME_FIELD_ID, values: ['Google', 'Facebook'] },
+          { fieldId: NAME_FIELD_ID, values: ['google', 'facebook'] },
         ],
       };
 

@@ -595,7 +595,7 @@
                   ]
                 },
                 "values": {
-                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                   "items": {
                     "type": "string"
                   },
@@ -1467,10 +1467,10 @@
             "description": "The submitted value. Address fields take an object of `billing` / `shipping` / `sameAsShipping`; every other field takes a string, except a multi-select field, which takes `values` instead."
           },
           "values": {
-            "description": "A multi-select field's chosen option labels, exactly as the field defines them. Only for multi-select fields. A `value` sent beside it is ignored, so an answer read from the API can be posted back as it is.",
+            "description": "A multi-select field's chosen option values, exactly as the field defines them (an option without a value is named by its label). Labels are not accepted in place of values. Only for multi-select fields. A `value` sent beside it is ignored: the stored `value` and the labels in `meta` are rebuilt from this list.",
             "example": [
-              "Google",
-              "Facebook"
+              "google",
+              "facebook"
             ],
             "items": {
               "maxLength": 5000,
@@ -7009,10 +7009,10 @@
                 ]
               },
               "values": {
-                "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                 "example": [
-                  "Google",
-                  "Facebook"
+                  "google",
+                  "facebook"
                 ],
                 "items": {
                   "type": "string"
@@ -9431,7 +9431,7 @@
                   ]
                 },
                 "values": {
-                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                   "items": {
                     "type": "string"
                   },
@@ -14461,7 +14461,7 @@
           },
           "meta": {
             "additionalProperties": {},
-            "description": "Additional structured metadata stored with the submitted field value. Shape varies by field type, so inspect defensively.",
+            "description": "Additional structured metadata stored with the submitted field value. Shape varies by field type, so inspect defensively. A `select` or `multi-select` answer keeps the chosen option labels in `selectedOptionLabel` (joined with \", \" on a multi-select), and a `multi-select` also lists them in `selectedOptionLabels`, index for index with `values`.",
             "type": [
               "object",
               "null"
@@ -14489,7 +14489,7 @@
             ]
           },
           "values": {
-            "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+            "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
             "items": {
               "type": "string"
             },
@@ -14819,7 +14819,7 @@
                       "type": "string"
                     },
                     "values": {
-                      "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                      "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                       "items": {
                         "type": "string"
                       },
@@ -45582,10 +45582,10 @@
                         ]
                       },
                       "values": {
-                        "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                         "example": [
-                          "Google",
-                          "Facebook"
+                          "google",
+                          "facebook"
                         ],
                         "items": {
                           "type": "string"
@@ -46453,10 +46453,10 @@
                         ]
                       },
                       "values": {
-                        "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                         "example": [
-                          "Google",
-                          "Facebook"
+                          "google",
+                          "facebook"
                         ],
                         "items": {
                           "type": "string"
@@ -48870,10 +48870,10 @@
                         ]
                       },
                       "values": {
-                        "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                         "example": [
-                          "Google",
-                          "Facebook"
+                          "google",
+                          "facebook"
                         ],
                         "items": {
                           "type": "string"
@@ -49741,10 +49741,10 @@
                         ]
                       },
                       "values": {
-                        "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                         "example": [
-                          "Google",
-                          "Facebook"
+                          "google",
+                          "facebook"
                         ],
                         "items": {
                           "type": "string"
@@ -53244,10 +53244,10 @@
                         ]
                       },
                       "values": {
-                        "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                         "example": [
-                          "Google",
-                          "Facebook"
+                          "google",
+                          "facebook"
                         ],
                         "items": {
                           "type": "string"
@@ -54115,10 +54115,10 @@
                         ]
                       },
                       "values": {
-                        "description": "Default option labels pre-ticked on a `multi-select` field when `enabled` is true. Ignored on other elements.",
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
                         "example": [
-                          "Google",
-                          "Facebook"
+                          "google",
+                          "facebook"
                         ],
                         "items": {
                           "type": "string"
@@ -59061,7 +59061,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -64224,7 +64224,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -65056,7 +65056,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -65888,7 +65888,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -66720,7 +66720,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -67552,7 +67552,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -68384,7 +68384,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -69216,7 +69216,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
@@ -70048,7 +70048,7 @@
                                   "type": "string"
                                 },
                                 "values": {
-                                  "description": "Chosen option labels of a multi-select field, in the order the options are defined. `value` holds the same labels joined with a comma. Absent on every other field type.",
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
                                   "items": {
                                     "type": "string"
                                   },
