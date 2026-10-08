@@ -3,17 +3,30 @@ import {
   CheckoutPageClient,
   ConflictError,
   NotFoundError,
+  ValidationError,
   createCheckoutPageClient,
 } from '../../index';
-import type { Theme } from '../../types';
+import type { Form, Schemas, Theme } from '../../types';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
+
+type ThemedPage = Pick<Form, 'id' | 'themeId' | 'locale' | 'themeOverrides'>;
+type PageThemeInput = { themeId?: string; themeOverrides?: Schemas['ThemeOverridesInput'] };
+type CreateThemedPageInput = PageThemeInput & { themeId: string; locale: 'de-DE' };
+
+interface PageKind {
+  label: string;
+  create: (input: CreateThemedPageInput) => Promise<ThemedPage>;
+  get: (id: string) => Promise<ThemedPage>;
+  update: (id: string, input: PageThemeInput) => Promise<ThemedPage>;
+  archive: (id: string) => Promise<unknown>;
+}
 
 describe('ThemeResource Integration Tests', () => {
   let client: CheckoutPageClient;
   let baseTheme: Theme;
   let createdThemeIds: string[] = [];
-  let createdFormIds: string[] = [];
+  let createdPages: Array<{ kind: PageKind; id: string }> = [];
 
   beforeAll(async () => {
     const config = loadIntegrationConfig();
@@ -27,23 +40,15 @@ describe('ThemeResource Integration Tests', () => {
     baseTheme = base;
   });
 
-  // Archiving a form keeps its theme, and a theme any page uses can't be
-  // deleted, so forms move back to the built-in theme before they're archived.
+  // Archiving a page keeps its theme, and a theme any page uses can't be
+  // deleted, so pages move back to the built-in theme before they're archived.
   afterEach(async () => {
-    for (const formId of createdFormIds.splice(0)) {
-      try {
-        await client.forms.update(formId, { themeId: baseTheme.id });
-        await client.forms.delete(formId);
-      } catch {
-        // Best-effort cleanup for integration tests.
-      }
+    for (const { kind, id } of createdPages.splice(0)) {
+      await kind.update(id, { themeId: baseTheme.id }).catch(() => undefined);
+      await kind.archive(id).catch(() => undefined);
     }
     for (const themeId of createdThemeIds.splice(0)) {
-      try {
-        await client.themes.delete(themeId);
-      } catch {
-        // Best-effort cleanup for integration tests.
-      }
+      await client.themes.delete(themeId).catch(() => undefined);
     }
   });
 
@@ -58,6 +63,62 @@ describe('ThemeResource Integration Tests', () => {
     createdThemeIds.push(theme.id);
     return theme;
   };
+
+  const forgetTheme = (themeId: string) => {
+    createdThemeIds = createdThemeIds.filter((id) => id !== themeId);
+  };
+
+  const pageKinds: PageKind[] = [
+    {
+      label: 'checkout pages',
+      create: async (input) => {
+        const name = themeName('checkout page');
+        const { data } = await client.checkoutPages.create({
+          name,
+          productData: { title: name, price: { amount: 4900, currency: 'usd' } },
+          ...input,
+        });
+        return data;
+      },
+      get: async (id) => (await client.checkoutPages.get(id)).data,
+      update: async (id, input) => (await client.checkoutPages.update(id, input)).data,
+      archive: (id) => client.checkoutPages.delete(id),
+    },
+    {
+      label: 'events',
+      create: async (input) => {
+        const name = themeName('event');
+        const { data } = await client.events.create({
+          name,
+          title: name,
+          eventDetails: {
+            type: 'in_person',
+            currency: 'usd',
+            startDate: '2027-09-01T09:00:00Z',
+            endDate: '2027-09-01T17:00:00Z',
+            timezone: 'UTC',
+            location: 'SDK Theme Venue',
+          },
+          ...input,
+        });
+        return data;
+      },
+      get: async (id) => (await client.events.get(id)).data,
+      update: async (id, input) => (await client.events.update(id, input)).data,
+      archive: (id) => client.events.delete(id),
+    },
+    {
+      label: 'forms',
+      create: async (input) => {
+        const name = themeName('form');
+        const { data } = await client.forms.create({ name, title: name, ...input });
+        return data;
+      },
+      get: async (id) => (await client.forms.get(id)).data,
+      update: async (id, input) => (await client.forms.update(id, input)).data,
+      archive: (id) => client.forms.delete(id),
+    },
+  ];
 
   it('creates a theme from a global base, gets it, updates it, then deletes it', async () => {
     const name = themeName('crud');
@@ -146,30 +207,74 @@ describe('ThemeResource Integration Tests', () => {
     await expect(client.themes.delete(missingId)).rejects.toBeInstanceOf(NotFoundError);
   });
 
-  it('sets a page theme with themeId and refuses to delete a theme in use', async () => {
-    const theme = await createTheme('page-theme');
-    const suffix = uniqueSuffix();
+  describe.each(pageKinds.map((kind) => [kind.label, kind] as const))('on %s', (_, kind) => {
+    const labelOverride = { labels: { payButtonText: 'Jetzt kaufen' } };
+    const tokenOverride = { tokens: { colorPrimary: { light: '#abcdef' } } };
+    const bothOverrides = { ...labelOverride, ...tokenOverride };
 
-    const { data: form } = await client.forms.create({
-      name: `SDK theme form ${suffix}`,
-      title: `SDK theme form ${suffix}`,
-      themeId: theme.id,
+    const createPage = async (input: PageThemeInput & { themeId: string }) => {
+      const page = await kind.create({ locale: 'de-DE', ...input });
+      createdPages.push({ kind, id: page.id });
+      return page;
+    };
+
+    it('creates the page with a theme the seller made', async () => {
+      const theme = await createTheme(`${kind.label} create`);
+
+      const page = await createPage({ themeId: theme.id });
+
+      expect(page.themeId).toBe(theme.id);
+      expect((await kind.get(page.id)).themeId).toBe(theme.id);
     });
-    createdFormIds.push(form.id);
 
-    expect(form.themeId).toBe(theme.id);
-    expect((await client.forms.get(form.id)).data.themeId).toBe(theme.id);
+    it('clears the page overrides but keeps its locale when the theme changes', async () => {
+      const theme = await createTheme(`${kind.label} switch`);
+      const page = await createPage({ themeId: theme.id, themeOverrides: bothOverrides });
+      expect(page).toMatchObject({ locale: 'de-DE', themeOverrides: bothOverrides });
 
-    await expect(client.themes.delete(theme.id)).rejects.toBeInstanceOf(ConflictError);
+      const switched = await kind.update(page.id, { themeId: baseTheme.id });
 
-    const { data: moved } = await client.forms.update(form.id, { themeId: baseTheme.id });
-    expect(moved.themeId).toBe(baseTheme.id);
+      const expected = { themeId: baseTheme.id, locale: 'de-DE', themeOverrides: null };
+      expect(switched).toMatchObject(expected);
+      expect(await kind.get(page.id)).toMatchObject(expected);
+    });
 
-    await client.forms.delete(form.id);
-    createdFormIds = createdFormIds.filter((id) => id !== form.id);
+    it('merges the overrides when themeId is the theme the page already uses', async () => {
+      const theme = await createTheme(`${kind.label} merge`);
+      const page = await createPage({ themeId: theme.id, themeOverrides: labelOverride });
 
-    await client.themes.delete(theme.id);
-    createdThemeIds = createdThemeIds.filter((id) => id !== theme.id);
-    await expect(client.themes.get(theme.id)).rejects.toBeInstanceOf(NotFoundError);
+      const updated = await kind.update(page.id, {
+        themeId: theme.id,
+        themeOverrides: tokenOverride,
+      });
+
+      const expected = { themeId: theme.id, locale: 'de-DE', themeOverrides: bothOverrides };
+      expect(updated).toMatchObject(expected);
+      expect(await kind.get(page.id)).toMatchObject(expected);
+    });
+
+    it('rejects a null themeId and keeps the page theme', async () => {
+      const theme = await createTheme(`${kind.label} null`);
+      const page = await createPage({ themeId: theme.id });
+
+      // The types already forbid null; this checks the API refuses it too.
+      await expect(kind.update(page.id, { themeId: null as never })).rejects.toBeInstanceOf(
+        ValidationError
+      );
+      expect((await kind.get(page.id)).themeId).toBe(theme.id);
+    });
+
+    it('refuses to delete a theme the page uses until the page moves off it', async () => {
+      const theme = await createTheme(`${kind.label} in use`);
+      const page = await createPage({ themeId: theme.id });
+
+      await expect(client.themes.delete(theme.id)).rejects.toBeInstanceOf(ConflictError);
+
+      expect((await kind.update(page.id, { themeId: baseTheme.id })).themeId).toBe(baseTheme.id);
+
+      await client.themes.delete(theme.id);
+      forgetTheme(theme.id);
+      await expect(client.themes.get(theme.id)).rejects.toBeInstanceOf(NotFoundError);
+    });
   });
 });
