@@ -2841,7 +2841,7 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). `themeOverrides` apply on top. Leave it out to use your store's default theme."
               }
             ]
           },
@@ -3818,7 +3818,7 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). `themeOverrides` apply on top. Leave it out to use your store's default theme."
               }
             ]
           },
@@ -4361,7 +4361,7 @@
                 "$ref": "#/components/schemas/UniqueIdentifier"
               },
               {
-                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). Changing it replaces the page's own theme settings, including ones set in the dashboard such as custom CSS, so the page looks like the theme; `themeOverrides` sent in the same request apply on top. The page's locale is kept."
+                "description": "The theme the page uses: one of your themes or a built-in one (see List themes). `themeOverrides` apply on top. Leave it out to use your store's default theme."
               }
             ]
           },
@@ -60306,7 +60306,7 @@
                         "$ref": "#/components/schemas/UniqueIdentifier"
                       },
                       {
-                        "description": "A theme to start from: one of your themes or a built-in one. The new theme copies all of its settings, including ones only the dashboard can change, and `variables` is applied on top. A copy of a built-in theme does not pick up your store's brand colour automatically; set `tokens.colorPrimary` if you want it."
+                        "description": "A theme to start from: one of your themes or a built-in one. The new theme copies all of its settings, including ones only the dashboard can change, and `variables` is applied on top. A copy of a built-in theme does not pick up your store's brand color automatically; set `tokens.colorPrimary` if you want it."
                       }
                     ]
                   },
