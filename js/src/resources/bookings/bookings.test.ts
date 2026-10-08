@@ -596,6 +596,27 @@ describe('BookingResource', () => {
       expect(result).toEqual(mockResponse);
     });
 
+    it('sends a multi-select answer as option values', async () => {
+      const requestSpy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: { ...BASE_BOOKING, status: 'unpaid' } });
+      const params: CreateBookingParams = {
+        ...createParams,
+        fields: [
+          { fieldId: EMAIL_FIELD_ID, value: 'ada@example.com' },
+          { fieldId: NAME_FIELD_ID, values: ['google', 'facebook'] },
+        ],
+      };
+
+      await bookingResource.create(params);
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: params,
+      });
+    });
+
     it('returns the wrapped envelope untouched', async () => {
       const mockResponse: BookingResponse = {
         data: { ...BASE_BOOKING, status: 'unpaid' },

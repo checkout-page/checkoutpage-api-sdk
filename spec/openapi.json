@@ -506,6 +506,7 @@
                     "quantity",
                     "multiple-choice",
                     "select",
+                    "multi-select",
                     "po-number",
                     "text",
                     "textarea",
@@ -590,6 +591,16 @@
                   "description": "Submitted value for the field.",
                   "type": [
                     "string",
+                    "null"
+                  ]
+                },
+                "values": {
+                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
                     "null"
                   ]
                 }
@@ -1453,12 +1464,24 @@
                 "type": "object"
               }
             ],
-            "description": "The submitted value. Address fields take an object of `billing` / `shipping` / `sameAsShipping`; every other field takes a string."
+            "description": "The submitted value. Address fields take an object of `billing` / `shipping` / `sameAsShipping`; every other field takes a string, except a multi-select field, which takes `values` instead."
+          },
+          "values": {
+            "description": "A multi-select field's chosen option values, exactly as the field defines them (an option without a value is named by its label). Labels are not accepted in place of values. Only for multi-select fields. A `value` sent beside it is ignored: the stored `value` and the labels in `meta` are rebuilt from this list.",
+            "example": [
+              "google",
+              "facebook"
+            ],
+            "items": {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
           }
         },
         "required": [
-          "fieldId",
-          "value"
+          "fieldId"
         ],
         "type": "object"
       },
@@ -6389,6 +6412,15 @@
                   "string",
                   "null"
                 ]
+              },
+              "values": {
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "array",
+                  "null"
+                ]
               }
             },
             "type": [
@@ -6426,6 +6458,18 @@
             "description": "Display label shown to customers for this field.",
             "example": "Company Name",
             "type": "string"
+          },
+          "layout": {
+            "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+            "enum": [
+              "dropdown",
+              "list",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "limitAllowedCountries": {
             "description": "Country restriction settings for fields that collect country data.",
@@ -6542,7 +6586,7 @@
             ]
           },
           "options": {
-            "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+            "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
             "items": {
               "properties": {
                 "id": {
@@ -6834,6 +6878,25 @@
             "required": true
           },
           {
+            "element": "multi-select",
+            "label": "How did you hear about us?",
+            "options": [
+              {
+                "label": "Google",
+                "value": "google"
+              },
+              {
+                "label": "Facebook",
+                "value": "facebook"
+              },
+              {
+                "label": "A friend",
+                "value": "friend"
+              }
+            ],
+            "required": false
+          },
+          {
             "element": "multiple-choice",
             "label": "T-Shirt Size",
             "options": [
@@ -6944,6 +7007,20 @@
                   "string",
                   "null"
                 ]
+              },
+              "values": {
+                "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                "example": [
+                  "google",
+                  "facebook"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "array",
+                  "null"
+                ]
               }
             },
             "type": [
@@ -6967,6 +7044,7 @@
               "quantity",
               "multiple-choice",
               "select",
+              "multi-select",
               "po-number",
               "text",
               "textarea",
@@ -7009,6 +7087,19 @@
             "maxLength": 200,
             "minLength": 1,
             "type": "string"
+          },
+          "layout": {
+            "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+            "enum": [
+              "dropdown",
+              "list",
+              null
+            ],
+            "example": "list",
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "limitAllowedCountries": {
             "description": "Country restriction settings for country-based fields.",
@@ -7154,7 +7245,7 @@
             ]
           },
           "options": {
-            "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+            "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
             "example": [
               {
                 "label": "Starter",
@@ -7238,7 +7329,7 @@
             "description": "Conditional visibility rules for this field.",
             "properties": {
               "comparison": {
-                "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                 "enum": [
                   "is",
                   "is_not",
@@ -7319,7 +7410,7 @@
             ]
           },
           "type": {
-            "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+            "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
             "enum": [
               "",
               "company-name",
@@ -9251,6 +9342,7 @@
                     "quantity",
                     "multiple-choice",
                     "select",
+                    "multi-select",
                     "po-number",
                     "text",
                     "textarea",
@@ -9335,6 +9427,16 @@
                   "description": "Submitted value for the field.",
                   "type": [
                     "string",
+                    "null"
+                  ]
+                },
+                "values": {
+                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
                     "null"
                   ]
                 }
@@ -14359,7 +14461,7 @@
           },
           "meta": {
             "additionalProperties": {},
-            "description": "Additional structured metadata stored with the submitted field value. Shape varies by field type, so inspect defensively.",
+            "description": "Additional structured metadata stored with the submitted field value. Shape varies by field type, so inspect defensively. A `select` or `multi-select` answer keeps the chosen option labels in `selectedOptionLabel` (joined with \", \" on a multi-select), and a `multi-select` also lists them in `selectedOptionLabels`, index for index with `values`.",
             "type": [
               "object",
               "null"
@@ -14383,6 +14485,16 @@
             "description": "Submitted value rendered as a string.",
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "values": {
+            "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
               "null"
             ]
           }
@@ -14645,6 +14757,7 @@
                         "quantity",
                         "multiple-choice",
                         "select",
+                        "multi-select",
                         "po-number",
                         "text",
                         "textarea",
@@ -14704,6 +14817,13 @@
                     },
                     "value": {
                       "type": "string"
+                    },
+                    "values": {
+                      "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
                     }
                   },
                   "type": "object"
@@ -45460,6 +45580,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "values": {
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                        "example": [
+                          "google",
+                          "facebook"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     },
                     "type": [
@@ -45483,6 +45617,7 @@
                       "quantity",
                       "multiple-choice",
                       "select",
+                      "multi-select",
                       "po-number",
                       "text",
                       "textarea",
@@ -45517,6 +45652,19 @@
                     "maxLength": 200,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "layout": {
+                    "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+                    "enum": [
+                      "dropdown",
+                      "list",
+                      null
+                    ],
+                    "example": "list",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "limitAllowedCountries": {
                     "description": "Country restriction settings for country-based fields.",
@@ -45662,7 +45810,7 @@
                     ]
                   },
                   "options": {
-                    "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+                    "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
                     "example": [
                       {
                         "label": "Starter",
@@ -45746,7 +45894,7 @@
                     "description": "Conditional visibility rules for this field.",
                     "properties": {
                       "comparison": {
-                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                         "enum": [
                           "is",
                           "is_not",
@@ -45827,7 +45975,7 @@
                     ]
                   },
                   "type": {
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
                     "enum": [
                       "",
                       "company-name",
@@ -46303,6 +46451,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "values": {
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                        "example": [
+                          "google",
+                          "facebook"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     },
                     "type": [
@@ -46326,6 +46488,7 @@
                       "quantity",
                       "multiple-choice",
                       "select",
+                      "multi-select",
                       "po-number",
                       "text",
                       "textarea",
@@ -46360,6 +46523,19 @@
                     "maxLength": 200,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "layout": {
+                    "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+                    "enum": [
+                      "dropdown",
+                      "list",
+                      null
+                    ],
+                    "example": "list",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "limitAllowedCountries": {
                     "description": "Country restriction settings for country-based fields.",
@@ -46505,7 +46681,7 @@
                     ]
                   },
                   "options": {
-                    "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+                    "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
                     "example": [
                       {
                         "label": "Starter",
@@ -46589,7 +46765,7 @@
                     "description": "Conditional visibility rules for this field.",
                     "properties": {
                       "comparison": {
-                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                         "enum": [
                           "is",
                           "is_not",
@@ -46670,7 +46846,7 @@
                     ]
                   },
                   "type": {
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
                     "enum": [
                       "",
                       "company-name",
@@ -48692,6 +48868,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "values": {
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                        "example": [
+                          "google",
+                          "facebook"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     },
                     "type": [
@@ -48715,6 +48905,7 @@
                       "quantity",
                       "multiple-choice",
                       "select",
+                      "multi-select",
                       "po-number",
                       "text",
                       "textarea",
@@ -48749,6 +48940,19 @@
                     "maxLength": 200,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "layout": {
+                    "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+                    "enum": [
+                      "dropdown",
+                      "list",
+                      null
+                    ],
+                    "example": "list",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "limitAllowedCountries": {
                     "description": "Country restriction settings for country-based fields.",
@@ -48894,7 +49098,7 @@
                     ]
                   },
                   "options": {
-                    "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+                    "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
                     "example": [
                       {
                         "label": "Starter",
@@ -48978,7 +49182,7 @@
                     "description": "Conditional visibility rules for this field.",
                     "properties": {
                       "comparison": {
-                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                         "enum": [
                           "is",
                           "is_not",
@@ -49059,7 +49263,7 @@
                     ]
                   },
                   "type": {
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
                     "enum": [
                       "",
                       "company-name",
@@ -49535,6 +49739,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "values": {
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                        "example": [
+                          "google",
+                          "facebook"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     },
                     "type": [
@@ -49558,6 +49776,7 @@
                       "quantity",
                       "multiple-choice",
                       "select",
+                      "multi-select",
                       "po-number",
                       "text",
                       "textarea",
@@ -49592,6 +49811,19 @@
                     "maxLength": 200,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "layout": {
+                    "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+                    "enum": [
+                      "dropdown",
+                      "list",
+                      null
+                    ],
+                    "example": "list",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "limitAllowedCountries": {
                     "description": "Country restriction settings for country-based fields.",
@@ -49737,7 +49969,7 @@
                     ]
                   },
                   "options": {
-                    "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+                    "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
                     "example": [
                       {
                         "label": "Starter",
@@ -49821,7 +50053,7 @@
                     "description": "Conditional visibility rules for this field.",
                     "properties": {
                       "comparison": {
-                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                         "enum": [
                           "is",
                           "is_not",
@@ -49902,7 +50134,7 @@
                     ]
                   },
                   "type": {
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
                     "enum": [
                       "",
                       "company-name",
@@ -53010,6 +53242,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "values": {
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                        "example": [
+                          "google",
+                          "facebook"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     },
                     "type": [
@@ -53033,6 +53279,7 @@
                       "quantity",
                       "multiple-choice",
                       "select",
+                      "multi-select",
                       "po-number",
                       "text",
                       "textarea",
@@ -53067,6 +53314,19 @@
                     "maxLength": 200,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "layout": {
+                    "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+                    "enum": [
+                      "dropdown",
+                      "list",
+                      null
+                    ],
+                    "example": "list",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "limitAllowedCountries": {
                     "description": "Country restriction settings for country-based fields.",
@@ -53212,7 +53472,7 @@
                     ]
                   },
                   "options": {
-                    "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+                    "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
                     "example": [
                       {
                         "label": "Starter",
@@ -53296,7 +53556,7 @@
                     "description": "Conditional visibility rules for this field.",
                     "properties": {
                       "comparison": {
-                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                         "enum": [
                           "is",
                           "is_not",
@@ -53377,7 +53637,7 @@
                     ]
                   },
                   "type": {
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
                     "enum": [
                       "",
                       "company-name",
@@ -53853,6 +54113,20 @@
                           "string",
                           "null"
                         ]
+                      },
+                      "values": {
+                        "description": "Option values pre-ticked on a `multi-select` field when `enabled` is true (an option without a value is named by its label). Ignored on other elements.",
+                        "example": [
+                          "google",
+                          "facebook"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     },
                     "type": [
@@ -53876,6 +54150,7 @@
                       "quantity",
                       "multiple-choice",
                       "select",
+                      "multi-select",
                       "po-number",
                       "text",
                       "textarea",
@@ -53910,6 +54185,19 @@
                     "maxLength": 200,
                     "minLength": 1,
                     "type": "string"
+                  },
+                  "layout": {
+                    "description": "How a multi-select field is drawn at checkout: `dropdown` (the default) or `list`, a list of checkboxes. Ignored on other elements.",
+                    "enum": [
+                      "dropdown",
+                      "list",
+                      null
+                    ],
+                    "example": "list",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "limitAllowedCountries": {
                     "description": "Country restriction settings for country-based fields.",
@@ -54055,7 +54343,7 @@
                     ]
                   },
                   "options": {
-                    "description": "Selectable options. Applies to `select` and `multiple-choice` elements.",
+                    "description": "Selectable options. Applies to `select`, `multi-select` and `multiple-choice` elements.",
                     "example": [
                       {
                         "label": "Starter",
@@ -54139,7 +54427,7 @@
                     "description": "Conditional visibility rules for this field.",
                     "properties": {
                       "comparison": {
-                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select` and `multiple-choice` triggers.",
+                        "description": "Comparison operator used for conditional visibility checks. Trigger fields must be `select`, `multi-select`, `multiple-choice`, or `checkbox`. Checkbox triggers only support `is` and `is_not`. Use `is_empty` and `is_not_empty` only with `select`, `multi-select` and `multiple-choice` triggers. On a `multi-select` trigger, `is` means the option is among the chosen ones.",
                         "enum": [
                           "is",
                           "is_not",
@@ -54220,7 +54508,7 @@
                     ]
                   },
                   "type": {
-                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `date-time`, `date`, `time`, `textarea`.",
+                    "description": "Used to store field data in a predictable manner. Please note that you must use Customer Name and Shipping Address if you wish to use any of the shipping address data types. Do not set `type` when `element` is one of: `checkbox`, `quantity`, `tax-id`, `po-number`, `multiple-choice`, `multi-select`, `date-time`, `date`, `time`, `textarea`.",
                     "enum": [
                       "",
                       "company-name",
@@ -58711,6 +58999,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -58770,6 +59059,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -63866,6 +64162,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -63925,6 +64222,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -64690,6 +64994,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -64749,6 +65054,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -65514,6 +65826,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -65573,6 +65886,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -66338,6 +66658,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -66397,6 +66718,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -67162,6 +67490,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -67221,6 +67550,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -67986,6 +68322,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -68045,6 +68382,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -68810,6 +69154,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -68869,6 +69214,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
@@ -69634,6 +69986,7 @@
                                     "quantity",
                                     "multiple-choice",
                                     "select",
+                                    "multi-select",
                                     "po-number",
                                     "text",
                                     "textarea",
@@ -69693,6 +70046,13 @@
                                 },
                                 "value": {
                                   "type": "string"
+                                },
+                                "values": {
+                                  "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": "array"
                                 }
                               },
                               "type": "object"
