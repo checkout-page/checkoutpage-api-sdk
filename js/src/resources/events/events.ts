@@ -1,4 +1,5 @@
 import type { CheckoutPageApiClient } from '../../client';
+import { OrderBumpsResource } from '../order-bumps/order-bumps';
 import type {
   EventList,
   EventListParams,
@@ -303,10 +304,12 @@ export class EventTicketGroupsResource {
 export class EventsResource {
   public readonly ticketGroups: EventTicketGroupsResource;
   public readonly fields: EventFieldsResource;
+  public readonly orderBumps: OrderBumpsResource;
 
   constructor(private client: CheckoutPageApiClient) {
     this.ticketGroups = new EventTicketGroupsResource(client);
     this.fields = new EventFieldsResource(client);
+    this.orderBumps = new OrderBumpsResource(client, 'events');
   }
 
   async list(args: EventListParams = {}): Promise<EventList> {

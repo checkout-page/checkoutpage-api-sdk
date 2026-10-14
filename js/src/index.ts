@@ -69,6 +69,10 @@ export const createCheckoutPageClient = (options: CheckoutPageApiClientOptions) 
 // Export types and errors for convenience
 export type { CheckoutPageApiClientOptions } from './client';
 export type {
+  OrderBumpsResource,
+  OrderBumpPageResource,
+} from './resources/order-bumps/order-bumps';
+export type {
   ReadOptions,
   Account,
   AccountLogo,
@@ -102,6 +106,17 @@ export type {
   UpdateProductParams,
   ProductList,
   ProductListParams,
+  CreateProductParams,
+  CreateProductResponse,
+  DeleteProductOptions,
+  DeleteProductResponse,
+  OrderBump,
+  OrderBumpList,
+  OrderBumpResponse,
+  CreateOrderBumpParams,
+  UpdateOrderBumpParams,
+  ReorderOrderBumpsParams,
+  DeleteOrderBumpResponse,
   Event,
   EventList,
   EventListParams,

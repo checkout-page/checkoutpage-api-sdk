@@ -369,6 +369,64 @@ await checkoutpage.checkoutPages.create({
 > report them by mirroring the product — but new integrations should set them
 > under `productData` or via `products.update()`.
 
+### Order bumps
+
+An order bump is an extra product offered on a checkout page or event (shown as
+an add-on on an event). Create the order bump product once, then offer it on as
+many pages as you like.
+
+#### Create an order bump product
+
+Order bump products use a single one-time price, which can have a setup fee or be
+pay what you want. Recurring prices and payment plans are refused with a
+`ValidationError`.
+
+```typescript
+const { data: bump } = await checkoutpage.products.create({
+  role: 'orderbump',
+  title: 'Gift wrapping',
+  price: { amount: 500, currency: 'usd' },
+  callToActionText: 'Yes! Add gift wrapping',
+  shortDescription: 'Wrapped in recycled paper with a handwritten note.',
+});
+
+const bumps = await checkoutpage.products.list({ role: 'orderbump' });
+```
+
+#### Offer it on a page
+
+The same methods are on `checkoutpage.events.orderBumps` for events.
+
+```typescript
+await checkoutpage.checkoutPages.orderBumps.create('page_id', {
+  productId: bump.id,
+  preselected: true,
+});
+
+const { data: placed } = await checkoutpage.checkoutPages.orderBumps.list('page_id');
+
+await checkoutpage.checkoutPages.orderBumps.update('page_id', bump.id, {
+  allowQuantity: true,
+});
+
+// List every order bump on the page, once, in the new order
+await checkoutpage.checkoutPages.orderBumps.reorder('page_id', {
+  productIds: ['other_bump_id', bump.id],
+});
+
+// Stops offering it on this page; the product is kept
+await checkoutpage.checkoutPages.orderBumps.delete('page_id', bump.id);
+```
+
+#### Delete an order bump product
+
+Only order bump products that have never been bought can be deleted. A product
+still offered on a page is refused unless you pass `fromAllPages: true`.
+
+```typescript
+await checkoutpage.products.delete(bump.id, { fromAllPages: true });
+```
+
 ### Files
 
 #### Upload an image

@@ -314,6 +314,44 @@ export type ProductListParams = Omit<NonNullable<ProductListArgs>, 'limit'> & {
   limit?: number;
 };
 
+/**
+ * Creating a product on its own is for order bump products only (`role: 'orderbump'`).
+ * Page products are created with their checkout page or event.
+ */
+export type CreateProductParams = NonNullable<
+  operations['products/create']['requestBody']
+>['content']['application/json'];
+
+export type CreateProductResponse =
+  operations['products/create']['responses'][201]['content']['application/json'];
+
+export interface DeleteProductOptions {
+  /** Also remove the order bump from every page that offers it. Without it, a product still offered on a page is refused. */
+  fromAllPages?: boolean;
+}
+
+export type DeleteProductResponse =
+  operations['products/delete']['responses'][200]['content']['application/json'];
+
+// Order bumps. Checkout pages and events share one contract, so these types
+// serve both `client.checkoutPages.orderBumps` and `client.events.orderBumps`.
+export type OrderBump = components['schemas']['OrderBump'];
+
+export type OrderBumpList =
+  operations['checkout-pages/order-bumps/list']['responses'][200]['content']['application/json'];
+
+export type OrderBumpResponse =
+  operations['checkout-pages/order-bumps/create']['responses'][201]['content']['application/json'];
+
+export type CreateOrderBumpParams = components['schemas']['CreateOrderBumpRequest'];
+
+export type UpdateOrderBumpParams = components['schemas']['UpdateOrderBumpRequest'];
+
+export type ReorderOrderBumpsParams = components['schemas']['ReorderOrderBumpsRequest'];
+
+export type DeleteOrderBumpResponse =
+  operations['checkout-pages/order-bumps/delete']['responses'][200]['content']['application/json'];
+
 // Events
 export type EventList = operations['events/list']['responses'][200]['content']['application/json'];
 
