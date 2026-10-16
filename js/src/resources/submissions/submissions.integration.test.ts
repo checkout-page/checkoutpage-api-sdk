@@ -7,7 +7,7 @@ import {
 } from '../../index';
 import type { CreateFormParams } from '../../types';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
-import { uniqueSuffix } from '../../test-helpers/test-lib';
+import { fakeObjectId, syntheticClientIp, uniqueSuffix } from '../../test-helpers/test-lib';
 
 describe('SubmissionResource integration tests', () => {
   let client: CheckoutPageClient;
@@ -108,6 +108,7 @@ describe('SubmissionResource integration tests', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Forwarded-For': syntheticClientIp(),
         },
         body: requestBody,
       });
@@ -456,6 +457,96 @@ describe('SubmissionResource integration tests', () => {
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].id).not.toBe(seedPage.data[1].id);
+    });
+  });
+
+  // Only ever cancels submissions this block created on its own form.
+  describe('cancel', () => {
+    let formId: string;
+    let canceledSubmissionId: string;
+    let activeSubmissionId: string;
+
+    beforeAll(async () => {
+      const { data: form } = await createForm({
+        name: `SDK Cancel Form ${uniqueSuffix()}`,
+        title: `SDK Cancel Form ${uniqueSuffix()}`,
+      });
+      formId = form.id;
+      canceledSubmissionId = (await createSubmissionForForm(formId)).submissionId;
+      activeSubmissionId = (await createSubmissionForForm(formId)).submissionId;
+    });
+
+    it('starts the seeded submissions as active', async () => {
+      const { data: submission } = await client.submissions.get(canceledSubmissionId);
+
+      expect(submission.orderStatus).toBe('active');
+      expect(submission.canceledAt ?? null).toBeNull();
+    });
+
+    it('rejects an empty reason with a ValidationError and leaves the submission active', async () => {
+      await expect(
+        client.submissions.cancel(activeSubmissionId, { reason: '' })
+      ).rejects.toBeInstanceOf(ValidationError);
+
+      const { data: submission } = await client.submissions.get(activeSubmissionId);
+      expect(submission.orderStatus).toBe('active');
+    });
+
+    it('cancels a submission and returns it with the cancel details', async () => {
+      const reason = `SDK cancel ${uniqueSuffix()}`;
+      const startedAt = Date.now();
+
+      const result = await client.submissions.cancel(canceledSubmissionId, { reason });
+
+      expect(Object.keys(result)).toEqual(['data']);
+      const { data: submission } = result;
+      expect(submission.id).toBe(canceledSubmissionId);
+      expect(submission.orderStatus).toBe('canceled');
+      expect(submission.canceledReason).toBe(reason);
+      expect(typeof submission.canceledAt).toBe('string');
+      expect(new Date(submission.canceledAt as string).getTime()).toBeGreaterThanOrEqual(
+        startedAt - 60_000
+      );
+      expect(typeof submission.canceledByApiKey).toBe('string');
+      expect(typeof submission.canceledByApiKeyName).toBe('string');
+      expect((submission.canceledByApiKeyName as string).length).toBeGreaterThan(0);
+      expect(submission.canceledBy ?? null).toBeNull();
+
+      const { data: fetched } = await client.submissions.get(canceledSubmissionId);
+      expect(fetched).toMatchObject({
+        orderStatus: 'canceled',
+        canceledReason: reason,
+        canceledAt: submission.canceledAt,
+        canceledByApiKeyName: submission.canceledByApiKeyName,
+      });
+    });
+
+    it('rejects a second cancel with a ValidationError', async () => {
+      const again = client.submissions.cancel(canceledSubmissionId, { reason: 'Again' });
+
+      await expect(again).rejects.toBeInstanceOf(ValidationError);
+      await expect(again).rejects.toThrow('Submission already canceled');
+    });
+
+    it('filters the list by orderStatus', async () => {
+      const canceled = await client.submissions.list({ pageId: formId, orderStatus: 'canceled' });
+      expect(canceled.data.map((s) => s.id)).toEqual([canceledSubmissionId]);
+      expect(canceled.data[0].orderStatus).toBe('canceled');
+
+      const active = await client.submissions.list({ pageId: formId, orderStatus: 'active' });
+      expect(active.data.map((s) => s.id)).toEqual([activeSubmissionId]);
+
+      const all = await client.submissions.list({ pageId: formId });
+      expect(all.data.map((s) => s.id).sort()).toEqual(
+        [canceledSubmissionId, activeSubmissionId].sort()
+      );
+    });
+
+    it('returns a NotFoundError for an unknown submission id', async () => {
+      const missing = client.submissions.cancel(fakeObjectId('missing'), { reason: 'Missing' });
+
+      await expect(missing).rejects.toBeInstanceOf(NotFoundError);
+      await expect(missing).rejects.toThrow('Submission not found');
     });
   });
 });

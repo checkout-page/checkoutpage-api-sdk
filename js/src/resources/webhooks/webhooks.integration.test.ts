@@ -75,6 +75,30 @@ describe('WebhookResource Integration Tests', () => {
     expect(webhook.customHeaders).toEqual({ Authorization: 'Bearer receiver-token' });
   });
 
+  it('subscribes to the canceled events and filters by them', async () => {
+    const { data: webhook } = await client.webhooks.create({
+      name: `SDK canceled ${uniqueSuffix()}`,
+      url: hookUrl(),
+      events: ['payment.canceled', 'booking.canceled', 'submission.canceled'],
+    });
+    createdIds.push(webhook.id);
+
+    expect(webhook.events).toEqual(['payment.canceled', 'booking.canceled', 'submission.canceled']);
+
+    const { data: updated } = await client.webhooks.update(webhook.id, {
+      events: ['submission.canceled'],
+    });
+    expect(updated.events).toEqual(['submission.canceled']);
+
+    const bySubmissionCanceled = await client.webhooks.list({
+      event: 'submission.canceled',
+      limit: 100,
+    });
+    expect(bySubmissionCanceled.data.some((w) => w.id === webhook.id)).toBe(true);
+    const byPaymentCanceled = await client.webhooks.list({ event: 'payment.canceled', limit: 100 });
+    expect(byPaymentCanceled.data.some((w) => w.id === webhook.id)).toBe(false);
+  });
+
   it('lists webhooks without secrets and filters by event and status', async () => {
     const { data: webhook } = await client.webhooks.create({
       name: `SDK list ${uniqueSuffix()}`,
