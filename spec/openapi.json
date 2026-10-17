@@ -5137,7 +5137,6 @@
             "enum": [
               "enabled",
               "disabled",
-              "archived",
               null
             ],
             "example": "enabled",
@@ -38138,7 +38137,6 @@
             "enum": [
               "enabled",
               "disabled",
-              "archived",
               null
             ],
             "example": "enabled",
@@ -38853,7 +38851,6 @@
             "enum": [
               "enabled",
               "disabled",
-              "archived",
               null
             ],
             "example": "enabled",
@@ -39674,7 +39671,6 @@
             "enum": [
               "enabled",
               "disabled",
-              "archived",
               null
             ],
             "example": "enabled",
@@ -43800,7 +43796,6 @@
             "enum": [
               "enabled",
               "disabled",
-              "archived",
               null
             ],
             "example": "enabled",
@@ -44039,7 +44034,6 @@
             "enum": [
               "enabled",
               "disabled",
-              "archived",
               null
             ],
             "example": "enabled",
@@ -50594,127 +50588,6 @@
       }
     },
     "/v1/events/:pageId/ticket-groups/:ticketGroupId": {
-      "delete": {
-        "description": "Archives a ticket group by setting its status to \"archived\". The ticket group will no longer be visible but data is preserved.",
-        "operationId": "events/ticket-groups/delete",
-        "parameters": [
-          {
-            "description": "The unique identifier of the page.",
-            "in": "path",
-            "name": "pageId",
-            "required": true,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "The unique identifier of the page.",
-                  "example": "507f1f77bcf86cd799439011"
-                }
-              ]
-            }
-          },
-          {
-            "description": "The unique identifier of the ticket group.",
-            "in": "path",
-            "name": "ticketGroupId",
-            "required": true,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "The unique identifier of the ticket group.",
-                  "example": "507f1f77bcf86cd799439012"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TicketGroupEnvelopeResponse"
-                }
-              }
-            },
-            "description": "Ticket group archived successfully"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Bad request - Invalid request parameters"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized - Missing or invalid API key"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden - Insufficient permissions or validation error"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Event or ticket group not found"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Rate Limit Exceeded - Please try again later."
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "api_key_auth": []
-          }
-        ],
-        "summary": "Archive a ticket group",
-        "tags": [
-          "Events"
-        ]
-      },
       "get": {
         "description": "Returns a single ticket group configured on the specified event page.",
         "operationId": "events/ticket-groups/get",
@@ -51221,144 +51094,6 @@
       }
     },
     "/v1/events/:pageId/ticket-groups/:ticketGroupId/ticket-types/:ticketTypeId": {
-      "delete": {
-        "description": "Archives a ticket type by setting its status to \"archived\". The ticket type will no longer be visible but data is preserved.",
-        "operationId": "events/ticket-groups/ticket-types/delete",
-        "parameters": [
-          {
-            "description": "The unique identifier of the page.",
-            "in": "path",
-            "name": "pageId",
-            "required": true,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "The unique identifier of the page.",
-                  "example": "507f1f77bcf86cd799439011"
-                }
-              ]
-            }
-          },
-          {
-            "description": "The unique identifier of the ticket group.",
-            "in": "path",
-            "name": "ticketGroupId",
-            "required": true,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "The unique identifier of the ticket group.",
-                  "example": "507f1f77bcf86cd799439012"
-                }
-              ]
-            }
-          },
-          {
-            "description": "The unique identifier of the ticket type.",
-            "in": "path",
-            "name": "ticketTypeId",
-            "required": true,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/UniqueIdentifier"
-                },
-                {
-                  "description": "The unique identifier of the ticket type.",
-                  "example": "507f1f77bcf86cd799439013"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TicketTypeEnvelopeResponse"
-                }
-              }
-            },
-            "description": "Ticket type archived successfully"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Bad request - Invalid request parameters"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized - Missing or invalid API key"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden - Insufficient permissions or validation error"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Event or ticket type not found"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Rate Limit Exceeded - Please try again later."
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerApiErrorResponse"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "api_key_auth": []
-          }
-        ],
-        "summary": "Archive a ticket type",
-        "tags": [
-          "Events"
-        ]
-      },
       "get": {
         "description": "Returns a single ticket type configured within the specified ticket group.",
         "operationId": "events/ticket-groups/ticket-types/get",

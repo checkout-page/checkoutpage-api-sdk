@@ -369,9 +369,6 @@ export type UpdateEventTicketGroupParams = NonNullable<
 export type UpdateEventTicketGroupResponse =
   operations['events/ticket-groups/update']['responses'][200]['content']['application/json'];
 
-export type DeleteEventTicketGroupResponse =
-  operations['events/ticket-groups/delete']['responses'][200]['content']['application/json'];
-
 export type EventTicketTypeList =
   operations['events/ticket-groups/ticket-types/list']['responses'][200]['content']['application/json'];
 
@@ -393,9 +390,6 @@ export type UpdateEventTicketTypeParams = NonNullable<
 
 export type UpdateEventTicketTypeResponse =
   operations['events/ticket-groups/ticket-types/update']['responses'][200]['content']['application/json'];
-
-export type DeleteEventTicketTypeResponse =
-  operations['events/ticket-groups/ticket-types/delete']['responses'][200]['content']['application/json'];
 
 // Forms
 export type FormList = operations['forms/list']['responses'][200]['content']['application/json'];

@@ -8,7 +8,6 @@ import type {
   EventTicketGroupResponse,
   UpdateEventTicketGroupParams,
   UpdateEventTicketGroupResponse,
-  DeleteEventTicketGroupResponse,
 } from '../../types';
 
 describe('EventsResource ticketGroups', () => {
@@ -182,27 +181,6 @@ describe('EventsResource ticketGroups', () => {
     expect(result.data.layout?.showTicketFee).toBe(true);
   });
 
-  it('archives a ticket group', async () => {
-    const mockResponse: DeleteEventTicketGroupResponse = {
-      data: {
-        id: 'group_123',
-        name: 'VIP',
-        status: 'archived',
-        ticketTypeIds: [],
-      },
-    };
-
-    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
-
-    const result = await eventsResource.ticketGroups.delete('event_123', 'group_123');
-
-    expect(result).toEqual(mockResponse);
-    expect(client.request).toHaveBeenCalledWith({
-      method: 'DELETE',
-      path: '/v1/events/event_123/ticket-groups/group_123',
-    });
-  });
-
   it('throws for missing page ids or ticket group ids', async () => {
     await expect(eventsResource.ticketGroups.list('')).rejects.toThrow('Page ID is required');
     await expect(eventsResource.ticketGroups.create('', { name: 'VIP' })).rejects.toThrow(
@@ -214,8 +192,5 @@ describe('EventsResource ticketGroups', () => {
     await expect(
       eventsResource.ticketGroups.update('event_123', '', { name: 'VIP' })
     ).rejects.toThrow('Ticket group ID is required');
-    await expect(eventsResource.ticketGroups.delete('event_123', '')).rejects.toThrow(
-      'Ticket group ID is required'
-    );
   });
 });

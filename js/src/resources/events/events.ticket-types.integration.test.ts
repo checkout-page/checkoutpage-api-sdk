@@ -281,7 +281,7 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
       expect(result.data.availabilityBehavior).toBe('until_event_starts');
     });
 
-    it('creates updates and deletes a ticket type within a full event lifecycle', async () => {
+    it('creates and updates a ticket type within a full event lifecycle', async () => {
       const event = await createEvent();
       const updatedEvent = await events.update(event.data.id, {
         title: `Updated Event ${uniqueSuffix()}`,
@@ -314,16 +314,6 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
       const eventRead = await events.get(event.data.id);
       const nestedGroup = eventRead.data.ticketGroups?.find((item) => item.id === group.data.id);
       expect(nestedGroup?.ticketTypes?.some((ticket) => ticket.id === created.data.id)).toBe(true);
-
-      const deletedTicket = await events.ticketGroups.ticketTypes.delete(
-        event.data.id,
-        group.data.id,
-        created.data.id
-      );
-      expect(deletedTicket.data.status).toBe('archived');
-
-      const eventReadAfterDeletes = await events.get(event.data.id);
-      expect(eventReadAfterDeletes.data.id).toBe(event.data.id);
     });
 
     it('fails when triggerTicketTypeId references a missing ticket type', async () => {
@@ -688,111 +678,6 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
         events.ticketGroups.ticketTypes.update(event.data.id, group.data.id, 'not-a-valid-id', {
           name: 'Bad ticket id',
         })
-      ).rejects.toThrow(ValidationError);
-    });
-  });
-
-  describe('delete', () => {
-    it('archives an existing ticket type', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-      const created = await createTicketType(event.data.id, group.data.id);
-      const result = await events.ticketGroups.ticketTypes.delete(
-        event.data.id,
-        group.data.id,
-        created.data.id
-      );
-
-      expect(result.data.id).toBe(created.data.id);
-      expect(result.data.status).toBe('archived');
-    });
-
-    it('marks the ticket type as archived in the response', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-      const created = await createTicketType(event.data.id, group.data.id);
-      const result = await events.ticketGroups.ticketTypes.delete(
-        event.data.id,
-        group.data.id,
-        created.data.id
-      );
-
-      expect(result.data.status).toBe('archived');
-    });
-
-    it('returns the archived ticket type when deleting the same ticket type twice', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-      const created = await createTicketType(event.data.id, group.data.id);
-      await events.ticketGroups.ticketTypes.delete(event.data.id, group.data.id, created.data.id);
-
-      const result = await events.ticketGroups.ticketTypes.delete(
-        event.data.id,
-        group.data.id,
-        created.data.id
-      );
-
-      expect(result.data.id).toBe(created.data.id);
-      expect(result.data.status).toBe('archived');
-    });
-
-    it('returns the deleted ticket type as archived in subsequent ticket-group and event reads', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-      const created = await createTicketType(event.data.id, group.data.id);
-
-      await events.ticketGroups.ticketTypes.delete(event.data.id, group.data.id, created.data.id);
-
-      const groupRead = await events.ticketGroups.get(event.data.id, group.data.id);
-      expect(groupRead.data.ticketTypeIds).toContain(created.data.id);
-
-      const eventRead = await events.get(event.data.id);
-      const nestedGroup = eventRead.data.ticketGroups?.find((item) => item.id === group.data.id);
-      const nestedTicket = nestedGroup?.ticketTypes?.find(
-        (ticket) => ticket.id === created.data.id
-      );
-      expect(nestedTicket?.status).toBe('archived');
-    });
-
-    it('fails for an unknown ticket type id', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-
-      await expect(
-        events.ticketGroups.ticketTypes.delete(
-          event.data.id,
-          group.data.id,
-          fakeObjectId('missingticket')
-        )
-      ).rejects.toThrow(NotFoundError);
-    });
-
-    it('fails for a malformed event id', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-      const created = await createTicketType(event.data.id, group.data.id);
-
-      await expect(
-        events.ticketGroups.ticketTypes.delete('not-a-valid-id', group.data.id, created.data.id)
-      ).rejects.toThrow(ValidationError);
-    });
-
-    it('fails for a malformed ticket group id', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-      const created = await createTicketType(event.data.id, group.data.id);
-
-      await expect(
-        events.ticketGroups.ticketTypes.delete(event.data.id, 'not-a-valid-id', created.data.id)
-      ).rejects.toThrow(ValidationError);
-    });
-
-    it('fails for a malformed ticket type id', async () => {
-      const event = await createEvent();
-      const group = await createTicketGroup(event.data.id);
-
-      await expect(
-        events.ticketGroups.ticketTypes.delete(event.data.id, group.data.id, 'not-a-valid-id')
       ).rejects.toThrow(ValidationError);
     });
   });
