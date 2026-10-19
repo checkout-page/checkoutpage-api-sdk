@@ -468,7 +468,14 @@
             "items": {
               "properties": {
                 "amount": {
-                  "description": "Fee amount in the smallest currency unit.",
+                  "description": "Fee amount in the smallest currency unit. For a fee with both a percentage and a fixed amount, the sum of `percentageAmount` and `fixedAmount`.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "fixedAmount": {
+                  "description": "The fixed part of `amount`, in the smallest currency unit, already multiplied by quantity or tickets when the fee multiplies. Only set on a fee with both a percentage and a fixed amount.",
                   "type": [
                     "number",
                     "null"
@@ -483,6 +490,13 @@
                 },
                 "percentage": {
                   "description": "Fee percentage when applicable.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "percentageAmount": {
+                  "description": "The part of `amount` from the percentage, in the smallest currency unit. Only set on a fee with both a percentage and a fixed amount. Can be 0, e.g. when a 100% coupon leaves nothing for the percentage to apply to.",
                   "type": [
                     "number",
                     "null"
@@ -8474,7 +8488,7 @@
         ],
         "properties": {
           "amount": {
-            "description": "Fixed fee amount in the page currency minor unit (e.g. cents).",
+            "description": "Fixed fee amount in the page currency minor unit (e.g. cents). Set it with `percentage` to charge both as one fee.",
             "example": 50,
             "maximum": 99999999,
             "minimum": 0,
@@ -8492,7 +8506,7 @@
             ]
           },
           "multiplyByQuantity": {
-            "description": "Multiplies the calculated fee by selected quantity. Applies to `checkout`.",
+            "description": "Multiplies the fixed `amount` by the selected quantity. Applies to `checkout`. On a fee that also has a `percentage`, only the fixed amount is multiplied.",
             "example": true,
             "type": [
               "boolean",
@@ -8500,7 +8514,7 @@
             ]
           },
           "multiplyByTickets": {
-            "description": "Multiplies the calculated fee by ticket quantity. Applies to `event`.",
+            "description": "Multiplies the fixed `amount` by the number of tickets. Applies to `event`. On a fee that also has a `percentage`, only the fixed amount is multiplied.",
             "example": true,
             "type": [
               "boolean",
@@ -8564,7 +8578,7 @@
             ]
           },
           "percentage": {
-            "description": "Percentage fee applied to the checkout total.",
+            "description": "Percentage of the checkout amount after discounts, before tax. Set it with `amount` to charge the percentage plus the fixed amount as one fee.",
             "minimum": 0,
             "type": [
               "number",
@@ -8580,7 +8594,7 @@
       "PageFeeResponse": {
         "properties": {
           "amount": {
-            "description": "Fixed fee amount in the page currency minor unit (e.g. cents).",
+            "description": "Fixed fee amount in the page currency minor unit (e.g. cents). Set it with `percentage` to charge both as one fee.",
             "example": 50,
             "maximum": 99999999,
             "minimum": 0,
@@ -8598,7 +8612,7 @@
             ]
           },
           "multiplyByQuantity": {
-            "description": "Multiplies the calculated fee by selected quantity. Applies to `checkout`.",
+            "description": "Multiplies the fixed `amount` by the selected quantity. Applies to `checkout`. On a fee that also has a `percentage`, only the fixed amount is multiplied.",
             "example": true,
             "type": [
               "boolean",
@@ -8606,7 +8620,7 @@
             ]
           },
           "multiplyByTickets": {
-            "description": "Multiplies the calculated fee by ticket quantity. Applies to `event`.",
+            "description": "Multiplies the fixed `amount` by the number of tickets. Applies to `event`. On a fee that also has a `percentage`, only the fixed amount is multiplied.",
             "example": true,
             "type": [
               "boolean",
@@ -8670,7 +8684,7 @@
             ]
           },
           "percentage": {
-            "description": "Percentage fee applied to the checkout total.",
+            "description": "Percentage of the checkout amount after discounts, before tax. Set it with `amount` to charge the percentage plus the fixed amount as one fee.",
             "minimum": 0,
             "type": [
               "number",
@@ -9342,7 +9356,14 @@
             "items": {
               "properties": {
                 "amount": {
-                  "description": "Fee amount in the smallest currency unit.",
+                  "description": "Fee amount in the smallest currency unit. For a fee with both a percentage and a fixed amount, the sum of `percentageAmount` and `fixedAmount`.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "fixedAmount": {
+                  "description": "The fixed part of `amount`, in the smallest currency unit, already multiplied by quantity or tickets when the fee multiplies. Only set on a fee with both a percentage and a fixed amount.",
                   "type": [
                     "number",
                     "null"
@@ -9357,6 +9378,13 @@
                 },
                 "percentage": {
                   "description": "Fee percentage when applicable.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "percentageAmount": {
+                  "description": "The part of `amount` from the percentage, in the smallest currency unit. Only set on a fee with both a percentage and a fixed amount. Can be 0, e.g. when a 100% coupon leaves nothing for the percentage to apply to.",
                   "type": [
                     "number",
                     "null"
@@ -14780,10 +14808,16 @@
                     "amount": {
                       "type": "number"
                     },
+                    "fixedAmount": {
+                      "type": "number"
+                    },
                     "name": {
                       "type": "string"
                     },
                     "percentage": {
+                      "type": "number"
+                    },
+                    "percentageAmount": {
                       "type": "number"
                     },
                     "stripeProductId": {
@@ -55203,7 +55237,14 @@
                             "items": {
                               "properties": {
                                 "amount": {
-                                  "description": "Fee amount in the smallest currency unit.",
+                                  "description": "Fee amount in the smallest currency unit. For a fee with both a percentage and a fixed amount, the sum of `percentageAmount` and `fixedAmount`.",
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "fixedAmount": {
+                                  "description": "The fixed part of `amount`, in the smallest currency unit, already multiplied by quantity or tickets when the fee multiplies. Only set on a fee with both a percentage and a fixed amount.",
                                   "type": [
                                     "number",
                                     "null"
@@ -55218,6 +55259,13 @@
                                 },
                                 "percentage": {
                                   "description": "Fee as a percentage of the subtotal (0-100), when defined that way.",
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "percentageAmount": {
+                                  "description": "The part of `amount` from the percentage, in the smallest currency unit. Only set on a fee with both a percentage and a fixed amount. Can be 0, e.g. when a 100% coupon leaves nothing for the percentage to apply to.",
                                   "type": [
                                     "number",
                                     "null"
@@ -55982,7 +56030,14 @@
                           "items": {
                             "properties": {
                               "amount": {
-                                "description": "Fee amount in the smallest currency unit.",
+                                "description": "Fee amount in the smallest currency unit. For a fee with both a percentage and a fixed amount, the sum of `percentageAmount` and `fixedAmount`.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "fixedAmount": {
+                                "description": "The fixed part of `amount`, in the smallest currency unit, already multiplied by quantity or tickets when the fee multiplies. Only set on a fee with both a percentage and a fixed amount.",
                                 "type": [
                                   "number",
                                   "null"
@@ -55997,6 +56052,13 @@
                               },
                               "percentage": {
                                 "description": "Fee as a percentage of the subtotal (0-100), when defined that way.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "percentageAmount": {
+                                "description": "The part of `amount` from the percentage, in the smallest currency unit. Only set on a fee with both a percentage and a fixed amount. Can be 0, e.g. when a 100% coupon leaves nothing for the percentage to apply to.",
                                 "type": [
                                   "number",
                                   "null"
@@ -56757,7 +56819,14 @@
                           "items": {
                             "properties": {
                               "amount": {
-                                "description": "Fee amount in the smallest currency unit.",
+                                "description": "Fee amount in the smallest currency unit. For a fee with both a percentage and a fixed amount, the sum of `percentageAmount` and `fixedAmount`.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "fixedAmount": {
+                                "description": "The fixed part of `amount`, in the smallest currency unit, already multiplied by quantity or tickets when the fee multiplies. Only set on a fee with both a percentage and a fixed amount.",
                                 "type": [
                                   "number",
                                   "null"
@@ -56772,6 +56841,13 @@
                               },
                               "percentage": {
                                 "description": "Fee as a percentage of the subtotal (0-100), when defined that way.",
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "percentageAmount": {
+                                "description": "The part of `amount` from the percentage, in the smallest currency unit. Only set on a fee with both a percentage and a fixed amount. Can be 0, e.g. when a 100% coupon leaves nothing for the percentage to apply to.",
                                 "type": [
                                   "number",
                                   "null"
@@ -59104,10 +59180,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -64927,10 +65009,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -65759,10 +65847,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -66591,10 +66685,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -67423,10 +67523,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -68255,10 +68361,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -69087,10 +69199,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -69919,10 +70037,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
@@ -70751,10 +70875,16 @@
                                 "amount": {
                                   "type": "number"
                                 },
+                                "fixedAmount": {
+                                  "type": "number"
+                                },
                                 "name": {
                                   "type": "string"
                                 },
                                 "percentage": {
+                                  "type": "number"
+                                },
+                                "percentageAmount": {
                                   "type": "number"
                                 },
                                 "stripeProductId": {
