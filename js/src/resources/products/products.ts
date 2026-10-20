@@ -1,5 +1,23 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { Product, ProductList, ProductListParams, UpdateProductParams } from '../../types';
+import type {
+  CreateProductParams,
+  CreateProductResponse,
+  DeleteProductOptions,
+  DeleteProductResponse,
+  Product,
+  ProductList,
+  ProductListParams,
+  UpdateProductParams,
+} from '../../types';
+
+const ORDER_BUMP_CARD_FIELDS = [
+  'shortDescription',
+  'callToActionText',
+  'headingText',
+  'features',
+  'calloutText',
+  'calloutIcon',
+] as const;
 
 export class ProductResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -17,6 +35,39 @@ export class ProductResource {
       method: 'GET',
       path: '/v1/products/',
       query,
+    });
+  }
+
+  /**
+   * Creates an order bump product (`role: 'orderbump'`). Order bump products use
+   * a single one-time price; page products are created with their page.
+   */
+  async create(params: CreateProductParams): Promise<CreateProductResponse> {
+    return this.client.request<CreateProductResponse>({
+      method: 'POST',
+      path: '/v1/products/',
+      body: params,
+    });
+  }
+
+  /**
+   * Deletes an order bump product that has never been bought. Pass
+   * `fromAllPages: true` to remove it from the pages offering it first.
+   */
+  async delete(
+    productId: string,
+    options: DeleteProductOptions = {}
+  ): Promise<DeleteProductResponse> {
+    if (!productId) {
+      throw new Error('Product ID is required');
+    }
+
+    return this.client.request<DeleteProductResponse>({
+      method: 'DELETE',
+      path: `/v1/products/${productId}`,
+      query: {
+        fromAllPages: options.fromAllPages === undefined ? undefined : String(options.fromAllPages),
+      },
     });
   }
 
@@ -101,6 +152,11 @@ export class ProductResource {
     }
     if (params.pricePicker !== undefined) {
       body.pricePicker = params.pricePicker;
+    }
+    for (const field of ORDER_BUMP_CARD_FIELDS) {
+      if (params[field] !== undefined) {
+        body[field] = params[field];
+      }
     }
 
     return this.client.request<Product>({
