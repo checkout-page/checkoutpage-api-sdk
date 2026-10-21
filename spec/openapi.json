@@ -7331,6 +7331,14 @@
               "null"
             ]
           },
+          "disabled": {
+            "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely.",
+            "example": false,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "element": {
             "description": "Input control used to render this field at checkout.",
             "example": "text",
@@ -7929,6 +7937,14 @@
             "maxLength": 500,
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "disabled": {
+            "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+            "example": false,
+            "type": [
+              "boolean",
               "null"
             ]
           },
@@ -68124,6 +68140,14 @@
                       "null"
                     ]
                   },
+                  "disabled": {
+                    "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+                    "example": false,
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
                   "element": {
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "enum": [
@@ -68992,6 +69016,14 @@
                     "maxLength": 500,
                     "type": [
                       "string",
+                      "null"
+                    ]
+                  },
+                  "disabled": {
+                    "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+                    "example": false,
+                    "type": [
+                      "boolean",
                       "null"
                     ]
                   },
@@ -72055,6 +72087,14 @@
                       "null"
                     ]
                   },
+                  "disabled": {
+                    "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+                    "example": false,
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
                   "element": {
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "enum": [
@@ -72923,6 +72963,14 @@
                     "maxLength": 500,
                     "type": [
                       "string",
+                      "null"
+                    ]
+                  },
+                  "disabled": {
+                    "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+                    "example": false,
+                    "type": [
+                      "boolean",
                       "null"
                     ]
                   },
@@ -77082,6 +77130,14 @@
                       "null"
                     ]
                   },
+                  "disabled": {
+                    "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+                    "example": false,
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
                   "element": {
                     "description": "Input control used to render this field in checkout. Defaults to `text`.",
                     "enum": [
@@ -77950,6 +78006,14 @@
                     "maxLength": 500,
                     "type": [
                       "string",
+                      "null"
+                    ]
+                  },
+                  "disabled": {
+                    "description": "Whether this field is switched off. A disabled field keeps its settings but is removed from the page entirely: it is not rendered, cannot be revealed with `show_fields`, is not prefilled and is never submitted.",
+                    "example": false,
+                    "type": [
+                      "boolean",
                       "null"
                     ]
                   },
