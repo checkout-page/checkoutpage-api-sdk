@@ -29,8 +29,10 @@ export class CouponResource {
   /**
    * Update an existing coupon. Only the fields you supply are changed.
    *
-   * `pageIds` and `ticketTypeIds` replace the existing lists rather than
-   * merging — pass an empty array to clear one.
+   * `pageIds`, `ticketTypeIds`, `productIds` and `priceIds` replace the
+   * existing lists rather than merging — pass an empty array to clear one.
+   * Any `priceIds` must belong to the `productIds` sent in the same request,
+   * or to the products already on the coupon.
    *
    * The discount itself (`code`, `amountOff`, `percentOff`, `currency`,
    * `duration`) is fixed once the coupon is mirrored into Stripe. To change a
@@ -73,6 +75,12 @@ export class CouponResource {
     }
     if (params.ticketTypeIds !== undefined) {
       body.ticketTypeIds = params.ticketTypeIds;
+    }
+    if (params.productIds !== undefined) {
+      body.productIds = params.productIds;
+    }
+    if (params.priceIds !== undefined) {
+      body.priceIds = params.priceIds;
     }
     if (params.maxRedemptions !== undefined) {
       body.maxRedemptions = params.maxRedemptions;
