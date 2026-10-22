@@ -3,6 +3,8 @@
 mod error;
 pub mod oauth;
 pub mod pkce;
+pub mod signature;
+pub mod sse;
 
 pub use error::{ApiError, describe_reqwest};
 
@@ -194,6 +196,28 @@ impl Client {
             }
         }
         Ok(out)
+    }
+
+    pub async fn open_event_stream(
+        &self,
+        path: &str,
+        query: &[(String, String)],
+    ) -> Result<reqwest::Response, ApiError> {
+        let url = self.url(path, query)?;
+        let resp = self
+            .builder(Method::GET, url)
+            .header(header::ACCEPT, "text/event-stream")
+            .header(header::CACHE_CONTROL, "no-cache")
+            .send()
+            .await
+            .map_err(ApiError::Network)?;
+        if resp.status().is_success() {
+            Ok(resp)
+        } else {
+            Err(read_json_response(resp).await.err().unwrap_or_else(|| {
+                ApiError::InvalidResponse("stream request failed without an error status".into())
+            }))
+        }
     }
 }
 

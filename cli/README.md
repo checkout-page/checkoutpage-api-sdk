@@ -1,8 +1,9 @@
 # Checkout Page CLI
 
 `checkoutpage` works with your Checkout Page account from the terminal. Look up events,
-checkout pages, forms, bookings, payments, customers, subscriptions, coupons and webhook
-endpoints, and book tickets and create coupons.
+checkout pages, forms, bookings, payments, customers, subscriptions and coupons, book tickets
+and create coupons, and receive your account's webhooks on your own machine while you build an
+integration.
 
 ## Install
 
@@ -213,6 +214,90 @@ checkoutpage api PATCH /v1/customers/65f0... --data '{"name": "Grace Hopper"}'
 checkoutpage api POST /v1/products/ --data @product.json
 ```
 
+## Receive webhooks locally
+
+`webhooks listen` receives your account's webhook events as they happen, with no endpoint to
+set up. It needs no public URL.
+
+```bash
+checkoutpage webhooks listen --forward-to http://localhost:3000/webhooks
+```
+
+```
+Ready! Listening for all events.
+Forwarding to http://localhost:3000/webhooks
+Webhook signing secret: 3f9a...c41e
+Press Ctrl-C to stop.
+10:42:07  payment.paid  evt_6718...  -> 200 (14ms)
+10:42:31  booking.paid  evt_6718...  -> 500 (31ms)
+```
+
+- `--events payment.paid,booking.paid` receives only those events.
+- `--forward-to <url>` POSTs each event to your app, signed like a real delivery. Without it,
+  the CLI prints one line per event.
+- `--print-json` prints each event's payload to stdout (the status lines move to stderr), for
+  piping into `jq`.
+- `--skip-verify` accepts a self-signed certificate on an `https` forward URL.
+
+Each forwarded request carries the same headers as a real delivery:
+
+| Header | Value |
+| --- | --- |
+| `Content-Type` | `application/json` |
+| `X-Webhook-Signature` | `sha256=<hex HMAC-SHA256 of the body, keyed with the signing secret>` |
+| `X-Webhook-Timestamp` | Milliseconds since the epoch |
+| `X-Webhook-Delivery-Attempt` | `1` |
+| `X-Webhook-Test` | `true` for events sent with `webhooks trigger` |
+| `User-Agent` | `Checkout-Page-CLI/<version>` |
+
+The signing secret belongs to this listening session only. Put it where your app reads its
+webhook secret while you test. A session lasts at most 60 minutes, then the CLI reconnects
+automatically and prints the new secret. It also reconnects after network drops, waiting 1s,
+2s, 4s and so on up to 30s between tries.
+
+Your existing verification code works unchanged with the listener's secret. In Node:
+
+```js
+import crypto from 'node:crypto';
+
+// Use the raw request body, before any JSON parsing.
+function verify(rawBody, signatureHeader, secret) {
+  const expected = `sha256=${crypto.createHmac('sha256', secret).update(rawBody).digest('hex')}`;
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signatureHeader ?? '');
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+app.post('/webhooks', express.raw({ type: 'application/json' }), (req, res) => {
+  if (!verify(req.body, req.get('X-Webhook-Signature'), process.env.CHECKOUTPAGE_WEBHOOK_SECRET)) {
+    return res.sendStatus(401);
+  }
+  const event = JSON.parse(req.body);
+  console.log(event.event, event.event_id);
+  res.sendStatus(200);
+});
+```
+
+In Python:
+
+```python
+import hashlib, hmac
+
+def verify(raw_body: bytes, signature_header: str, secret: str) -> bool:
+    expected = "sha256=" + hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, signature_header or "")
+```
+
+### Send a test event
+
+With `webhooks listen` running, send a sample event to it from another terminal:
+
+```bash
+checkoutpage webhooks trigger payment.paid
+```
+
+The sample payload has `"test": true`, and the forwarded request has `X-Webhook-Test: true`.
+
 ## Exit codes
 
 | Code | Meaning |
@@ -235,6 +320,9 @@ cargo clippy --all-targets -- -D warnings
 cargo test
 ```
 
-`cargo test` runs offline against mock servers.
+`cargo test` runs offline against mock servers. `tests/live_listen.rs` also checks
+`webhooks listen` end to end against a real API, and runs only when
+`CHECKOUTPAGE_LIVE_API_KEY` and `CHECKOUTPAGE_LIVE_BASE_URL` are set. Point it at a local dev
+stack, never production: it creates and archives checkout pages.
 
 See [CLAUDE.md](CLAUDE.md) for the layout and the testing approach.
