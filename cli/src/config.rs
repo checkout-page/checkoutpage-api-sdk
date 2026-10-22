@@ -133,6 +133,7 @@ fn set_private(path: &Path) -> Result<()> {
     Ok(())
 }
 
+// On Windows the file sits in the user's own AppData folder, whose ACL already keeps other users out.
 #[cfg(not(unix))]
 fn set_private(_path: &Path) -> Result<()> {
     Ok(())

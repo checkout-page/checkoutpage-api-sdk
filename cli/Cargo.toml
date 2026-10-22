@@ -6,6 +6,10 @@ rust-version = "1.85"
 description = "Command-line tool for the Checkout Page seller API"
 license = "MIT"
 repository = "https://github.com/checkout-page/checkoutpage-api-sdk"
+homepage = "https://checkoutpage.com"
+readme = "README.md"
+keywords = ["checkoutpage", "payments", "webhooks", "cli", "api"]
+categories = ["command-line-utilities", "api-bindings"]
 publish = false
 
 [[bin]]
@@ -44,3 +48,14 @@ assert_cmd = "2"
 predicates = "3"
 tempfile = "3"
 wiremock = "0.6"
+
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+# `publish = false` keeps the crate off crates.io, and dist skips such crates unless told otherwise.
+[package.metadata.dist]
+dist = true
+formula = "checkoutpage"
+npm-scope = "@checkoutpage"
+npm-package = "cli"

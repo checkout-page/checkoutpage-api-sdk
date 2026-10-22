@@ -134,10 +134,14 @@ async fn forwards_signed_exact_bytes_and_prints_one_line_per_delivery() {
         assert_eq!(h("x-webhook-test").as_deref(), is_test.then_some("true"));
     }
 
-    proc.interrupt();
-    let status = proc.wait_exit(WAIT);
-    assert!(status.success(), "Ctrl-C exits cleanly: {}", proc.drain());
-    assert!(proc.drain().contains("Stopped listening."));
+    // Windows has no way to send Ctrl-C to just one child process, so this check is Unix-only.
+    #[cfg(unix)]
+    {
+        proc.interrupt();
+        let status = proc.wait_exit(WAIT);
+        assert!(status.success(), "Ctrl-C exits cleanly: {}", proc.drain());
+        assert!(proc.drain().contains("Stopped listening."));
+    }
 }
 
 #[tokio::test(flavor = "multi_thread")]

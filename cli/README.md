@@ -7,7 +7,43 @@ integration.
 
 ## Install
 
-There are no prebuilt binaries yet. Build from source with Rust (stable, 1.85 or newer):
+Prebuilt binaries are available from the first CLI release, for macOS (Apple silicon and
+Intel), Linux (x64 and arm64) and Windows (x64). Until then, build from source.
+
+### Homebrew (macOS and Linux)
+
+```bash
+brew install checkout-page/tap/checkoutpage
+```
+
+### Shell script (macOS and Linux)
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/checkout-page/checkoutpage-api-sdk/releases/download/checkoutpage-cli-v0.1.0/checkoutpage-cli-installer.sh | sh
+```
+
+### PowerShell (Windows)
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/checkout-page/checkoutpage-api-sdk/releases/download/checkoutpage-cli-v0.1.0/checkoutpage-cli-installer.ps1 | iex"
+```
+
+Both scripts install the version in the URL. For a newer one, replace `0.1.0` with the version
+from the [CLI releases](https://github.com/checkout-page/checkoutpage-api-sdk/releases); each
+release lists its own install commands. The binary goes in `~/.cargo/bin` (`%USERPROFILE%\.cargo\bin`
+on Windows), which the script adds to your `PATH`.
+
+### npm
+
+```bash
+npm install -g @checkoutpage/cli
+```
+
+The package downloads the binary for your platform when it installs.
+
+### From source
+
+With Rust (stable, 1.85 or newer):
 
 ```bash
 git clone https://github.com/checkout-page/checkoutpage-api-sdk.git
@@ -62,7 +98,7 @@ checkoutpage payments list --profile staging
 
 Credentials live in `config.toml` inside `$CHECKOUTPAGE_CONFIG_DIR`, or the platform config
 directory (`~/Library/Application Support/checkoutpage` on macOS, `~/.config/checkoutpage` on
-Linux). The file is readable only by you. The CLI never prints a full key: it shows
+Linux, `%APPDATA%\checkoutpage` on Windows). The file is readable only by you. The CLI never prints a full key: it shows
 `sk_live_...a1b2`, like the dashboard.
 
 ```bash

@@ -174,6 +174,7 @@ impl Proc {
         }
     }
 
+    #[cfg(unix)]
     pub fn interrupt(&self) {
         let status = std::process::Command::new("kill")
             .args(["-INT", &self.pid().to_string()])
