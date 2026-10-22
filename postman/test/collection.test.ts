@@ -37,7 +37,6 @@ function strings(value: unknown, out: string[] = []): string[] {
   return out;
 }
 
-/** Every request object, including the copies on example responses. */
 function allRequestObjects(): Obj[] {
   return requests.flatMap((item) => [
     item.request,

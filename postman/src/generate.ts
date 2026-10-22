@@ -126,11 +126,7 @@ export function listOperations(spec: Obj): SpecOperation[] {
   return operations;
 }
 
-/**
- * Builds an example value from a schema: the schema's own `example` first, then enums and
- * defaults, then a typed placeholder. Unlike the converter's faker this is deterministic and
- * local to each schema, so a spec change only changes the requests it touches.
- */
+// Deterministic, unlike the converter's faker, so a spec change only changes the requests it touches.
 export function exampleFromSchema(spec: Obj, schema: Obj | undefined, seen: string[] = []): Json {
   if (!schema || typeof schema !== 'object') return null;
   if (schema.$ref) {
@@ -288,7 +284,6 @@ function convert(spec: Obj): Promise<Obj> {
   });
 }
 
-/** For the few path params the spec leaves undescribed: `customerId` becomes "The customer ID." */
 function pathParameterFallback(name: string): string {
   const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
   return words.endsWith(' id') ? `The ${words.slice(0, -3)} ID.` : `The ${words}.`;
@@ -417,7 +412,6 @@ function compareItems(a: Obj, b: Obj): number {
   return (METHOD_ORDER[a.request.method] ?? 9) - (METHOD_ORDER[b.request.method] ?? 9);
 }
 
-/** Every request in a converted collection, wherever the converter nested it. */
 function flattenRequests(items: Obj[]): Obj[] {
   return items.flatMap((item) => (item.request ? [item] : flattenRequests(item.item ?? [])));
 }

@@ -1,7 +1,5 @@
 name: Publish Postman collection
 
-# Replaces the public Postman collection with the committed one, using the Postman API
-# (PUT https://api.postman.com/collections/{collectionId}).
 on:
   workflow_dispatch:
 
