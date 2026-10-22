@@ -13,6 +13,8 @@ customer-facing: plain short sentences, sentence-case headings, no em dash chara
 ## Repo map
 
 - **`js/`** - JavaScript/TypeScript SDK, npm `@checkoutpage/sdk`. Conventions in [js/CLAUDE.md](js/CLAUDE.md).
+- **`postman/`** - Postman collection and environment, generated from the spec and committed.
+  Private workspace package `@checkoutpage/postman`. Conventions in [postman/CLAUDE.md](postman/CLAUDE.md).
 - **`cli/`** - Checkout Page CLI (Rust). Coming next; not in the repo yet.
 - **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
 - **`examples/<lang>/`** - runnable usage examples per language (`examples/js/` today).
@@ -24,7 +26,7 @@ package metadata (npm `repository.directory`, for example), CI path filters and 
 depend on them.
 
 The root `package.json` (`@checkoutpage/dev-tools`, private) holds the shared Node tooling and
-the pnpm workspace scripts. Only JS packages belong in `pnpm-workspace.yaml`; other languages
+the pnpm workspace scripts. Only Node packages (`js/`, `postman/`) belong in `pnpm-workspace.yaml`; other languages
 use their own toolchain inside their directory.
 
 ## The spec is the source of truth
@@ -43,7 +45,9 @@ How it is refreshed (see `git log --oneline -- spec`):
   `chore(spec): ..., from checkoutpage-mono#1740`, and refresh from production once it deploys.
 - Then run `pnpm generate:types` from the root. `scripts/generate-types.ts` rewrites the spec
   in a stable form (keys sorted, 2-space pretty print) so it diffs line by line, and generates
-  the JS types into `js/src/generated/schema.ts` (gitignored). Commit the normalized spec.
+  the JS types into `js/src/generated/schema.ts` (gitignored). It then runs
+  `pnpm generate:postman`, which rewrites `postman/*.json`. Commit the normalized spec and the
+  regenerated Postman files together; `test-postman.yml` fails when they drift.
 
 Every language generates from this one file. A spec change lands in one PR with the regenerated
 code and tests for each language it affects. When a new language gets a generator, add it to
