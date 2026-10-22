@@ -8,7 +8,6 @@ import type {
   EventTicketTypeResponse,
   UpdateEventTicketTypeParams,
   UpdateEventTicketTypeResponse,
-  DeleteEventTicketTypeResponse,
 } from '../../types';
 
 describe('EventsResource ticketGroups.ticketTypes', () => {
@@ -192,30 +191,6 @@ describe('EventsResource ticketGroups.ticketTypes', () => {
     expect(result.data.feeAmount).toBeNull();
   });
 
-  it('archives a ticket type', async () => {
-    const mockResponse: DeleteEventTicketTypeResponse = {
-      data: {
-        id: 'ticket_123',
-        name: 'VIP',
-        status: 'archived',
-      },
-    };
-
-    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
-
-    const result = await eventsResource.ticketGroups.ticketTypes.delete(
-      'event_123',
-      'group_123',
-      'ticket_123'
-    );
-
-    expect(result).toEqual(mockResponse);
-    expect(client.request).toHaveBeenCalledWith({
-      method: 'DELETE',
-      path: '/v1/events/event_123/ticket-groups/group_123/ticket-types/ticket_123',
-    });
-  });
-
   it('throws for missing ids', async () => {
     await expect(eventsResource.ticketGroups.ticketTypes.list('', 'group_123')).rejects.toThrow(
       'Page ID is required'
@@ -228,9 +203,6 @@ describe('EventsResource ticketGroups.ticketTypes', () => {
     ).rejects.toThrow('Ticket type ID is required');
     await expect(
       eventsResource.ticketGroups.ticketTypes.update('event_123', 'group_123', '', { name: 'VIP' })
-    ).rejects.toThrow('Ticket type ID is required');
-    await expect(
-      eventsResource.ticketGroups.ticketTypes.delete('event_123', 'group_123', '')
     ).rejects.toThrow('Ticket type ID is required');
   });
 });

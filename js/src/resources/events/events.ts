@@ -15,14 +15,12 @@ import type {
   CreateEventTicketGroupResponse,
   UpdateEventTicketGroupParams,
   UpdateEventTicketGroupResponse,
-  DeleteEventTicketGroupResponse,
   EventTicketTypeList,
   EventTicketTypeResponse,
   CreateEventTicketTypeParams,
   CreateEventTicketTypeResponse,
   UpdateEventTicketTypeParams,
   UpdateEventTicketTypeResponse,
-  DeleteEventTicketTypeResponse,
   EventFieldList,
   EventFieldResponse,
   CreateEventFieldParams,
@@ -192,29 +190,6 @@ export class EventTicketTypesResource {
       body: params,
     });
   }
-
-  async delete(
-    pageId: string,
-    ticketGroupId: string,
-    ticketTypeId: string
-  ): Promise<DeleteEventTicketTypeResponse> {
-    if (!pageId) {
-      throw new Error('Page ID is required');
-    }
-
-    if (!ticketGroupId) {
-      throw new Error('Ticket group ID is required');
-    }
-
-    if (!ticketTypeId) {
-      throw new Error('Ticket type ID is required');
-    }
-
-    return this.client.request<DeleteEventTicketTypeResponse>({
-      method: 'DELETE',
-      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}/ticket-types/${ticketTypeId}`,
-    });
-  }
 }
 
 export class EventTicketGroupsResource {
@@ -282,21 +257,6 @@ export class EventTicketGroupsResource {
       method: 'PATCH',
       path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}`,
       body: params,
-    });
-  }
-
-  async delete(pageId: string, ticketGroupId: string): Promise<DeleteEventTicketGroupResponse> {
-    if (!pageId) {
-      throw new Error('Page ID is required');
-    }
-
-    if (!ticketGroupId) {
-      throw new Error('Ticket group ID is required');
-    }
-
-    return this.client.request<DeleteEventTicketGroupResponse>({
-      method: 'DELETE',
-      path: `/v1/events/${pageId}/ticket-groups/${ticketGroupId}`,
     });
   }
 }
