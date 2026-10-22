@@ -1,3 +1,5 @@
+# --- JavaScript / TypeScript (js/, shared Node tooling) ---
+
 # Dependencies
 node_modules/
 .pnpm-store/
@@ -12,6 +14,29 @@ js/src/generated/
 
 # Test coverage
 coverage/
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Rust (cli/) ---
+target/
+
+# --- PHP ---
+vendor/
+composer.phar
+
+# --- Ruby ---
+.bundle/
+*.gem
+
+# --- Python ---
+__pycache__/
+.venv/
+
+# --- Shared ---
 
 # Environment variables
 .env
@@ -31,10 +56,6 @@ Thumbs.db
 
 # Logs
 *.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Misc
 .cache/

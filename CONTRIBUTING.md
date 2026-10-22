@@ -1,15 +1,16 @@
-# Contributing to Checkout Page API SDK
+# Contributing to Checkout Page developer tools
 
-Thank you for your interest in contributing to the Checkout Page API SDK! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing. This document covers the general flow for every
+tool in this repo, then the setup for each language.
 
-## Development Setup
+## How the repo is organized
 
-### Prerequisites
+Each language or tool has its own top-level directory (`js/` today, more to come). All of them
+are built from the shared OpenAPI spec in `spec/openapi.json`. Examples live in
+`examples/<lang>/`, and shared tooling in `scripts/`. See the [README](README.md) for the full
+layout.
 
-- Node.js >= 18.0.0
-- pnpm >= 8.0.0
-
-### Getting Started
+## General flow
 
 1. **Clone the repository**
 
@@ -18,48 +19,87 @@ Thank you for your interest in contributing to the Checkout Page API SDK! This d
    cd checkoutpage-api-sdk
    ```
 
-2. **Install dependencies**
+2. **Create a new branch**
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make your changes**
+
+   - Work inside the directory for the language you are changing
+   - Write code following the existing patterns
+   - Add tests for new functionality
+   - Update documentation and examples as needed
+
+4. **Run that language's tests and linting** (see the language sections below)
+
+5. **Commit your changes**
+
+   ```bash
+   git add .
+   git commit -m "Description of your changes"
+   ```
+
+6. **Push and create a pull request**
+
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+### Changing the API spec
+
+`spec/openapi.json` comes from the Checkout Page API. Spec changes must match what the API
+serves, so they are usually made by the Checkout Page team. See [spec/README.md](spec/README.md)
+for how a refresh is done. A spec change is regenerated and tested in every language it affects.
+
+## JavaScript/TypeScript SDK
+
+The JS SDK lives in `js/` and is published to npm as `@checkoutpage/sdk`.
+
+### Prerequisites
+
+- Node.js >= 18.0.0
+- pnpm >= 8.0.0
+
+### Getting started
+
+1. **Install dependencies** (from the repo root)
 
    ```bash
    pnpm install
    ```
 
-3. **Generate TypeScript types from OpenAPI spec**
+2. **Generate TypeScript types from the OpenAPI spec**
 
    ```bash
    pnpm generate:types
    ```
 
-4. **Build the SDK**
+3. **Build the SDK**
 
    ```bash
    pnpm build
    ```
 
-5. **Run tests**
+4. **Run tests**
+
    ```bash
    pnpm test
    ```
 
-## Project Structure
-
-This is a monorepo containing SDKs for multiple languages:
+### Project structure
 
 ```
-checkoutpage-api-sdk/
-├─ js/                  # JavaScript/TypeScript SDK
-│  ├─ src/
-│  │  ├─ client.ts      # HTTP client
-│  │  ├─ errors.ts      # Error classes
-│  │  ├─ types.ts       # TypeScript types
-│  │  ├─ resources/     # API resource classes
-│  │  └─ index.ts       # Main export
-│  └─ package.json
-├─ spec/                # OpenAPI specification
-└─ examples/            # Usage examples
+js/
+├─ src/
+│  ├─ client.ts      # HTTP client
+│  ├─ errors.ts      # Error classes
+│  ├─ types.ts       # TypeScript types
+│  ├─ resources/     # API resource classes
+│  └─ index.ts       # Main export
+└─ package.json
 ```
-
-## Development Workflow
 
 ### Working on the JavaScript SDK
 
@@ -79,41 +119,15 @@ pnpm lint
 pnpm build
 ```
 
-### Making Changes
+Before opening a pull request, run:
 
-1. **Create a new branch**
+```bash
+pnpm test
+pnpm lint
+pnpm type-check
+```
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make your changes**
-
-   - Write code following the existing patterns
-   - Add tests for new functionality
-   - Update documentation as needed
-
-3. **Run tests and linting**
-
-   ```bash
-   pnpm test
-   pnpm lint
-   pnpm type-check
-   ```
-
-4. **Commit your changes**
-
-   ```bash
-   git add .
-   git commit -m "Description of your changes"
-   ```
-
-5. **Push and create a pull request**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-## Code Style
+### Code style
 
 - Use TypeScript for all new code
 - Follow existing code formatting (enforced by Prettier)
@@ -121,11 +135,11 @@ pnpm build
 - Add JSDoc comments for public APIs
 - Keep functions small and focused
 
-## Testing Guidelines
+### Testing guidelines
 
-We have two types of tests in this project:
+We have two types of tests in the JS SDK.
 
-### Unit Tests
+#### Unit tests
 
 - Write unit tests for all new functionality
 - Tests should be co-located with source files (e.g., `customers.test.ts` next to `customers.ts`)
@@ -133,7 +147,7 @@ We have two types of tests in this project:
 - Mock external dependencies (HTTP requests, etc.)
 - Run with: `pnpm test` or `pnpm test:unit`
 
-#### Unit Test Structure
+Unit test structure:
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -149,11 +163,12 @@ describe('ResourceName', () => {
 });
 ```
 
-### Integration Tests
+#### Integration tests
 
-Integration tests make real API requests to validate the full request/response cycle. These tests are optional and require proper credentials.
+Integration tests make real API requests to validate the full request/response cycle. These
+tests are optional and require proper credentials.
 
-#### Setup for Checkout Page Developers (Local API)
+Setup for Checkout Page developers (local API):
 
 1. **Copy the environment template**
 
@@ -179,7 +194,7 @@ Integration tests make real API requests to validate the full request/response c
    pnpm test:integration
    ```
 
-#### Setup for External Contributors (Production API)
+Setup for external contributors (production API):
 
 1. **Copy the environment template**
 
@@ -205,7 +220,7 @@ Integration tests make real API requests to validate the full request/response c
    pnpm test:integration
    ```
 
-#### Integration Test Guidelines
+Integration test guidelines:
 
 - Integration tests are named with `.integration.test.ts` suffix
 - Tests automatically skip if no API key is configured
@@ -213,7 +228,7 @@ Integration tests make real API requests to validate the full request/response c
 - Validate response structure matches TypeScript types
 - Test both success and error scenarios
 
-#### Test Commands
+#### Test commands
 
 ```bash
 # Run only unit tests (default)
@@ -229,9 +244,10 @@ pnpm test:all
 pnpm test:watch
 ```
 
-**Note**: Integration tests are not required for pull requests. Unit tests with mocked dependencies are sufficient for most contributions.
+**Note**: Integration tests are not required for pull requests. Unit tests with mocked
+dependencies are sufficient for most contributions.
 
-## Adding New Resources
+### Adding new resources
 
 When adding a new API resource:
 
@@ -288,13 +304,13 @@ When adding a new API resource:
    - Add usage examples to the JS SDK README
    - Create example files in `examples/js/`
 
-## OpenAPI Specification & Type Generation
+### OpenAPI spec and type generation
 
-The API structure is defined in `spec/openapi.json`. TypeScript types are automatically generated from this spec.
+TypeScript types are generated from `spec/openapi.json`.
 
-### When adding new endpoints:
+When adding new endpoints:
 
-1. **Update the OpenAPI spec**
+1. **Update the OpenAPI spec** (see [spec/README.md](spec/README.md))
 
    ```bash
    # Edit spec/openapi.json
@@ -332,7 +348,13 @@ The API structure is defined in `spec/openapi.json`. TypeScript types are automa
 
 5. **Add tests and documentation**
 
-## Pull Request Process
+## Adding a language
+
+New languages and tools each get their own top-level directory, README, examples and CI
+workflows. The checklist is in [CLAUDE.md](CLAUDE.md#adding-a-new-language-or-tool). Open an
+issue first so we can agree on the package name and layout.
+
+## Pull request process
 
 1. Ensure all tests pass
 2. Update documentation if needed
@@ -340,7 +362,7 @@ The API structure is defined in `spec/openapi.json`. TypeScript types are automa
 4. Reference any related issues
 5. Wait for review from maintainers
 
-## Questions or Issues?
+## Questions or issues?
 
 - Check existing GitHub issues
 - Create a new issue for bugs or feature requests
