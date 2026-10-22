@@ -13,9 +13,12 @@ customer-facing: plain short sentences, sentence-case headings, no em dash chara
 ## Repo map
 
 - **`js/`** - JavaScript/TypeScript SDK, npm `@checkoutpage/sdk`. Conventions in [js/CLAUDE.md](js/CLAUDE.md).
+- **`n8n/`** - n8n community nodes, npm `n8n-nodes-checkoutpage`. A standalone npm project
+  outside the pnpm workspace, with no runtime dependencies (n8n verification forbids them, so
+  it calls the API directly instead of using the SDK). Conventions in [n8n/CLAUDE.md](n8n/CLAUDE.md).
 - **`cli/`** - Checkout Page CLI (Rust). Coming next; not in the repo yet.
 - **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
-- **`examples/<lang>/`** - runnable usage examples per language (`examples/js/` today).
+- **`examples/<lang>/`** - usage examples per language or tool (`examples/js/`, `examples/n8n/`).
 - **`scripts/`** - shared tooling (`generate-types.ts`).
 - **`.github/workflows/`** - one `test-<lang>.yml` and one `publish-<lang>.yml` per language.
 
@@ -25,7 +28,8 @@ depend on them.
 
 The root `package.json` (`@checkoutpage/dev-tools`, private) holds the shared Node tooling and
 the pnpm workspace scripts. Only JS packages belong in `pnpm-workspace.yaml`; other languages
-use their own toolchain inside their directory.
+use their own toolchain inside their directory. `n8n/` is TypeScript but stays out of the
+workspace too: n8n's tooling expects npm, so root `pnpm -r` commands skip it.
 
 ## The spec is the source of truth
 

@@ -1,0 +1,87 @@
+name: Publish n8n node
+
+# n8n only verifies community nodes published from GitHub Actions with an npm
+# provenance statement, so this is the only supported way to release n8n/.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.0)'
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    defaults:
+      run:
+        working-directory: n8n
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+          cache-dependency-path: n8n/package-lock.json
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update version
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: npm version "$VERSION" --no-git-tag-version
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Run tests
+        run: npm test
+
+      # In GitHub Actions `n8n-node release` lints, builds and runs
+      # `npm publish` with provenance (NPM_CONFIG_PROVENANCE=true).
+      - name: Publish to npm with provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run release
+
+      - name: Create git tag
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore(n8n): release v$VERSION"
+          git tag "n8n-v$VERSION"
+          git push origin main
+          git push origin "n8n-v$VERSION"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: n8n-v${{ github.event.inputs.version }}
+          release_name: n8n node v${{ github.event.inputs.version }}
+          body: |
+            ## n8n node v${{ github.event.inputs.version }}
+
+            ### Installation
+
+            In n8n, open Settings > Community nodes, select Install and enter `n8n-nodes-checkoutpage`.
+          draft: false
+          prerelease: false
