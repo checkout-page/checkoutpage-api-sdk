@@ -8,14 +8,14 @@ OpenAPI spec, so they cover the same API.
 
 ## Tools
 
-| Tool                      | Status      | Install                         | Docs                         |
-| ------------------------- | ----------- | ------------------------------- | ---------------------------- |
-| JavaScript/TypeScript SDK | Active      | `npm install @checkoutpage/sdk` | [js/README.md](js/README.md) |
-| CLI                       | Coming soon | -                               | `cli/`                       |
-| PHP                       | Planned     | -                               | -                            |
-| Ruby                      | Planned     | -                               | -                            |
-| Python                    | Planned     | -                               | -                            |
-| Go                        | Planned     | -                               | -                            |
+| Tool                      | Status  | Install                         | Docs                           |
+| ------------------------- | ------- | ------------------------------- | ------------------------------ |
+| JavaScript/TypeScript SDK | Active  | `npm install @checkoutpage/sdk` | [js/README.md](js/README.md)   |
+| CLI (`checkoutpage`)      | Active  | Build from source               | [cli/README.md](cli/README.md) |
+| PHP                       | Planned | -                               | -                              |
+| Ruby                      | Planned | -                               | -                              |
+| Python                    | Planned | -                               | -                              |
+| Go                        | Planned | -                               | -                              |
 
 ## JavaScript/TypeScript SDK
 
@@ -40,6 +40,13 @@ The JavaScript SDK has full TypeScript support and runs on Node.js 18 or later.
 
 More in the [JS SDK README](js/README.md) and the [JavaScript examples](examples/js/).
 
+## CLI
+
+`checkoutpage` works with your account from the terminal: look up bookings, payments and
+customers, export them as CSV, create coupons and bookings, and receive your webhooks on your
+own machine with `checkoutpage webhooks listen`. Install and usage are in
+[cli/README.md](cli/README.md).
+
 ## The API spec
 
 [`spec/openapi.json`](spec/openapi.json) is the OpenAPI spec for the Checkout Page seller API.
@@ -54,7 +61,7 @@ For the full API reference, visit [docs.checkoutpage.com](https://docs.checkoutp
 ```
 checkoutpage-api-sdk/
 ├─ js/                  # JavaScript/TypeScript SDK (@checkoutpage/sdk)
-├─ cli/                 # Checkout Page CLI (coming soon)
+├─ cli/                 # Checkout Page CLI (Rust)
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
 ├─ examples/

@@ -1,0 +1,46 @@
+[package]
+name = "checkoutpage-cli"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Command-line tool for the Checkout Page seller API"
+license = "MIT"
+repository = "https://github.com/checkout-page/checkoutpage-api-sdk"
+publish = false
+
+[[bin]]
+name = "checkoutpage"
+path = "src/main.rs"
+
+[lib]
+name = "checkoutpage_cli"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1"
+base64 = "0.22"
+bytes = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std", "serde"] }
+clap = { version = "4.5", features = ["derive", "env"] }
+comfy-table = { version = "7", default-features = false }
+csv = "1"
+dirs = "6"
+futures-util = "0.3"
+hex = "0.4"
+hmac = "0.12"
+open = "5"
+rand = "0.8"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util", "time", "signal", "sync"] }
+toml = "0.8"
+url = "2"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
+wiremock = "0.6"

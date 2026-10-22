@@ -13,7 +13,7 @@ customer-facing: plain short sentences, sentence-case headings, no em dash chara
 ## Repo map
 
 - **`js/`** - JavaScript/TypeScript SDK, npm `@checkoutpage/sdk`. Conventions in [js/CLAUDE.md](js/CLAUDE.md).
-- **`cli/`** - Checkout Page CLI (Rust). Coming next; not in the repo yet.
+- **`cli/`** - `checkoutpage` CLI, a standalone Rust crate outside the pnpm workspace. Conventions in [cli/CLAUDE.md](cli/CLAUDE.md).
 - **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
 - **`examples/<lang>/`** - runnable usage examples per language (`examples/js/` today).
 - **`scripts/`** - shared tooling (`generate-types.ts`).
