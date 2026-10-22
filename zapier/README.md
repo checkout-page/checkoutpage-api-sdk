@@ -213,10 +213,6 @@ partner dashboard.
 These are kept as they are on purpose: changing them changes behaviour for existing Zaps. The
 unit tests pin today's behaviour.
 
-- **The connection test accepts any key.** `index.js` sets `skipThrowForStatus`, and
-  `authentication.js` never calls `response.throwForStatus()`. A `401 Missing or invalid API
-key` from `/zapier/v2/health` resolves, so Zapier would treat the connection as working.
-  The triggers call `throwForStatus()` and fail as expected.
 - **"Include test ..." = False may still include test data.** The `include_test_*` fields are
   `boolean` fields with string choices `'false'` and `'true'`, and the triggers check
   `bundle.inputData.include_test_* ? {} : { livemode: true }`. `zapier-platform-core` does not

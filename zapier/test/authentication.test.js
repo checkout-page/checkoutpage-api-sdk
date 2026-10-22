@@ -46,12 +46,17 @@ describe('authentication.test', () => {
     await expect(appTester(authTest, bundleFor())).rejects.toThrow(/ECONNREFUSED/);
   });
 
-  // Pins current behaviour: with skipThrowForStatus and no throwForStatus() in the test, an
-  // error status resolves, so Zapier would accept the connection. See README, Known issues.
-  it.each([401, 403, 404, 500])('does not throw on %i', async (status) => {
-    const body = { status: 'error', type: 'error', message: 'Missing or invalid API key' };
-    captureRequest(api(), HEALTH, { status, body });
+  it.each([401, 403, 404, 500])(
+    'fails the connection with a ResponseError on %i',
+    async (status) => {
+      const body = { status: 'error', type: 'error', message: 'Missing or invalid API key' };
+      captureRequest(api(), HEALTH, { status, body });
 
-    await expect(appTester(authTest, bundleFor())).resolves.toEqual(body);
-  });
+      const error = await appTester(authTest, bundleFor()).catch((err) => err);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe('ResponseError');
+      expect(JSON.parse(error.message).status).toBe(status);
+    }
+  );
 });

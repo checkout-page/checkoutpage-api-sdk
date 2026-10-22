@@ -8,6 +8,7 @@ const test = async (z, bundle) => {
   };
 
   return z.request(options).then((response) => {
+    response.throwForStatus();
     const results = response.json;
 
     return results;
