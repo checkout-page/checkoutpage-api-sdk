@@ -10,17 +10,13 @@ const perform = async (z, bundle) => {
       limit: 25,
       skip: bundle.meta.page * 25,
       sort: JSON.stringify({ canceledAt: -1 }),
-      ...(bundle.inputData.include_test_subscriptions
-        ? {}
-        : { livemode: true }),
+      ...(bundle.inputData.include_test_subscriptions ? {} : { livemode: true }),
     },
   };
 
   return z.request(options).then((response) => {
     response.throwForStatus();
     const results = response.json;
-
-    // You can do any parsing you need for results here before returning them
 
     return results;
   });
@@ -159,8 +155,7 @@ module.exports = {
   noun: 'Subscription',
   display: {
     label: 'Completed Subscription',
-    description:
-      'Triggers when a subscription with limited number of payments is completed.',
+    description: 'Triggers when a subscription with limited number of payments is completed.',
     hidden: false,
   },
 };

@@ -14,6 +14,10 @@ customer-facing: plain short sentences, sentence-case headings, no em dash chara
 
 - **`js/`** - JavaScript/TypeScript SDK, npm `@checkoutpage/sdk`. Conventions in [js/CLAUDE.md](js/CLAUDE.md).
 - **`cli/`** - Checkout Page CLI (Rust). Coming next; not in the repo yet.
+- **`zapier/`** - the Checkout Page Zapier integration (id 140636), a standalone npm project
+  outside the pnpm workspace. It calls the API's `/zapier/v2` endpoints, not the seller API,
+  so it does not use the spec. Released with `publish-zapier.yml` (tags `zapier-v<version>`).
+  Never break existing Zaps: see [zapier/CLAUDE.md](zapier/CLAUDE.md).
 - **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
 - **`examples/<lang>/`** - runnable usage examples per language (`examples/js/` today).
 - **`scripts/`** - shared tooling (`generate-types.ts`).

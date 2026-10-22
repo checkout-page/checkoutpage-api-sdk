@@ -1,0 +1,2100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`user-facing contract matches the snapshot 1`] = `
+{
+  "authentication": {
+    "fields": [
+      {
+        "computed": false,
+        "helpText": "You can create an API key within your store API key settings https://checkoutpage.com/dashboard/settings/api",
+        "key": "api_key",
+        "label": "API Key",
+        "required": true,
+        "type": "string",
+      },
+    ],
+    "type": "custom",
+  },
+  "triggers": {
+    "active_subscription": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a subscription becomes active. Either upon subscription purchase, when subscription trial ends or on subscription start date",
+        "hidden": false,
+        "label": "Active Subscription",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+          ],
+          "default": "True",
+          "helpText": "By default, the Zap will trigger on all successful subscriptions.
+
+Each subscription contains a "livemode" field that you can use to determine if it's a real or test subscription.
+
+Choose "False" to prevent the Zap from triggering on test subscriptions.",
+          "key": "include_test_subscriptions",
+          "label": "Include test subscriptions",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "active_subscription",
+      "noun": "Subscription",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "status",
+          "label": "Subscription Status",
+        },
+        {
+          "key": "id",
+          "label": "Subscription ID",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "interval",
+        },
+        {
+          "key": "intervalCount",
+        },
+        {
+          "key": "endsAfterPayments",
+          "label": "Ends after no. of payments",
+        },
+        {
+          "key": "trialStart",
+        },
+        {
+          "key": "trialEnd",
+        },
+        {
+          "key": "currentSubscriptionPeriodStart",
+        },
+        {
+          "key": "currentSubscriptionPeriodEnd",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTrialPeriodDays",
+        },
+        {
+          "key": "productSubscribers",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "99.00",
+        "checkoutId": "633d34750d5b13795903da4f",
+        "checkoutSlug": "subscription-4",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:07:09.441Z",
+        "currency": "usd",
+        "currentSubscriptionPeriodEnd": "2022-10-12T08:07:09.000Z",
+        "currentSubscriptionPeriodStart": "2022-10-05T07:22:19.000Z",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "199.00",
+        "endsAfterPayments": null,
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b2d7a740243092cac0a",
+        "interval": "month",
+        "intervalCount": 1,
+        "isPrefilled": true,
+        "licenseKey": "08b62a9d-70cc-4c49-aeff-ce4dca972d01",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "24485475",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "99.00",
+        "productSubscribers": 2,
+        "productTitle": "Subscription",
+        "productTotalRevenue": "198.00",
+        "productTrialPeriodDays": 7,
+        "sku": "1004",
+        "status": "completed",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "trialEnd": "2022-10-12T08:07:09.000Z",
+        "trialStart": "2022-10-05T07:22:19.000Z",
+        "variants": {},
+      },
+      "type": undefined,
+    },
+    "canceled_subscription": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a subscription is canceled (either by you, by a customer or automatically after 4 unsuccessful payment attempts).",
+        "hidden": false,
+        "label": "Canceled Subscription",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+          ],
+          "default": "True",
+          "helpText": "By default, the Zap will trigger on all successful subscriptions.
+
+Each subscription contains a "livemode" field that you can use to determine if it's a real or test subscription.
+
+Choose "False" to prevent the Zap from triggering on test subscriptions.",
+          "key": "include_test_subscriptions",
+          "label": "Include test subscriptions",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "canceled_subscription",
+      "noun": "Subscription",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "status",
+          "label": "Subscription Status",
+        },
+        {
+          "key": "id",
+          "label": "Subscription ID",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "interval",
+        },
+        {
+          "key": "intervalCount",
+          "type": "integer",
+        },
+        {
+          "key": "endsAfterPayments",
+          "label": "Ends after no. of payments",
+          "type": "integer",
+        },
+        {
+          "key": "trialStart",
+        },
+        {
+          "key": "trialEnd",
+        },
+        {
+          "key": "currentSubscriptionPeriodStart",
+        },
+        {
+          "key": "currentSubscriptionPeriodEnd",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+          "type": "boolean",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTrialPeriodDays",
+        },
+        {
+          "key": "productSubscribers",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "99.00",
+        "checkoutId": "633d34750d5b13795903da4f",
+        "checkoutSlug": "subscription-4",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:07:09.441Z",
+        "currency": "usd",
+        "currentSubscriptionPeriodEnd": "2022-10-12T08:07:09.000Z",
+        "currentSubscriptionPeriodStart": "2022-10-05T07:22:19.000Z",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "199.00",
+        "endsAfterPayments": null,
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b2d7a740243092cac0a",
+        "interval": "month",
+        "intervalCount": 1,
+        "isPrefilled": true,
+        "licenseKey": "08b62a9d-70cc-4c49-aeff-ce4dca972d01",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "24485475",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "99.00",
+        "productSubscribers": 2,
+        "productTitle": "Subscription",
+        "productTotalRevenue": "198.00",
+        "productTrialPeriodDays": 7,
+        "sku": "1004",
+        "status": "canceled",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "trialEnd": "2022-10-12T08:07:09.000Z",
+        "trialStart": "2022-10-05T07:22:19.000Z",
+        "variants": {},
+      },
+      "type": undefined,
+    },
+    "completed_subscription": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a subscription with limited number of payments is completed.",
+        "hidden": false,
+        "label": "Completed Subscription",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+          ],
+          "default": "True",
+          "helpText": "By default, the Zap will trigger on all successful subscriptions.
+
+Each subscription contains a "livemode" field that you can use to determine if it's a real or test subscription.
+
+Choose "False" to prevent the Zap from triggering on test subscriptions.",
+          "key": "include_test_subscriptions",
+          "label": "Include test subscriptions",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "completed_subscription",
+      "noun": "Subscription",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "status",
+          "label": "Subscription Status",
+        },
+        {
+          "key": "id",
+          "label": "Subscription ID",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "interval",
+        },
+        {
+          "key": "intervalCount",
+          "type": "integer",
+        },
+        {
+          "key": "endsAfterPayments",
+          "label": "Ends after no. of payments",
+          "type": "integer",
+        },
+        {
+          "key": "trialStart",
+        },
+        {
+          "key": "trialEnd",
+        },
+        {
+          "key": "currentSubscriptionPeriodStart",
+        },
+        {
+          "key": "currentSubscriptionPeriodEnd",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+          "type": "boolean",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTrialPeriodDays",
+        },
+        {
+          "key": "productSubscribers",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "99.00",
+        "checkoutId": "633d34750d5b13795903da4f",
+        "checkoutSlug": "subscription-4",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:07:09.441Z",
+        "currency": "usd",
+        "currentSubscriptionPeriodEnd": "2022-10-12T08:07:09.000Z",
+        "currentSubscriptionPeriodStart": "2022-10-05T07:22:19.000Z",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "199.00",
+        "endsAfterPayments": null,
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b2d7a740243092cac0a",
+        "interval": "month",
+        "intervalCount": 1,
+        "isPrefilled": true,
+        "licenseKey": "08b62a9d-70cc-4c49-aeff-ce4dca972d01",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "24485475",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "99.00",
+        "productSubscribers": 2,
+        "productTitle": "Subscription",
+        "productTotalRevenue": "198.00",
+        "productTrialPeriodDays": 7,
+        "sku": "1004",
+        "status": "completed",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "trialEnd": "2022-10-12T08:07:09.000Z",
+        "trialStart": "2022-10-05T07:22:19.000Z",
+        "variants": {},
+      },
+      "type": undefined,
+    },
+    "new_abandoned_booking": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a booking is abandoned",
+        "hidden": false,
+        "label": "New Abandoned Booking",
+      },
+      "inputFields": undefined,
+      "key": "new_abandoned_booking",
+      "noun": "Abandoned Booking",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__quantity",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "tickets__Ticket types - General Admission__ticketGroupName",
+        },
+        {
+          "key": "tickets__Ticket types - General Admission__name",
+        },
+        {
+          "key": "tickets__Ticket types - General Admission__quantity",
+        },
+        {
+          "key": "tickets__Ticket types - General Admission__price",
+        },
+        {
+          "key": "tickets__Ticket types - General Admission__capacity",
+        },
+        {
+          "key": "tickets__Ticket types - General Admission__ticketTypeId",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "couponDiscount",
+        },
+        {
+          "key": "status",
+          "label": "Payment Status",
+        },
+        {
+          "key": "id",
+          "label": "Payment ID",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTotalNumberOfSales",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "194.00",
+        "checkoutId": "633d22a1917cc631d51f1764",
+        "checkoutSlug": "one-time-payment",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponDiscount": "10.00",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:08:07.700Z",
+        "currency": "usd",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "299.00",
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "quantity": "1",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b677a740243092cac57",
+        "isPrefilled": true,
+        "licenseKey": "85b5f091-5c0a-450d-a4ef-2da26918f7f2",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "32000373",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "199.00",
+        "productTitle": "One Time Payment",
+        "productTotalNumberOfSales": 2,
+        "productTotalRevenue": "502.00",
+        "sku": "1004",
+        "status": "paid",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "tickets": {
+          "Ticket types - General Admission": {
+            "capacity": 100,
+            "name": "General Admission",
+            "price": "10.00",
+            "quantity": 5,
+            "ticketGroupName": "Ticket types",
+            "ticketTypeId": "68be9ca4a9b7690382179e69",
+          },
+        },
+        "variants": {},
+      },
+      "type": undefined,
+    },
+    "new_abandoned_payment": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a payment is abandoned",
+        "hidden": false,
+        "label": "New Abandoned Payment",
+      },
+      "inputFields": undefined,
+      "key": "new_abandoned_payment",
+      "noun": "Abandoned Payment",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__quantity",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "couponDiscount",
+        },
+        {
+          "key": "status",
+          "label": "Payment Status",
+        },
+        {
+          "key": "id",
+          "label": "Payment ID",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTotalNumberOfSales",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "194.00",
+        "checkoutId": "633d22a1917cc631d51f1764",
+        "checkoutSlug": "one-time-payment",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponDiscount": "10.00",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:08:07.700Z",
+        "currency": "usd",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "299.00",
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "quantity": "1",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b677a740243092cac57",
+        "isPrefilled": true,
+        "licenseKey": "85b5f091-5c0a-450d-a4ef-2da26918f7f2",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "32000373",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "199.00",
+        "productTitle": "One Time Payment",
+        "productTotalNumberOfSales": 2,
+        "productTotalRevenue": "502.00",
+        "sku": "1004",
+        "status": "paid",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "variants": {},
+      },
+      "type": undefined,
+    },
+    "new_abandoned_subscription": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a subscription is abandoned",
+        "hidden": false,
+        "label": "New Abandoned Subscription",
+      },
+      "inputFields": undefined,
+      "key": "new_abandoned_subscription",
+      "noun": "Abandoned Subscription",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "status",
+          "label": "Subscription Status",
+        },
+        {
+          "key": "id",
+          "label": "Subscription ID",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "interval",
+        },
+        {
+          "key": "intervalCount",
+        },
+        {
+          "key": "endsAfterPayments",
+          "label": "Ends after no. of payments",
+        },
+        {
+          "key": "trialStart",
+        },
+        {
+          "key": "trialEnd",
+        },
+        {
+          "key": "currentSubscriptionPeriodStart",
+        },
+        {
+          "key": "currentSubscriptionPeriodEnd",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTrialPeriodDays",
+        },
+        {
+          "key": "productSubscribers",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "99.00",
+        "checkoutId": "633d34750d5b13795903da4f",
+        "checkoutSlug": "subscription-4",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:07:09.441Z",
+        "currency": "usd",
+        "currentSubscriptionPeriodEnd": "2022-10-12T08:07:09.000Z",
+        "currentSubscriptionPeriodStart": "2022-10-05T07:22:19.000Z",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "199.00",
+        "endsAfterPayments": null,
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b2d7a740243092cac0a",
+        "interval": "month",
+        "intervalCount": 1,
+        "isPrefilled": true,
+        "licenseKey": "08b62a9d-70cc-4c49-aeff-ce4dca972d01",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "24485475",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "99.00",
+        "productSubscribers": 2,
+        "productTitle": "Subscription",
+        "productTotalRevenue": "198.00",
+        "productTrialPeriodDays": 7,
+        "sku": "1004",
+        "status": "active",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "trialEnd": "2022-10-12T08:07:09.000Z",
+        "trialStart": "2022-10-05T07:22:19.000Z",
+        "variants": {},
+      },
+      "type": undefined,
+    },
+    "new_payment": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a someone completes a one time payment checkout",
+        "hidden": false,
+        "label": "New Payment",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+          ],
+          "helpText": "Set this to True if you want the Zap to trigger on test payments.",
+          "key": "include_test_payments",
+          "label": "Include test payments",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "new_payment",
+      "noun": "Payment",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__quantity",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "createdDate",
+          "type": "datetime",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "couponDiscount",
+        },
+        {
+          "key": "status",
+          "label": "Payment Status",
+        },
+        {
+          "key": "id",
+          "label": "Payment ID",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+          "type": "boolean",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTotalNumberOfSales",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "194.00",
+        "checkoutId": "633d22a1917cc631d51f1764",
+        "checkoutSlug": "one-time-payment",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponDiscount": "10.00",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:08:07.700Z",
+        "currency": "usd",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "299.00",
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "quantity": "1",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b677a740243092cac57",
+        "isPrefilled": true,
+        "licenseKey": "85b5f091-5c0a-450d-a4ef-2da26918f7f2",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "32000373",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "199.00",
+        "productTitle": "One Time Payment",
+        "productTotalNumberOfSales": 2,
+        "productTotalRevenue": "502.00",
+        "sku": "1004",
+        "status": "paid",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "variants": {},
+      },
+      "type": "polling",
+    },
+    "new_submission": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a someone submits a Form",
+        "hidden": false,
+        "label": "New Submission",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+          ],
+          "helpText": "Set this to True if you want the Zap to trigger on test submissions",
+          "key": "include_test_submissions",
+          "label": "Include test submissions",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "new_submission",
+      "noun": "Submission",
+      "outputFields": [
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "status",
+        },
+        {
+          "key": "checkoutName",
+        },
+        {
+          "key": "customerCreatedDate",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "livemode",
+        },
+        {
+          "key": "id",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "createdAt",
+        },
+      ],
+      "sample": {
+        "checkoutId": "65376fa183e380fa7bfa9338",
+        "checkoutName": "Untitled",
+        "checkoutSlug": "untitled-2",
+        "createdAt": "2023-10-25T08:00:58.306Z",
+        "createdDate": "2023-10-25T08:00:58.306Z",
+        "customerCreatedDate": "2023-10-25T08:00:58.272Z",
+        "customerEmail": "weae@wa.om",
+        "customerId": "6538cb3ad769d28d3e4fdf6a",
+        "fields": {
+          "customer_email": "weae@WA.OM",
+        },
+        "id": "6538cb3ad769d28d3e4fdf70",
+        "livemode": true,
+        "status": "succeeded",
+      },
+      "type": undefined,
+    },
+    "new_subscription": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a someone subscribes on a subscription checkout.",
+        "hidden": false,
+        "label": "New Subscription",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+          ],
+          "default": "True",
+          "helpText": "By default, the Zap will trigger on all successful subscriptions.
+
+Each subscription contains a "livemode" field that you can use to determine if it's a real or test subscription.
+
+Choose "False" to prevent the Zap from triggering on test subscriptions.",
+          "key": "include_test_subscriptions",
+          "label": "Include test subscriptions",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "new_subscription",
+      "noun": "Subscription",
+      "outputFields": [
+        {
+          "key": "fields__customer_email",
+        },
+        {
+          "key": "fields__customer_name",
+        },
+        {
+          "key": "fields__customer_phone",
+        },
+        {
+          "key": "fields__shipping_address_line1",
+        },
+        {
+          "key": "fields__shipping_address_line2",
+        },
+        {
+          "key": "fields__shipping_address_city",
+        },
+        {
+          "key": "fields__shipping_address_country",
+        },
+        {
+          "key": "fields__shipping_address_postal_code",
+        },
+        {
+          "key": "fields__shipping_address_state",
+        },
+        {
+          "key": "fields__accept-terms-and-conditions",
+        },
+        {
+          "key": "amount",
+          "type": "string",
+        },
+        {
+          "key": "currency",
+          "type": "string",
+        },
+        {
+          "key": "orderId",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "licenseKey",
+        },
+        {
+          "key": "licenseKeyUses",
+        },
+        {
+          "key": "licenseKeyEnabled",
+        },
+        {
+          "key": "couponId",
+        },
+        {
+          "key": "couponCode",
+        },
+        {
+          "key": "couponPercentOff",
+        },
+        {
+          "key": "couponAmountOff",
+        },
+        {
+          "key": "createdDate",
+        },
+        {
+          "key": "status",
+          "label": "Subscription Status",
+          "type": "string",
+        },
+        {
+          "key": "id",
+          "label": "Subscription ID",
+          "type": "string",
+        },
+        {
+          "key": "discountedFrom",
+        },
+        {
+          "key": "interval",
+          "type": "string",
+        },
+        {
+          "key": "intervalCount",
+          "type": "integer",
+        },
+        {
+          "key": "endsAfterPayments",
+          "label": "Ends after no. of payments",
+          "type": "integer",
+        },
+        {
+          "key": "trialStart",
+        },
+        {
+          "key": "trialEnd",
+        },
+        {
+          "key": "currentSubscriptionPeriodStart",
+        },
+        {
+          "key": "currentSubscriptionPeriodEnd",
+        },
+        {
+          "key": "sku",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "livemode",
+          "type": "boolean",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productPrice",
+        },
+        {
+          "key": "productTotalRevenue",
+        },
+        {
+          "key": "productTrialPeriodDays",
+        },
+        {
+          "key": "productSubscribers",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "99.00",
+        "checkoutId": "633d34750d5b13795903da4f",
+        "checkoutSlug": "subscription-4",
+        "couponAmountOff": "10.00",
+        "couponCode": "10off",
+        "couponId": "633d37ee0d5b13795903ddae",
+        "couponPercentOff": null,
+        "createdDate": "2022-10-05T08:07:09.441Z",
+        "currency": "usd",
+        "currentSubscriptionPeriodEnd": "2022-10-12T08:07:09.000Z",
+        "currentSubscriptionPeriodStart": "2022-10-05T07:22:19.000Z",
+        "customerEmail": "zapier@checkoutpage.co",
+        "customerId": "633d30ab917cc631d51f1b36",
+        "customerName": "John",
+        "discountedFrom": "199.00",
+        "endsAfterPayments": null,
+        "fields": {
+          "accept-terms-and-conditions": "true",
+          "customer_email": "zapier@checkoutpage.co",
+          "customer_name": "John",
+          "customer_phone": "0135589319",
+          "shipping_address_city": "New York",
+          "shipping_address_country": "us",
+          "shipping_address_line1": "Main street",
+          "shipping_address_line2": "First floor",
+          "shipping_address_postal_code": "10001",
+          "shipping_address_state": "New York",
+        },
+        "hasInteraction": true,
+        "id": "633d3b2d7a740243092cac0a",
+        "interval": "month",
+        "intervalCount": 1,
+        "isPrefilled": true,
+        "licenseKey": "08b62a9d-70cc-4c49-aeff-ce4dca972d01",
+        "licenseKeyEnabled": true,
+        "licenseKeyUses": 0,
+        "livemode": true,
+        "orderId": "24485475",
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "productPrice": "99.00",
+        "productSubscribers": 2,
+        "productTitle": "Subscription",
+        "productTotalRevenue": "198.00",
+        "productTrialPeriodDays": 7,
+        "sku": "1004",
+        "status": "active",
+        "stripeCustomerId": "cus_MYZ3dglRIEUvei",
+        "trialEnd": "2022-10-12T08:07:09.000Z",
+        "trialStart": "2022-10-05T07:22:19.000Z",
+        "variants": {},
+      },
+      "type": "polling",
+    },
+    "new_subscription_payment": {
+      "canPaginate": true,
+      "display": {
+        "description": "Triggers when a subscription renews",
+        "hidden": false,
+        "label": "New Subscription Payment",
+      },
+      "inputFields": [
+        {
+          "altersDynamicFields": false,
+          "choices": [
+            {
+              "label": "True",
+              "sample": "true",
+              "value": "true",
+            },
+            {
+              "label": "False",
+              "sample": "false",
+              "value": "false",
+            },
+          ],
+          "default": "True",
+          "helpText": "By default, the Zap will trigger on all successful subscriptions.
+
+Each subscription contains a "livemode" field that you can use to determine if it's a real or test subscription.
+
+Choose "False" to prevent the Zap from triggering on test subscriptions.",
+          "key": "include_test_subscriptions",
+          "label": "Include test subscriptions",
+          "list": false,
+          "required": true,
+          "type": "boolean",
+        },
+      ],
+      "key": "new_subscription_payment",
+      "noun": "Subscription Payment",
+      "outputFields": [
+        {
+          "key": "customerName",
+        },
+        {
+          "key": "customerEmail",
+        },
+        {
+          "key": "amount",
+        },
+        {
+          "key": "currency",
+        },
+        {
+          "key": "createdDate",
+          "type": "datetime",
+        },
+        {
+          "key": "paymentStatus",
+        },
+        {
+          "key": "invoiceStatus",
+        },
+        {
+          "key": "paid",
+        },
+        {
+          "key": "billingReason",
+        },
+        {
+          "key": "checkoutName",
+        },
+        {
+          "key": "productTitle",
+        },
+        {
+          "key": "productNumberOfSubscribers",
+        },
+        {
+          "key": "customerCreatedDate",
+        },
+        {
+          "key": "customerId",
+        },
+        {
+          "key": "stripeCustomerId",
+        },
+        {
+          "key": "livemode",
+          "type": "boolean",
+        },
+        {
+          "key": "paymentGateway",
+        },
+        {
+          "key": "paymentMethod",
+        },
+        {
+          "key": "subscriptionId",
+        },
+        {
+          "key": "subscriptionOrderId",
+        },
+        {
+          "key": "stripeSubscriptionId",
+        },
+        {
+          "key": "stripePaymentId",
+        },
+        {
+          "key": "stripePaymentIntentId",
+        },
+        {
+          "key": "stripeInvoicePdf",
+        },
+        {
+          "key": "id",
+          "label": "Subscription Payment ID",
+        },
+        {
+          "key": "checkoutId",
+        },
+        {
+          "key": "checkoutSlug",
+        },
+        {
+          "key": "isPrefilled",
+          "type": "boolean",
+        },
+        {
+          "key": "hasInteraction",
+          "type": "boolean",
+        },
+      ],
+      "sample": {
+        "amount": "225.00",
+        "billingReason": "subscription_create",
+        "checkoutId": "66973a0dde853d7fbc07c926",
+        "checkoutName": "Subscription",
+        "checkoutSlug": "subscription-3",
+        "createdDate": "2024-08-28T09:29:34.458Z",
+        "currency": "eur",
+        "customerCreatedDate": "2024-08-28T09:29:23.242Z",
+        "customerEmail": "weew@weew.com",
+        "customerId": "66ceedf3c35b61efe4832119",
+        "customerName": "eawawe",
+        "hasInteraction": true,
+        "id": "66ceedfec35b61efe48321c2",
+        "invoiceStatus": "paid",
+        "isPrefilled": true,
+        "livemode": false,
+        "paid": true,
+        "paymentGateway": "stripe",
+        "paymentMethod": "card",
+        "paymentStatus": "succeeded",
+        "productNumberOfSubscribers": 4,
+        "productTitle": "Subscription",
+        "stripeCustomerId": "cus_QkCbe8aFcpwrQr",
+        "stripeInvoicePdf": "https://pay.stripe.com/invoice/acct_1DRMcgJ7i86GeQKl/test_YWNjdF8xRFJNY2dKN2k4NkdlUUtsLF9Ra0NiUWc0aXE3VWEwMmJNQUlkdHRXMXk2QUFlZEhzLDExNTM3ODE3Mg0200uxITPoMQ/pdf?s=ap",
+        "stripePaymentId": "ch_3PsiBtJ7i86GeQKl1tnZx45l",
+        "stripePaymentIntentId": "pi_3PsiBtJ7i86GeQKl1Ccx5ldM",
+        "stripeSubscriptionId": "sub_1PsiBtJ7i86GeQKlUWGzDkNY",
+        "subscriptionId": "66ceedf4c35b61efe4832132",
+        "subscriptionOrderId": "42898959",
+      },
+      "type": undefined,
+    },
+  },
+}
+`;

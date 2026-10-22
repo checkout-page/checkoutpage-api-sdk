@@ -17,8 +17,6 @@ const perform = async (z, bundle) => {
     response.throwForStatus();
     const results = response.json;
 
-    // You can do any parsing you need for results here before returning them
-
     return results;
   });
 };
@@ -32,8 +30,7 @@ module.exports = {
         key: 'include_test_payments',
         type: 'boolean',
         label: 'Include test payments',
-        helpText:
-          'Set this to True if you want the Zap to trigger on test payments.',
+        helpText: 'Set this to True if you want the Zap to trigger on test payments.',
         choices: [
           { sample: 'false', value: 'false', label: 'False' },
           { sample: 'true', value: 'true', label: 'True' },
@@ -139,8 +136,7 @@ module.exports = {
   key: 'new_payment',
   noun: 'Payment',
   display: {
-    description:
-      'Triggers when a someone completes a one time payment checkout',
+    description: 'Triggers when a someone completes a one time payment checkout',
     hidden: false,
     label: 'New Payment',
   },

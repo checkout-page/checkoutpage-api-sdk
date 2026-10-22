@@ -3,19 +3,21 @@
 Official developer tools for the Checkout Page API: client libraries and command-line tools
 for building on Checkout Page from your own code.
 
-Each language or tool lives in its own top-level directory. They are all built from the same
-OpenAPI spec, so they cover the same API.
+Each language or tool lives in its own top-level directory. The SDKs and the CLI are built from
+the same OpenAPI spec, so they cover the same API. The Zapier integration is the source of
+Checkout Page's app on Zapier.
 
 ## Tools
 
-| Tool                      | Status      | Install                         | Docs                         |
-| ------------------------- | ----------- | ------------------------------- | ---------------------------- |
-| JavaScript/TypeScript SDK | Active      | `npm install @checkoutpage/sdk` | [js/README.md](js/README.md) |
-| CLI                       | Coming soon | -                               | `cli/`                       |
-| PHP                       | Planned     | -                               | -                            |
-| Ruby                      | Planned     | -                               | -                            |
-| Python                    | Planned     | -                               | -                            |
-| Go                        | Planned     | -                               | -                            |
+| Tool                      | Status      | Install                         | Docs                                 |
+| ------------------------- | ----------- | ------------------------------- | ------------------------------------ |
+| JavaScript/TypeScript SDK | Active      | `npm install @checkoutpage/sdk` | [js/README.md](js/README.md)         |
+| CLI                       | Coming soon | -                               | `cli/`                               |
+| Zapier integration        | Active      | Connect it in Zapier            | [zapier/README.md](zapier/README.md) |
+| PHP                       | Planned     | -                               | -                                    |
+| Ruby                      | Planned     | -                               | -                                    |
+| Python                    | Planned     | -                               | -                                    |
+| Go                        | Planned     | -                               | -                                    |
 
 ## JavaScript/TypeScript SDK
 
@@ -55,12 +57,13 @@ For the full API reference, visit [docs.checkoutpage.com](https://docs.checkoutp
 checkoutpage-api-sdk/
 ├─ js/                  # JavaScript/TypeScript SDK (@checkoutpage/sdk)
 ├─ cli/                 # Checkout Page CLI (coming soon)
+├─ zapier/              # Zapier integration (standalone npm project)
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
 ├─ examples/
 │  └─ js/               # Examples, one directory per language
 ├─ scripts/             # Shared tooling, such as type generation
-└─ .github/workflows/   # Test and publish workflows, one pair per language
+└─ .github/workflows/   # Test and publish workflows, one pair per language or tool
 ```
 
 ## Contributing
