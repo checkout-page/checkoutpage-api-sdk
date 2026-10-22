@@ -72,7 +72,6 @@ export function getApiErrorBody(error: unknown): IDataObject | undefined {
   );
 }
 
-/** Builds a NodeApiError whose message is the one the Checkout Page API returned. */
 export function toNodeApiError(node: INode, error: unknown, itemIndex?: number): NodeApiError {
   const body = getApiErrorBody(error);
   const status = getHttpStatus(error);

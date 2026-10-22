@@ -1,7 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { filtersField, idField, operationField, returnAllAndLimit, textOption } from './common';
 
-/** Events, checkout pages and forms share one shape: get by ID and a filtered list. */
 function pageResource(resource: string, singular: string, plural: string): INodeProperties[] {
   const singularTitle = singular.charAt(0).toUpperCase() + singular.slice(1);
   return [
