@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { EventsResource } from './events';
-import type { CreateEventParams, UpdateEventParams } from '../../types';
+import type { FormLayout, CreateEventParams, UpdateEventParams } from '../../types';
 
 describe('EventsResource', () => {
   let client: CheckoutPageApiClient;
@@ -358,6 +358,58 @@ describe('EventsResource', () => {
 
     it('throws for missing page id', async () => {
       await expect(eventsResource.update('', {})).rejects.toThrow('Page ID is required');
+    });
+  });
+
+  describe('formLayout', () => {
+    const layout: FormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldId: 'first-name' },
+          { type: 'field', fieldId: 'last-name' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+      { type: 'discount-code', id: 'discount-code' },
+    ];
+
+    it('sends formLayout in the create body', async () => {
+      const params: CreateEventParams = {
+        name: 'Laid out event',
+        title: 'Laid out event',
+        fields: [
+          { key: 'first-name', element: 'text', label: 'First name' },
+          { key: 'last-name', element: 'text', label: 'Last name' },
+        ],
+        formLayout: layout,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'event_123' } } as any);
+
+      await eventsResource.create(params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/events/',
+        body: params,
+      });
+    });
+
+    it('sends formLayout in the update body', async () => {
+      const params: UpdateEventParams = { formLayout: layout };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'event_123' } } as any);
+
+      await eventsResource.update('event_123', params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/events/event_123',
+        body: params,
+      });
     });
   });
 

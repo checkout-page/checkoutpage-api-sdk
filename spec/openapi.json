@@ -2377,6 +2377,270 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by the `key` you gave it in `fields` in this request (or by its id). Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "first-name",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "last-name",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 500,
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
             "examples": [
@@ -3361,6 +3625,242 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by the `key` you gave it in `fields` in this request (or by its id). Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 500,
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
             "examples": [
@@ -4066,6 +4566,270 @@
               "object",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by the `key` you gave it in `fields` in this request (or by its id). Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "first-name",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "last-name",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
@@ -6603,6 +7367,279 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How the page's form is arranged, top to bottom: fields, headings, dividers, groups of fields shown side by side in columns, and where the discount code box sits. Always returned, even for a page that was never arranged: every field on the page is listed, and `fieldId` matches the `id` of an entry in `fields`. A `discount-code` item is included while `showCouponCodeField` is on (at the end when it was never placed) and never on forms. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/UniqueIdentifier"
+                                  },
+                                  {
+                                    "description": "Unique identifier. Must be in BSON ObjectId format."
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel steps for this page. The response uses the public response structure, including `pageId`, `redirectPageId`, and redirect token `identifier` values.",
             "examples": [
@@ -7253,7 +8290,8 @@
           "testmodeEnabledAt",
           "themeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "formLayout"
         ],
         "type": "object"
       },
@@ -8202,7 +9240,7 @@
             ]
           },
           "order": {
-            "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+            "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
             "example": 0,
             "minimum": 0,
             "type": [
@@ -14748,6 +15786,279 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How the page's form is arranged, top to bottom: fields, headings, dividers, groups of fields shown side by side in columns, and where the discount code box sits. Always returned, even for a page that was never arranged: every field on the page is listed, and `fieldId` matches the `id` of an entry in `fields`. A `discount-code` item is included while `showCouponCodeField` is on (at the end when it was never placed) and never on forms. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/UniqueIdentifier"
+                                  },
+                                  {
+                                    "description": "Unique identifier. Must be in BSON ObjectId format."
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel steps for this page. The response uses the same public structure as the input schema, including `pageId` and `redirectPageId` field names.",
             "examples": [
@@ -15098,7 +16409,8 @@
           "testmodeEnabledAt",
           "themeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "formLayout"
         ],
         "type": "object"
       },
@@ -62285,6 +63597,280 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/UniqueIdentifier"
+                                  },
+                                  {
+                                    "description": "Unique identifier. Must be in BSON ObjectId format."
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 500,
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
             "items": {
@@ -63260,6 +64846,280 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "oneOf": [
+                {
+                  "properties": {
+                    "fieldId": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
+                    },
+                    "type": {
+                      "enum": [
+                        "field"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "fieldId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "level": {
+                      "enum": [
+                        "heading",
+                        "subheading"
+                      ],
+                      "type": "string"
+                    },
+                    "text": {
+                      "maxLength": 200,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "heading"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text",
+                    "level"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "divider"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "discount-code"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "columns": {
+                      "maximum": 4,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "id": {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "oneOf": [
+                          {
+                            "properties": {
+                              "fieldId": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/UniqueIdentifier"
+                                  },
+                                  {
+                                    "description": "Unique identifier. Must be in BSON ObjectId format."
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "enum": [
+                                  "field"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "fieldId"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "level": {
+                                "enum": [
+                                  "heading",
+                                  "subheading"
+                                ],
+                                "type": "string"
+                              },
+                              "text": {
+                                "maxLength": 200,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "heading"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id",
+                              "text",
+                              "level"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "divider"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "maxLength": 64,
+                                "minLength": 1,
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": [
+                                  "discount-code"
+                                ],
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "maxItems": 200,
+                      "type": "array"
+                    },
+                    "name": {
+                      "maxLength": 100,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "group"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "columns",
+                    "items"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
@@ -68394,7 +70254,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -69273,7 +71133,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -72341,7 +74201,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -73220,7 +75080,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -76447,6 +78307,280 @@
                       "null"
                     ]
                   },
+                  "formLayout": {
+                    "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
+                    "example": [
+                      {
+                        "id": "your-details",
+                        "level": "heading",
+                        "text": "Your details",
+                        "type": "heading"
+                      },
+                      {
+                        "columns": 2,
+                        "id": "name-row",
+                        "items": [
+                          {
+                            "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                            "type": "field"
+                          },
+                          {
+                            "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                            "type": "field"
+                          }
+                        ],
+                        "name": "Name",
+                        "type": "group"
+                      },
+                      {
+                        "id": "divider-1",
+                        "type": "divider"
+                      }
+                    ],
+                    "items": {
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "fieldId": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/UniqueIdentifier"
+                                },
+                                {
+                                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                                }
+                              ]
+                            },
+                            "type": {
+                              "enum": [
+                                "field"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "fieldId"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "properties": {
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "level": {
+                              "enum": [
+                                "heading",
+                                "subheading"
+                              ],
+                              "type": "string"
+                            },
+                            "text": {
+                              "maxLength": 200,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": {
+                              "enum": [
+                                "heading"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "id",
+                            "text",
+                            "level"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "properties": {
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": {
+                              "enum": [
+                                "divider"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "id"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "properties": {
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": {
+                              "enum": [
+                                "discount-code"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "id"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "properties": {
+                            "columns": {
+                              "maximum": 4,
+                              "minimum": 1,
+                              "type": "integer"
+                            },
+                            "id": {
+                              "maxLength": 64,
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "items": {
+                              "items": {
+                                "oneOf": [
+                                  {
+                                    "properties": {
+                                      "fieldId": {
+                                        "allOf": [
+                                          {
+                                            "$ref": "#/components/schemas/UniqueIdentifier"
+                                          },
+                                          {
+                                            "description": "Unique identifier. Must be in BSON ObjectId format."
+                                          }
+                                        ]
+                                      },
+                                      "type": {
+                                        "enum": [
+                                          "field"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "fieldId"
+                                    ],
+                                    "type": "object"
+                                  },
+                                  {
+                                    "properties": {
+                                      "id": {
+                                        "maxLength": 64,
+                                        "minLength": 1,
+                                        "type": "string"
+                                      },
+                                      "level": {
+                                        "enum": [
+                                          "heading",
+                                          "subheading"
+                                        ],
+                                        "type": "string"
+                                      },
+                                      "text": {
+                                        "maxLength": 200,
+                                        "minLength": 1,
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "enum": [
+                                          "heading"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "id",
+                                      "text",
+                                      "level"
+                                    ],
+                                    "type": "object"
+                                  },
+                                  {
+                                    "properties": {
+                                      "id": {
+                                        "maxLength": 64,
+                                        "minLength": 1,
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "enum": [
+                                          "divider"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "id"
+                                    ],
+                                    "type": "object"
+                                  },
+                                  {
+                                    "properties": {
+                                      "id": {
+                                        "maxLength": 64,
+                                        "minLength": 1,
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "enum": [
+                                          "discount-code"
+                                        ],
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "id"
+                                    ],
+                                    "type": "object"
+                                  }
+                                ]
+                              },
+                              "maxItems": 200,
+                              "type": "array"
+                            },
+                            "name": {
+                              "maxLength": 100,
+                              "type": "string"
+                            },
+                            "type": {
+                              "enum": [
+                                "group"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "id",
+                            "columns",
+                            "items"
+                          ],
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    "maxItems": 500,
+                    "type": "array"
+                  },
                   "funnelSteps": {
                     "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
                     "items": {
@@ -77384,7 +79518,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -78263,7 +80397,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array. Once the page form has been arranged (a `formLayout` saved in the dashboard or through the API), the layout decides the order: change `formLayout` on the page instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [

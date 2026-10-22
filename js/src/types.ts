@@ -524,6 +524,22 @@ export type UpdateCheckoutPageResponse =
 export type DeleteCheckoutPageResponse =
   operations['checkout-pages/delete']['responses'][200]['content']['application/json'];
 
+// Form layout. Checkout pages, events and forms share one shape.
+/**
+ * How a page's form is arranged, top to bottom. Pass it as `formLayout` when creating or
+ * updating a checkout page, event or form; responses always include the layout the checkout shows.
+ */
+export type FormLayout = CheckoutPage['formLayout'];
+
+/** One entry in a `FormLayout`: a field, heading, divider, the discount code box or a group. */
+export type FormLayoutItem = FormLayout[number];
+
+/** A row of up to 4 columns holding fields, headings, dividers or the discount code. Groups never nest. */
+export type FormLayoutGroup = Extract<FormLayoutItem, { type: 'group' }>;
+
+/** One entry inside a `FormLayoutGroup`. */
+export type FormLayoutGroupItem = FormLayoutGroup['items'][number];
+
 // Checkout page fields
 export type CheckoutPageFieldList =
   operations['checkout-pages/fields/list']['responses'][200]['content']['application/json'];
