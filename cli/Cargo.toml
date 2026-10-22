@@ -23,23 +23,19 @@ path = "src/lib.rs"
 [dependencies]
 anyhow = "1"
 base64 = "0.22"
-bytes = "1"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std", "serde"] }
 clap = { version = "4.5", features = ["derive", "env"] }
 comfy-table = { version = "7", default-features = false }
 csv = "1"
 dirs = "6"
-futures-util = "0.3"
-hex = "0.4"
-hmac = "0.12"
 open = "5"
 rand = "0.8"
-reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
 thiserror = "2"
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util", "time", "signal", "sync"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util", "time"] }
 toml = "0.8"
 url = "2"
 

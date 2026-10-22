@@ -2,7 +2,6 @@
 #![allow(clippy::large_enum_variant)]
 
 use clap::{Args, Parser, Subcommand};
-use url::Url;
 
 use crate::util::parse_key_value;
 
@@ -12,8 +11,8 @@ use crate::util::parse_key_value;
     version,
     about = "Work with your Checkout Page account from the terminal",
     long_about = "Work with your Checkout Page account from the terminal: list and look up \
-                  events, checkout pages, forms, bookings, payments, customers, subscriptions \
-                  and coupons, and receive webhooks locally while you build an integration.",
+                  events, checkout pages, forms, bookings, payments, customers, subscriptions, \
+                  coupons and webhook endpoints.",
     propagate_version = true
 )]
 pub struct Cli {
@@ -113,7 +112,7 @@ pub enum Command {
         #[command(subcommand)]
         command: CouponsCommand,
     },
-    /// Webhook endpoints, and local webhook testing
+    /// Webhook endpoints
     Webhooks {
         #[command(subcommand)]
         command: WebhooksCommand,
@@ -429,10 +428,6 @@ pub enum WebhooksCommand {
     List(WebhookListArgs),
     /// Show one webhook endpoint
     Get(GetArgs),
-    /// Receive your account's webhook events here and forward them to a local URL
-    Listen(ListenArgs),
-    /// Send a sample event to running `webhooks listen` sessions
-    Trigger(TriggerArgs),
 }
 
 #[derive(Args, Debug)]
@@ -444,28 +439,6 @@ pub struct WebhookListArgs {
     /// Only endpoints subscribed to this event, e.g. payment.paid
     #[arg(long)]
     pub event: Option<String>,
-}
-
-#[derive(Args, Debug)]
-pub struct ListenArgs {
-    /// Comma-separated events to receive [default: all]
-    #[arg(long, value_name = "EVENTS", value_delimiter = ',')]
-    pub events: Vec<String>,
-    /// URL to POST each event to, signed like a real delivery
-    #[arg(long, value_name = "URL")]
-    pub forward_to: Option<Url>,
-    /// Accept self-signed certificates on the --forward-to URL
-    #[arg(long)]
-    pub skip_verify: bool,
-    /// Print each event's payload JSON to stdout (status lines move to stderr)
-    #[arg(long)]
-    pub print_json: bool,
-}
-
-#[derive(Args, Debug)]
-pub struct TriggerArgs {
-    /// Event to send, e.g. payment.paid
-    pub event: String,
 }
 
 #[derive(Args, Debug)]
@@ -640,28 +613,6 @@ mod tests {
             ])
             .is_err()
         );
-    }
-
-    #[test]
-    fn listen_events_split_on_commas() {
-        let cli = parse(&[
-            "webhooks",
-            "listen",
-            "--events",
-            "payment.paid,booking.paid",
-            "--forward-to",
-            "http://localhost:3000/hook",
-        ])
-        .unwrap();
-        let Command::Webhooks {
-            command: WebhooksCommand::Listen(a),
-        } = cli.command
-        else {
-            panic!()
-        };
-        assert_eq!(a.events, ["payment.paid", "booking.paid"]);
-        assert_eq!(a.forward_to.unwrap().as_str(), "http://localhost:3000/hook");
-        assert!(parse(&["webhooks", "listen", "--forward-to", "not a url"]).is_err());
     }
 
     #[test]

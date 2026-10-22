@@ -649,7 +649,6 @@ async fn test_flag_is_refused_where_the_api_has_no_mode_filter() {
         &["customers", "list", "--test"][..],
         &["coupons", "list", "--live"],
         &["events", "get", "abc", "--test"],
-        &["webhooks", "trigger", "payment.paid", "--test"],
     ] {
         Env::new()
             .api(&server.uri())
@@ -1067,58 +1066,4 @@ async fn api_command_sends_method_path_query_and_body() {
         .assert()
         .code(2)
         .stderr(predicate::str::contains("not valid JSON"));
-}
-
-#[tokio::test(flavor = "multi_thread")]
-async fn webhooks_trigger_posts_the_test_event() {
-    let server = MockServer::start().await;
-    Mock::given(method("POST"))
-        .and(path("/v1/webhook-listeners/test-events"))
-        .and(body_json(json!({"event": "payment.paid"})))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(json!({"delivered": 2, "eventId": "evt_abc"})),
-        )
-        .mount(&server)
-        .await;
-    Mock::given(method("POST"))
-        .and(path("/v1/webhook-listeners/test-events"))
-        .and(body_json(json!({"event": "booking.paid"})))
-        .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_json(json!({"data": {"delivered": 0, "eventId": "evt_def"}})),
-        )
-        .mount(&server)
-        .await;
-    Mock::given(method("POST"))
-        .and(path("/v1/webhook-listeners/test-events"))
-        .and(body_json(json!({"event": "nope"})))
-        .respond_with(
-            ResponseTemplate::new(400).set_body_json(json!({"message": "Unknown event nope"})),
-        )
-        .mount(&server)
-        .await;
-    let env = Env::new();
-    env.api(&server.uri())
-        .args(["webhooks", "trigger", "payment.paid"])
-        .assert()
-        .success()
-        .stdout("Sent a test payment.paid event (evt_abc) to 2 listeners.\n");
-    env.api(&server.uri())
-        .args(["webhooks", "trigger", "booking.paid"])
-        .assert()
-        .success()
-        .stdout(predicate::str::contains("to 0 listeners"))
-        .stderr(predicate::str::contains(
-            "No `checkoutpage webhooks listen` session is running",
-        ));
-    env.api(&server.uri())
-        .args(["webhooks", "trigger", "payment.paid", "--json"])
-        .assert()
-        .success()
-        .stdout(predicate::str::contains("\"delivered\": 2"));
-    env.api(&server.uri())
-        .args(["webhooks", "trigger", "nope"])
-        .assert()
-        .code(5)
-        .stderr(predicate::str::contains("Unknown event nope"));
 }
