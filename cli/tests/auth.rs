@@ -167,6 +167,28 @@ async fn browser_login_runs_the_pkce_flow_and_stores_the_issued_key() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn login_keeps_a_profile_saved_while_it_waited() {
+    let server = MockServer::start().await;
+    mount_oauth(&server).await;
+    let env = Env::new();
+    env.write_config("[profiles.work]\napi_key = \"sk_test_fake-old0-work\"\n");
+    let (mut proc, authorize) = start_login(&env, &server);
+
+    env.write_config("[profiles.work]\napi_key = \"sk_test_fake-new0-work\"\n");
+    let q = query(&authorize);
+    http_get(&format!(
+        "{}?code=the-code&state={}",
+        q["redirect_uri"], q["state"]
+    ));
+    let status = proc.wait_exit(Duration::from_secs(20));
+    assert!(status.success(), "{}", proc.drain());
+
+    let config = env.read_config();
+    assert!(config.contains("sk_test_fake-new0-work"), "{config}");
+    assert!(config.contains(ISSUED_KEY), "{config}");
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn login_rejects_a_callback_with_the_wrong_state() {
     let server = MockServer::start().await;
     mount_oauth(&server).await;

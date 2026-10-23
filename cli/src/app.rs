@@ -109,6 +109,16 @@ impl App {
             .cloned())
     }
 
+    /// Reloads the file first, so a profile another process saved meanwhile isn't overwritten.
+    pub fn set_profile(&self, profile: Option<Profile>) -> Result<()> {
+        let mut config = self.load_config()?;
+        match profile {
+            Some(p) => config.profiles.insert(self.global.profile.clone(), p),
+            None => config.profiles.remove(&self.global.profile),
+        };
+        config.save(&self.config_path)
+    }
+
     pub fn base_url(&self, profile: Option<&Profile>) -> String {
         self.global
             .base_url

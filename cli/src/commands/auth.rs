@@ -22,8 +22,7 @@ const LOGIN_TIMEOUT: Duration = Duration::from_secs(5 * 60);
 
 pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
     app.reject_csv("login")?;
-    let mut config = app.load_config()?;
-    let existing = config.profiles.get(&app.global.profile).cloned();
+    let existing = app.profile()?;
     let base_url = app.base_url(existing.as_ref());
     let stored_base_url = (base_url != crate::api::DEFAULT_BASE_URL).then(|| base_url.clone());
 
@@ -33,15 +32,11 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
                 "Warning: that doesn't look like a Checkout Page API key (sk_live_... or sk_test_...). Saving it anyway.",
             ));
         }
-        config.profiles.insert(
-            app.global.profile.clone(),
-            Profile {
-                base_url: stored_base_url,
-                api_key: Some(key.clone()),
-                oauth: None,
-            },
-        );
-        config.save(&app.config_path)?;
+        app.set_profile(Some(Profile {
+            base_url: stored_base_url,
+            api_key: Some(key.clone()),
+            oauth: None,
+        }))?;
         out(format!(
             "Saved API key {} to profile \"{}\".",
             mask_key(&key),
@@ -96,15 +91,11 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
         api_key: issued.token,
     };
 
-    config.profiles.insert(
-        app.global.profile.clone(),
-        Profile {
-            base_url: stored_base_url,
-            api_key: None,
-            oauth: Some(creds.clone()),
-        },
-    );
-    config.save(&app.config_path)?;
+    app.set_profile(Some(Profile {
+        base_url: stored_base_url,
+        api_key: None,
+        oauth: Some(creds.clone()),
+    }))?;
 
     let account = match Client::with_user_agent(&base_url, &creds.api_key, user_agent()) {
         Ok(c) => c.get("/v1/account/", &[]).await.ok(),
@@ -131,8 +122,7 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
 
 pub async fn logout(app: &App) -> Result<()> {
     app.reject_csv("logout")?;
-    let mut config = app.load_config()?;
-    let Some(profile) = config.profiles.remove(&app.global.profile) else {
+    let Some(profile) = app.profile()? else {
         out(format!(
             "Profile \"{}\" has no stored credentials.",
             app.global.profile
@@ -155,7 +145,7 @@ pub async fn logout(app: &App) -> Result<()> {
             )));
         }
     }
-    config.save(&app.config_path)?;
+    app.set_profile(None)?;
     out(format!("Logged out of profile \"{}\".", app.global.profile));
     if std::env::var_os(API_KEY_ENV).is_some() {
         err(app.err_style.yellow(&format!(
