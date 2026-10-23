@@ -1,4 +1,5 @@
 packages:
   - 'js'
+  - 'postman'
 allowBuilds:
   esbuild: true
