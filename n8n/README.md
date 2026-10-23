@@ -55,7 +55,8 @@ then add:
 
 - **Tickets**: a ticket type and how many.
 - **Fields**: a value for each of the event's fields. Always include the email field, because
-  the attendee's customer record is created from it.
+  the attendee's customer record is created from it. Multi-select and address fields can't be
+  set from n8n yet, so an event that requires one can't be booked from here.
 
 Under **Additional fields** you can make the booking complimentary (no charge), record it as
 paid by invoice or cash on delivery, or apply a coupon.
@@ -101,7 +102,9 @@ Things to know:
 3. Map columns to the booking, for example `{{ $json.data.booking.customerName }}`,
    `{{ $json.data.booking.customerEmail }}`, `{{ $json.data.booking.eventTitle }}` and
    `{{ $json.data.booking.amount / 100 }}`. Amounts are in the smallest currency unit, such as
-   cents.
+   cents, so divide by 100 only for two-decimal currencies such as USD, GBP or EUR. For
+   zero-decimal currencies such as JPY, use `{{ $json.data.booking.amount }}` as it is. The
+   currency is in `{{ $json.data.booking.currency }}`.
 4. Activate the workflow. Every new booking becomes a row.
 
 ### A welcome coupon for every new customer

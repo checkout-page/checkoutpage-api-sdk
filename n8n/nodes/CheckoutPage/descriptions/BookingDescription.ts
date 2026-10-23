@@ -142,7 +142,7 @@ export const bookingDescription: INodeProperties[] = [
     default: {},
     displayOptions: show('booking', ['create']),
     description:
-      "Values for the event's fields. Include the email field: the booking's customer is created from it.",
+      "Values for the event's fields. Include the email field: the booking's customer is created from it. Multi-select and address fields can't be set yet.",
     options: [
       {
         displayName: 'Field',

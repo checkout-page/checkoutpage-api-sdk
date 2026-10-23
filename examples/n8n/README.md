@@ -13,7 +13,10 @@ Keep a live attendee list in a spreadsheet.
    - Name: `{{ $json.data.booking.customerName }}`
    - Email: `{{ $json.data.booking.customerEmail }}`
    - Event: `{{ $json.data.booking.eventTitle }}`
-   - Amount: `{{ $json.data.booking.amount / 100 }}`
+   - Amount: `{{ $json.data.booking.amount / 100 }}` for two-decimal currencies such as USD or
+     GBP. Amounts are in the smallest currency unit, so for zero-decimal currencies such as JPY
+     use `{{ $json.data.booking.amount }}`.
+   - Currency: `{{ $json.data.booking.currency }}`
    - Booked at: `{{ $json.data.booking.createdAt }}`
 
 ## A welcome coupon for every new customer
@@ -43,7 +46,8 @@ Book people onto an event from rows you already have, such as a sign-up sheet.
 
 1. **Schedule Trigger**, every day.
 2. **Checkout Page**, **Payment > Get Many**, Return All on, with the filters **Status** Paid
-   and **Created After** `{{ $now.minus({ days: 1 }).toISO() }}`.
+   and **Created After** `{{ $now.minus({ days: 1 }).toUTC().toISO() }}`. A date from the date
+   picker works too: the node reads it in the workflow's timezone.
 3. Send the list to Slack or email.
 
 ## Look up a customer from an AI agent
