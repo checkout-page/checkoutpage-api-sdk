@@ -2408,235 +2408,7 @@
               }
             ],
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItemInput"
             },
             "maxItems": 500,
             "type": "array"
@@ -3628,235 +3400,7 @@
           "formLayout": {
             "description": "How to arrange the page's form, top to bottom. Reference a field by the `key` you gave it in `fields` in this request (or by its id). Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (`id` `discount-code`) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. Field `order` values are rewritten to match the layout. A `discount-code` item only places the discount code box: it does not switch the box on, which `showCouponCodeField` does. Forms have no discount code, so a form layout must leave it out.",
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItemInput"
             },
             "maxItems": 500,
             "type": "array"
@@ -4598,235 +4142,7 @@
               }
             ],
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItemInput"
             },
             "maxItems": 500,
             "type": "array"
@@ -7398,245 +6714,7 @@
               }
             ],
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "allOf": [
-                                  {
-                                    "$ref": "#/components/schemas/UniqueIdentifier"
-                                  },
-                                  {
-                                    "description": "Unique identifier. Must be in BSON ObjectId format."
-                                  }
-                                ]
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItem"
             },
             "type": "array"
           },
@@ -9478,6 +8556,331 @@
           "id"
         ],
         "type": "object"
+      },
+      "FormLayoutDiscountCode": {
+        "description": "Where the discount code box sits. It only shows while the page has `showCouponCodeField` on. Checkout pages and events only.",
+        "properties": {
+          "id": {
+            "description": "Always `discount-code`: a form has one discount code box at most.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `discount-code`.",
+            "enum": [
+              "discount-code"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "type": "object"
+      },
+      "FormLayoutDivider": {
+        "description": "A line that separates parts of the form.",
+        "properties": {
+          "id": {
+            "description": "The divider's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `divider`.",
+            "enum": [
+              "divider"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "type": "object"
+      },
+      "FormLayoutField": {
+        "description": "A field on the page, shown where it sits in the layout.",
+        "properties": {
+          "fieldId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The `id` of a field in the page's `fields`."
+              }
+            ]
+          },
+          "type": {
+            "description": "Always `field`.",
+            "enum": [
+              "field"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "fieldId"
+        ],
+        "type": "object"
+      },
+      "FormLayoutFieldInput": {
+        "description": "A field on the page, shown where it sits in the layout.",
+        "properties": {
+          "fieldId": {
+            "description": "The `key` you gave the field in `fields` in this request, or the `id` of a field already on the page.",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `field`.",
+            "enum": [
+              "field"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "fieldId"
+        ],
+        "type": "object"
+      },
+      "FormLayoutGroup": {
+        "description": "Items shown side by side in columns.",
+        "properties": {
+          "columns": {
+            "description": "How many items sit side by side, 1 to 4. On phones the group stacks by default.",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "description": "The group's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "items": {
+            "description": "What the group holds, filled row by row: fields, headings, dividers and the discount code. Groups never nest.",
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+                  "divider": "#/components/schemas/FormLayoutDivider",
+                  "field": "#/components/schemas/FormLayoutField",
+                  "heading": "#/components/schemas/FormLayoutHeading"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FormLayoutField"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutHeading"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDivider"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDiscountCode"
+                }
+              ]
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "name": {
+            "description": "A name for the group, seen only in the dashboard. Up to 100 characters.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `group`.",
+            "enum": [
+              "group"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "columns",
+          "items"
+        ],
+        "type": "object"
+      },
+      "FormLayoutGroupInput": {
+        "description": "Items shown side by side in columns.",
+        "properties": {
+          "columns": {
+            "description": "How many items sit side by side, 1 to 4. On phones the group stacks by default.",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "description": "The group's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "items": {
+            "description": "What the group holds, filled row by row: fields, headings, dividers and the discount code. Groups never nest.",
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+                  "divider": "#/components/schemas/FormLayoutDivider",
+                  "field": "#/components/schemas/FormLayoutFieldInput",
+                  "heading": "#/components/schemas/FormLayoutHeading"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FormLayoutFieldInput"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutHeading"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDivider"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDiscountCode"
+                }
+              ]
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "name": {
+            "description": "A name for the group, seen only in the dashboard. Up to 100 characters.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `group`.",
+            "enum": [
+              "group"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "columns",
+          "items"
+        ],
+        "type": "object"
+      },
+      "FormLayoutHeading": {
+        "description": "A heading or subheading shown above the items after it.",
+        "properties": {
+          "id": {
+            "description": "The heading's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "level": {
+            "description": "`heading` for a section title, `subheading` for a smaller one.",
+            "enum": [
+              "heading",
+              "subheading"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "description": "The text shown, up to 200 characters.",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `heading`.",
+            "enum": [
+              "heading"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "text",
+          "level"
+        ],
+        "type": "object"
+      },
+      "FormLayoutItem": {
+        "discriminator": {
+          "mapping": {
+            "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+            "divider": "#/components/schemas/FormLayoutDivider",
+            "field": "#/components/schemas/FormLayoutField",
+            "group": "#/components/schemas/FormLayoutGroup",
+            "heading": "#/components/schemas/FormLayoutHeading"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FormLayoutField"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutHeading"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDivider"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDiscountCode"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutGroup"
+          }
+        ]
+      },
+      "FormLayoutItemInput": {
+        "discriminator": {
+          "mapping": {
+            "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+            "divider": "#/components/schemas/FormLayoutDivider",
+            "field": "#/components/schemas/FormLayoutFieldInput",
+            "group": "#/components/schemas/FormLayoutGroupInput",
+            "heading": "#/components/schemas/FormLayoutHeading"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FormLayoutFieldInput"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutHeading"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDivider"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDiscountCode"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutGroupInput"
+          }
+        ]
       },
       "FormPageResponse": {
         "allOf": [
@@ -15817,245 +15220,7 @@
               }
             ],
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "allOf": [
-                                  {
-                                    "$ref": "#/components/schemas/UniqueIdentifier"
-                                  },
-                                  {
-                                    "description": "Unique identifier. Must be in BSON ObjectId format."
-                                  }
-                                ]
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItem"
             },
             "type": "array"
           },
@@ -63628,245 +62793,7 @@
               }
             ],
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "allOf": [
-                                  {
-                                    "$ref": "#/components/schemas/UniqueIdentifier"
-                                  },
-                                  {
-                                    "description": "Unique identifier. Must be in BSON ObjectId format."
-                                  }
-                                ]
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItem"
             },
             "maxItems": 500,
             "type": "array"
@@ -64878,245 +63805,7 @@
               }
             ],
             "items": {
-              "oneOf": [
-                {
-                  "properties": {
-                    "fieldId": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/UniqueIdentifier"
-                        },
-                        {
-                          "description": "Unique identifier. Must be in BSON ObjectId format."
-                        }
-                      ]
-                    },
-                    "type": {
-                      "enum": [
-                        "field"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "fieldId"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "level": {
-                      "enum": [
-                        "heading",
-                        "subheading"
-                      ],
-                      "type": "string"
-                    },
-                    "text": {
-                      "maxLength": 200,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "heading"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "text",
-                    "level"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "divider"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "discount-code"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "columns": {
-                      "maximum": 4,
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "maxLength": 64,
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "items": {
-                      "items": {
-                        "oneOf": [
-                          {
-                            "properties": {
-                              "fieldId": {
-                                "allOf": [
-                                  {
-                                    "$ref": "#/components/schemas/UniqueIdentifier"
-                                  },
-                                  {
-                                    "description": "Unique identifier. Must be in BSON ObjectId format."
-                                  }
-                                ]
-                              },
-                              "type": {
-                                "enum": [
-                                  "field"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "fieldId"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "level": {
-                                "enum": [
-                                  "heading",
-                                  "subheading"
-                                ],
-                                "type": "string"
-                              },
-                              "text": {
-                                "maxLength": 200,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "heading"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id",
-                              "text",
-                              "level"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "divider"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          },
-                          {
-                            "properties": {
-                              "id": {
-                                "maxLength": 64,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "discount-code"
-                                ],
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "type",
-                              "id"
-                            ],
-                            "type": "object"
-                          }
-                        ]
-                      },
-                      "maxItems": 200,
-                      "type": "array"
-                    },
-                    "name": {
-                      "maxLength": 100,
-                      "type": "string"
-                    },
-                    "type": {
-                      "enum": [
-                        "group"
-                      ],
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id",
-                    "columns",
-                    "items"
-                  ],
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/FormLayoutItem"
             },
             "maxItems": 500,
             "type": "array"
@@ -78338,245 +77027,7 @@
                       }
                     ],
                     "items": {
-                      "oneOf": [
-                        {
-                          "properties": {
-                            "fieldId": {
-                              "allOf": [
-                                {
-                                  "$ref": "#/components/schemas/UniqueIdentifier"
-                                },
-                                {
-                                  "description": "Unique identifier. Must be in BSON ObjectId format."
-                                }
-                              ]
-                            },
-                            "type": {
-                              "enum": [
-                                "field"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type",
-                            "fieldId"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "id": {
-                              "maxLength": 64,
-                              "minLength": 1,
-                              "type": "string"
-                            },
-                            "level": {
-                              "enum": [
-                                "heading",
-                                "subheading"
-                              ],
-                              "type": "string"
-                            },
-                            "text": {
-                              "maxLength": 200,
-                              "minLength": 1,
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": [
-                                "heading"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type",
-                            "id",
-                            "text",
-                            "level"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "id": {
-                              "maxLength": 64,
-                              "minLength": 1,
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": [
-                                "divider"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type",
-                            "id"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "id": {
-                              "maxLength": 64,
-                              "minLength": 1,
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": [
-                                "discount-code"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type",
-                            "id"
-                          ],
-                          "type": "object"
-                        },
-                        {
-                          "properties": {
-                            "columns": {
-                              "maximum": 4,
-                              "minimum": 1,
-                              "type": "integer"
-                            },
-                            "id": {
-                              "maxLength": 64,
-                              "minLength": 1,
-                              "type": "string"
-                            },
-                            "items": {
-                              "items": {
-                                "oneOf": [
-                                  {
-                                    "properties": {
-                                      "fieldId": {
-                                        "allOf": [
-                                          {
-                                            "$ref": "#/components/schemas/UniqueIdentifier"
-                                          },
-                                          {
-                                            "description": "Unique identifier. Must be in BSON ObjectId format."
-                                          }
-                                        ]
-                                      },
-                                      "type": {
-                                        "enum": [
-                                          "field"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type",
-                                      "fieldId"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
-                                      "id": {
-                                        "maxLength": 64,
-                                        "minLength": 1,
-                                        "type": "string"
-                                      },
-                                      "level": {
-                                        "enum": [
-                                          "heading",
-                                          "subheading"
-                                        ],
-                                        "type": "string"
-                                      },
-                                      "text": {
-                                        "maxLength": 200,
-                                        "minLength": 1,
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "enum": [
-                                          "heading"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type",
-                                      "id",
-                                      "text",
-                                      "level"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
-                                      "id": {
-                                        "maxLength": 64,
-                                        "minLength": 1,
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "enum": [
-                                          "divider"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type",
-                                      "id"
-                                    ],
-                                    "type": "object"
-                                  },
-                                  {
-                                    "properties": {
-                                      "id": {
-                                        "maxLength": 64,
-                                        "minLength": 1,
-                                        "type": "string"
-                                      },
-                                      "type": {
-                                        "enum": [
-                                          "discount-code"
-                                        ],
-                                        "type": "string"
-                                      }
-                                    },
-                                    "required": [
-                                      "type",
-                                      "id"
-                                    ],
-                                    "type": "object"
-                                  }
-                                ]
-                              },
-                              "maxItems": 200,
-                              "type": "array"
-                            },
-                            "name": {
-                              "maxLength": 100,
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": [
-                                "group"
-                              ],
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "type",
-                            "id",
-                            "columns",
-                            "items"
-                          ],
-                          "type": "object"
-                        }
-                      ]
+                      "$ref": "#/components/schemas/FormLayoutItem"
                     },
                     "maxItems": 500,
                     "type": "array"
