@@ -1,6 +1,8 @@
 use std::time::Duration;
 
-use anyhow::Result;
+use std::io::IsTerminal;
+
+use anyhow::{Context, Result};
 use chrono::Utc;
 use serde_json::Value;
 use tokio::net::TcpListener;
@@ -8,7 +10,7 @@ use tokio::net::TcpListener;
 use crate::api::oauth::{AuthorizeRequest, DEFAULT_SCOPE, OAuthClient};
 use crate::api::pkce::{Pkce, random_urlsafe};
 use crate::api::{Client, unwrap_data};
-use crate::app::{API_KEY_ENV, App, KeySource, parse_expiry, user_agent};
+use crate::app::{API_KEY_ENV, App, CliError, KeySource, parse_expiry, user_agent};
 use crate::callback::{CALLBACK_PATH, wait_for_code};
 use crate::cli::LoginArgs;
 use crate::config::{OAuthCredentials, Profile};
@@ -27,6 +29,11 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
     let stored_base_url = (base_url != crate::api::DEFAULT_BASE_URL).then(|| base_url.clone());
 
     if let Some(key) = app.global.api_key.clone().filter(|k| !k.is_empty()) {
+        let key = if key == "-" {
+            read_key_from_stdin()?
+        } else {
+            key
+        };
         if key_mode(&key).is_none() {
             err(app.err_style.yellow(
                 "Warning: that doesn't look like a Checkout Page API key (sk_live_... or sk_test_...). Saving it anyway.",
@@ -118,6 +125,21 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
         )));
     }
     Ok(())
+}
+
+fn read_key_from_stdin() -> Result<String> {
+    if std::io::stdin().is_terminal() {
+        err("Paste your API key and press Enter:");
+    }
+    let mut line = String::new();
+    std::io::stdin()
+        .read_line(&mut line)
+        .context("could not read the API key from stdin")?;
+    let key = line.trim().to_string();
+    if key.is_empty() {
+        return Err(CliError::Usage("no API key on stdin".into()).into());
+    }
+    Ok(key)
 }
 
 pub async fn logout(app: &App) -> Result<()> {

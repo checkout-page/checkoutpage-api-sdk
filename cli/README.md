@@ -73,11 +73,16 @@ checkoutpage login --no-browser
 The browser has to reach `http://127.0.0.1` on the machine running the CLI, because that is
 where the login finishes.
 
-To store an API key from your dashboard instead:
+To store an API key from your dashboard instead, pass `-` and paste the key when asked, or pipe
+it in:
 
 ```bash
-checkoutpage login --api-key sk_live_...
+checkoutpage login --api-key -
+pbpaste | checkoutpage login --api-key -
 ```
+
+Reading it from stdin keeps the key out of your shell history and the process list. Scripts can
+still pass the key itself with `--api-key <key>`.
 
 ### Which credentials are used
 

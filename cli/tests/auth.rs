@@ -264,6 +264,30 @@ async fn login_surfaces_a_failed_token_exchange() {
 }
 
 #[test]
+fn login_reads_the_api_key_from_stdin() {
+    let env = Env::new();
+    env.cmd()
+        .args(["login", "--api-key", "-"])
+        .write_stdin("sk_test_fake-cccc-5d6e\n")
+        .assert()
+        .success()
+        .stdout("Saved API key sk_test_...5d6e to profile \"default\".\n");
+    assert!(
+        env.read_config()
+            .contains("api_key = \"sk_test_fake-cccc-5d6e\""),
+        "{}",
+        env.read_config()
+    );
+
+    env.cmd()
+        .args(["login", "--api-key", "-"])
+        .write_stdin("")
+        .assert()
+        .code(2)
+        .stderr(predicate::str::contains("no API key on stdin"));
+}
+
+#[test]
 fn login_with_api_key_stores_it_masked() {
     let env = Env::new();
     env.cmd()
