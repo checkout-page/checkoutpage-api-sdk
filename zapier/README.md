@@ -128,8 +128,17 @@ the version as input. It:
 5. runs `zapier-platform env:set <version> API_URL=<ZAPIER_API_URL>`;
 6. commits the version bump to main, tags it `zapier-v<version>` and creates a GitHub release.
 
-If a step after the push fails, fix the cause and run the workflow again with the same
-version: the tag does not exist yet, and the push overwrites the unpromoted version.
+The bump commit and the tag are pushed together (`git push --atomic`), so either both land or
+neither does. If a run fails before that push, fix the cause and start a new run of the workflow
+from main with the same version: Zapier's push overwrites the unpromoted version. Don't press
+"Re-run" on the failed run, which reuses the old commit.
+
+If only the last step (`gh release create`) failed, the version is pushed, committed and tagged.
+Create the release by hand from the repo root, with the notes from the CHANGELOG section:
+
+```bash
+gh release create zapier-v2.2.11 --title "Zapier app v2.2.11" --notes "<the 2.2.11 CHANGELOG section>"
+```
 
 ### 3. Check the new version
 
