@@ -18,9 +18,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # n8n-workflow 2.x needs Node 24: its isolated-vm dependency won't build on older versions.
     strategy:
       matrix:
-        node-version: [20, 22, 24]
+        node-version: [24]
 
     defaults:
       run:
