@@ -6,11 +6,23 @@ pub mod pkce;
 
 pub use error::{ApiError, describe_reqwest};
 
+use std::time::Duration;
+
 use reqwest::{Method, header};
 use serde_json::Value;
 use url::Url;
 
 pub const DEFAULT_BASE_URL: &str = "https://api.checkoutpage.com";
+pub const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+pub const REQUEST_TIMEOUT: Duration = Duration::from_secs(60);
+
+/// No overall timeout here: a long-lived response (an event stream) sets its own.
+pub(crate) fn http_client() -> Result<reqwest::Client, ApiError> {
+    reqwest::Client::builder()
+        .connect_timeout(CONNECT_TIMEOUT)
+        .build()
+        .map_err(ApiError::Network)
+}
 
 pub type Query = Vec<(String, String)>;
 
@@ -95,11 +107,8 @@ impl Client {
         api_key: impl Into<String>,
         user_agent: impl Into<String>,
     ) -> Result<Self, ApiError> {
-        let http = reqwest::Client::builder()
-            .build()
-            .map_err(ApiError::Network)?;
         Ok(Client {
-            http,
+            http: http_client()?,
             base_url: parse_base_url(base_url)?,
             api_key: api_key.into(),
             user_agent: user_agent.into(),
@@ -152,6 +161,7 @@ impl Client {
         let url = self.url(path, query)?;
         let mut req = self
             .builder(method, url)
+            .timeout(REQUEST_TIMEOUT)
             .header(header::ACCEPT, "application/json");
         if let Some(body) = body {
             req = req.json(body);
