@@ -310,11 +310,8 @@ TypeScript types are generated from `spec/openapi.json`.
 
 When adding new endpoints:
 
-1. **Update the OpenAPI spec** (see [spec/README.md](spec/README.md))
-
-   ```bash
-   # Edit spec/openapi.json
-   ```
+1. **Refresh the OpenAPI spec** from the API, as [spec/README.md](spec/README.md) describes. Don't
+   hand-write an endpoint the API doesn't serve.
 
 2. **Generate TypeScript types**
 
