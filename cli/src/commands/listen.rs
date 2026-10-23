@@ -250,12 +250,12 @@ impl Listener {
                 err(format!("Webhook signing secret: {}", e.bold(&ready.secret)));
                 err(e.dim("Press Ctrl-C to stop."));
             }
-            Some(old) if old != ready.secret => {
+            // The server mints a new secret for every stream.
+            Some(_) => {
                 err(e.yellow("Reconnected with a new listener, and the signing secret changed."));
                 err(format!("Webhook signing secret: {}", e.bold(&ready.secret)));
                 err(e.yellow("Update the secret your endpoint verifies with."));
             }
-            Some(_) => err(e.green("Reconnected.")),
         }
         self.secret = Some(ready.secret);
         self.rate_limited_since = None;

@@ -233,7 +233,7 @@ async fn a_dropped_stream_reconnects_with_backoff() {
         Conn::Stream(vec![Step::Send(ready_frame(SECRET_A, &[])), Step::Close]),
         Conn::Status(503, r#"{"message":"Service unavailable"}"#.into()),
         Conn::Stream(vec![Step::Close]),
-        Conn::Stream(vec![Step::Send(ready_frame(SECRET_A, &[])), Step::Hold]),
+        Conn::Stream(vec![Step::Send(ready_frame(SECRET_B, &[])), Step::Hold]),
     ]);
     let env = Env::new();
     let mut proc = listen(&env, &sse, &[]);
@@ -248,12 +248,11 @@ async fn a_dropped_stream_reconnects_with_backoff() {
         "The server closed the connection. Reconnecting in 40ms",
         WAIT,
     );
-    proc.wait_for("Reconnected.", WAIT);
-    assert_eq!(
-        proc.count("Webhook signing secret"),
-        1,
-        "same secret is not re-announced"
+    proc.wait_for(
+        "Reconnected with a new listener, and the signing secret changed.",
+        WAIT,
     );
+    proc.wait_for(&format!("Webhook signing secret: {SECRET_B}"), WAIT);
     assert_eq!(sse.requests().len(), 4);
 }
 
@@ -261,7 +260,7 @@ async fn a_dropped_stream_reconnects_with_backoff() {
 async fn a_silent_stream_is_treated_as_dead() {
     let sse = SseServer::start(vec![
         Conn::Stream(vec![Step::Send(ready_frame(SECRET_A, &[])), Step::Hold]),
-        Conn::Stream(vec![Step::Send(ready_frame(SECRET_A, &[])), Step::Hold]),
+        Conn::Stream(vec![Step::Send(ready_frame(SECRET_B, &[])), Step::Hold]),
     ]);
     let env = Env::new();
     let mut cmd = env.std_cmd();
@@ -281,7 +280,7 @@ async fn a_silent_stream_is_treated_as_dead() {
         "No heartbeat from the server for 300ms. Reconnecting in 10ms",
         WAIT,
     );
-    proc.wait_for("Reconnected.", WAIT);
+    proc.wait_for("the signing secret changed", WAIT);
 }
 
 #[test]
