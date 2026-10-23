@@ -284,6 +284,33 @@ async fn a_silent_stream_is_treated_as_dead() {
     proc.wait_for("Reconnected.", WAIT);
 }
 
+#[test]
+fn a_stream_request_with_no_response_is_retried() {
+    let sse = SseServer::start(vec![
+        Conn::NoResponse,
+        Conn::Stream(vec![Step::Send(ready_frame(SECRET_A, &[])), Step::Hold]),
+    ]);
+    let env = Env::new();
+    let mut cmd = env.std_cmd();
+    cmd.env("CHECKOUTPAGE_BACKOFF_UNIT_MS", "10")
+        .env("CHECKOUTPAGE_IDLE_TIMEOUT_MS", "300")
+        .args([
+            "webhooks",
+            "listen",
+            "--base-url",
+            &sse.base_url,
+            "--api-key",
+            "sk_test_key",
+        ]);
+    let mut proc = Proc::spawn(cmd);
+    proc.wait_for(
+        "No response from the server for 300ms. Reconnecting in 10ms",
+        WAIT,
+    );
+    proc.wait_for("Ready!", WAIT);
+    assert_eq!(sse.requests().len(), 2);
+}
+
 #[tokio::test(flavor = "multi_thread")]
 async fn a_down_forward_target_prints_an_error_and_keeps_listening() {
     let sse = SseServer::start(vec![Conn::Stream(vec![

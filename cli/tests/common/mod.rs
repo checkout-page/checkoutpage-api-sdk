@@ -225,6 +225,7 @@ pub enum Step {
 pub enum Conn {
     Stream(Vec<Step>),
     Status(u16, String),
+    NoResponse,
 }
 
 #[derive(Clone, Debug)]
@@ -296,6 +297,7 @@ fn read_head(stream: &mut TcpStream) -> Option<SeenRequest> {
 
 fn serve(mut stream: TcpStream, conn: Conn) {
     match conn {
+        Conn::NoResponse => thread::sleep(Duration::from_secs(120)),
         Conn::Status(code, body) => {
             let _ = write!(
                 stream,

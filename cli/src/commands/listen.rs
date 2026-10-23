@@ -149,7 +149,18 @@ impl Listener {
         query: &Query,
         backoff: &mut Backoff,
     ) -> Result<SessionEnd, ApiError> {
-        let resp = self.client.open_event_stream(STREAM_PATH, query).await?;
+        let opened = tokio::time::timeout(
+            self.settings.idle_timeout,
+            self.client.open_event_stream(STREAM_PATH, query),
+        )
+        .await;
+        let Ok(resp) = opened else {
+            return Ok(SessionEnd::Dropped(format!(
+                "No response from the server for {}",
+                human_delay(self.settings.idle_timeout)
+            )));
+        };
+        let resp = resp?;
         let mut stream = resp.bytes_stream();
         let mut parser = SseParser::new();
         loop {
