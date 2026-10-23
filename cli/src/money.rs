@@ -1,8 +1,9 @@
 //! Amounts in the API are integers in the currency's smallest unit (Stripe's convention).
 
+// Matches the API's list: UGX is zero-decimal to Stripe, but its API amounts stay two-decimal.
 const ZERO_DECIMAL: &[&str] = &[
-    "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "ugx", "vnd", "vuv",
-    "xaf", "xof", "xpf",
+    "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "vnd", "vuv", "xaf",
+    "xof", "xpf",
 ];
 const THREE_DECIMAL: &[&str] = &["bhd", "jod", "kwd", "omr", "tnd"];
 
@@ -134,6 +135,13 @@ mod tests {
         assert_eq!(format_money(990, "krw"), "990 KRW");
         assert_eq!(format_decimal(1500, "jpy"), "1500");
         assert_eq!(format_decimal(25000, "clp"), "25000");
+    }
+
+    #[test]
+    fn ugx_amounts_are_two_decimal() {
+        assert_eq!(exponent("ugx"), 2);
+        assert_eq!(parse_major("5", "ugx"), Ok(500));
+        assert_eq!(format_money(500, "ugx"), "5.00 UGX");
     }
 
     #[test]
