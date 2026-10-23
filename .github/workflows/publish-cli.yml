@@ -39,13 +39,12 @@ jobs:
             exit 1
           fi
 
-      # A tag pushed with the default GITHUB_TOKEN does not start other workflows, so the push
-      # uses RELEASE_TOKEN to trigger the dist release workflow.
+      # No credentials on disk while cargo runs dependency build scripts and tests.
       - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-          token: ${{ secrets.RELEASE_TOKEN }}
+          persist-credentials: false
 
       - name: Check the tag is new
         run: |
@@ -74,7 +73,11 @@ jobs:
         working-directory: cli
         run: cargo test --locked
 
+      # A tag pushed with the default GITHUB_TOKEN does not start other workflows, so the push
+      # uses RELEASE_TOKEN to trigger the dist release workflow.
       - name: Commit, tag and push
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -83,5 +86,6 @@ jobs:
             git commit -m "chore(cli): release $VERSION"
           fi
           git tag "$TAG"
-          git push origin HEAD:main
-          git push origin "$TAG"
+          remote="https://x-access-token:${RELEASE_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push "$remote" HEAD:main
+          git push "$remote" "$TAG"

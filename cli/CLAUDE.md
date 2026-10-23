@@ -64,8 +64,9 @@ package, not the binary.
   `version` in `Cargo.toml` and `Cargo.lock`, runs the tests, commits
   `chore(cli): release <version>` to main and pushes the `checkoutpage-cli-v<version>` tag.
 - A tag pushed with the default `GITHUB_TOKEN` does not start other workflows, so the Release
-  CLI workflow checks out and pushes with the `RELEASE_TOKEN` secret instead. Without it the
-  tag would land and nothing would build.
+  CLI workflow pushes with the `RELEASE_TOKEN` secret instead. Without it the tag would land and
+  nothing would build. Only the push step sees the token: the checkout keeps no credentials, so
+  the build scripts and tests that cargo runs can't read it.
 
 Targets: `aarch64-apple-darwin`, `x86_64-apple-darwin`, `x86_64-unknown-linux-gnu`,
 `aarch64-unknown-linux-gnu`, `x86_64-unknown-linux-musl` (static, fine because reqwest uses
