@@ -56,7 +56,12 @@ function parameterGetter(params: IDataObject) {
 export function executeContext(
   params: IDataObject,
   responses: HttpResponse[],
-  options: { continueOnFail?: boolean; items?: number; credentials?: IDataObject } = {}
+  options: {
+    continueOnFail?: boolean;
+    items?: number;
+    credentials?: IDataObject;
+    timezone?: string;
+  } = {}
 ) {
   const http = httpMock(responses);
   const context = {
@@ -65,6 +70,7 @@ export function executeContext(
     getCredentials: vi.fn(async () => options.credentials ?? CREDENTIALS),
     getNode: () => TEST_NODE,
     continueOnFail: () => options.continueOnFail ?? false,
+    getTimezone: () => options.timezone ?? 'America/New_York',
     helpers: { httpRequestWithAuthentication: http },
   };
   return { context: context as unknown as IExecuteFunctions, http };

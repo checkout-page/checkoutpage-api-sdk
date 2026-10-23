@@ -13,7 +13,11 @@ import { apiError, executeContext, loadOptionsContext, requestOptions, TEST_NODE
 const BASE = 'https://api.checkoutpage.com';
 const node = new CheckoutPage();
 
-async function run(params: IDataObject, responses: unknown[], options = {}) {
+async function run(
+  params: IDataObject,
+  responses: unknown[],
+  options: Parameters<typeof executeContext>[2] = {}
+) {
   const { context, http } = executeContext(params, responses, options);
   const output = await node.execute.call(context);
   return { output: output[0], http };
@@ -343,6 +347,22 @@ describe('booking create (add an attendee)', () => {
     });
   });
 
+  it('needs at least the email field', async () => {
+    const { context, http } = executeContext(
+      {
+        resource: 'booking',
+        operation: 'create',
+        eventId: 'ev_1',
+        tickets: { ticket: [{ ticketTypeId: 'tt_adult', quantity: 1 }] },
+        fields: {},
+        additionalFields: {},
+      },
+      []
+    );
+    await expect(node.execute.call(context)).rejects.toThrow('Add at least the email field');
+    expect(http).not.toHaveBeenCalled();
+  });
+
   it('needs at least one ticket', async () => {
     const { context, http } = executeContext(
       {
@@ -357,6 +377,101 @@ describe('booking create (add an attendee)', () => {
     );
     await expect(node.execute.call(context)).rejects.toThrow('Add at least one ticket');
     expect(http).not.toHaveBeenCalled();
+  });
+});
+
+describe('date filters', () => {
+  async function createdAfter(value: unknown, timezone?: string) {
+    const { http } = await run(
+      {
+        resource: 'payment',
+        operation: 'getAll',
+        returnAll: false,
+        limit: 10,
+        filters: { createdAfter: value },
+      },
+      [list([])],
+      { timezone }
+    );
+    return requestOptions(http).qs?.createdAfter;
+  }
+
+  it('reads a date picker value in the workflow timezone, New York', async () => {
+    expect(await createdAfter('2026-10-01T00:00:00', 'America/New_York')).toBe(
+      '2026-10-01T04:00:00.000Z'
+    );
+    expect(await createdAfter('2026-01-15T09:30:00', 'America/New_York')).toBe(
+      '2026-01-15T14:30:00.000Z'
+    );
+  });
+
+  it('reads a date picker value in the workflow timezone, London', async () => {
+    expect(await createdAfter('2026-07-01T00:00:00', 'Europe/London')).toBe(
+      '2026-06-30T23:00:00.000Z'
+    );
+    expect(await createdAfter('2026-12-01T08:00:00', 'Europe/London')).toBe(
+      '2026-12-01T08:00:00.000Z'
+    );
+  });
+
+  it('reads a wall time just after a daylight saving change', async () => {
+    expect(await createdAfter('2026-03-08T03:30:00', 'America/New_York')).toBe(
+      '2026-03-08T07:30:00.000Z'
+    );
+  });
+
+  it('converts a value with an offset directly', async () => {
+    expect(await createdAfter('2026-10-01T00:00:00.000-04:00', 'Europe/London')).toBe(
+      '2026-10-01T04:00:00.000Z'
+    );
+  });
+
+  it('keeps a UTC value', async () => {
+    expect(await createdAfter('2026-10-01T04:00:00.000Z', 'Europe/London')).toBe(
+      '2026-10-01T04:00:00.000Z'
+    );
+  });
+
+  it('accepts a date object from an expression', async () => {
+    expect(await createdAfter(new Date('2026-10-01T04:00:00.000Z'))).toBe(
+      '2026-10-01T04:00:00.000Z'
+    );
+    expect(await createdAfter({ toISO: () => '2026-10-01T00:00:00.000+01:00' })).toBe(
+      '2026-09-30T23:00:00.000Z'
+    );
+  });
+
+  it('rejects a value that is not a date before calling the API', async () => {
+    const { context, http } = executeContext(
+      {
+        resource: 'payment',
+        operation: 'getAll',
+        returnAll: false,
+        limit: 10,
+        filters: { createdBefore: 'next tuesday' },
+      },
+      []
+    );
+    await expect(node.execute.call(context)).rejects.toThrow(NodeOperationError);
+    expect(http).not.toHaveBeenCalled();
+  });
+
+  it('converts a coupon redeem-by date', async () => {
+    const { http } = await run(
+      {
+        resource: 'coupon',
+        operation: 'create',
+        label: 'Spring',
+        code: 'SPRING',
+        discountType: 'percent',
+        percentOff: 10,
+        duration: 'once',
+        additionalFields: { redeemBy: '2026-12-31T23:59:59' },
+      },
+      [{ data: {} }],
+      { timezone: 'Europe/London' }
+    );
+    expect((requestOptions(http).body as IDataObject).redeemBy).toBe('2026-12-31T23:59:59.000Z');
   });
 });
 

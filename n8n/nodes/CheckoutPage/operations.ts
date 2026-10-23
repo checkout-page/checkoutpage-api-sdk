@@ -4,6 +4,7 @@ import {
   type IExecuteFunctions,
   type IHttpRequestMethods,
 } from 'n8n-workflow';
+import { toUtcIso } from './dates';
 
 export interface PlannedRequest {
   method: IHttpRequestMethods;
@@ -68,6 +69,24 @@ function compact(values: IDataObject): IDataObject {
   return result;
 }
 
+const DATE_KEYS = ['createdAfter', 'createdBefore', 'redeemBy'];
+
+function withUtcDates(ctx: IExecuteFunctions, values: IDataObject, i: number): IDataObject {
+  const result = { ...values };
+  for (const key of DATE_KEYS) {
+    const value = result[key];
+    if (value === '' || value === undefined || value === null) continue;
+    const iso = toUtcIso(value, ctx.getTimezone());
+    if (!iso) {
+      throw new NodeOperationError(ctx.getNode(), `${key} is not a valid date: ${String(value)}`, {
+        itemIndex: i,
+      });
+    }
+    result[key] = iso;
+  }
+  return result;
+}
+
 function itemPath(ctx: IExecuteFunctions, resource: string, i: number): string {
   const id = String(ctx.getNodeParameter(ID_PARAMETERS[resource], i) ?? '').trim();
   if (!id) {
@@ -102,6 +121,13 @@ function bookingCreateBody(ctx: IExecuteFunctions, i: number): IDataObject {
       const value = row.value === undefined || row.value === null ? '' : String(row.value);
       return { fieldId: String(row.fieldId).trim(), value };
     });
+
+  if (!fields.length) {
+    throw new NodeOperationError(ctx.getNode(), 'Add at least the email field', {
+      description: "Booking needs a value for the event's email field, so add it under Fields.",
+      itemIndex: i,
+    });
+  }
 
   const body: IDataObject = { eventId, tickets, fields };
 
@@ -143,7 +169,7 @@ function couponCreateBody(ctx: IExecuteFunctions, i: number): IDataObject {
     body.durationInMonths = ctx.getNodeParameter('durationInMonths', i);
   }
 
-  const { pageIds, ticketTypeIds, ...rest } = additional;
+  const { pageIds, ticketTypeIds, ...rest } = withUtcDates(ctx, additional, i);
   Object.assign(body, compact(rest));
   const pages = splitList(pageIds);
   if (pages.length) body.pageIds = pages;
@@ -193,7 +219,7 @@ export function planRequest(
   if (operation === 'getAll') {
     const returnAll = ctx.getNodeParameter('returnAll', i, false) as boolean;
     const limit = returnAll ? 0 : (ctx.getNodeParameter('limit', i, 50) as number);
-    const filters = ctx.getNodeParameter('filters', i, {}) as IDataObject;
+    const filters = withUtcDates(ctx, ctx.getNodeParameter('filters', i, {}) as IDataObject, i);
     return { method: 'GET', path: collection, qs: toQuery(filters), list: { returnAll, limit } };
   }
 
