@@ -244,7 +244,7 @@ Press Ctrl-C to stop.
   piping into `jq`.
 - `--skip-verify` accepts a self-signed certificate on an `https` forward URL.
 
-Each forwarded request carries the same headers as a real delivery:
+Each forwarded request carries the same `X-Webhook-*` headers as a real delivery:
 
 | Header | Value |
 | --- | --- |
@@ -255,10 +255,14 @@ Each forwarded request carries the same headers as a real delivery:
 | `X-Webhook-Test` | `true` for events sent with `webhooks trigger` |
 | `User-Agent` | `Checkout-Page-CLI/<version>` |
 
+Two things differ. Real deliveries send `User-Agent: Checkout-Page-Webhooks/1.0`, and they also
+carry the custom headers set on the webhook endpoint, which forwarded requests don't.
+
 The signing secret belongs to this listening session only. Put it where your app reads its
-webhook secret while you test. A session lasts at most 60 minutes, then the CLI reconnects
-automatically and prints the new secret. It also reconnects after network drops, waiting 1s,
-2s, 4s and so on up to 30s between tries.
+webhook secret while you test. The CLI reconnects automatically after a network drop or an API
+deploy, waiting 1s, 2s, 4s and so on up to 30s between tries, and when a session reaches its
+60 minute limit. The secret changes on every reconnect, and the CLI prints the new one. Events
+sent while the CLI is reconnecting are not replayed.
 
 Your existing verification code works unchanged with the listener's secret. In Node:
 
