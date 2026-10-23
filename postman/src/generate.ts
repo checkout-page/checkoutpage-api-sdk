@@ -2,7 +2,6 @@
 
 import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { convertV2 } from 'openapi-to-postmanv2';
@@ -61,16 +60,6 @@ export function stableId(seed: string): string {
   const hex = createHash('sha1').update(seed).digest('hex');
   const variant = ((parseInt(hex[16], 16) & 0x3) | 0x8).toString(16);
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-5${hex.slice(13, 16)}-${variant}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
-}
-
-function seededRandom(seed: number): () => number {
-  let state = seed;
-  return () => {
-    state = (state + 0x6d2b79f5) | 0;
-    let t = Math.imul(state ^ (state >>> 15), 1 | state);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 function sortKeysDeep(value: unknown): unknown {
@@ -262,14 +251,6 @@ function convert(spec: Obj): Promise<Obj> {
     includeAuthInfoInExample: false,
     enableOptionalParameters: false,
   };
-  // The converter fakes values with Math.random. Seeding it keeps every leftover faked value
-  // stable; the bodies and parameters it fakes are rebuilt from the spec afterwards anyway.
-  const require = createRequire(import.meta.url);
-  const converterDir = path.dirname(require.resolve('openapi-to-postmanv2/package.json'));
-  const faker = require(path.join(converterDir, 'assets/json-schema-faker.js'));
-  const originalRandom = Math.random;
-  Math.random = seededRandom(20260101);
-  faker.option({ random: Math.random });
   return new Promise<Obj>((resolvePromise, reject) => {
     convertV2({ type: 'json', data: spec }, options, (error, result?: CollectionResult) => {
       if (error || !result?.result || !result.output?.[0]) {
@@ -278,9 +259,6 @@ function convert(spec: Obj): Promise<Obj> {
       }
       resolvePromise(result.output[0].data as Obj);
     });
-  }).finally(() => {
-    Math.random = originalRandom;
-    faker.option({ random: originalRandom });
   });
 }
 

@@ -25,9 +25,10 @@ pnpm --filter @checkoutpage/postman type-check
 
 - The converter only sees the production server, so staging and local hosts never reach the
   output.
-- The converter fakes values with `Math.random`. The generator seeds it, then rebuilds request
-  bodies, response bodies, query values and form fields from the spec with
-  `exampleFromSchema`, so a spec change only changes the requests it touches.
+- The converter fakes values with `Math.random`. The generator rebuilds every faked value
+  (request bodies, response bodies, query values and form fields) from the spec with
+  `exampleFromSchema`, so the output is deterministic and a spec change only changes the
+  requests it touches. If a faked value ever survives, the drift check catches it.
 - Ids are `stableId(...)` hashes of the operationId (requests), operationId + status (example
   responses) and tag name (folders). Keys are sorted on write. Regenerating with no spec change
   must give a zero diff; the test suite and `test-postman.yml` enforce it.
