@@ -3,13 +3,25 @@ name: Publish Postman collection
 on:
   workflow_dispatch:
 
+concurrency:
+  group: publish-postman
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # The secrets live in this environment, which only main can use. See postman/README.md.
+    environment: postman
     permissions:
       contents: read
 
     steps:
+      - name: Require main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Run this workflow from main, not $GITHUB_REF"
+          exit 1
+
       - name: Check secrets
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
@@ -17,11 +29,11 @@ jobs:
         run: |
           missing=0
           if [ -z "$POSTMAN_API_KEY" ]; then
-            echo "::error::The POSTMAN_API_KEY secret is not set. See postman/README.md."
+            echo "::error::The POSTMAN_API_KEY secret is not set in the postman environment. See postman/README.md."
             missing=1
           fi
           if [ -z "$POSTMAN_COLLECTION_UID" ]; then
-            echo "::error::The POSTMAN_COLLECTION_UID secret is not set. See postman/README.md."
+            echo "::error::The POSTMAN_COLLECTION_UID secret is not set in the postman environment. See postman/README.md."
             missing=1
           fi
           exit "$missing"

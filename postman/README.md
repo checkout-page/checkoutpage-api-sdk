@@ -99,9 +99,16 @@ by hand from the Actions tab after a change is merged.
    `12345678-0b1e2f3a-aaaa-bbbb-cccc-1234567890ab`.
 4. Create a Postman API key with access to the workspace (**Settings** > **API keys** in
    Postman).
-5. In this GitHub repo, add two Actions secrets:
+5. In this GitHub repo, go to **Settings** > **Environments** and create an environment named
+   `postman`:
+   - under **Deployment branches and tags**, pick **Protected branches only** (or a rule for
+     `main` only), so no other branch can publish;
+   - under **Required reviewers**, add the people who approve each publish.
+6. Add two secrets to the `postman` environment, not to the repo's Actions secrets:
    - `POSTMAN_API_KEY` - the Postman API key.
    - `POSTMAN_COLLECTION_UID` - the collection UID from step 3.
-6. Submit the public workspace to the Postman API Network. This is a manual step in Postman.
+7. Submit the public workspace to the Postman API Network. This is a manual step in Postman.
 
-The workflow fails with a clear message if either secret is missing.
+The workflow fails with a clear message if it runs from a branch other than main, or if either
+secret is missing. Each run waits for a required reviewer to approve it before it can read the
+secrets.
