@@ -8,14 +8,15 @@ OpenAPI spec, so they cover the same API.
 
 ## Tools
 
-| Tool                      | Status                    | Install                                        | Docs                           |
-| ------------------------- | ------------------------- | ---------------------------------------------- | ------------------------------ |
-| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                | [js/README.md](js/README.md)   |
-| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source) | [cli/README.md](cli/README.md) |
-| PHP                       | Planned                   | -                                              | -                              |
-| Ruby                      | Planned                   | -                                              | -                              |
-| Python                    | Planned                   | -                                              | -                              |
-| Go                        | Planned                   | -                                              | -                              |
+| Tool                      | Status                    | Install                                        | Docs                                   |
+| ------------------------- | ------------------------- | ---------------------------------------------- | -------------------------------------- |
+| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                | [js/README.md](js/README.md)           |
+| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source) | [cli/README.md](cli/README.md)         |
+| Postman collection        | Active                    | Import the collection file                     | [postman/README.md](postman/README.md) |
+| PHP                       | Planned                   | -                                              | -                                      |
+| Ruby                      | Planned                   | -                                              | -                                      |
+| Python                    | Planned                   | -                                              | -                                      |
+| Go                        | Planned                   | -                                              | -                                      |
 
 ## JavaScript/TypeScript SDK
 
@@ -47,6 +48,13 @@ customers, export them as CSV, create coupons and bookings, and receive your web
 own machine with `checkoutpage webhooks listen`. Install and usage are in
 [cli/README.md](cli/README.md).
 
+## Postman collection
+
+Try the API without writing code. The [Postman collection](postman/README.md) has a request
+for every endpoint, with descriptions and example bodies. Import
+`postman/checkoutpage-api.postman_collection.json`, then set the `apiKey` variable to
+your API key.
+
 ## The API spec
 
 [`spec/openapi.json`](spec/openapi.json) is the OpenAPI spec for the Checkout Page seller API.
@@ -62,6 +70,7 @@ For the full API reference, visit [docs.checkoutpage.com](https://docs.checkoutp
 checkoutpage-api-sdk/
 ├─ js/                  # JavaScript/TypeScript SDK (@checkoutpage/sdk)
 ├─ cli/                 # Checkout Page CLI (Rust)
+├─ postman/             # Postman collection and environment, generated from the spec
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
 ├─ examples/
