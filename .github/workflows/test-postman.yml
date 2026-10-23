@@ -1,0 +1,61 @@
+name: Test Postman collection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'postman/**'
+      - 'spec/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/test-postman.yml'
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'postman/**'
+      - 'spec/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/test-postman.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm --filter @checkoutpage/postman type-check
+
+      - name: Lint
+        run: pnpm --filter @checkoutpage/postman lint
+
+      # Includes the drift check: the committed collection must equal a fresh generation.
+      - name: Run tests
+        run: pnpm --filter @checkoutpage/postman test
+
+      - name: Committed files match the generator
+        run: |
+          pnpm generate:postman
+          git diff --exit-code -- postman/ || {
+            echo "::error::The Postman collection is out of date. Run 'pnpm generate:postman' and commit the result."
+            exit 1
+          }

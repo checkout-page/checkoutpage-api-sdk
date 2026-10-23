@@ -30,7 +30,9 @@ pnpm generate:types
 ```
 
 This rewrites `openapi.json` in a stable form (keys sorted, pretty-printed) so changes diff
-line by line, then regenerates the JavaScript types. Commit the rewritten spec.
+line by line, then regenerates the JavaScript types and the
+[Postman collection](../postman/README.md). Commit the rewritten spec and the regenerated
+`postman/` files. To regenerate only the Postman files, run `pnpm generate:postman`.
 
 ## Every language uses it
 
