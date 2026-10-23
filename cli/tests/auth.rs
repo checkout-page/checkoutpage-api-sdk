@@ -361,6 +361,61 @@ async fn an_expired_issued_key_is_refreshed_and_saved() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn a_failed_key_issue_after_a_refresh_keeps_the_rotated_tokens() {
+    let server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/oauth/token"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "access_token": "at_new", "token_type": "Bearer", "expires_in": 3600, "refresh_token": "rt_new"
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("POST"))
+        .and(path("/oauth/issue-api-key"))
+        .respond_with(ResponseTemplate::new(500).set_body_json(json!({"message": "boom"})))
+        .up_to_n_times(1)
+        .expect(1)
+        .mount(&server)
+        .await;
+    let env = Env::new();
+    env.write_config(&expired_oauth_config(&server.uri()));
+
+    env.cmd().args(["customers", "list"]).assert().failure();
+    let config = env.read_config();
+    assert!(config.contains("refresh_token = \"rt_new\""), "{config}");
+    assert!(config.contains("access_token = \"at_new\""), "{config}");
+    assert!(!config.contains("sk_live_fake-old0-old1"), "{config}");
+
+    Mock::given(method("POST"))
+        .and(path("/oauth/issue-api-key"))
+        .and(header("authorization", "Bearer at_new"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "data": {"token": "sk_live_fake-new0-new2", "expiresAt": "2099-01-01T00:00:00.000Z"}
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/v1/customers/"))
+        .and(header("authorization", "Bearer sk_live_fake-new0-new2"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(
+            json!({"data": [{"id": "c1", "name": "Fresh"}], "has_more": false, "total": 1}),
+        ))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    // The token mock expects one call, so this run must re-issue with at_new, not refresh again.
+    env.cmd()
+        .args(["customers", "list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Fresh"));
+    assert!(env.read_config().contains("sk_live_fake-new0-new2"));
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn a_dead_refresh_token_asks_for_a_new_login() {
     let server = MockServer::start().await;
     Mock::given(method("POST"))
