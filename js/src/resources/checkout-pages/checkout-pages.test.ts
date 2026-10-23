@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { CheckoutPagesResource } from './checkout-pages';
-import type { CreateCheckoutPageParams, UpdateCheckoutPageParams } from '../../types';
+import type {
+  CreateFormLayout,
+  FormLayout,
+  CreateCheckoutPageParams,
+  UpdateCheckoutPageParams,
+} from '../../types';
 
 describe('CheckoutPagesResource', () => {
   let client: CheckoutPageApiClient;
@@ -405,6 +410,74 @@ describe('CheckoutPagesResource', () => {
 
     it('throws for missing page id', async () => {
       await expect(checkoutPagesResource.update('', {})).rejects.toThrow('Page ID is required');
+    });
+  });
+
+  describe('formLayout', () => {
+    const createLayout: CreateFormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldKey: 'first-name' },
+          { type: 'field', fieldKey: 'last-name' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+      { type: 'discount-code' },
+    ];
+
+    const updateLayout: FormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldId: '507f1f77bcf86cd799439011' },
+          { type: 'field', fieldId: '507f1f77bcf86cd799439012' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+      { type: 'discount-code' },
+    ];
+
+    it('sends formLayout in the create body', async () => {
+      const params: CreateCheckoutPageParams = {
+        name: 'Laid out checkout',
+        productData: { title: 'Laid out product', price: { amount: 4900, currency: 'usd' } },
+        fields: [
+          { key: 'first-name', element: 'text', label: 'First name' },
+          { key: 'last-name', element: 'text', label: 'Last name' },
+        ],
+        formLayout: createLayout,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } } as any);
+
+      await checkoutPagesResource.create(params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/checkout-pages/',
+        body: params,
+      });
+    });
+
+    it('sends formLayout in the update body', async () => {
+      const params: UpdateCheckoutPageParams = { formLayout: updateLayout };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } } as any);
+
+      await checkoutPagesResource.update('page_123', params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/checkout-pages/page_123',
+        body: params,
+      });
     });
   });
 

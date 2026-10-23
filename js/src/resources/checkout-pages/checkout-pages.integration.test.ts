@@ -901,6 +901,9 @@ describe('CheckoutPagesResource integration tests', () => {
             updatedAt: expect.any(String),
           },
         ],
+        formLayout: [...(data.fields ?? [])]
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((field) => ({ type: 'field', fieldId: field.id })),
         funnelSteps: [],
         googleIndex: true,
         hostedLayoutType: 'double',
