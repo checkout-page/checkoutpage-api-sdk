@@ -40,7 +40,6 @@ function toDateString(value: unknown): string | undefined {
 /**
  * The API accepts only UTC timestamps ending in `Z`. n8n's date picker sends a zoneless
  * `YYYY-MM-DDTHH:mm:ss`, which means wall time in the workflow's timezone.
- * Returns undefined for a value that isn't a date.
  */
 export function toUtcIso(value: unknown, timeZone: string): string | undefined {
   const text = toDateString(value);

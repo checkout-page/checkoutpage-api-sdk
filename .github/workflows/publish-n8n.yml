@@ -3,9 +3,8 @@ name: Publish n8n node
 # n8n only verifies community nodes published from GitHub Actions with an npm
 # provenance statement, so this is the only supported way to release n8n/.
 #
-# The version bump and tag land on main in one atomic push before npm publish runs. If the
-# publish or the GitHub release then fails, re-run the workflow with the same version: it
-# finds the tag, checks it out, and finishes whichever of the two is missing without bumping.
+# The bump and tag land on main in one atomic push before npm publish. If a later step fails,
+# re-run with the same version: it resumes from the tag and does only what is missing.
 
 on:
   workflow_dispatch:
