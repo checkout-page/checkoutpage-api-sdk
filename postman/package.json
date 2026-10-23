@@ -1,0 +1,22 @@
+{
+  "name": "@checkoutpage/postman",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Postman collection for the Checkout Page API, generated from the OpenAPI spec",
+  "type": "module",
+  "scripts": {
+    "generate": "tsx src/generate.ts",
+    "test": "vitest run",
+    "lint": "eslint src test",
+    "type-check": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "openapi-to-postmanv2": "6.4.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

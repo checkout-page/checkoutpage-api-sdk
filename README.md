@@ -3,21 +3,22 @@
 Official developer tools for the Checkout Page API: client libraries and command-line tools
 for building on Checkout Page from your own code.
 
-Each language or tool lives in its own top-level directory. The SDKs and the CLI are built from
-the same OpenAPI spec, so they cover the same API. The Zapier integration is the source of
-Checkout Page's app on Zapier.
+Each language or tool lives in its own top-level directory. The SDKs, the CLI and the Postman
+collection are built from the same OpenAPI spec, so they cover the same API. The Zapier
+integration is the source of Checkout Page's app on Zapier.
 
 ## Tools
 
-| Tool                      | Status                    | Install                                        | Docs                                 |
-| ------------------------- | ------------------------- | ---------------------------------------------- | ------------------------------------ |
-| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                | [js/README.md](js/README.md)         |
-| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source) | [cli/README.md](cli/README.md)       |
-| Zapier integration        | Active                    | Connect it in Zapier                           | [zapier/README.md](zapier/README.md) |
-| PHP                       | Planned                   | -                                              | -                                    |
-| Ruby                      | Planned                   | -                                              | -                                    |
-| Python                    | Planned                   | -                                              | -                                    |
-| Go                        | Planned                   | -                                              | -                                    |
+| Tool                      | Status                    | Install                                        | Docs                                   |
+| ------------------------- | ------------------------- | ---------------------------------------------- | -------------------------------------- |
+| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                | [js/README.md](js/README.md)           |
+| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source) | [cli/README.md](cli/README.md)         |
+| Postman collection        | Active                    | Import the collection file                     | [postman/README.md](postman/README.md) |
+| Zapier integration        | Active                    | Connect it in Zapier                           | [zapier/README.md](zapier/README.md)   |
+| PHP                       | Planned                   | -                                              | -                                      |
+| Ruby                      | Planned                   | -                                              | -                                      |
+| Python                    | Planned                   | -                                              | -                                      |
+| Go                        | Planned                   | -                                              | -                                      |
 
 ## JavaScript/TypeScript SDK
 
@@ -48,6 +49,13 @@ More in the [JS SDK README](js/README.md) and the [JavaScript examples](examples
 customers, export them as CSV, and create coupons and bookings. Install and usage are in
 [cli/README.md](cli/README.md).
 
+## Postman collection
+
+Try the API without writing code. The [Postman collection](postman/README.md) has a request
+for every endpoint, with descriptions and example bodies. Import
+`postman/checkoutpage-api.postman_collection.json`, then set the `apiKey` variable to
+your API key.
+
 ## The API spec
 
 [`spec/openapi.json`](spec/openapi.json) is the OpenAPI spec for the Checkout Page seller API.
@@ -63,6 +71,7 @@ For the full API reference, visit [docs.checkoutpage.com](https://docs.checkoutp
 checkoutpage-api-sdk/
 ├─ js/                  # JavaScript/TypeScript SDK (@checkoutpage/sdk)
 ├─ cli/                 # Checkout Page CLI (Rust)
+├─ postman/             # Postman collection and environment, generated from the spec
 ├─ zapier/              # Zapier integration (standalone npm project)
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
