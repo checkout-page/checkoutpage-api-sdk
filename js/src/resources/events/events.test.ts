@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { EventsResource } from './events';
-import type { FormLayout, CreateEventParams, UpdateEventParams } from '../../types';
+import type {
+  CreateFormLayout,
+  FormLayout,
+  CreateEventParams,
+  UpdateEventParams,
+} from '../../types';
 
 describe('EventsResource', () => {
   let client: CheckoutPageApiClient;
@@ -362,7 +367,7 @@ describe('EventsResource', () => {
   });
 
   describe('formLayout', () => {
-    const layout: FormLayout = [
+    const createLayout: CreateFormLayout = [
       { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
       {
         type: 'group',
@@ -370,12 +375,28 @@ describe('EventsResource', () => {
         name: 'Name',
         columns: 2,
         items: [
-          { type: 'field', fieldId: 'first-name' },
-          { type: 'field', fieldId: 'last-name' },
+          { type: 'field', fieldKey: 'first-name' },
+          { type: 'field', fieldKey: 'last-name' },
         ],
       },
       { type: 'divider', id: 'divider-1' },
-      { type: 'discount-code', id: 'discount-code' },
+      { type: 'discount-code' },
+    ];
+
+    const updateLayout: FormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldId: '507f1f77bcf86cd799439011' },
+          { type: 'field', fieldId: '507f1f77bcf86cd799439012' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+      { type: 'discount-code' },
     ];
 
     it('sends formLayout in the create body', async () => {
@@ -386,7 +407,7 @@ describe('EventsResource', () => {
           { key: 'first-name', element: 'text', label: 'First name' },
           { key: 'last-name', element: 'text', label: 'Last name' },
         ],
-        formLayout: layout,
+        formLayout: createLayout,
       };
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'event_123' } } as any);
 
@@ -400,7 +421,7 @@ describe('EventsResource', () => {
     });
 
     it('sends formLayout in the update body', async () => {
-      const params: UpdateEventParams = { formLayout: layout };
+      const params: UpdateEventParams = { formLayout: updateLayout };
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'event_123' } } as any);
 
       await eventsResource.update('event_123', params);

@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { CheckoutPageClient, ValidationError, createCheckoutPageClient } from '../../index';
-import type { CreateFormParams, Form, FormLayout } from '../../types';
+import type { CreateFormParams, Form, CreateFormLayout, FormLayout } from '../../types';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
 
@@ -26,7 +26,7 @@ describe('FormsResource formLayout integration tests', () => {
     { key: 'notes', element: 'textarea', label: 'Notes' },
   ];
 
-  const layoutByKey: FormLayout = [
+  const layoutByKey: CreateFormLayout = [
     { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
     {
       type: 'group',
@@ -34,12 +34,12 @@ describe('FormsResource formLayout integration tests', () => {
       name: 'Name',
       columns: 2,
       items: [
-        { type: 'field', fieldId: 'first-name' },
-        { type: 'field', fieldId: 'last-name' },
+        { type: 'field', fieldKey: 'first-name' },
+        { type: 'field', fieldKey: 'last-name' },
       ],
     },
     { type: 'divider', id: 'divider-1' },
-    { type: 'field', fieldId: 'notes' },
+    { type: 'field', fieldKey: 'notes' },
   ];
 
   const createPage = async (overrides: Partial<CreateFormParams> = {}) => {
@@ -85,7 +85,7 @@ describe('FormsResource formLayout integration tests', () => {
     const notes = fieldIdByLabel(page, 'Notes');
 
     const expected: FormLayout = [
-      layoutByKey[0],
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
       {
         type: 'group',
         id: 'name-row',
@@ -96,7 +96,7 @@ describe('FormsResource formLayout integration tests', () => {
           { type: 'field', fieldId: last },
         ],
       },
-      layoutByKey[2],
+      { type: 'divider', id: 'divider-1' },
       { type: 'field', fieldId: notes },
     ];
     expectLayoutStartsWith(page, expected);
@@ -135,9 +135,14 @@ describe('FormsResource formLayout integration tests', () => {
 
   it('rejects a layout that references an unknown field key on create', async () => {
     await expectValidationError(
-      createPage({ formLayout: [{ type: 'field', fieldId: 'no-such-key' }] }),
-      'formLayout fieldId "no-such-key" does not match the key of a field'
+      createPage({ formLayout: [{ type: 'field', fieldKey: 'no-such-key' }] }),
+      'formLayout fieldKey "no-such-key" does not match the key of a field'
     );
+  });
+
+  it('rejects a field item with fieldId instead of fieldKey on create', async () => {
+    const byId = [{ type: 'field', fieldId: 'first-name' }] as unknown as CreateFormLayout;
+    await expectValidationError(createPage({ formLayout: byId }), 'formLayout.0.fieldKey');
   });
 
   it('rejects a layout that references a field id not on the page on update', async () => {
@@ -156,7 +161,7 @@ describe('FormsResource formLayout integration tests', () => {
   });
 
   it('rejects the discount code box on a form', async () => {
-    const discountCode: FormLayout = [{ type: 'discount-code', id: 'discount-code' }];
+    const discountCode: FormLayout = [{ type: 'discount-code' }];
 
     await expectValidationError(
       createPage({ formLayout: discountCode }),

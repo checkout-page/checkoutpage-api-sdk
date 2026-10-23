@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { CheckoutPagesResource } from './checkout-pages';
-import type { FormLayout, CreateCheckoutPageParams, UpdateCheckoutPageParams } from '../../types';
+import type {
+  CreateFormLayout,
+  FormLayout,
+  CreateCheckoutPageParams,
+  UpdateCheckoutPageParams,
+} from '../../types';
 
 describe('CheckoutPagesResource', () => {
   let client: CheckoutPageApiClient;
@@ -409,7 +414,7 @@ describe('CheckoutPagesResource', () => {
   });
 
   describe('formLayout', () => {
-    const layout: FormLayout = [
+    const createLayout: CreateFormLayout = [
       { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
       {
         type: 'group',
@@ -417,12 +422,28 @@ describe('CheckoutPagesResource', () => {
         name: 'Name',
         columns: 2,
         items: [
-          { type: 'field', fieldId: 'first-name' },
-          { type: 'field', fieldId: 'last-name' },
+          { type: 'field', fieldKey: 'first-name' },
+          { type: 'field', fieldKey: 'last-name' },
         ],
       },
       { type: 'divider', id: 'divider-1' },
-      { type: 'discount-code', id: 'discount-code' },
+      { type: 'discount-code' },
+    ];
+
+    const updateLayout: FormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldId: '507f1f77bcf86cd799439011' },
+          { type: 'field', fieldId: '507f1f77bcf86cd799439012' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+      { type: 'discount-code' },
     ];
 
     it('sends formLayout in the create body', async () => {
@@ -433,7 +454,7 @@ describe('CheckoutPagesResource', () => {
           { key: 'first-name', element: 'text', label: 'First name' },
           { key: 'last-name', element: 'text', label: 'Last name' },
         ],
-        formLayout: layout,
+        formLayout: createLayout,
       };
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } } as any);
 
@@ -447,7 +468,7 @@ describe('CheckoutPagesResource', () => {
     });
 
     it('sends formLayout in the update body', async () => {
-      const params: UpdateCheckoutPageParams = { formLayout: layout };
+      const params: UpdateCheckoutPageParams = { formLayout: updateLayout };
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'page_123' } } as any);
 
       await checkoutPagesResource.update('page_123', params);

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { FormsResource } from './forms';
-import type { FormLayout, CreateFormParams, UpdateFormParams } from '../../types';
+import type { CreateFormLayout, FormLayout, CreateFormParams, UpdateFormParams } from '../../types';
 
 describe('FormsResource', () => {
   let client: CheckoutPageApiClient;
@@ -333,7 +333,7 @@ describe('FormsResource', () => {
   });
 
   describe('formLayout', () => {
-    const layout: FormLayout = [
+    const createLayout: CreateFormLayout = [
       { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
       {
         type: 'group',
@@ -341,8 +341,23 @@ describe('FormsResource', () => {
         name: 'Name',
         columns: 2,
         items: [
-          { type: 'field', fieldId: 'first-name' },
-          { type: 'field', fieldId: 'last-name' },
+          { type: 'field', fieldKey: 'first-name' },
+          { type: 'field', fieldKey: 'last-name' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+    ];
+
+    const updateLayout: FormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldId: '507f1f77bcf86cd799439011' },
+          { type: 'field', fieldId: '507f1f77bcf86cd799439012' },
         ],
       },
       { type: 'divider', id: 'divider-1' },
@@ -356,7 +371,7 @@ describe('FormsResource', () => {
           { key: 'first-name', element: 'text', label: 'First name' },
           { key: 'last-name', element: 'text', label: 'Last name' },
         ],
-        formLayout: layout,
+        formLayout: createLayout,
       };
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'form_123' } } as any);
 
@@ -370,7 +385,7 @@ describe('FormsResource', () => {
     });
 
     it('sends formLayout in the update body', async () => {
-      const params: UpdateFormParams = { formLayout: layout };
+      const params: UpdateFormParams = { formLayout: updateLayout };
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'form_123' } } as any);
 
       await formsResource.update('form_123', params);

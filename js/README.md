@@ -522,25 +522,25 @@ first.
 
 `formLayout` arranges a page's form, top to bottom: fields, headings, dividers, the discount code
 box and groups that put up to 4 items side by side. Checkout pages, events and forms take it on
-`create` and `update`, and page responses always include it. On `create`, a field can be
-referenced by the `key` you gave it in `fields`.
+`create` and `update`, and page responses always include it. On `create`, reference a field by
+`fieldKey`, the `key` you gave it in `fields` in the same request.
 
 ```typescript
-import type { FormLayout } from '@checkoutpage/sdk';
+import type { CreateFormLayout } from '@checkoutpage/sdk';
 
-const formLayout: FormLayout = [
+const formLayout: CreateFormLayout = [
   { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
   {
     type: 'group',
     id: 'name-row',
     columns: 2,
     items: [
-      { type: 'field', fieldId: 'first-name' },
-      { type: 'field', fieldId: 'last-name' },
+      { type: 'field', fieldKey: 'first-name' },
+      { type: 'field', fieldKey: 'last-name' },
     ],
   },
   { type: 'divider', id: 'divider-1' },
-  { type: 'discount-code', id: 'discount-code' },
+  { type: 'discount-code' },
 ];
 
 const { data: page } = await checkoutpage.checkoutPages.create({
@@ -556,10 +556,13 @@ const { data: page } = await checkoutpage.checkoutPages.create({
 });
 ```
 
-`update` replaces the whole layout and takes field ids, so read `page.formLayout`, change it and
-send it back. Fields the layout leaves out are added after it. A field id that is not on the page,
-or a `discount-code` item on a form, throws a `ValidationError`. The `discount-code` item only
-places the box: `showCouponCodeField` switches it on.
+Responses and `update` reference fields by `fieldId` (the `FormLayout` type). `update` replaces the
+whole layout, so read `page.formLayout`, change it and send it back. Fields the layout leaves out
+are added after it. A `fieldKey` that matches no field, a field id that is not on the page, or a
+`discount-code` item on a form, throws a `ValidationError`. The `discount-code` item only places
+the box: `showCouponCodeField` switches it on, and a saved placement is returned while the box is
+off too. More item types may be added later: skip any type you do not recognise when reading, and
+send it back as you received it when updating.
 
 ### Webhooks
 

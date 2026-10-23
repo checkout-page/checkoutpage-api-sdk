@@ -1,6 +1,11 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { CheckoutPageClient, ValidationError, createCheckoutPageClient } from '../../index';
-import type { CheckoutPage, CreateCheckoutPageParams, FormLayout } from '../../types';
+import type {
+  CheckoutPage,
+  CreateCheckoutPageParams,
+  CreateFormLayout,
+  FormLayout,
+} from '../../types';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
 
@@ -26,7 +31,7 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
     { key: 'notes', element: 'textarea', label: 'Notes' },
   ];
 
-  const layoutByKey: FormLayout = [
+  const layoutByKey: CreateFormLayout = [
     { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
     {
       type: 'group',
@@ -34,13 +39,13 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
       name: 'Name',
       columns: 2,
       items: [
-        { type: 'field', fieldId: 'first-name' },
-        { type: 'field', fieldId: 'last-name' },
+        { type: 'field', fieldKey: 'first-name' },
+        { type: 'field', fieldKey: 'last-name' },
       ],
     },
     { type: 'divider', id: 'divider-1' },
-    { type: 'field', fieldId: 'notes' },
-    { type: 'discount-code', id: 'discount-code' },
+    { type: 'field', fieldKey: 'notes' },
+    { type: 'discount-code' },
   ];
 
   const createPage = async (overrides: Partial<CreateCheckoutPageParams> = {}) => {
@@ -87,7 +92,7 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
     const notes = fieldIdByLabel(page, 'Notes');
 
     const expected: FormLayout = [
-      layoutByKey[0],
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
       {
         type: 'group',
         id: 'name-row',
@@ -98,9 +103,9 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
           { type: 'field', fieldId: last },
         ],
       },
-      layoutByKey[2],
+      { type: 'divider', id: 'divider-1' },
       { type: 'field', fieldId: notes },
-      layoutByKey[4],
+      { type: 'discount-code' },
     ];
     expectLayoutStartsWith(page, expected);
 
@@ -115,7 +120,7 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
     const notes = fieldIdByLabel(page, 'Notes');
 
     const layout: FormLayout = [
-      { type: 'discount-code', id: 'discount-code' },
+      { type: 'discount-code' },
       { type: 'heading', id: 'about-you', text: 'About you', level: 'subheading' },
       {
         type: 'group',
@@ -139,9 +144,14 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
 
   it('rejects a layout that references an unknown field key on create', async () => {
     await expectValidationError(
-      createPage({ formLayout: [{ type: 'field', fieldId: 'no-such-key' }] }),
-      'formLayout fieldId "no-such-key" does not match the key of a field'
+      createPage({ formLayout: [{ type: 'field', fieldKey: 'no-such-key' }] }),
+      'formLayout fieldKey "no-such-key" does not match the key of a field'
     );
+  });
+
+  it('rejects a field item with fieldId instead of fieldKey on create', async () => {
+    const byId = [{ type: 'field', fieldId: 'first-name' }] as unknown as CreateFormLayout;
+    await expectValidationError(createPage({ formLayout: byId }), 'formLayout.0.fieldKey');
   });
 
   it('rejects a layout that references a field id not on the page on update', async () => {
@@ -157,5 +167,24 @@ describe('CheckoutPagesResource formLayout integration tests', () => {
 
     const { data: fetched } = await client.checkoutPages.get(page.id);
     expect(fetched.formLayout).toEqual(page.formLayout);
+  });
+
+  it('returns a placed discount code box while showCouponCodeField is off and keeps it on round trip', async () => {
+    const page = await createPage({ showCouponCodeField: false });
+    const discountCodeAt = page.formLayout.findIndex((item) => item.type === 'discount-code');
+    expect(discountCodeAt).toBe(4);
+    expect(page.formLayout[discountCodeAt]).toEqual({ type: 'discount-code' });
+
+    const { data: fetched } = await client.checkoutPages.get(page.id);
+    const { data: updated } = await client.checkoutPages.update(page.id, {
+      formLayout: fetched.formLayout,
+    });
+    expect(updated.showCouponCodeField).toBe(false);
+    expect(updated.formLayout).toEqual(fetched.formLayout);
+
+    const { data: switchedOn } = await client.checkoutPages.update(page.id, {
+      showCouponCodeField: true,
+    });
+    expect(switchedOn.formLayout).toEqual(fetched.formLayout);
   });
 });
