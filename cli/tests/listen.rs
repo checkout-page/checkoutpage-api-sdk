@@ -365,6 +365,60 @@ async fn forward_target_errors_are_reported_with_their_status() {
     assert!(line.contains("  -> 500 ("), "{line}");
 }
 
+const TOO_MANY: &str = r#"{"error":"Too many listeners for this account"}"#;
+
+#[test]
+fn a_rate_limit_after_ready_is_retried() {
+    let sse = SseServer::start(vec![
+        Conn::Stream(vec![Step::Send(ready_frame(SECRET_A, &[])), Step::Close]),
+        Conn::Status(429, TOO_MANY.into()),
+        Conn::RateLimited {
+            retry_after: 1,
+            body: TOO_MANY.into(),
+        },
+        Conn::Stream(vec![Step::Send(ready_frame(SECRET_B, &[])), Step::Hold]),
+    ]);
+    let env = Env::new();
+    let mut proc = listen(&env, &sse, &[]);
+    proc.wait_for("Ready!", WAIT);
+    proc.wait_for(
+        "Too many listeners for this account. Reconnecting in 20ms",
+        WAIT,
+    );
+    proc.wait_for(
+        "Too many listeners for this account. Reconnecting in 1s",
+        WAIT,
+    );
+    proc.wait_for(&format!("Webhook signing secret: {SECRET_B}"), WAIT);
+    assert_eq!(sse.requests().len(), 4);
+}
+
+#[test]
+fn a_rate_limit_that_outlasts_the_retry_window_stops() {
+    let mut conns = vec![Conn::Stream(vec![
+        Step::Send(ready_frame(SECRET_A, &[])),
+        Step::Close,
+    ])];
+    conns.extend((0..30).map(|_| Conn::Status(429, TOO_MANY.into())));
+    let sse = SseServer::start(conns);
+    let env = Env::new();
+    let mut cmd = env.std_cmd();
+    cmd.env("CHECKOUTPAGE_BACKOFF_UNIT_MS", "10")
+        .env("CHECKOUTPAGE_RATE_LIMIT_WINDOW_MS", "150")
+        .args([
+            "webhooks",
+            "listen",
+            "--base-url",
+            &sse.base_url,
+            "--api-key",
+            "sk_test_key",
+        ]);
+    let mut proc = Proc::spawn(cmd);
+    let exit = proc.wait_exit(WAIT);
+    assert_eq!(exit.code(), Some(7), "{}", proc.drain());
+    assert!(proc.count("Reconnecting in") >= 2, "{}", proc.drain());
+}
+
 #[test]
 fn auth_and_validation_errors_stop_instead_of_retrying() {
     for (status, body, code, message) in [

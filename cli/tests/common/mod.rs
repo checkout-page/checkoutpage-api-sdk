@@ -225,6 +225,7 @@ pub enum Step {
 pub enum Conn {
     Stream(Vec<Step>),
     Status(u16, String),
+    RateLimited { retry_after: u64, body: String },
     NoResponse,
 }
 
@@ -298,6 +299,13 @@ fn read_head(stream: &mut TcpStream) -> Option<SeenRequest> {
 fn serve(mut stream: TcpStream, conn: Conn) {
     match conn {
         Conn::NoResponse => thread::sleep(Duration::from_secs(120)),
+        Conn::RateLimited { retry_after, body } => {
+            let _ = write!(
+                stream,
+                "HTTP/1.1 429 Too Many Requests\r\nRetry-After: {retry_after}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            );
+        }
         Conn::Status(code, body) => {
             let _ = write!(
                 stream,

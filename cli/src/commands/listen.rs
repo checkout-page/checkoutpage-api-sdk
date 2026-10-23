@@ -21,10 +21,13 @@ pub const STREAM_PATH: &str = "/v1/webhook-listeners/stream";
 const FORWARD_TIMEOUT: Duration = Duration::from_secs(30);
 /// The server pings every 15s; three missed pings means the connection is dead.
 const IDLE_TIMEOUT: Duration = Duration::from_secs(45);
+/// After a deploy, the old process's listeners count against the limit for up to 45s.
+const RATE_LIMIT_WINDOW: Duration = Duration::from_secs(60);
 
 /// Test hooks: shrink reconnect and idle timings so integration tests run in milliseconds.
 const BACKOFF_UNIT_ENV: &str = "CHECKOUTPAGE_BACKOFF_UNIT_MS";
 const IDLE_TIMEOUT_ENV: &str = "CHECKOUTPAGE_IDLE_TIMEOUT_MS";
+const RATE_LIMIT_WINDOW_ENV: &str = "CHECKOUTPAGE_RATE_LIMIT_WINDOW_MS";
 
 fn env_ms(name: &str) -> Option<Duration> {
     std::env::var(name)
@@ -58,6 +61,7 @@ pub struct Settings {
     pub print_json: bool,
     pub backoff_unit: Duration,
     pub idle_timeout: Duration,
+    pub rate_limit_window: Duration,
 }
 
 pub async fn run(app: &App, args: &ListenArgs) -> Result<()> {
@@ -76,6 +80,7 @@ pub async fn run(app: &App, args: &ListenArgs) -> Result<()> {
         print_json: args.print_json,
         backoff_unit: env_ms(BACKOFF_UNIT_ENV).unwrap_or(Duration::from_secs(1)),
         idle_timeout: env_ms(IDLE_TIMEOUT_ENV).unwrap_or(IDLE_TIMEOUT),
+        rate_limit_window: env_ms(RATE_LIMIT_WINDOW_ENV).unwrap_or(RATE_LIMIT_WINDOW),
     };
     let mut listener = Listener::new(client, settings, app.out_style, app.err_style)?;
     tokio::select! {
@@ -92,6 +97,7 @@ pub struct Listener {
     settings: Settings,
     forwarder: Option<Forwarder>,
     secret: Option<String>,
+    rate_limited_since: Option<Instant>,
     out_style: Style,
     err_style: Style,
 }
@@ -112,6 +118,7 @@ impl Listener {
             settings,
             forwarder,
             secret: None,
+            rate_limited_since: None,
             out_style,
             err_style,
         })
@@ -124,18 +131,25 @@ impl Listener {
         }
         let mut backoff = Backoff::new(self.settings.backoff_unit);
         loop {
-            let reason = match self.session(&query, &mut backoff).await {
+            let (reason, wait_at_least) = match self.session(&query, &mut backoff).await {
                 Ok(SessionEnd::Expired) => {
                     err(self
                         .err_style
                         .yellow("The listener reached its 60 minute limit. Reconnecting..."));
                     continue;
                 }
-                Ok(SessionEnd::Dropped(reason)) => reason,
-                Err(e) if e.is_transient() => e.to_string(),
+                Ok(SessionEnd::Dropped(reason)) => (reason, Duration::ZERO),
+                Err(e @ ApiError::RateLimit { retry_after, .. }) if self.secret.is_some() => {
+                    let since = *self.rate_limited_since.get_or_insert_with(Instant::now);
+                    if since.elapsed() >= self.settings.rate_limit_window {
+                        return Err(e.into());
+                    }
+                    (e.to_string(), Duration::from_secs(retry_after.unwrap_or(0)))
+                }
+                Err(e) if e.is_transient() => (e.to_string(), Duration::ZERO),
                 Err(e) => return Err(e.into()),
             };
-            let delay = backoff.next_delay();
+            let delay = backoff.next_delay().max(wait_at_least);
             err(self.err_style.yellow(&format!(
                 "{reason}. Reconnecting in {}...",
                 human_delay(delay)
@@ -238,6 +252,7 @@ impl Listener {
             Some(_) => err(e.green("Reconnected.")),
         }
         self.secret = Some(ready.secret);
+        self.rate_limited_since = None;
     }
 
     async fn on_webhook(&self, event: &SseEvent) {
