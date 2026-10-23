@@ -14,7 +14,7 @@ Repo-wide rules (the shared spec, adding a language, cross-cutting rules) are in
   - `resources/` - API resource classes (customers, coupons, payments, subscriptions, ...)
   - `generated/` - Auto-generated types from the OpenAPI spec (gitignored)
   - `test-helpers/` - Utilities for testing
-- **`test/`** - Extra test suites
+- **`test/resources/`** - Fixtures for the file upload tests. Unit tests sit next to the code in `src/`
 - **`../examples/js/`** - Usage examples
 
 ## Core architecture
@@ -171,7 +171,7 @@ pnpm build
 
 When adding a new API resource:
 
-1. **Update the OpenAPI spec** (`../spec/openapi.json`) with new endpoint definitions (see [../spec/README.md](../spec/README.md))
+1. **Refresh the OpenAPI spec** (`../spec/openapi.json`) from the API, as [../spec/README.md](../spec/README.md) describes. Never hand-write an endpoint the API doesn't serve
 
 2. **Generate TypeScript types**
 
@@ -223,7 +223,7 @@ When adding a new API resource:
 
 ### Adding a new endpoint to an existing resource
 
-1. Update `../spec/openapi.json`
+1. Refresh `../spec/openapi.json` from the API (see [../spec/README.md](../spec/README.md))
 2. Run `pnpm generate:types`
 3. Add method to resource class in `src/resources/{resource}/`
 4. Write tests alongside the implementation

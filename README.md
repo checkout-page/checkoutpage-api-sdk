@@ -8,15 +8,15 @@ OpenAPI spec, so they cover the same API.
 
 ## Tools
 
-| Tool                      | Status      | Install                                                   | Docs                           |
-| ------------------------- | ----------- | --------------------------------------------------------- | ------------------------------ |
-| JavaScript/TypeScript SDK | Active      | `npm install @checkoutpage/sdk`                           | [js/README.md](js/README.md)   |
-| n8n nodes                 | Coming soon | n8n Settings > Community nodes > `n8n-nodes-checkoutpage` | [n8n/README.md](n8n/README.md) |
-| CLI                       | Coming soon | -                                                         | `cli/`                         |
-| PHP                       | Planned     | -                                                         | -                              |
-| Ruby                      | Planned     | -                                                         | -                              |
-| Python                    | Planned     | -                                                         | -                              |
-| Go                        | Planned     | -                                                         | -                              |
+| Tool                      | Status                    | Install                                                   | Docs                           |
+| ------------------------- | ------------------------- | --------------------------------------------------------- | ------------------------------ |
+| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                           | [js/README.md](js/README.md)   |
+| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source)            | [cli/README.md](cli/README.md) |
+| n8n nodes                 | Coming soon               | n8n Settings > Community nodes > `n8n-nodes-checkoutpage` | [n8n/README.md](n8n/README.md) |
+| PHP                       | Planned                   | -                                                         | -                              |
+| Ruby                      | Planned                   | -                                                         | -                              |
+| Python                    | Planned                   | -                                                         | -                              |
+| Go                        | Planned                   | -                                                         | -                              |
 
 ## JavaScript/TypeScript SDK
 
@@ -41,6 +41,12 @@ The JavaScript SDK has full TypeScript support and runs on Node.js 18 or later.
 
 More in the [JS SDK README](js/README.md) and the [JavaScript examples](examples/js/).
 
+## CLI
+
+`checkoutpage` works with your account from the terminal: look up bookings, payments and
+customers, export them as CSV, and create coupons and bookings. Install and usage are in
+[cli/README.md](cli/README.md).
+
 ## n8n nodes
 
 Automate Checkout Page in [n8n](https://n8n.io) without writing code. Start a workflow when
@@ -64,8 +70,8 @@ For the full API reference, visit [docs.checkoutpage.com](https://docs.checkoutp
 ```
 checkoutpage-api-sdk/
 ├─ js/                  # JavaScript/TypeScript SDK (@checkoutpage/sdk)
+├─ cli/                 # Checkout Page CLI (Rust)
 ├─ n8n/                 # n8n community nodes (n8n-nodes-checkoutpage)
-├─ cli/                 # Checkout Page CLI (coming soon)
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
 ├─ examples/

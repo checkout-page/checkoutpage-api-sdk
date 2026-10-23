@@ -518,6 +518,52 @@ A theme that any of your pages uses, archived ones included, or that is your sto
 can't be deleted and throws a `ConflictError`. Move those pages to another theme with `themeId`
 first.
 
+### Form layout
+
+`formLayout` arranges a page's form, top to bottom: fields, headings, dividers, the discount code
+box and groups that put up to 4 items side by side. Checkout pages, events and forms take it on
+`create` and `update`, and page responses always include it. On `create`, reference a field by
+`fieldKey`, the `key` you gave it in `fields` in the same request.
+
+```typescript
+import type { CreateFormLayout } from '@checkoutpage/sdk';
+
+const formLayout: CreateFormLayout = [
+  { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+  {
+    type: 'group',
+    id: 'name-row',
+    columns: 2,
+    items: [
+      { type: 'field', fieldKey: 'first-name' },
+      { type: 'field', fieldKey: 'last-name' },
+    ],
+  },
+  { type: 'divider', id: 'divider-1' },
+  { type: 'discount-code' },
+];
+
+const { data: page } = await checkoutpage.checkoutPages.create({
+  name: 'Workshop',
+  productData: { title: 'Workshop', price: { amount: 4900, currency: 'usd' } },
+  fields: [
+    { label: 'Email', element: 'email', type: 'email', required: true },
+    { key: 'first-name', element: 'text', label: 'First name' },
+    { key: 'last-name', element: 'text', label: 'Last name' },
+  ],
+  showCouponCodeField: true,
+  formLayout,
+});
+```
+
+Responses and `update` reference fields by `fieldId` (the `FormLayout` type). `update` replaces the
+whole layout, so read `page.formLayout`, change it and send it back. Fields the layout leaves out
+are added after it. A `fieldKey` that matches no field, a field id that is not on the page, or a
+`discount-code` item on a form, throws a `ValidationError`. The `discount-code` item only places
+the box: `showCouponCodeField` switches it on, and a saved placement is returned while the box is
+off too. More item types may be added later: skip any type you do not recognise when reading, and
+send it back as you received it when updating.
+
 ### Webhooks
 
 #### List webhook endpoints
