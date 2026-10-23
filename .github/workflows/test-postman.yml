@@ -6,12 +6,18 @@ on:
     paths:
       - 'postman/**'
       - 'spec/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - '.github/workflows/test-postman.yml'
   pull_request:
     branches: ['**']
     paths:
       - 'postman/**'
       - 'spec/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - '.github/workflows/test-postman.yml'
 
 jobs:
