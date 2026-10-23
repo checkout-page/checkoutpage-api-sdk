@@ -709,6 +709,7 @@ describe('CheckoutPagesResource integration tests', () => {
         closePopupOnClickOutside: false,
         confirmationEmailShowLogo: true,
         confirmationEmailShowStoreName: true,
+        coverProcessingFees: [],
         createdAt: expect.any(String),
         customizeCheckoutConfirmation: false,
         customizeEmailConfirmation: false,
@@ -901,6 +902,9 @@ describe('CheckoutPagesResource integration tests', () => {
             updatedAt: expect.any(String),
           },
         ],
+        formLayout: [...(data.fields ?? [])]
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((field) => ({ type: 'field', fieldId: field.id })),
         funnelSteps: [],
         googleIndex: true,
         hostedLayoutType: 'double',
@@ -984,6 +988,7 @@ describe('CheckoutPagesResource integration tests', () => {
         },
         testmode: false,
         testmodeEnabledAt: null,
+        themeId: expect.any(String),
         themeOverrides: null,
         type: 'checkout',
         updatedAt: expect.any(String),

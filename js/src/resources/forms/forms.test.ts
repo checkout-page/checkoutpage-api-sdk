@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { FormsResource } from './forms';
-import type { CreateFormParams, UpdateFormParams } from '../../types';
+import type { CreateFormLayout, FormLayout, CreateFormParams, UpdateFormParams } from '../../types';
 
 describe('FormsResource', () => {
   let client: CheckoutPageApiClient;
@@ -329,6 +329,72 @@ describe('FormsResource', () => {
 
     it('throws for missing page id', async () => {
       await expect(formsResource.update('', {})).rejects.toThrow('Page ID is required');
+    });
+  });
+
+  describe('formLayout', () => {
+    const createLayout: CreateFormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldKey: 'first-name' },
+          { type: 'field', fieldKey: 'last-name' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+    ];
+
+    const updateLayout: FormLayout = [
+      { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+      {
+        type: 'group',
+        id: 'name-row',
+        name: 'Name',
+        columns: 2,
+        items: [
+          { type: 'field', fieldId: '507f1f77bcf86cd799439011' },
+          { type: 'field', fieldId: '507f1f77bcf86cd799439012' },
+        ],
+      },
+      { type: 'divider', id: 'divider-1' },
+    ];
+
+    it('sends formLayout in the create body', async () => {
+      const params: CreateFormParams = {
+        name: 'Laid out form',
+        title: 'Laid out form',
+        fields: [
+          { key: 'first-name', element: 'text', label: 'First name' },
+          { key: 'last-name', element: 'text', label: 'Last name' },
+        ],
+        formLayout: createLayout,
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'form_123' } } as any);
+
+      await formsResource.create(params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/forms/',
+        body: params,
+      });
+    });
+
+    it('sends formLayout in the update body', async () => {
+      const params: UpdateFormParams = { formLayout: updateLayout };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: 'form_123' } } as any);
+
+      await formsResource.update('form_123', params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/forms/form_123',
+        body: params,
+      });
     });
   });
 

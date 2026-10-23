@@ -202,7 +202,7 @@ describe('CheckoutPagesResource multi-price integration tests', () => {
   });
 
   describe('multiple prices', () => {
-    it('preserves order and marks the first price default', async () => {
+    it('preserves order and reports no default when none is saved', async () => {
       const product = (await createWithPrices([
         { billingType: 'one_time', amount: 1000, currency: 'usd', label: 'A' },
         { billingType: 'recurring', amount: 800, currency: 'usd', label: 'B', recurring: { interval: 'month', intervalCount: 1 } },
@@ -212,9 +212,8 @@ describe('CheckoutPagesResource multi-price integration tests', () => {
       expect(product.prices).toHaveLength(3);
       expect(product.prices!.map((p) => p.label)).toEqual(['A', 'B', 'C']);
       expect(product.prices!.map((p) => p.order)).toEqual([0, 1, 2]);
-      expect(product.prices!.filter((p) => p.isDefault)).toHaveLength(1);
-      expect(product.prices![0].isDefault).toBe(true);
-      expect(product.defaultPriceId).toBe(product.prices![0].id);
+      expect(product.prices!.filter((p) => p.isDefault)).toHaveLength(0);
+      expect(product.defaultPriceId).toBeNull();
     });
 
     it('honours an explicit defaultPriceId supplied with client-provided price ids', async () => {
@@ -274,7 +273,7 @@ describe('CheckoutPagesResource multi-price integration tests', () => {
   });
 
   describe('products.update prices replacement', () => {
-    it('replaces prices[] and re-resolves the default', async () => {
+    it('replaces prices[] and reports no default when none is saved', async () => {
       const created = await createWithPrices([
         { billingType: 'one_time', amount: 1000, currency: 'usd', label: 'Original' },
       ]);
@@ -290,7 +289,8 @@ describe('CheckoutPagesResource multi-price integration tests', () => {
       const data = (updated as { data: NonNullable<typeof created.product> }).data;
       expect(data.prices).toHaveLength(2);
       expect(data.prices!.map((p) => p.label)).toEqual(['New A', 'New B']);
-      expect(data.prices!.filter((p) => p.isDefault)).toHaveLength(1);
+      expect(data.prices!.filter((p) => p.isDefault)).toHaveLength(0);
+      expect(data.defaultPriceId).toBeNull();
     });
   });
 
