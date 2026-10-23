@@ -285,6 +285,27 @@ async fn a_silent_stream_is_treated_as_dead() {
 }
 
 #[test]
+fn an_oversized_message_drops_the_connection_and_reconnects() {
+    let sse = SseServer::start(vec![
+        Conn::Stream(vec![
+            Step::Send(ready_frame(SECRET_A, &[])),
+            Step::Send(format!("data: {}", "x".repeat(1024 * 1024 + 1))),
+            Step::Hold,
+        ]),
+        Conn::Stream(vec![Step::Send(ready_frame(SECRET_B, &[])), Step::Hold]),
+    ]);
+    let env = Env::new();
+    let mut proc = listen(&env, &sse, &[]);
+    proc.wait_for("Ready!", WAIT);
+    proc.wait_for(
+        "The server sent a message larger than 1 MiB. Reconnecting in 10ms",
+        WAIT,
+    );
+    proc.wait_for(&format!("Webhook signing secret: {SECRET_B}"), WAIT);
+    assert_eq!(sse.requests().len(), 2);
+}
+
+#[test]
 fn a_stream_request_with_no_response_is_retried() {
     let sse = SseServer::start(vec![
         Conn::NoResponse,

@@ -200,8 +200,14 @@ impl Listener {
                 Ok(Some(Ok(bytes))) => bytes,
             };
             for item in parser.feed(&chunk) {
-                let SseItem::Event(event) = item else {
-                    continue;
+                let event = match item {
+                    SseItem::Event(event) => event,
+                    SseItem::TooLarge => {
+                        return Ok(SessionEnd::Dropped(
+                            "The server sent a message larger than 1 MiB".into(),
+                        ));
+                    }
+                    _ => continue,
                 };
                 match event.event.as_str() {
                     "ready" => {

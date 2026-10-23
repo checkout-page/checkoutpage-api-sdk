@@ -1,6 +1,9 @@
 //! Incremental `text/event-stream` parser following the WHATWG HTML "event stream
 //! interpretation" rules. Feed it raw chunks in any split; it yields complete events.
 
+/// Far above any webhook payload; a stream that exceeds it is broken or hostile.
+pub const MAX_BUFFER: usize = 1024 * 1024;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SseEvent {
     pub event: String,
@@ -14,6 +17,8 @@ pub enum SseItem {
     Comment(String),
     /// A `retry:` field, in milliseconds.
     Retry(u64),
+    /// A line or an event's data passed `MAX_BUFFER`. The parser ignores the rest of the stream.
+    TooLarge,
 }
 
 #[derive(Debug, Default)]
@@ -26,6 +31,7 @@ pub struct SseParser {
     has_data: bool,
     id: Option<String>,
     last_event_id: Option<String>,
+    overflowed: bool,
 }
 
 impl SseParser {
@@ -40,6 +46,9 @@ impl SseParser {
     pub fn feed(&mut self, chunk: &[u8]) -> Vec<SseItem> {
         let mut out = Vec::new();
         for &b in chunk {
+            if self.overflowed {
+                break;
+            }
             if self.after_cr {
                 self.after_cr = false;
                 if b == b'\n' {
@@ -52,10 +61,22 @@ impl SseParser {
                     self.end_line(&mut out);
                 }
                 b'\n' => self.end_line(&mut out),
-                _ => self.line.push(b),
+                _ => {
+                    self.line.push(b);
+                    if self.line.len() > MAX_BUFFER {
+                        self.overflow(&mut out);
+                    }
+                }
             }
         }
         out
+    }
+
+    fn overflow(&mut self, out: &mut Vec<SseItem>) {
+        self.overflowed = true;
+        self.line = Vec::new();
+        self.data = String::new();
+        out.push(SseItem::TooLarge);
     }
 
     fn end_line(&mut self, out: &mut Vec<SseItem>) {
@@ -85,6 +106,10 @@ impl SseParser {
         match field {
             "event" => self.event_type = Some(value.to_string()),
             "data" => {
+                if self.data.len() + value.len() + 1 > MAX_BUFFER {
+                    self.overflow(out);
+                    return;
+                }
                 if self.has_data {
                     self.data.push('\n');
                 }
@@ -268,6 +293,42 @@ mod tests {
         assert_eq!(out[0].id.as_deref(), Some("1"));
         assert_eq!(out[1].id, None);
         assert_eq!(p.last_event_id(), Some("1"));
+    }
+
+    #[test]
+    fn a_line_past_the_cap_stops_the_parser() {
+        let mut p = SseParser::new();
+        let mut out = p.feed(b"data: before\n\n");
+        let chunk = vec![b'x'; 64 * 1024];
+        for _ in 0..16 {
+            out.extend(p.feed(&chunk));
+        }
+        assert_eq!(out.len(), 1, "exactly 1 MiB is still allowed");
+        out.extend(p.feed(b"x"));
+        assert_eq!(
+            out,
+            vec![
+                SseItem::Event(ev("message", "before", None)),
+                SseItem::TooLarge
+            ]
+        );
+        assert!(p.feed(b"\ndata: after\n\n").is_empty());
+        assert!(p.line.capacity() < MAX_BUFFER, "the buffer is released");
+    }
+
+    #[test]
+    fn data_past_the_cap_stops_the_parser() {
+        let mut p = SseParser::new();
+        let line = format!("data: {}\n", "y".repeat(64 * 1024));
+        let mut out = Vec::new();
+        for _ in 0..17 {
+            out.extend(p.feed(line.as_bytes()));
+        }
+        assert_eq!(out, vec![SseItem::TooLarge]);
+        assert!(
+            p.feed(b"\n").is_empty(),
+            "the partial event is not dispatched"
+        );
     }
 
     #[test]
