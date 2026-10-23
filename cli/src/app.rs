@@ -262,6 +262,7 @@ pub fn exit_code(error: &anyhow::Error) -> i32 {
             ApiError::Validation { .. } => 5,
             ApiError::Conflict { .. } => 6,
             ApiError::RateLimit { .. } => 7,
+            ApiError::InvalidRequest(_) => 2,
             ApiError::Api { .. } | ApiError::Network(_) | ApiError::InvalidResponse(_) => 1,
         };
     }
