@@ -26,7 +26,7 @@ pub struct Cli {
 #[derive(Args, Debug, Clone, Default)]
 pub struct GlobalArgs {
     /// API key to use for this command. Beats CHECKOUTPAGE_API_KEY and stored credentials.
-    /// With `login`, the key to store.
+    /// With `login`, the key to store, or `-` to read it from stdin.
     #[arg(long, global = true, value_name = "KEY")]
     pub api_key: Option<String>,
 

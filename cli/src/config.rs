@@ -33,15 +33,31 @@ pub struct OAuthCredentials {
     pub refresh_token: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub access_token_expires_at: Option<DateTime<Utc>>,
-    /// The `sk_...` key issued for the access token; what `/v1` calls actually use.
+    /// The `sk_...` key issued for the access token; what `/v1` calls actually use. Empty after
+    /// a refresh whose key issue failed, since the refresh deletes the old key on the server.
+    #[serde(default)]
     pub api_key: String,
     pub api_key_expires_at: DateTime<Utc>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Renewal {
+    None,
+    ReissueKey,
+    Refresh,
+}
+
 impl OAuthCredentials {
-    /// Refresh a minute early so a key doesn't expire mid-request.
-    pub fn needs_refresh(&self, now: DateTime<Utc>) -> bool {
-        self.api_key_expires_at - chrono::Duration::seconds(60) <= now
+    /// Renews a minute early so a key or token doesn't expire mid-request.
+    pub fn renewal(&self, now: DateTime<Utc>) -> Renewal {
+        let early = now + chrono::Duration::seconds(60);
+        if !self.api_key.is_empty() && self.api_key_expires_at > early {
+            Renewal::None
+        } else if self.access_token_expires_at.is_some_and(|exp| exp > early) {
+            Renewal::ReissueKey
+        } else {
+            Renewal::Refresh
+        }
     }
 }
 
@@ -231,10 +247,38 @@ mod tests {
 
     #[test]
     fn refresh_window() {
-        let creds = sample().profiles["work"].oauth.clone().unwrap();
+        let mut creds = sample().profiles["work"].oauth.clone().unwrap();
         let exp = creds.api_key_expires_at;
-        assert!(!creds.needs_refresh(exp - chrono::Duration::minutes(5)));
-        assert!(creds.needs_refresh(exp - chrono::Duration::seconds(30)));
-        assert!(creds.needs_refresh(exp + chrono::Duration::seconds(1)));
+        assert_eq!(
+            creds.renewal(exp - chrono::Duration::minutes(5)),
+            Renewal::None
+        );
+        assert_eq!(
+            creds.renewal(exp - chrono::Duration::seconds(30)),
+            Renewal::Refresh
+        );
+        assert_eq!(
+            creds.renewal(exp + chrono::Duration::seconds(1)),
+            Renewal::Refresh
+        );
+
+        creds.access_token_expires_at = Some(exp + chrono::Duration::hours(1));
+        assert_eq!(
+            creds.renewal(exp - chrono::Duration::minutes(5)),
+            Renewal::None
+        );
+        assert_eq!(
+            creds.renewal(exp + chrono::Duration::seconds(1)),
+            Renewal::ReissueKey
+        );
+        creds.api_key.clear();
+        assert_eq!(
+            creds.renewal(exp - chrono::Duration::minutes(5)),
+            Renewal::ReissueKey
+        );
+        assert_eq!(
+            creds.renewal(exp + chrono::Duration::hours(2)),
+            Renewal::Refresh
+        );
     }
 }

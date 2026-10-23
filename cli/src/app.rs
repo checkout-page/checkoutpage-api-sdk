@@ -6,7 +6,7 @@ use chrono::{DateTime, Utc};
 use crate::api::oauth::OAuthClient;
 use crate::api::{ApiError, Client, DEFAULT_BASE_URL};
 use crate::cli::GlobalArgs;
-use crate::config::{self, Config, OAuthCredentials, Profile};
+use crate::config::{self, Config, OAuthCredentials, Profile, Renewal};
 use crate::output::{Format, err};
 use crate::util::Style;
 
@@ -109,6 +109,16 @@ impl App {
             .cloned())
     }
 
+    /// Reloads the file first, so a profile another process saved meanwhile isn't overwritten.
+    pub fn set_profile(&self, profile: Option<Profile>) -> Result<()> {
+        let mut config = self.load_config()?;
+        match profile {
+            Some(p) => config.profiles.insert(self.global.profile.clone(), p),
+            None => config.profiles.remove(&self.global.profile),
+        };
+        config.save(&self.config_path)
+    }
+
     pub fn base_url(&self, profile: Option<&Profile>) -> String {
         self.global
             .base_url
@@ -173,10 +183,10 @@ impl App {
             return Err(CliError::NotLoggedIn.into());
         };
         if let Some(oauth) = &profile.oauth {
-            let oauth = if oauth.needs_refresh(Utc::now()) {
-                self.refresh(oauth, &base_url).await?
-            } else {
-                oauth.clone()
+            let oauth = match oauth.renewal(Utc::now()) {
+                Renewal::None => oauth.clone(),
+                Renewal::ReissueKey => self.reissue(oauth, &base_url).await?,
+                Renewal::Refresh => self.refresh(oauth, &base_url).await?,
             };
             return Ok((
                 Credentials {
@@ -200,42 +210,76 @@ impl App {
         Err(CliError::NotLoggedIn.into())
     }
 
+    fn expired_login(&self) -> CliError {
+        CliError::Auth(format!(
+            "Your login for profile \"{}\" has expired. Run `checkoutpage login` again.",
+            self.global.profile
+        ))
+    }
+
+    async fn reissue(&self, old: &OAuthCredentials, base_url: &str) -> Result<OAuthCredentials> {
+        let oauth = OAuthClient::new(base_url, user_agent())?;
+        match self.issue_and_save(&oauth, old.clone()).await {
+            Err(e)
+                if matches!(
+                    e.downcast_ref::<ApiError>(),
+                    Some(ApiError::Authentication { .. })
+                ) =>
+            {
+                self.refresh(old, base_url).await
+            }
+            other => other,
+        }
+    }
+
     async fn refresh(&self, old: &OAuthCredentials, base_url: &str) -> Result<OAuthCredentials> {
-        let expired = || {
-            CliError::Auth(format!(
-                "Your login for profile \"{}\" has expired. Run `checkoutpage login` again.",
-                self.global.profile
-            ))
-        };
         let Some(refresh_token) = old.refresh_token.as_deref() else {
-            return Err(expired().into());
+            return Err(self.expired_login().into());
         };
         let oauth = OAuthClient::new(base_url, user_agent())?;
         let tokens = match oauth.refresh(&old.client_id, refresh_token).await {
             Ok(t) => t,
             Err(ApiError::Validation { .. } | ApiError::Authentication { .. }) => {
-                return Err(expired().into());
+                return Err(self.expired_login().into());
             }
             Err(e) => return Err(e.into()),
         };
-        let issued = oauth.issue_api_key(&tokens.access_token).await?;
-        let creds = OAuthCredentials {
+        // The refresh rotates the tokens and deletes the old key on the server. Saving the new
+        // tokens first means a failed key issue can't strand the old, now reused, refresh token.
+        let rotated = OAuthCredentials {
             client_id: old.client_id.clone(),
             access_token_expires_at: tokens
                 .expires_in
                 .map(|s| Utc::now() + chrono::Duration::seconds(s)),
             access_token: tokens.access_token,
             refresh_token: tokens.refresh_token.or_else(|| old.refresh_token.clone()),
-            api_key_expires_at: parse_expiry(&issued.expires_at)?,
-            api_key: issued.token,
+            api_key: String::new(),
+            api_key_expires_at: old.api_key_expires_at,
         };
+        self.save_oauth(&rotated)?;
+        self.issue_and_save(&oauth, rotated).await
+    }
+
+    async fn issue_and_save(
+        &self,
+        oauth: &OAuthClient,
+        mut creds: OAuthCredentials,
+    ) -> Result<OAuthCredentials> {
+        let issued = oauth.issue_api_key(&creds.access_token).await?;
+        creds.api_key_expires_at = parse_expiry(&issued.expires_at)?;
+        creds.api_key = issued.token;
+        self.save_oauth(&creds)?;
+        err(self.err_style.dim("Renewed your login."));
+        Ok(creds)
+    }
+
+    fn save_oauth(&self, creds: &OAuthCredentials) -> Result<()> {
         let mut config = self.load_config()?;
         if let Some(p) = config.profiles.get_mut(&self.global.profile) {
             p.oauth = Some(creds.clone());
             config.save(&self.config_path)?;
         }
-        err(self.err_style.dim("Renewed your login."));
-        Ok(creds)
+        Ok(())
     }
 
     pub async fn client(&self) -> Result<Client> {
@@ -262,6 +306,7 @@ pub fn exit_code(error: &anyhow::Error) -> i32 {
             ApiError::Validation { .. } => 5,
             ApiError::Conflict { .. } => 6,
             ApiError::RateLimit { .. } => 7,
+            ApiError::InvalidRequest(_) => 2,
             ApiError::Api { .. } | ApiError::Network(_) | ApiError::InvalidResponse(_) => 1,
         };
     }

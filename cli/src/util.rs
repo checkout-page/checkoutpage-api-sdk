@@ -97,7 +97,7 @@ mod tests {
     fn masked_key_never_contains_the_secret_body() {
         let key = "sk_live_fake-supe-1234";
         let masked = mask_key(key);
-        assert!(!masked.contains("supersecret"));
+        assert!(!masked.contains(&key[8..key.len() - 4]));
         assert!(masked.len() < key.len());
     }
 

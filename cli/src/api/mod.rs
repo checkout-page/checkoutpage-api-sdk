@@ -8,11 +8,23 @@ pub mod sse;
 
 pub use error::{ApiError, describe_reqwest};
 
+use std::time::Duration;
+
 use reqwest::{Method, header};
 use serde_json::Value;
 use url::Url;
 
 pub const DEFAULT_BASE_URL: &str = "https://api.checkoutpage.com";
+pub const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+pub const REQUEST_TIMEOUT: Duration = Duration::from_secs(60);
+
+/// No overall timeout here: a long-lived response (an event stream) sets its own.
+pub(crate) fn http_client() -> Result<reqwest::Client, ApiError> {
+    reqwest::Client::builder()
+        .connect_timeout(CONNECT_TIMEOUT)
+        .build()
+        .map_err(ApiError::Network)
+}
 
 pub type Query = Vec<(String, String)>;
 
@@ -97,11 +109,8 @@ impl Client {
         api_key: impl Into<String>,
         user_agent: impl Into<String>,
     ) -> Result<Self, ApiError> {
-        let http = reqwest::Client::builder()
-            .build()
-            .map_err(ApiError::Network)?;
         Ok(Client {
-            http,
+            http: http_client()?,
             base_url: parse_base_url(base_url)?,
             api_key: api_key.into(),
             user_agent: user_agent.into(),
@@ -120,7 +129,14 @@ impl Client {
         let mut url = self
             .base_url
             .join(path)
-            .map_err(|e| ApiError::InvalidResponse(format!("invalid path {path:?}: {e}")))?;
+            .map_err(|e| ApiError::InvalidRequest(format!("invalid path {path:?}: {e}")))?;
+        if url.origin() != self.base_url.origin() {
+            return Err(ApiError::InvalidRequest(format!(
+                "refusing to send the API key to {}: the path {path:?} points away from {}",
+                url.origin().ascii_serialization(),
+                self.base_url.origin().ascii_serialization()
+            )));
+        }
         if !query.is_empty() {
             let mut pairs = url.query_pairs_mut();
             for (k, v) in query {
@@ -147,6 +163,7 @@ impl Client {
         let url = self.url(path, query)?;
         let mut req = self
             .builder(method, url)
+            .timeout(REQUEST_TIMEOUT)
             .header(header::ACCEPT, "application/json");
         if let Some(body) = body {
             req = req.json(body);
@@ -270,6 +287,43 @@ mod tests {
             url.as_str(),
             "https://api.checkoutpage.com/v1/coupons/?limit=5&search=a+b%26c"
         );
+    }
+
+    #[test]
+    fn refuses_paths_that_change_the_host() {
+        let c = Client::new("https://api.checkoutpage.com", "sk_test_fake-aaaa-bbbb").unwrap();
+        for path in [
+            "//evil.example/x",
+            "/\\evil.example/x",
+            "\\\\evil.example/x",
+        ] {
+            let err = c.url(path, &[]).unwrap_err();
+            assert!(
+                matches!(err, ApiError::InvalidRequest(_)),
+                "{path}: {err:?}"
+            );
+            assert!(err.to_string().contains("https://evil.example"), "{err}");
+        }
+        assert!(c.url("https://evil.example/x", &[]).is_err());
+        assert!(c.url("http://api.checkoutpage.com/x", &[]).is_err());
+        assert!(c.url("https://api.checkoutpage.com:8443/x", &[]).is_err());
+        assert!(c.url("/v1/account/", &[]).is_ok());
+    }
+
+    #[tokio::test]
+    async fn a_request_to_another_host_never_leaves() {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let addr = listener.local_addr().unwrap();
+        let c = Client::new(
+            &format!("http://localhost:{}", addr.port()),
+            "sk_test_fake-aaaa-bbbb",
+        )
+        .unwrap();
+        let path = format!("//127.0.0.1:{}/x", addr.port());
+        let err = c.get(&path, &[]).await.unwrap_err();
+        assert!(matches!(err, ApiError::InvalidRequest(_)), "{err:?}");
+        assert!(listener.accept().is_err(), "no connection was made");
     }
 
     #[test]

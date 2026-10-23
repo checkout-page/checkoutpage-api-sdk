@@ -35,6 +35,8 @@ pub enum ApiError {
     Network(#[source] reqwest::Error),
     #[error("unexpected response from the API: {0}")]
     InvalidResponse(String),
+    #[error("{0}")]
+    InvalidRequest(String),
 }
 
 fn format_validation(message: &str, details: &[String]) -> String {
@@ -107,7 +109,9 @@ impl ApiError {
             ApiError::NotFound { .. } => Some(404),
             ApiError::Conflict { .. } => Some(409),
             ApiError::RateLimit { .. } => Some(429),
-            ApiError::Network(_) | ApiError::InvalidResponse(_) => None,
+            ApiError::Network(_) | ApiError::InvalidResponse(_) | ApiError::InvalidRequest(_) => {
+                None
+            }
         }
     }
 
@@ -119,7 +123,9 @@ impl ApiError {
             | ApiError::Validation { body, .. }
             | ApiError::RateLimit { body, .. }
             | ApiError::Api { body, .. } => Some(body),
-            ApiError::Network(_) | ApiError::InvalidResponse(_) => None,
+            ApiError::Network(_) | ApiError::InvalidResponse(_) | ApiError::InvalidRequest(_) => {
+                None
+            }
         }
     }
 

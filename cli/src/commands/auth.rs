@@ -1,6 +1,8 @@
 use std::time::Duration;
 
-use anyhow::Result;
+use std::io::IsTerminal;
+
+use anyhow::{Context, Result};
 use chrono::Utc;
 use serde_json::Value;
 use tokio::net::TcpListener;
@@ -8,7 +10,7 @@ use tokio::net::TcpListener;
 use crate::api::oauth::{AuthorizeRequest, DEFAULT_SCOPE, OAuthClient};
 use crate::api::pkce::{Pkce, random_urlsafe};
 use crate::api::{Client, unwrap_data};
-use crate::app::{API_KEY_ENV, App, KeySource, parse_expiry, user_agent};
+use crate::app::{API_KEY_ENV, App, CliError, KeySource, parse_expiry, user_agent};
 use crate::callback::{CALLBACK_PATH, wait_for_code};
 use crate::cli::LoginArgs;
 use crate::config::{OAuthCredentials, Profile};
@@ -22,26 +24,26 @@ const LOGIN_TIMEOUT: Duration = Duration::from_secs(5 * 60);
 
 pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
     app.reject_csv("login")?;
-    let mut config = app.load_config()?;
-    let existing = config.profiles.get(&app.global.profile).cloned();
+    let existing = app.profile()?;
     let base_url = app.base_url(existing.as_ref());
     let stored_base_url = (base_url != crate::api::DEFAULT_BASE_URL).then(|| base_url.clone());
 
     if let Some(key) = app.global.api_key.clone().filter(|k| !k.is_empty()) {
+        let key = if key == "-" {
+            read_key_from_stdin()?
+        } else {
+            key
+        };
         if key_mode(&key).is_none() {
             err(app.err_style.yellow(
                 "Warning: that doesn't look like a Checkout Page API key (sk_live_... or sk_test_...). Saving it anyway.",
             ));
         }
-        config.profiles.insert(
-            app.global.profile.clone(),
-            Profile {
-                base_url: stored_base_url,
-                api_key: Some(key.clone()),
-                oauth: None,
-            },
-        );
-        config.save(&app.config_path)?;
+        app.set_profile(Some(Profile {
+            base_url: stored_base_url,
+            api_key: Some(key.clone()),
+            oauth: None,
+        }))?;
         out(format!(
             "Saved API key {} to profile \"{}\".",
             mask_key(&key),
@@ -96,15 +98,11 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
         api_key: issued.token,
     };
 
-    config.profiles.insert(
-        app.global.profile.clone(),
-        Profile {
-            base_url: stored_base_url,
-            api_key: None,
-            oauth: Some(creds.clone()),
-        },
-    );
-    config.save(&app.config_path)?;
+    app.set_profile(Some(Profile {
+        base_url: stored_base_url,
+        api_key: None,
+        oauth: Some(creds.clone()),
+    }))?;
 
     let account = match Client::with_user_agent(&base_url, &creds.api_key, user_agent()) {
         Ok(c) => c.get("/v1/account/", &[]).await.ok(),
@@ -129,10 +127,24 @@ pub async fn login(app: &App, args: &LoginArgs) -> Result<()> {
     Ok(())
 }
 
+fn read_key_from_stdin() -> Result<String> {
+    if std::io::stdin().is_terminal() {
+        err("Paste your API key and press Enter:");
+    }
+    let mut line = String::new();
+    std::io::stdin()
+        .read_line(&mut line)
+        .context("could not read the API key from stdin")?;
+    let key = line.trim().to_string();
+    if key.is_empty() {
+        return Err(CliError::Usage("no API key on stdin".into()).into());
+    }
+    Ok(key)
+}
+
 pub async fn logout(app: &App) -> Result<()> {
     app.reject_csv("logout")?;
-    let mut config = app.load_config()?;
-    let Some(profile) = config.profiles.remove(&app.global.profile) else {
+    let Some(profile) = app.profile()? else {
         out(format!(
             "Profile \"{}\" has no stored credentials.",
             app.global.profile
@@ -155,7 +167,7 @@ pub async fn logout(app: &App) -> Result<()> {
             )));
         }
     }
-    config.save(&app.config_path)?;
+    app.set_profile(None)?;
     out(format!("Logged out of profile \"{}\".", app.global.profile));
     if std::env::var_os(API_KEY_ENV).is_some() {
         err(app.err_style.yellow(&format!(

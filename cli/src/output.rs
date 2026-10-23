@@ -32,8 +32,15 @@ pub fn to_pretty_json(v: &Value) -> String {
 
 const MAX_CELL: usize = 48;
 
+/// Cells hold customer-entered text, so escape sequences must not reach the terminal.
+fn sanitize(s: &str) -> String {
+    s.chars()
+        .map(|c| if c.is_control() { ' ' } else { c })
+        .collect()
+}
+
 fn truncate(s: &str, max: usize) -> String {
-    let single_line = s.replace(['\n', '\r'], " ");
+    let single_line = sanitize(s);
     if single_line.chars().count() <= max {
         single_line
     } else {
@@ -68,16 +75,26 @@ pub fn render_detail(pairs: &[(&str, String)]) -> String {
         .load_preset(presets::NOTHING)
         .set_content_arrangement(ContentArrangement::Disabled);
     for (k, v) in pairs {
-        table.add_row(vec![k.to_string(), v.replace(['\n', '\r'], " ")]);
+        table.add_row(vec![k.to_string(), sanitize(v)]);
     }
     trim_lines(table.to_string())
+}
+
+/// Spreadsheets run a cell starting with one of these as a formula (OWASP CSV injection).
+fn escape_formula(cell: &str) -> std::borrow::Cow<'_, str> {
+    let risky = cell.starts_with(['=', '+', '-', '@', '\t', '\r']);
+    if risky && cell.parse::<f64>().is_err() {
+        format!("'{cell}").into()
+    } else {
+        cell.into()
+    }
 }
 
 pub fn render_csv(headers: &[&str], rows: &[Vec<String>]) -> anyhow::Result<String> {
     let mut w = csv::Writer::from_writer(Vec::new());
     w.write_record(headers)?;
     for row in rows {
-        w.write_record(row)?;
+        w.write_record(row.iter().map(|c| escape_formula(c).into_owned()))?;
     }
     let bytes = w.into_inner().map_err(|e| anyhow::anyhow!(e.to_string()))?;
     Ok(String::from_utf8(bytes)?.trim_end().to_string())
@@ -117,6 +134,39 @@ mod tests {
     fn csv_quotes_when_needed() {
         let c = render_csv(&["id", "name"], &[vec!["1".into(), "Smith, \"Jo\"".into()]]).unwrap();
         assert_eq!(c, "id,name\n1,\"Smith, \"\"Jo\"\"\"");
+    }
+
+    #[test]
+    fn csv_neutralises_formulas_but_keeps_numbers() {
+        let c = render_csv(
+            &["a", "b", "c", "d", "e", "f", "g"],
+            &[vec![
+                "=HYPERLINK(\"x\")".into(),
+                "+cmd".into(),
+                "-2+3".into(),
+                "@SUM(A1)".into(),
+                "\tx".into(),
+                "-12.50".into(),
+                "+5".into(),
+            ]],
+        )
+        .unwrap();
+        let row = c.lines().nth(1).unwrap();
+        assert_eq!(
+            row,
+            "\"'=HYPERLINK(\"\"x\"\")\",'+cmd,'-2+3,'@SUM(A1),'\tx,-12.50,+5"
+        );
+    }
+
+    #[test]
+    fn control_characters_never_reach_the_terminal() {
+        let evil = "a\u{1b}]52;c;aGk=\u{7}b\u{9b}31mc\td";
+        let t = render_table(&["A"], &[vec![evil.into()]]);
+        let d = render_detail(&[("name", evil.into())]);
+        for out in [t, d] {
+            assert!(!out.chars().any(|c| c.is_control() && c != '\n'), "{out:?}");
+            assert!(out.contains("a ]52;c;aGk= b 31mc d"), "{out:?}");
+        }
     }
 
     #[test]

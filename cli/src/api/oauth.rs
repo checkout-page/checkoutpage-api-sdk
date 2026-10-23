@@ -3,7 +3,9 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 use url::Url;
 
-use super::{ApiError, parse_base_url, read_json_response, unwrap_data};
+use super::{
+    ApiError, REQUEST_TIMEOUT, http_client, parse_base_url, read_json_response, unwrap_data,
+};
 
 pub const DEFAULT_SCOPE: &str = "admin:read admin:write";
 
@@ -44,9 +46,7 @@ pub struct OAuthClient {
 impl OAuthClient {
     pub fn new(base_url: &str, user_agent: impl Into<String>) -> Result<Self, ApiError> {
         Ok(OAuthClient {
-            http: reqwest::Client::builder()
-                .build()
-                .map_err(ApiError::Network)?,
+            http: http_client()?,
             base_url: parse_base_url(base_url)?,
             user_agent: user_agent.into(),
         })
@@ -67,6 +67,7 @@ impl OAuthClient {
         let mut req = self
             .http
             .post(self.endpoint(path)?)
+            .timeout(REQUEST_TIMEOUT)
             .header(header::USER_AGENT, &self.user_agent)
             .header(header::ACCEPT, "application/json")
             .json(body);

@@ -8,14 +8,14 @@ OpenAPI spec, so they cover the same API.
 
 ## Tools
 
-| Tool                      | Status  | Install                                       | Docs                           |
-| ------------------------- | ------- | --------------------------------------------- | ------------------------------ |
-| JavaScript/TypeScript SDK | Active  | `npm install @checkoutpage/sdk`               | [js/README.md](js/README.md)   |
-| CLI (`checkoutpage`)      | Active  | `brew install checkout-page/tap/checkoutpage` | [cli/README.md](cli/README.md) |
-| PHP                       | Planned | -                                             | -                              |
-| Ruby                      | Planned | -                                             | -                              |
-| Python                    | Planned | -                                             | -                              |
-| Go                        | Planned | -                                             | -                              |
+| Tool                      | Status                    | Install                                        | Docs                           |
+| ------------------------- | ------------------------- | ---------------------------------------------- | ------------------------------ |
+| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                | [js/README.md](js/README.md)   |
+| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source) | [cli/README.md](cli/README.md) |
+| PHP                       | Planned                   | -                                              | -                              |
+| Ruby                      | Planned                   | -                                              | -                              |
+| Python                    | Planned                   | -                                              | -                              |
+| Go                        | Planned                   | -                                              | -                              |
 
 ## JavaScript/TypeScript SDK
 
