@@ -12,6 +12,7 @@ import {
   apiRequest,
   apiRequestList,
   CREDENTIAL_NAME,
+  getApiErrorBody,
   getHttpStatus,
   toNodeApiError,
 } from '../CheckoutPage/transport';
@@ -74,6 +75,15 @@ async function deleteRemoteWebhook(this: IHookFunctions, webhookId: string): Pro
     if (getHttpStatus(error) === 404) return;
     throw toNodeApiError(this.getNode(), error);
   }
+}
+
+function isConflictOrCap(error: unknown): boolean {
+  const status = getHttpStatus(error);
+  if (status === 409) return true;
+  const message = getApiErrorBody(error)?.message;
+  return (
+    status === 400 && typeof message === 'string' && /maximum number of webhooks/i.test(message)
+  );
 }
 
 export class CheckoutPageTrigger implements INodeType {
@@ -184,9 +194,9 @@ export class CheckoutPageTrigger implements INodeType {
         try {
           response = await apiRequest.call(this, 'POST', '/v1/webhooks/', body);
         } catch (error) {
-          if (getHttpStatus(error) !== 409) throw toNodeApiError(this.getNode(), error);
-          // A webhook for this URL survives from an earlier activation whose static
-          // data was lost. Its secret can't be read back, so replace it.
+          if (!isConflictOrCap(error)) throw toNodeApiError(this.getNode(), error);
+          // A leftover webhook for this URL (static data lost) has a secret we can't read back,
+          // so replace it. The API checks its cap before the URL, so this can surface as the cap.
           const existing = await apiRequestList.call(this, '/v1/webhooks/', {}, true);
           const stale = existing.find((webhook) => webhook.url === webhookUrl);
           if (!stale?.id) throw toNodeApiError(this.getNode(), error);

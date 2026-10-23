@@ -155,14 +155,63 @@ describe('create', () => {
     expect(http).not.toHaveBeenCalled();
   });
 
-  it("surfaces the API's message, for example the 10-webhook limit", async () => {
-    const { context, staticData } = hookContext({ events: ['booking.created'] }, [
-      apiError(400, 'The maximum of 10 webhooks has been reached'),
+  it('replaces a leftover webhook for the same URL when the account is at the webhook limit', async () => {
+    const { context, http, staticData } = hookContext({ events: ['booking.created'] }, [
+      apiError(400, 'Maximum number of webhooks (10) reached for this seller'),
+      {
+        data: [
+          webhookRecord({ id: 'wh_other', url: 'https://elsewhere.example.com' }),
+          webhookRecord({ id: 'wh_old' }),
+        ],
+        has_more: false,
+      },
+      { data: webhookRecord({ id: 'wh_old' }) },
+      { data: webhookRecord({ id: 'wh_new' }) },
+    ]);
+    expect(await hooks.create.call(context)).toBe(true);
+    expect(requestOptions(http, 2).method).toBe('DELETE');
+    expect(requestOptions(http, 2).url).toBe(`${BASE}/v1/webhooks/wh_old`);
+    expect(requestOptions(http, 3).method).toBe('POST');
+    expect(http).toHaveBeenCalledTimes(4);
+    expect(staticData.webhookId).toBe('wh_new');
+  });
+
+  it("surfaces the webhook limit when none of the account's webhooks is this node's", async () => {
+    const { context, http, staticData } = hookContext({ events: ['booking.created'] }, [
+      apiError(400, 'Maximum number of webhooks (10) reached for this seller'),
+      {
+        data: [webhookRecord({ id: 'wh_other', url: 'https://elsewhere.example.com' })],
+        has_more: false,
+      },
     ]);
     const error = await hooks.create.call(context).catch((e) => e);
     expect(error).toBeInstanceOf(NodeApiError);
-    expect(error.message).toBe('The maximum of 10 webhooks has been reached');
+    expect(error.message).toBe('Maximum number of webhooks (10) reached for this seller');
+    expect(http).toHaveBeenCalledTimes(2);
     expect(staticData).toEqual({});
+  });
+
+  it('retries only once when the retry fails too', async () => {
+    const { context, http, staticData } = hookContext({ events: ['booking.created'] }, [
+      apiError(400, 'Maximum number of webhooks (10) reached for this seller'),
+      { data: [webhookRecord({ id: 'wh_old' })], has_more: false },
+      { data: webhookRecord({ id: 'wh_old' }) },
+      apiError(400, 'Maximum number of webhooks (10) reached for this seller'),
+    ]);
+    const error = await hooks.create.call(context).catch((e) => e);
+    expect(error).toBeInstanceOf(NodeApiError);
+    expect(http).toHaveBeenCalledTimes(4);
+    expect(staticData).toEqual({});
+  });
+
+  it('surfaces other 400s without looking for a leftover webhook', async () => {
+    const { context, http } = hookContext({ events: ['booking.created'] }, [
+      apiError(400, 'Invalid webhook data'),
+    ]);
+    const error = await hooks.create.call(context).catch((e) => e);
+    expect(error).toBeInstanceOf(NodeApiError);
+    expect(error.message).toBe('Invalid webhook data');
+    expect(http).toHaveBeenCalledTimes(1);
   });
 });
 

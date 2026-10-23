@@ -60,8 +60,9 @@ before changing any of these.
 
 - `create` sends a random 64-character hex `secret` in `POST /v1/webhooks/` and stores the
   webhook `id` and secret in the node's static data (the response's `secret` wins if present).
-  On a 409 for the same URL it deletes the leftover webhook and creates a new one, because a
-  secret can't be read back.
+  On a 409 for the same URL, or the 400 for the 10-webhook cap (the API checks the cap first),
+  it deletes the leftover webhook with this exact URL and retries once, because a secret can't
+  be read back.
 - `checkExists` returns true only when the stored webhook still exists with the same URL and
   events and a secret is stored; otherwise it deletes the remote webhook and clears static data.
 - `delete` removes the webhook (a 404 counts as deleted) and clears static data.
