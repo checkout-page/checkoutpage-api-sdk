@@ -1,6 +1,6 @@
 {
   "name": "checkout-page",
-  "version": "2.2.10",
+  "version": "2.2.9",
   "description": "Sell digital products, event tickets, and subscriptions with custom checkout pages.",
   "main": "index.js",
   "scripts": {
