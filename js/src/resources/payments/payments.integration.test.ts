@@ -1,7 +1,13 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import {
+  CheckoutPageClient,
+  createCheckoutPageClient,
+  NotFoundError,
+  ValidationError,
+} from '../../index';
 import { APIError } from '../../errors';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
+import { fakeObjectId, syntheticClientIp, uniqueSuffix } from '../../test-helpers/test-lib';
 
 describe('PaymentResource Integration Tests', () => {
   let client: CheckoutPageClient;
@@ -476,5 +482,204 @@ describe('PaymentResource Integration Tests', () => {
         expect(paymentWithPriceId.priceId.length).toBeGreaterThan(0);
       });
     });
+  });
+
+  // Only ever cancels payments this block created on its own checkout page.
+  describe('cancel', () => {
+    const createdPageIds: string[] = [];
+    const createdEventIds: string[] = [];
+
+    // Pay by invoice completes without a card, so the storefront records it as `unpaid` at once.
+    const createInvoicePayment = async (pageId: string) => {
+      const email = `sdk-cancel-${uniqueSuffix()}@example.com`;
+      const response = await fetch(new URL(`/api/v1/checkout/${pageId}/charges`, config.baseUrl), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': syntheticClientIp() },
+        body: JSON.stringify({
+          pageId,
+          sellerId: config.testSellerId,
+          email,
+          name: 'SDK Cancel Buyer',
+          fields: [
+            { label: 'Email', element: 'email', type: 'email', value: email },
+            { label: 'Name', element: 'text', type: 'name', value: 'SDK Cancel Buyer' },
+          ],
+          paymentOption: { type: 'manual', manualType: 'invoice', name: 'Pay by invoice' },
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Could not create an invoice payment: ${response.status} ${await response.text()}`
+        );
+      }
+
+      const { data } = (await response.json()) as { data: { _id?: string; id?: string } };
+      const paymentId = data._id ?? data.id;
+      if (!paymentId) throw new Error('The storefront charge returned no id');
+      return paymentId;
+    };
+
+    let pageId: string;
+
+    beforeAll(async () => {
+      const suffix = uniqueSuffix();
+      const { data: page } = await client.checkoutPages.create({
+        name: `SDK Cancel Checkout ${suffix}`,
+        productData: {
+          title: `SDK Cancel Product ${suffix}`,
+          price: { amount: 4900, currency: 'usd' },
+        },
+        paymentOptions: [
+          { type: 'manual', manualType: 'invoice', name: 'Pay by invoice', enabled: true },
+        ],
+        sendEmailConfirmation: false,
+        sendPaymentNotification: false,
+      });
+      pageId = page.id;
+      createdPageIds.push(pageId);
+    });
+
+    afterAll(async () => {
+      for (const id of createdPageIds) {
+        try {
+          await client.checkoutPages.delete(id);
+        } catch {
+          // Best-effort cleanup for integration tests.
+        }
+      }
+      for (const id of createdEventIds) {
+        try {
+          await client.events.delete(id);
+        } catch {
+          // Best-effort cleanup for integration tests.
+        }
+      }
+    });
+
+    it('cancels a payment, then refuses a second cancel', { timeout: 60_000 }, async () => {
+      const paymentId = await createInvoicePayment(pageId);
+      const { data: before } = await client.payments.get(paymentId);
+      expect(before.status).toBe('unpaid');
+      expect(before.orderStatus ?? 'active').toBe('active');
+
+      const reason = `SDK cancel ${uniqueSuffix()}`;
+      const result = await client.payments.cancel(paymentId, { reason });
+
+      expect(Object.keys(result)).toEqual(['data']);
+      const { data: payment } = result;
+      expect(payment.id).toBe(paymentId);
+      expect(payment.orderStatus).toBe('canceled');
+      expect(payment.canceledReason).toBe(reason);
+      expect(typeof payment.canceledAt).toBe('string');
+      expect(typeof payment.canceledByApiKey).toBe('string');
+      expect(typeof payment.canceledByApiKeyName).toBe('string');
+      expect((payment.canceledByApiKeyName as string).length).toBeGreaterThan(0);
+
+      const { data: fetched } = await client.payments.get(paymentId);
+      expect(fetched).toMatchObject({
+        orderStatus: 'canceled',
+        canceledReason: reason,
+        canceledByApiKeyName: payment.canceledByApiKeyName,
+      });
+
+      const again = client.payments.cancel(paymentId, { reason: 'Again' });
+      await expect(again).rejects.toBeInstanceOf(ValidationError);
+      await expect(again).rejects.toThrow('Charge already canceled');
+
+      const canceled = await client.payments.list({ pageId, orderStatus: 'canceled' });
+      expect(canceled.data.map((p) => p.id)).toContain(paymentId);
+    });
+
+    it(
+      'refuses a refund on a payment with nothing paid and leaves it active',
+      { timeout: 60_000 },
+      async () => {
+        const paymentId = await createInvoicePayment(pageId);
+
+        // Past body validation, so the refund shape the SDK sends is the one the API takes.
+        const attempt = client.payments.cancel(paymentId, {
+          reason: 'Refund what was never paid',
+          refund: {
+            amount: 100,
+            reason: 'requested_by_customer',
+            note: 'SDK test',
+            sendEmail: false,
+          },
+        });
+        await expect(attempt).rejects.toBeInstanceOf(ValidationError);
+        await expect(attempt).rejects.toThrow(/no payment to refund/);
+
+        const { data: payment } = await client.payments.get(paymentId);
+        expect(payment.orderStatus ?? 'active').toBe('active');
+      }
+    );
+
+    it(
+      'rejects an empty reason with a ValidationError and leaves the payment active',
+      { timeout: 60_000 },
+      async () => {
+        const paymentId = await createInvoicePayment(pageId);
+
+        await expect(client.payments.cancel(paymentId, { reason: '' })).rejects.toBeInstanceOf(
+          ValidationError
+        );
+
+        const { data: payment } = await client.payments.get(paymentId);
+        expect(payment.orderStatus ?? 'active').toBe('active');
+      }
+    );
+
+    it('returns a NotFoundError for an unknown payment id', async () => {
+      const missing = client.payments.cancel(fakeObjectId('missing'), { reason: 'Missing' });
+
+      await expect(missing).rejects.toBeInstanceOf(NotFoundError);
+      await expect(missing).rejects.toThrow('Payment not found');
+    });
+
+    it(
+      'returns a NotFoundError for a booking id, which is not a payment',
+      { timeout: 60_000 },
+      async () => {
+        const suffix = uniqueSuffix();
+        const { data: event } = await client.events.create({
+          name: `SDK Cancel Event ${suffix}`,
+          title: `SDK Cancel Event ${suffix}`,
+          eventDetails: {
+            type: 'virtual',
+            currency: 'usd',
+            startDate: '2027-01-01T09:00:00Z',
+            endDate: '2027-01-01T17:00:00Z',
+            timezone: 'UTC',
+          },
+          fields: [{ label: 'Email address', element: 'email', type: 'email', required: true }],
+          ticketGroups: [
+            { name: 'General', ticketTypes: [{ name: 'GA', pricing: 'paid', price: 2500 }] },
+          ],
+          sendEmailConfirmation: false,
+          sendPaymentNotification: false,
+        });
+        createdEventIds.push(event.id);
+        const ticketTypeId = event.ticketGroups?.[0]?.ticketTypes?.[0]?.id;
+        if (!ticketTypeId) throw new Error('Provisioned event has no ticket type');
+
+        const { data: fields } = await client.events.fields.list(event.id);
+        const emailFieldId = fields.find((f) => f.reference === 'customer_email')?.id;
+        if (!emailFieldId) throw new Error('Provisioned event has no email field');
+
+        const { data: booking } = await client.bookings.create({
+          eventId: event.id,
+          tickets: { [ticketTypeId]: 1 },
+          fields: [{ fieldId: emailFieldId, value: `sdk-cancel-${suffix}@example.com` }],
+          complimentary: true,
+        });
+
+        const attempt = client.payments.cancel(booking.id, { reason: 'Not a payment' });
+        await expect(attempt).rejects.toBeInstanceOf(NotFoundError);
+        await expect(attempt).rejects.toThrow('Payment not found');
+
+        const { data: after } = await client.bookings.get(booking.id);
+        expect(after.orderStatus ?? 'active').toBe('active');
+      }
+    );
   });
 });

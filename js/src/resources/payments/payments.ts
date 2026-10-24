@@ -1,5 +1,12 @@
 import type { CheckoutPageApiClient } from '../../client';
-import type { PaymentList, PaymentListParams, PaymentResponse, ReadOptions } from '../../types';
+import type {
+  CancelPaymentParams,
+  CancelPaymentResponse,
+  PaymentList,
+  PaymentListParams,
+  PaymentResponse,
+  ReadOptions,
+} from '../../types';
 
 export class PaymentResource {
   constructor(private client: CheckoutPageApiClient) {}
@@ -50,6 +57,40 @@ export class PaymentResource {
       method: 'GET',
       query,
       path: '/v1/payments/',
+    });
+  }
+
+  /**
+   * Cancel a one-time payment. A cancel is final: it ends the whole order, puts the stock
+   * back and removes the buyer's access to the order's files and license key. It does not
+   * move money unless you pass `refund`, which runs first; if the refund fails the payment
+   * is not canceled. Fires the `payment.canceled` webhook.
+   *
+   * Throws a `ValidationError` when the payment is already canceled, isn't complete yet,
+   * or has nothing left to refund, and a `NotFoundError` for an unknown id or a booking id.
+   *
+   * @example
+   * const { data: payment } = await client.payments.cancel(paymentId, {
+   *   reason: 'Customer asked to cancel',
+   * });
+   *
+   * @example
+   * // Cancel, refund $25.00 and email the customer about both
+   * await client.payments.cancel(paymentId, {
+   *   reason: 'Event postponed',
+   *   sendCancellationEmail: true,
+   *   refund: { amount: 2500, reason: 'requested_by_customer', sendEmail: true },
+   * });
+   */
+  async cancel(paymentId: string, params: CancelPaymentParams): Promise<CancelPaymentResponse> {
+    if (!paymentId) {
+      throw new Error('Payment ID is required');
+    }
+
+    return this.client.request<CancelPaymentResponse>({
+      method: 'POST',
+      path: `/v1/payments/${encodeURIComponent(paymentId)}/cancel`,
+      body: params,
     });
   }
 }

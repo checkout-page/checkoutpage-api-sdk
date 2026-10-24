@@ -216,6 +216,68 @@ const previousPage = await checkoutpage.payments.list({
 });
 ```
 
+#### Cancel a payment
+
+```typescript
+const { data: payment } = await checkoutpage.payments.cancel(paymentId, {
+  reason: 'Customer asked to cancel',
+  sendCancellationEmail: true,
+});
+
+console.log(payment.orderStatus); // 'canceled'
+console.log(payment.canceledReason, payment.canceledAt, payment.canceledByApiKeyName);
+```
+
+A cancel is final. It ends the whole order, puts the stock back and removes the buyer's access to
+the order's files and license key. It does not move money on its own: pass `refund` to refund the
+customer in the same request. The refund runs first, and if it fails the payment is not canceled.
+
+```typescript
+await checkoutpage.payments.cancel(paymentId, {
+  reason: 'Event postponed',
+  refund: { amount: 2500, reason: 'requested_by_customer', sendEmail: true },
+});
+```
+
+`refund.amount` is in the smallest currency unit and cannot be more than what is still refundable.
+A payment that is already canceled, isn't complete yet, or has nothing to refund throws a
+`ValidationError`. Booking ids are not payments and throw a `NotFoundError`. Canceling fires the
+`payment.canceled` webhook.
+
+```typescript
+const { data: canceled } = await checkoutpage.payments.list({ orderStatus: 'canceled' });
+```
+
+### Submissions
+
+#### List submissions
+
+```typescript
+const { data: submissions } = await checkoutpage.submissions.list({ pageId: formId });
+
+// Only the ones you canceled, or only the ones still active
+const canceled = await checkoutpage.submissions.list({ pageId: formId, orderStatus: 'canceled' });
+const active = await checkoutpage.submissions.list({ pageId: formId, orderStatus: 'active' });
+```
+
+Without `orderStatus` the list returns every submission. Each one carries `orderStatus`
+(`active`, `canceled` or `archived`).
+
+#### Cancel a submission
+
+```typescript
+const { data: submission } = await checkoutpage.submissions.cancel(submissionId, {
+  reason: 'Duplicate registration',
+  sendCancellationEmail: true,
+});
+
+console.log(submission.orderStatus); // 'canceled'
+```
+
+A cancel is final. A canceled submission no longer counts toward "Prevent duplicate submissions",
+and its files leave the customer portal. Canceling it again throws a `ValidationError`. Canceling
+fires the `submission.canceled` webhook.
+
 ### Bookings
 
 #### List bookings
@@ -597,6 +659,10 @@ saveSecret(webhook.secret);
 
 > The `url` must use **https** — an `http` URL is rejected with a `ValidationError`,
 > and a URL already registered on the account is rejected with a `ConflictError`.
+
+Subscribe to `payment.canceled`, `booking.canceled` and `submission.canceled` to hear about
+cancels, whether they come from the dashboard or the API. The payload carries the canceled
+record under `data.payment`, `data.booking` or `data.submission`.
 
 > The create response is the **only** place the signing `secret` is ever returned.
 > It is not included in `list()` or `get()` responses and cannot be retrieved later, so store

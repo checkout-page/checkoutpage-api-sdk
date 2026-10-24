@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CheckoutPageApiClient } from '../../client';
 import { SubmissionResource } from './submissions';
-import type { SubmissionList, SubmissionResponse } from '../../types';
+import type {
+  CancelSubmissionParams,
+  CancelSubmissionResponse,
+  SubmissionList,
+  SubmissionResponse,
+} from '../../types';
 
 describe('SubmissionResource', () => {
   let client: CheckoutPageApiClient;
@@ -204,6 +209,100 @@ describe('SubmissionResource', () => {
       expect(spy.mock.calls[1][0].query.ending_before).toBeUndefined();
       expect(spy.mock.calls[2][0].query).toMatchObject({ limit: '2', ending_before: 's3' });
       expect(spy.mock.calls[2][0].query.starting_after).toBeUndefined();
+    });
+
+    it('should forward the orderStatus filter', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await submissionResource.list({
+        pageId: '507f1f77bcf86cd799439011',
+        orderStatus: 'canceled',
+      });
+
+      expect(spy.mock.calls[0][0]).toMatchObject({
+        method: 'GET',
+        path: '/v1/submissions/',
+        query: { pageId: '507f1f77bcf86cd799439011', orderStatus: 'canceled' },
+      });
+    });
+
+    it('should send no orderStatus when it is omitted', async () => {
+      const spy = vi
+        .spyOn(client, 'request')
+        .mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await submissionResource.list({ limit: 5 });
+
+      expect(spy.mock.calls[0][0].query?.orderStatus).toBeUndefined();
+    });
+  });
+
+  describe('cancel', () => {
+    const SUBMISSION_ID = '6812fe6e9f39b6760576f01c';
+    const CANCELED_SUBMISSION: CancelSubmissionResponse = {
+      data: {
+        id: SUBMISSION_ID,
+        status: 'succeeded',
+        orderStatus: 'canceled',
+        canceledAt: '2026-10-16T09:00:00.000Z',
+        canceledReason: 'Duplicate registration',
+        canceledByApiKey: '507f1f77bcf86cd799439030',
+        canceledByApiKeyName: 'CRM sync',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2026-10-16T09:00:00.000Z',
+      },
+    };
+
+    it('POSTs the params as the body and returns the raw response', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(CANCELED_SUBMISSION);
+
+      const params: CancelSubmissionParams = {
+        reason: 'Duplicate registration',
+        sendCancellationEmail: true,
+      };
+      const result = await submissionResource.cancel(SUBMISSION_ID, params);
+
+      expect(result).toEqual(CANCELED_SUBMISSION);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: `/v1/submissions/${SUBMISSION_ID}/cancel`,
+        body: params,
+      });
+    });
+
+    it('sends a reason-only body as-is', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(CANCELED_SUBMISSION);
+
+      await submissionResource.cancel(SUBMISSION_ID, { reason: 'Spam' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: `/v1/submissions/${SUBMISSION_ID}/cancel`,
+        body: { reason: 'Spam' },
+      });
+    });
+
+    it('encodes the id in the path', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(CANCELED_SUBMISSION);
+
+      await submissionResource.cancel('a/b?c', { reason: 'x' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/submissions/a%2Fb%3Fc/cancel',
+        body: { reason: 'x' },
+      });
+    });
+
+    it('throws for a missing submission id without calling the API', async () => {
+      const spy = vi.spyOn(client, 'request');
+
+      await expect(submissionResource.cancel('', { reason: 'x' })).rejects.toThrow(
+        'Submission ID is required'
+      );
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 });
