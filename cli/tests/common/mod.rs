@@ -5,6 +5,7 @@ use std::net::{TcpListener, TcpStream};
 use std::path::PathBuf;
 use std::process::{Child, ExitStatus, Stdio};
 use std::sync::mpsc::{Receiver, channel};
+use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -111,6 +112,10 @@ impl Proc {
         }
     }
 
+    pub fn pid(&self) -> u32 {
+        self.child.id()
+    }
+
     pub fn wait_for(&mut self, needle: &str, timeout: Duration) -> String {
         self.wait_until(|l| l.contains(needle), timeout)
             .unwrap_or_else(|| {
@@ -148,6 +153,11 @@ impl Proc {
         self.lines.join("\n")
     }
 
+    pub fn count(&mut self, needle: &str) -> usize {
+        self.drain();
+        self.lines.iter().filter(|l| l.contains(needle)).count()
+    }
+
     pub fn wait_exit(&mut self, timeout: Duration) -> ExitStatus {
         let deadline = Instant::now() + timeout;
         loop {
@@ -162,6 +172,15 @@ impl Proc {
             }
             thread::sleep(Duration::from_millis(20));
         }
+    }
+
+    #[cfg(unix)]
+    pub fn interrupt(&self) {
+        let status = std::process::Command::new("kill")
+            .args(["-INT", &self.pid().to_string()])
+            .status()
+            .unwrap();
+        assert!(status.success());
     }
 }
 
@@ -192,4 +211,144 @@ pub fn http_get(url: &str) -> String {
     let mut out = String::new();
     s.read_to_string(&mut out).unwrap();
     out
+}
+
+#[derive(Clone, Debug)]
+pub enum Step {
+    Send(String),
+    Sleep(Duration),
+    Close,
+    Hold,
+}
+
+#[derive(Clone, Debug)]
+pub enum Conn {
+    Stream(Vec<Step>),
+    Status(u16, String),
+    RateLimited { retry_after: u64, body: String },
+    NoResponse,
+}
+
+#[derive(Clone, Debug)]
+pub struct SeenRequest {
+    pub target: String,
+    pub headers: Vec<(String, String)>,
+}
+
+impl SeenRequest {
+    pub fn header(&self, name: &str) -> Option<&str> {
+        self.headers
+            .iter()
+            .find(|(k, _)| k.eq_ignore_ascii_case(name))
+            .map(|(_, v)| v.as_str())
+    }
+}
+
+/// Connections beyond the listed ones are held open silently.
+pub struct SseServer {
+    pub base_url: String,
+    pub requests: Arc<Mutex<Vec<SeenRequest>>>,
+}
+
+impl SseServer {
+    pub fn start(conns: Vec<Conn>) -> Self {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let base_url = format!("http://{}", listener.local_addr().unwrap());
+        let requests = Arc::new(Mutex::new(Vec::new()));
+        let seen = requests.clone();
+        thread::spawn(move || {
+            let mut conns = conns.into_iter();
+            for stream in listener.incoming() {
+                let Ok(mut stream) = stream else { continue };
+                let Some(req) = read_head(&mut stream) else {
+                    continue;
+                };
+                seen.lock().unwrap().push(req);
+                let conn = conns.next().unwrap_or(Conn::Stream(vec![Step::Hold]));
+                thread::spawn(move || serve(stream, conn));
+            }
+        });
+        SseServer { base_url, requests }
+    }
+
+    pub fn requests(&self) -> Vec<SeenRequest> {
+        self.requests.lock().unwrap().clone()
+    }
+}
+
+fn read_head(stream: &mut TcpStream) -> Option<SeenRequest> {
+    let mut reader = BufReader::new(stream.try_clone().ok()?);
+    let mut first = String::new();
+    reader.read_line(&mut first).ok()?;
+    let target = first.split_whitespace().nth(1)?.to_string();
+    let mut headers = Vec::new();
+    loop {
+        let mut line = String::new();
+        reader.read_line(&mut line).ok()?;
+        let line = line.trim_end();
+        if line.is_empty() {
+            break;
+        }
+        if let Some((k, v)) = line.split_once(':') {
+            headers.push((k.trim().to_string(), v.trim().to_string()));
+        }
+    }
+    Some(SeenRequest { target, headers })
+}
+
+fn serve(mut stream: TcpStream, conn: Conn) {
+    match conn {
+        Conn::NoResponse => thread::sleep(Duration::from_secs(120)),
+        Conn::RateLimited { retry_after, body } => {
+            let _ = write!(
+                stream,
+                "HTTP/1.1 429 Too Many Requests\r\nRetry-After: {retry_after}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            );
+        }
+        Conn::Status(code, body) => {
+            let _ = write!(
+                stream,
+                "HTTP/1.1 {code} Error\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            );
+        }
+        Conn::Stream(steps) => {
+            let _ = write!(
+                stream,
+                "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nCache-Control: no-cache\r\nConnection: close\r\n\r\n"
+            );
+            let _ = stream.flush();
+            for step in steps {
+                match step {
+                    Step::Send(s) => {
+                        if stream
+                            .write_all(s.as_bytes())
+                            .and_then(|_| stream.flush())
+                            .is_err()
+                        {
+                            return;
+                        }
+                    }
+                    Step::Sleep(d) => thread::sleep(d),
+                    Step::Close => {
+                        let _ = stream.shutdown(std::net::Shutdown::Both);
+                        return;
+                    }
+                    Step::Hold => thread::sleep(Duration::from_secs(120)),
+                }
+            }
+        }
+    }
+}
+
+pub fn ready_frame(secret: &str, events: &[&str]) -> String {
+    format!(
+        "event: ready\ndata: {{\"id\":\"wl_0123456789abcdef01234567\",\"secret\":\"{secret}\",\"events\":{},\"expiresAt\":\"2026-10-22T11:00:00.000Z\"}}\n\n",
+        serde_json::to_string(events).unwrap()
+    )
+}
+
+pub fn webhook_frame(event_id: &str, payload: &str) -> String {
+    format!("event: webhook\nid: {event_id}\ndata: {payload}\n\n")
 }

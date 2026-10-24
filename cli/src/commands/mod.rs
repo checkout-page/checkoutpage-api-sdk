@@ -1,7 +1,9 @@
 pub mod api_cmd;
 pub mod auth;
 pub mod create;
+pub mod listen;
 pub mod resources;
+pub mod webhooks;
 
 use anyhow::{Context, Result};
 use serde_json::Value;
@@ -97,6 +99,8 @@ pub async fn dispatch(app: &App, command: Command) -> Result<()> {
                 resources::list(app, &WEBHOOKS, &a.list, q).await
             }
             WebhooksCommand::Get(a) => resources::get(app, &WEBHOOKS, &a.id).await,
+            WebhooksCommand::Listen(a) => listen::run(app, &a).await,
+            WebhooksCommand::Trigger(a) => webhooks::trigger(app, &a).await,
         },
         Command::Api(a) => api_cmd::run(app, &a).await,
     }

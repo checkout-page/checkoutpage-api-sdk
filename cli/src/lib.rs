@@ -1,5 +1,6 @@
 pub mod api;
 pub mod app;
+pub mod backoff;
 pub mod callback;
 pub mod cli;
 pub mod commands;

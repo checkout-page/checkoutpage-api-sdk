@@ -46,7 +46,8 @@ More in the [JS SDK README](js/README.md) and the [JavaScript examples](examples
 ## CLI
 
 `checkoutpage` works with your account from the terminal: look up bookings, payments and
-customers, export them as CSV, and create coupons and bookings. Install and usage are in
+customers, export them as CSV, create coupons and bookings, and receive your webhooks on your
+own machine with `checkoutpage webhooks listen`. Install and usage are in
 [cli/README.md](cli/README.md).
 
 ## Postman collection
