@@ -127,6 +127,22 @@ const results = await checkoutpage.coupons.create({
 });
 ```
 
+Restrict a coupon to products, and optionally to some of their prices. A product with none of
+its prices listed is discounted at every price. `priceIds` are the `id`s of a product's
+`prices`, not Stripe price ids, and each must belong to a product in `productIds`:
+
+```typescript
+const results = await checkoutpage.coupons.create({
+  type: 'percent',
+  label: 'Members',
+  code: 'MEMBERS10',
+  percentOff: 10,
+  duration: 'once',
+  productIds: [productId],
+  priceIds: [annualPriceId],
+});
+```
+
 ### Subscriptions
 
 #### List subscriptions

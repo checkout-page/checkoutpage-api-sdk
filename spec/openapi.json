@@ -2017,6 +2017,7 @@
             "type": "number"
           },
           "pageIds": {
+            "description": "Pages this coupon can be used on. Restrictions add up rather than narrow each other: the coupon works on these pages and also wherever a product in `productIds` is sold.",
             "items": {
               "type": "string"
             },
@@ -2028,6 +2029,30 @@
               "number",
               "null"
             ]
+          },
+          "priceIds": {
+            "description": "List of price IDs that this coupon can be used with, each one a price of a product in `productIds`. A product with none of its prices listed is discounted at every price. An empty list means no price limit, the same as leaving it out.",
+            "example": [
+              "67fcbdac6a91c25ef2d3534a"
+            ],
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "productIds": {
+            "description": "Products this coupon discounts wherever they are sold: as the main product of a checkout page, as an order bump on a checkout page, or as an add-on on an event. Restrictions add up rather than narrow each other: the coupon also works on any pages in `pageIds`. A coupon with no `pageIds`, `ticketTypeIds`, `productIds` or `priceIds` applies everywhere. An empty `productIds` list means no product limit, the same as leaving it out.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
           },
           "redeemBy": {
             "description": "The ISO datetime that this coupon must be used before.",
@@ -16487,6 +16512,18 @@
                   },
                   "percentOff": {
                     "type": "number"
+                  },
+                  "priceIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "productIds": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
                   },
                   "redeemBy": {
                     "format": "date-time",
@@ -70947,7 +70984,7 @@
                     "type": "number"
                   },
                   "pageIds": {
-                    "description": "A list of pageIds that this coupon can be used within.",
+                    "description": "A list of pageIds that this coupon can be used within. Restrictions add up rather than narrow each other: the coupon works on these pages and also wherever a product in `productIds` is sold. Omit `pageIds`, `ticketTypeIds`, `productIds` and `priceIds` for a coupon that applies everywhere.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -70969,6 +71006,40 @@
                     "maximum": 100,
                     "minimum": 1,
                     "type": "number"
+                  },
+                  "priceIds": {
+                    "description": "List of price IDs that this coupon can be used with. Price ids must belong to a product specified in the `productIds` array. These are the `id`s of a product's `prices`, not Stripe price ids. A product with none of its prices listed is discounted at every price. If the customer picks a price that is not listed, the code is accepted but discounts nothing.",
+                    "example": [
+                      "67fcbdac6a91c25ef2d3534a"
+                    ],
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
+                    },
+                    "type": "array"
+                  },
+                  "productIds": {
+                    "description": "A list of productIds this coupon discounts wherever they are sold: as the main product of a checkout page, as an order bump on a checkout page, or as an add-on on an event. Restrictions add up rather than narrow each other: the coupon also works on any pages in `pageIds`. Use `priceIds` to discount only some prices of a product. Omit `pageIds`, `ticketTypeIds`, `productIds` and `priceIds` for a coupon that applies everywhere.",
+                    "example": [
+                      "67ee075004de439ab0b675b6"
+                    ],
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/UniqueIdentifier"
+                        },
+                        {
+                          "description": "Unique identifier. Must be in BSON ObjectId format."
+                        }
+                      ]
+                    },
+                    "type": "array"
                   },
                   "redeemBy": {
                     "description": "The ISO datetime that this coupon must be used before.",
@@ -71098,7 +71169,7 @@
     },
     "/v1/coupons/:couponId": {
       "patch": {
-        "description": "Updates a coupon. Ticket types are scoped through pages, so any ticketTypeIds must belong to the pageIds sent in the same request, or — when pageIds are omitted — to the pages already on the coupon.",
+        "description": "Updates a coupon. Ticket types are scoped through pages, so any ticketTypeIds must belong to the pageIds sent in the same request, or - when pageIds are omitted - to the pages already on the coupon. Prices are scoped through products the same way: any priceIds must belong to the productIds sent in the same request, or to the products already on the coupon.",
         "operationId": "coupons/update",
         "parameters": [
           {
@@ -71138,10 +71209,32 @@
                     ]
                   },
                   "pageIds": {
-                    "description": "A list of pageIds that this coupon can be used within.",
+                    "description": "The pages this coupon can be used on. Replaces the existing list; an empty array clears it. Restrictions add up rather than narrow each other: the coupon works on these pages and also wherever a product in `productIds` is sold. A coupon with no pages, ticket types, products or prices applies everywhere.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
+                    ],
+                    "items": {
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "priceIds": {
+                    "description": "The prices this coupon can be used with. Replaces the existing list; an empty array clears it, so every price of the coupon products is discounted. Every ID must belong to a product in `productIds` - or, when `productIds` is omitted, to the products already on the coupon. These are the `id`s of a product's `prices`, not Stripe price ids. A product with none of its prices listed is discounted at every price. If the customer picks a price that is not listed, the code is accepted but discounts nothing.",
+                    "example": [
+                      "67fcbdac6a91c25ef2d3534a"
+                    ],
+                    "items": {
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "productIds": {
+                    "description": "The products this coupon discounts wherever they are sold: as the main product of a checkout page, as an order bump on a checkout page, or as an add-on on an event. Replaces the existing list; an empty array clears it. Restrictions add up rather than narrow each other: the coupon also works on any pages in `pageIds`. Prices in `priceIds` of a product taken off the list are removed with it. A coupon with no pages, ticket types, products or prices applies everywhere.",
+                    "example": [
+                      "67ee075004de439ab0b675b6"
                     ],
                     "items": {
                       "pattern": "^[0-9a-fA-F]{24}$",
@@ -83648,6 +83741,18 @@
                               "percentOff": {
                                 "type": "number"
                               },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
                               "redeemBy": {
                                 "format": "date-time",
                                 "type": "string"
@@ -89477,6 +89582,18 @@
                               "percentOff": {
                                 "type": "number"
                               },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
                               "redeemBy": {
                                 "format": "date-time",
                                 "type": "string"
@@ -90314,6 +90431,18 @@
                               },
                               "percentOff": {
                                 "type": "number"
+                              },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
                               },
                               "redeemBy": {
                                 "format": "date-time",
@@ -91153,6 +91282,18 @@
                               "percentOff": {
                                 "type": "number"
                               },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
                               "redeemBy": {
                                 "format": "date-time",
                                 "type": "string"
@@ -91990,6 +92131,18 @@
                               },
                               "percentOff": {
                                 "type": "number"
+                              },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
                               },
                               "redeemBy": {
                                 "format": "date-time",
@@ -92829,6 +92982,18 @@
                               "percentOff": {
                                 "type": "number"
                               },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
                               "redeemBy": {
                                 "format": "date-time",
                                 "type": "string"
@@ -93666,6 +93831,18 @@
                               },
                               "percentOff": {
                                 "type": "number"
+                              },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
                               },
                               "redeemBy": {
                                 "format": "date-time",
@@ -94505,6 +94682,18 @@
                               "percentOff": {
                                 "type": "number"
                               },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
                               "redeemBy": {
                                 "format": "date-time",
                                 "type": "string"
@@ -95342,6 +95531,18 @@
                               },
                               "percentOff": {
                                 "type": "number"
+                              },
+                              "priceIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
+                              },
+                              "productIds": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": "array"
                               },
                               "redeemBy": {
                                 "format": "date-time",

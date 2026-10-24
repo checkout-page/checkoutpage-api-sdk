@@ -44,6 +44,34 @@ describe('CouponResource', () => {
       );
     });
 
+    it('should forward productIds and priceIds', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: COUPON_ID } } as never);
+
+      await couponResource.update(COUPON_ID, {
+        productIds: ['67ee075004de439ab0b675c1'],
+        priceIds: ['67ee075004de439ab0b675c2'],
+      });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/coupons/${COUPON_ID}`,
+        body: {
+          productIds: ['67ee075004de439ab0b675c1'],
+          priceIds: ['67ee075004de439ab0b675c2'],
+        },
+      });
+    });
+
+    it('should forward an empty priceIds so every price of the coupon products is discounted', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: COUPON_ID } } as never);
+
+      await couponResource.update(COUPON_ID, { priceIds: [] });
+
+      expect(client.request).toHaveBeenCalledWith(
+        expect.objectContaining({ body: { priceIds: [] } })
+      );
+    });
+
     it('should throw error for missing coupon id', async () => {
       await expect(couponResource.update('', { deleted: true })).rejects.toThrow(
         'Coupon ID is required'
@@ -558,6 +586,87 @@ describe('CouponResource', () => {
           maxRedemptions: 100,
           redeemBy: '2025-12-31T23:59:59.000Z',
         },
+      });
+    });
+
+    describe('productIds and priceIds', () => {
+      const PRODUCT_ID = '67ee075004de439ab0b675c1';
+      const PRICE_ID = '67ee075004de439ab0b675c2';
+      const productParams: AmountNonRepeating = {
+        type: 'amount',
+        label: 'Members',
+        code: 'MEMBERS10',
+        amountOff: 1000,
+        currency: 'usd',
+        duration: 'once',
+      };
+
+      it('should send productIds and priceIds when given', async () => {
+        const spy = vi
+          .spyOn(client, 'request')
+          .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+
+        await couponResource.create({
+          ...productParams,
+          productIds: [PRODUCT_ID],
+          priceIds: [PRICE_ID],
+        });
+
+        const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
+        expect(sent.body).toEqual({
+          label: 'Members',
+          code: 'MEMBERS10',
+          amountOff: 1000,
+          currency: 'usd',
+          duration: 'once',
+          productIds: [PRODUCT_ID],
+          priceIds: [PRICE_ID],
+        });
+      });
+
+      it('should omit productIds and priceIds when they are not given', async () => {
+        const spy = vi
+          .spyOn(client, 'request')
+          .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+
+        await couponResource.create(productParams);
+
+        const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
+        expect(sent.body).not.toHaveProperty('productIds');
+        expect(sent.body).not.toHaveProperty('priceIds');
+      });
+
+      it('should return productIds and priceIds from the create response unchanged', async () => {
+        const mockCoupon: CreateCouponResponse = {
+          data: {
+            id: '67ee075004de439ab0b675bb',
+            label: 'Members',
+            code: 'MEMBERS10',
+            amountOff: 1000,
+            currency: 'usd',
+            percentOff: null,
+            appliesToSetupFee: false,
+            duration: 'once',
+            timesRedeemed: 0,
+            deleted: false,
+            stripeCouponId: 'mPV2YLWF',
+            sellerId: 'seller123',
+            productIds: [PRODUCT_ID],
+            priceIds: [PRICE_ID],
+            createdAt: '2024-01-06T00:00:00.000Z',
+            updatedAt: '2024-01-06T00:00:00.000Z',
+          },
+        };
+        vi.spyOn(client, 'request').mockResolvedValue(mockCoupon);
+
+        const result = await couponResource.create({
+          ...productParams,
+          productIds: [PRODUCT_ID],
+          priceIds: [PRICE_ID],
+        });
+
+        expect(result.data.productIds).toEqual([PRODUCT_ID]);
+        expect(result.data.priceIds).toEqual([PRICE_ID]);
       });
     });
 
