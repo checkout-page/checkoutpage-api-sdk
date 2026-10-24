@@ -107,12 +107,13 @@ does not change anything for existing users until you promote and migrate by han
 Open a PR that adds a `## <version>` section to [CHANGELOG.md](CHANGELOG.md), for example:
 
 ```markdown
-## 2.2.11
+## 2.2.10
 
 - Update trigger/new_payment: describe the change for Zapier users.
 ```
 
-The version must be greater than `version` in `package.json`. Merge the PR to main.
+The version must be the next one after `version` in `package.json`: Zapier refuses a push that
+skips a version ("Version 2.2.11 requires 2.2.10 to exist"). Merge the PR to main.
 
 ### 2. Push the version
 
@@ -137,7 +138,7 @@ If only the last step (`gh release create`) failed, the version is pushed, commi
 Create the release by hand from the repo root, with the notes from the CHANGELOG section:
 
 ```bash
-gh release create zapier-v2.2.11 --title "Zapier app v2.2.11" --notes "<the 2.2.11 CHANGELOG section>"
+gh release create zapier-v2.2.10 --title "Zapier app v2.2.10" --notes "<the 2.2.10 CHANGELOG section>"
 ```
 
 ### 3. Check the new version
@@ -147,7 +148,7 @@ The commands below run from `zapier/` with a deploy key: either
 
 ```bash
 npx zapier-platform versions          # the new version is listed, with 0 users
-npx zapier-platform env:get 2.2.11    # API_URL is set
+npx zapier-platform env:get 2.2.10    # API_URL is set
 ```
 
 Then try it in Zapier: in the Zap editor, pick the new version of Checkout Page (private
@@ -157,7 +158,7 @@ trigger.
 ### 4. Promote (manual)
 
 ```bash
-npx zapier-platform promote 2.2.11
+npx zapier-platform promote 2.2.10
 ```
 
 Promoting makes the version the one new users get. Existing Zaps stay on their version. The
@@ -168,10 +169,10 @@ command shows the CHANGELOG section and asks you to confirm.
 Move a small share of users first, then watch for errors before moving everyone:
 
 ```bash
-npx zapier-platform migrate 2.2.9 2.2.11 10     # 10% of users on 2.2.9
+npx zapier-platform migrate 2.2.9 2.2.10 10     # 10% of users on 2.2.9
 npx zapier-platform jobs                        # wait for the migration to finish
-npx zapier-platform logs --version=2.2.11 --status=error --type=http
-npx zapier-platform migrate 2.2.9 2.2.11 100    # everyone else
+npx zapier-platform logs --version=2.2.10 --status=error --type=http
+npx zapier-platform migrate 2.2.9 2.2.10 100    # everyone else
 ```
 
 The percent is a plain number from 1 to 100 (no `%` sign). Repeat for any other version that
@@ -183,7 +184,7 @@ breaking change: migrated Zaps keep running on their saved trigger keys and fiel
 Migrate users back and re-promote the previous version:
 
 ```bash
-npx zapier-platform migrate 2.2.11 2.2.9 100
+npx zapier-platform migrate 2.2.10 2.2.9 100
 npx zapier-platform promote 2.2.9
 ```
 
