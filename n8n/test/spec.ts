@@ -1,6 +1,6 @@
-import { readFileSync } from 'node:fs';
 import Ajv2020, { type ErrorObject, type ValidateFunction } from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
+import specDocument from '../../spec/openapi.json';
 
 type Schema = Record<string, unknown>;
 
@@ -24,9 +24,9 @@ export interface SpecOperation {
 const SPEC_ID = 'https://checkoutpage.test/openapi.json';
 const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
-export const spec = JSON.parse(
-  readFileSync(new URL('../../spec/openapi.json', import.meta.url), 'utf8')
-) as Schema & { paths: Record<string, Record<string, Schema>> };
+export const spec = specDocument as unknown as Schema & {
+  paths: Record<string, Record<string, Schema>>;
+};
 
 const ajv = new Ajv2020({ strict: false, allErrors: true });
 addFormats(ajv);
