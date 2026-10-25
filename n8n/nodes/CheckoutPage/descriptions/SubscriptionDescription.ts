@@ -20,13 +20,13 @@ export const subscriptionDescription: INodeProperties[] = [
       {
         name: 'Get',
         value: 'get',
-        description: 'Get a subscription',
-        action: 'Get a subscription',
+        description: 'Retrieve a subscription',
+        action: 'Get subscription',
       },
       {
         name: 'Get Many',
         value: 'getAll',
-        description: 'Get many subscriptions',
+        description: 'Retrieve a list of subscriptions',
         action: 'Get many subscriptions',
       },
     ],

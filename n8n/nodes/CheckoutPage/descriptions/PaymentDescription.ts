@@ -18,11 +18,11 @@ export const paymentDescription: INodeProperties[] = [
   operationField(
     'payment',
     [
-      { name: 'Get', value: 'get', description: 'Get a payment', action: 'Get a payment' },
+      { name: 'Get', value: 'get', description: 'Retrieve a payment', action: 'Get payment' },
       {
         name: 'Get Many',
         value: 'getAll',
-        description: 'Get many payments',
+        description: 'Retrieve a list of payments',
         action: 'Get many payments',
       },
     ],

@@ -2,6 +2,7 @@ import {
   NodeApiError,
   NodeOperationError,
   type IDataObject,
+  type INodeProperties,
   type INodePropertyOptions,
   type IPairedItemData,
 } from 'n8n-workflow';
@@ -69,6 +70,73 @@ describe('node description', () => {
       payment: ['get', 'getAll'],
       subscription: ['get', 'getAll'],
     });
+  });
+
+  it("names operations in n8n's style", () => {
+    const actions: Record<string, Array<[string, string, string]>> = {};
+    for (const property of node.description.properties) {
+      if (property.name !== 'operation') continue;
+      const resource = (property.displayOptions?.show?.resource as string[])[0];
+      actions[resource] = (property.options as INodePropertyOptions[]).map((o) => [
+        o.name,
+        String(o.action),
+        String(o.description),
+      ]);
+    }
+    expect(actions).toEqual({
+      booking: [
+        ['Create', 'Create booking', 'Create a new booking to add an attendee to an event'],
+        ['Get', 'Get booking', 'Retrieve a booking'],
+        ['Get Many', 'Get many bookings', 'Retrieve a list of bookings'],
+      ],
+      checkoutPage: [
+        ['Get', 'Get checkout page', 'Retrieve a checkout page'],
+        ['Get Many', 'Get many checkout pages', 'Retrieve a list of checkout pages'],
+      ],
+      coupon: [
+        ['Create', 'Create coupon', 'Create a new coupon'],
+        ['Get Many', 'Get many coupons', 'Retrieve a list of coupons'],
+      ],
+      customer: [
+        ['Get', 'Get customer', 'Retrieve a customer'],
+        ['Get Many', 'Get many customers', 'Retrieve a list of customers'],
+        ['Update', 'Update customer', 'Update a customer'],
+      ],
+      event: [
+        ['Get', 'Get event', 'Retrieve an event'],
+        ['Get Many', 'Get many events', 'Retrieve a list of events'],
+      ],
+      form: [
+        ['Get', 'Get form', 'Retrieve a form'],
+        ['Get Many', 'Get many forms', 'Retrieve a list of forms'],
+      ],
+      payment: [
+        ['Get', 'Get payment', 'Retrieve a payment'],
+        ['Get Many', 'Get many payments', 'Retrieve a list of payments'],
+      ],
+      subscription: [
+        ['Get', 'Get subscription', 'Retrieve a subscription'],
+        ['Get Many', 'Get many subscriptions', 'Retrieve a list of subscriptions'],
+      ],
+    });
+  });
+
+  it('starts every placeholder on a text field with "e.g."', () => {
+    const placeholders: string[] = [];
+    const walk = (properties: INodeProperties[]) => {
+      for (const property of properties) {
+        if (property.type === 'string' && property.placeholder) {
+          placeholders.push(String(property.placeholder));
+        }
+        for (const option of property.options ?? []) {
+          if ('values' in option) walk(option.values);
+          else if ('type' in option) walk([option as INodeProperties]);
+        }
+      }
+    };
+    walk(node.description.properties);
+    expect(placeholders).toContain('e.g. nathan@example.com');
+    expect(placeholders.every((p) => p.startsWith('e.g. '))).toBe(true);
   });
 });
 

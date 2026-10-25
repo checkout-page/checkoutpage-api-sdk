@@ -10,13 +10,13 @@ function pageResource(resource: string, singular: string, plural: string): INode
         {
           name: 'Get',
           value: 'get',
-          description: `Get ${singular === 'event' ? 'an' : 'a'} ${singular}`,
-          action: `Get ${singular === 'event' ? 'an' : 'a'} ${singular}`,
+          description: `Retrieve ${singular === 'event' ? 'an' : 'a'} ${singular}`,
+          action: `Get ${singular}`,
         },
         {
           name: 'Get Many',
           value: 'getAll',
-          description: `Get many ${plural}`,
+          description: `Retrieve a list of ${plural}`,
           action: `Get many ${plural}`,
         },
       ],
