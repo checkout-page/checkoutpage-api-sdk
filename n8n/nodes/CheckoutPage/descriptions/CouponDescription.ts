@@ -103,11 +103,11 @@ export const couponDescription: INodeProperties[] = [
     type: 'number',
     required: true,
     default: 10,
-    typeOptions: { minValue: 0, maxValue: 100, numberPrecision: 2 },
+    typeOptions: { minValue: 1, maxValue: 100, numberPrecision: 2 },
     displayOptions: {
       show: { resource: ['coupon'], operation: ['create'], discountType: ['percent'] },
     },
-    description: 'The discount, larger than 0 and up to 100',
+    description: 'The discount, from 1 to 100',
   },
   {
     displayName: 'Amount Off',
