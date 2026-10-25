@@ -9,6 +9,7 @@ import {
   operationField,
   returnAllAndLimit,
   show,
+  simplifyField,
   SUBSCRIPTION_STATUSES,
   textOption,
 } from './common';
@@ -51,6 +52,7 @@ export const subscriptionDescription: INodeProperties[] = [
   },
 
   ...returnAllAndLimit('subscription'),
+  simplifyField('subscription', ['get', 'getAll']),
   filtersField('subscription', [
     abandonmentStatusOption,
     textOption('pageId', 'Checkout Page ID', 'Only return subscriptions started on this page'),

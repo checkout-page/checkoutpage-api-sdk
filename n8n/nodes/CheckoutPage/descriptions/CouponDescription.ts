@@ -1,5 +1,12 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { filtersField, operationField, returnAllAndLimit, show, textOption } from './common';
+import {
+  filtersField,
+  operationField,
+  returnAllAndLimit,
+  show,
+  simplifyField,
+  textOption,
+} from './common';
 
 const CURRENCIES = [
   'aed',
@@ -50,6 +57,7 @@ export const couponDescription: INodeProperties[] = [
   ),
 
   ...returnAllAndLimit('coupon'),
+  simplifyField('coupon', ['getAll']),
   filtersField('coupon', [
     textOption(
       'search',

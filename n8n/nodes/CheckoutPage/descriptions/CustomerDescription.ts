@@ -7,6 +7,7 @@ import {
   operationField,
   returnAllAndLimit,
   show,
+  simplifyField,
   textOption,
 } from './common';
 
@@ -50,6 +51,7 @@ export const customerDescription: INodeProperties[] = [
   idField('customer', ['get', 'update'], 'customerId', 'Customer ID', 'The ID of the customer'),
 
   ...returnAllAndLimit('customer'),
+  simplifyField('customer', ['get', 'getAll']),
   filtersField('customer', [
     createdAfterOption,
     createdBeforeOption,

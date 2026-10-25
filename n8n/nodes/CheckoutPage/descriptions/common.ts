@@ -164,3 +164,14 @@ export function operationField(
     default: defaultValue,
   };
 }
+
+export function simplifyField(resource: string, operations: string[]): INodeProperties {
+  return {
+    displayName: 'Simplify',
+    name: 'simplify',
+    type: 'boolean',
+    default: true,
+    displayOptions: show(resource, operations),
+    description: 'Whether to return a simplified version of the response instead of the raw data',
+  };
+}

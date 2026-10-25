@@ -12,6 +12,7 @@ export interface PlannedRequest {
   qs?: IDataObject;
   body?: IDataObject;
   list?: { returnAll: boolean; limit: number };
+  simplify?: boolean;
 }
 
 const COLLECTION_PATHS: Record<string, string> = {
@@ -220,14 +221,25 @@ export function planRequest(
     const returnAll = ctx.getNodeParameter('returnAll', i, false) as boolean;
     const limit = returnAll ? 0 : (ctx.getNodeParameter('limit', i, 50) as number);
     const filters = withUtcDates(ctx, ctx.getNodeParameter('filters', i, {}) as IDataObject, i);
-    return { method: 'GET', path: collection, qs: toQuery(filters), list: { returnAll, limit } };
+    return {
+      method: 'GET',
+      path: collection,
+      qs: toQuery(filters),
+      list: { returnAll, limit },
+      simplify: ctx.getNodeParameter('simplify', i, true) as boolean,
+    };
   }
 
   if (operation === 'get') {
     const options = RESOURCES_WITH_LIVEMODE_ON_GET.has(resource)
       ? (ctx.getNodeParameter('options', i, {}) as IDataObject)
       : {};
-    return { method: 'GET', path: itemPath(ctx, resource, i), qs: toQuery(options) };
+    return {
+      method: 'GET',
+      path: itemPath(ctx, resource, i),
+      qs: toQuery(options),
+      simplify: ctx.getNodeParameter('simplify', i, true) as boolean,
+    };
   }
 
   if (resource === 'booking' && operation === 'create') {

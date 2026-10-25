@@ -11,6 +11,7 @@ import {
   PAYMENT_STATUSES,
   returnAllAndLimit,
   show,
+  simplifyField,
   textOption,
 } from './common';
 
@@ -52,6 +53,7 @@ export const bookingDescription: INodeProperties[] = [
   },
 
   ...returnAllAndLimit('booking'),
+  simplifyField('booking', ['get', 'getAll']),
   filtersField('booking', [
     abandonmentStatusOption,
     textOption('couponCode', 'Coupon Code', 'Only return bookings that used this coupon code'),

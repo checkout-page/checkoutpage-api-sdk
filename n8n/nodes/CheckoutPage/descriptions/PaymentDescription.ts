@@ -11,6 +11,7 @@ import {
   PAYMENT_STATUSES,
   returnAllAndLimit,
   show,
+  simplifyField,
   textOption,
 } from './common';
 
@@ -41,6 +42,7 @@ export const paymentDescription: INodeProperties[] = [
   },
 
   ...returnAllAndLimit('payment'),
+  simplifyField('payment', ['get', 'getAll']),
   filtersField('payment', [
     abandonmentStatusOption,
     textOption('pageId', 'Checkout Page ID', 'Only return payments made on this checkout page'),

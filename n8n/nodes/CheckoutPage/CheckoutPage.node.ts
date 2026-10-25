@@ -20,6 +20,7 @@ import {
 import { paymentDescription } from './descriptions/PaymentDescription';
 import { subscriptionDescription } from './descriptions/SubscriptionDescription';
 import { planRequest } from './operations';
+import { simplifyRecord } from './simplify';
 import { apiRequest, apiRequestList, CREDENTIAL_NAME, toNodeApiError } from './transport';
 
 async function getEvent(this: ILoadOptionsFunctions): Promise<IDataObject | undefined> {
@@ -122,6 +123,8 @@ export class CheckoutPage implements INodeType {
         const resource = this.getNodeParameter('resource', i) as string;
         const operation = this.getNodeParameter('operation', i) as string;
         const request = planRequest(this, resource, operation, i);
+        const shape = (record: IDataObject) =>
+          request.simplify ? simplifyRecord(resource, record) : record;
 
         if (request.list) {
           const records = await apiRequestList.call(
@@ -132,7 +135,7 @@ export class CheckoutPage implements INodeType {
             request.list.limit
           );
           for (const record of records) {
-            returnData.push({ json: record, pairedItem: { item: i } });
+            returnData.push({ json: shape(record), pairedItem: { item: i } });
           }
           continue;
         }
@@ -145,7 +148,7 @@ export class CheckoutPage implements INodeType {
           request.qs
         );
         const record = (response?.data as IDataObject | undefined) ?? response;
-        returnData.push({ json: record, pairedItem: { item: i } });
+        returnData.push({ json: shape(record), pairedItem: { item: i } });
       } catch (error) {
         if (this.continueOnFail()) {
           returnData.push({

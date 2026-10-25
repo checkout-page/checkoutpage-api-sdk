@@ -1,5 +1,12 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { filtersField, idField, operationField, returnAllAndLimit, textOption } from './common';
+import {
+  filtersField,
+  idField,
+  operationField,
+  returnAllAndLimit,
+  simplifyField,
+  textOption,
+} from './common';
 
 function pageResource(resource: string, singular: string, plural: string): INodeProperties[] {
   const singularTitle = singular.charAt(0).toUpperCase() + singular.slice(1);
@@ -24,6 +31,7 @@ function pageResource(resource: string, singular: string, plural: string): INode
     ),
     idField(resource, ['get'], 'pageId', `${singularTitle} ID`, `The ID of the ${singular}`),
     ...returnAllAndLimit(resource),
+    simplifyField(resource, ['get', 'getAll']),
     filtersField(resource, [
       textOption(
         'search',

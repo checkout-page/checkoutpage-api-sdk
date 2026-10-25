@@ -152,9 +152,10 @@ describe('get operations', () => {
   ];
 
   it.each(cases)('%s: GET %s', async (resource, idParam, id, path) => {
-    const { output, http } = await run({ resource, operation: 'get', [idParam]: id, options: {} }, [
-      { data: { id, name: 'Record' } },
-    ]);
+    const { output, http } = await run(
+      { resource, operation: 'get', [idParam]: id, options: {}, simplify: false },
+      [{ data: { id, name: 'Record' } }]
+    );
     const options = requestOptions(http);
     expect(http.mock.calls[0][0]).toBe('checkoutPageApi');
     expect(options.method).toBe('GET');
@@ -217,7 +218,7 @@ describe('get many operations', () => {
 
   it.each(Object.entries(paths))('%s: GET %s with the limit', async (resource, path) => {
     const { output, http } = await run(
-      { resource, operation: 'getAll', returnAll: false, limit: 2, filters: {} },
+      { resource, operation: 'getAll', returnAll: false, limit: 2, filters: {}, simplify: false },
       [list([{ id: 'a' }, { id: 'b' }, { id: 'c' }], true)]
     );
     const options = requestOptions(http);
