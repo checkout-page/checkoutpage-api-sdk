@@ -3,8 +3,9 @@
 Official developer tools for the Checkout Page API: client libraries and command-line tools
 for building on Checkout Page from your own code.
 
-Each language or tool lives in its own top-level directory. They are all built from the same
-OpenAPI spec, so they cover the same API.
+Each language or tool lives in its own top-level directory. The SDKs, the CLI and the Postman
+collection are built from the same OpenAPI spec, so they cover the same API. The Zapier
+integration is the source of Checkout Page's app on Zapier.
 
 ## Tools
 
@@ -14,6 +15,7 @@ OpenAPI spec, so they cover the same API.
 | CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source)            | [cli/README.md](cli/README.md)         |
 | Postman collection        | Active                    | Import the collection file                                | [postman/README.md](postman/README.md) |
 | n8n nodes                 | Coming soon               | n8n Settings > Community nodes > `n8n-nodes-checkoutpage` | [n8n/README.md](n8n/README.md)         |
+| Zapier integration        | Active                    | Connect it in Zapier                                      | [zapier/README.md](zapier/README.md)   |
 | PHP                       | Planned                   | -                                                         | -                                      |
 | Ruby                      | Planned                   | -                                                         | -                                      |
 | Python                    | Planned                   | -                                                         | -                                      |
@@ -81,13 +83,14 @@ checkoutpage-api-sdk/
 ├─ cli/                 # Checkout Page CLI (Rust)
 ├─ postman/             # Postman collection and environment, generated from the spec
 ├─ n8n/                 # n8n community nodes (n8n-nodes-checkoutpage)
+├─ zapier/              # Zapier integration (standalone npm project)
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
 ├─ examples/
 │  ├─ js/               # Examples, one directory per language or tool
 │  └─ n8n/
 ├─ scripts/             # Shared tooling, such as type generation
-└─ .github/workflows/   # Test and publish workflows, one pair per language
+└─ .github/workflows/   # Test and publish workflows, one pair per language or tool
 ```
 
 ## Contributing

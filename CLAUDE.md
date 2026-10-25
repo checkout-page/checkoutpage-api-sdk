@@ -19,6 +19,10 @@ customer-facing: plain short sentences, sentence-case headings, no em dash chara
 - **`n8n/`** - n8n community nodes, npm `n8n-nodes-checkoutpage`. A standalone npm project
   outside the pnpm workspace, with no runtime dependencies (n8n verification forbids them, so
   it calls the API directly instead of using the SDK). Conventions in [n8n/CLAUDE.md](n8n/CLAUDE.md).
+- **`zapier/`** - the Checkout Page Zapier integration (id 140636), a standalone npm project
+  outside the pnpm workspace. It calls the API's `/zapier/v2` endpoints, not the seller API,
+  so it does not use the spec. Released with `publish-zapier.yml` (tags `zapier-v<version>`).
+  Never break existing Zaps: see [zapier/CLAUDE.md](zapier/CLAUDE.md).
 - **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
 - **`examples/<lang>/`** - usage examples per language or tool (`examples/js/`, `examples/n8n/`).
 - **`scripts/`** - shared tooling (`generate-types.ts`).
