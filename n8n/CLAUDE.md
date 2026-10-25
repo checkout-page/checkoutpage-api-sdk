@@ -19,6 +19,7 @@ things they automate: new bookings and payments, adding an attendee, coupons, cu
 - `icons/` - `checkoutpage.svg` (light) and `checkoutpage.dark.svg` (dark), the brand mark from
   the mono repo's `apps/site/public/brand/`.
 - `test/` - vitest unit tests with a mocked `httpRequestWithAuthentication`. Not shipped.
+  `test/spec.ts` loads the spec into ajv (dev dependencies only, like everything in `test/`).
 
 ## Rules n8n verification imposes
 
@@ -46,6 +47,11 @@ before changing any of these.
   `create`, `update`. Paths, query parameters and body fields come from `spec/openapi.json`;
   a test fails if a list filter is not a query parameter in the spec, or if the trigger's
   events differ from the spec's webhook event enum. Update both when the spec changes.
+- `test/spec-conformance.test.ts` sends every operation's requests (every filter, option value
+  and UI number bound, and required-only and full bodies from `WRITE_FIXTURES`) and checks path,
+  query and body against `spec/openapi.json` with ajv, rejecting undeclared body keys. A spec sync
+  PR is expected to fail it when the node falls out of line: fix the node, never loosen the test.
+  Its inline snapshot lists spec fields the node never sends; update it when that list changes.
 - Lists use the API's cursor: `limit` up to 100, then `starting_after` set to the last id
   while `has_more` is true (`apiRequestList`).
 - The action node is programmatic (`execute`), not declarative. Declarative routing can't be
