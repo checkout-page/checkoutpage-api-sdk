@@ -45,9 +45,25 @@ export function requestOptions(mock: ReturnType<typeof httpMock>, call = 0): IHt
   return mock.mock.calls[call][1];
 }
 
+export function locator(value: string, mode = 'list'): IDataObject {
+  return { __rl: true, mode, value };
+}
+
+function extract(value: unknown, options?: { extractValue?: boolean }): unknown {
+  if (options?.extractValue && value && typeof value === 'object' && '__rl' in value) {
+    return (value as IDataObject).value;
+  }
+  return value;
+}
+
 function parameterGetter(params: IDataObject) {
-  return (name: string, _index?: number, fallback?: unknown) => {
-    if (name in params) return params[name];
+  return (
+    name: string,
+    _index?: number,
+    fallback?: unknown,
+    options?: { extractValue?: boolean }
+  ) => {
+    if (name in params) return extract(params[name], options);
     if (fallback !== undefined) return fallback;
     throw new Error(`Missing parameter: ${name}`);
   };
@@ -79,7 +95,8 @@ export function executeContext(
 export function loadOptionsContext(current: IDataObject, responses: HttpResponse[]) {
   const http = httpMock(responses);
   const context = {
-    getCurrentNodeParameter: (name: string) => current[name],
+    getCurrentNodeParameter: (name: string, options?: { extractValue?: boolean }) =>
+      extract(current[name], options),
     getCredentials: async () => CREDENTIALS,
     getNode: () => TEST_NODE,
     helpers: { httpRequestWithAuthentication: http },

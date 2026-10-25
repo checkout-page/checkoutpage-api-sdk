@@ -89,7 +89,9 @@ function withUtcDates(ctx: IExecuteFunctions, values: IDataObject, i: number): I
 }
 
 function itemPath(ctx: IExecuteFunctions, resource: string, i: number): string {
-  const id = String(ctx.getNodeParameter(ID_PARAMETERS[resource], i) ?? '').trim();
+  const id = String(
+    ctx.getNodeParameter(ID_PARAMETERS[resource], i, '', { extractValue: true }) ?? ''
+  ).trim();
   if (!id) {
     throw new NodeOperationError(ctx.getNode(), 'An ID is required', { itemIndex: i });
   }
@@ -97,7 +99,7 @@ function itemPath(ctx: IExecuteFunctions, resource: string, i: number): string {
 }
 
 function bookingCreateBody(ctx: IExecuteFunctions, i: number): IDataObject {
-  const eventId = ctx.getNodeParameter('eventId', i) as string;
+  const eventId = String(ctx.getNodeParameter('eventId', i, '', { extractValue: true })).trim();
   const ticketRows =
     ((ctx.getNodeParameter('tickets', i, {}) as IDataObject).ticket as IDataObject[]) ?? [];
   const fieldRows =

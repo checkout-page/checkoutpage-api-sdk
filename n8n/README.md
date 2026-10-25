@@ -48,10 +48,18 @@ data.
 "Get many" can return every record or stop at a limit. Each one has filters, such as a booking's
 status, its event, a customer or a date range.
 
+"Get" and "get many" return a short version of each record by default, with up to 10 of the
+fields you are most likely to use, such as the name, email, amount, status and date. Turn off
+**Simplify** to get every field.
+
+To get one customer, event, checkout page or form, pick it from a searchable list or enter its
+ID.
+
 ### Add an attendee
 
-**Booking > Create** books tickets on an event without taking a card payment. Choose the event,
-then add:
+**Booking > Create** books tickets on an event without taking a card payment. Pick the event
+from the list, where you can search by name, or switch to **By ID** and paste or map the event
+ID. Then add:
 
 - **Tickets**: a ticket type and how many.
 - **Fields**: a value for each of the event's fields. Always include the email field, because

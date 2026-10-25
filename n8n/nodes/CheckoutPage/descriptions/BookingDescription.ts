@@ -6,6 +6,7 @@ import {
   filtersField,
   idField,
   livemodeOption,
+  locatorField,
   operationField,
   orderStatusOption,
   PAYMENT_STATUSES,
@@ -85,17 +86,15 @@ export const bookingDescription: INodeProperties[] = [
     },
   ]),
 
-  {
-    displayName: 'Event Name or ID',
+  locatorField({
+    resource: 'booking',
+    operations: ['create'],
     name: 'eventId',
-    type: 'options',
-    required: true,
-    default: '',
-    typeOptions: { loadOptionsMethod: 'getEvents' },
-    displayOptions: show('booking', ['create']),
-    description:
-      'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-  },
+    displayName: 'Event',
+    singular: 'event',
+    searchListMethod: 'searchEvents',
+    description: 'The event to add the attendee to',
+  }),
   {
     displayName: 'Tickets',
     name: 'tickets',
@@ -118,7 +117,7 @@ export const bookingDescription: INodeProperties[] = [
             default: '',
             typeOptions: {
               loadOptionsMethod: 'getTicketTypes',
-              loadOptionsDependsOn: ['eventId'],
+              loadOptionsDependsOn: ['eventId.value'],
             },
             description:
               'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
@@ -157,7 +156,7 @@ export const bookingDescription: INodeProperties[] = [
             default: '',
             typeOptions: {
               loadOptionsMethod: 'getEventFields',
-              loadOptionsDependsOn: ['eventId'],
+              loadOptionsDependsOn: ['eventId.value'],
             },
             description:
               'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',

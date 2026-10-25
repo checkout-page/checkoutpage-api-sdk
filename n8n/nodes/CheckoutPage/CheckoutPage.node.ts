@@ -5,6 +5,7 @@ import {
   type IExecuteFunctions,
   type ILoadOptionsFunctions,
   type INodeExecutionData,
+  type INodeListSearchResult,
   type INodePropertyOptions,
   type INodeType,
   type INodeTypeDescription,
@@ -21,14 +22,59 @@ import { paymentDescription } from './descriptions/PaymentDescription';
 import { subscriptionDescription } from './descriptions/SubscriptionDescription';
 import { planRequest } from './operations';
 import { simplifyRecord } from './simplify';
-import { apiRequest, apiRequestList, CREDENTIAL_NAME, toNodeApiError } from './transport';
+import {
+  apiRequest,
+  apiRequestList,
+  CREDENTIAL_NAME,
+  MAX_PAGE_SIZE,
+  toNodeApiError,
+  type ListResponse,
+} from './transport';
 
 async function getEvent(this: ILoadOptionsFunctions): Promise<IDataObject | undefined> {
-  const eventId = this.getCurrentNodeParameter('eventId') as string | undefined;
+  const eventId = this.getCurrentNodeParameter('eventId', { extractValue: true }) as
+    | string
+    | undefined;
   if (!eventId) return undefined;
   const response = await apiRequest.call(this, 'GET', `/v1/events/${encodeURIComponent(eventId)}`);
   return response.data as IDataObject | undefined;
 }
+
+async function searchList(
+  this: ILoadOptionsFunctions,
+  path: string,
+  label: (record: IDataObject) => unknown,
+  filter?: string,
+  paginationToken?: string
+): Promise<INodeListSearchResult> {
+  const qs: IDataObject = { limit: MAX_PAGE_SIZE };
+  if (filter) qs.search = filter;
+  if (paginationToken) qs.starting_after = paginationToken;
+  const response = (await apiRequest.call(
+    this,
+    'GET',
+    path,
+    undefined,
+    qs
+  )) as unknown as ListResponse;
+  const records = response.data ?? [];
+  const lastId = records.length ? records[records.length - 1].id : undefined;
+  return {
+    results: records.map((record) => ({
+      name: String(label(record) || record.id),
+      value: String(record.id),
+      url: typeof record.url === 'string' && record.url ? record.url : undefined,
+    })),
+    paginationToken: response.has_more && lastId ? String(lastId) : undefined,
+  };
+}
+
+const pageLabel = (page: IDataObject) => page.title || page.name;
+
+const customerLabel = (customer: IDataObject) =>
+  customer.name && customer.email
+    ? `${String(customer.name)} (${String(customer.email)})`
+    : customer.name || customer.email;
 
 export class CheckoutPage implements INodeType {
   description: INodeTypeDescription = {
@@ -77,15 +123,33 @@ export class CheckoutPage implements INodeType {
   };
 
   methods = {
-    loadOptions: {
-      async getEvents(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-        const events = await apiRequestList.call(this, '/v1/events/', {}, true);
-        return events.map((event) => ({
-          name: String(event.title || event.name || event.id),
-          value: String(event.id),
-        }));
+    listSearch: {
+      async searchEvents(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
+        return searchList.call(this, '/v1/events/', pageLabel, filter, paginationToken);
       },
 
+      async searchCheckoutPages(
+        this: ILoadOptionsFunctions,
+        filter?: string,
+        paginationToken?: string
+      ) {
+        return searchList.call(this, '/v1/checkout-pages/', pageLabel, filter, paginationToken);
+      },
+
+      async searchForms(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
+        return searchList.call(this, '/v1/forms/', pageLabel, filter, paginationToken);
+      },
+
+      async searchCustomers(
+        this: ILoadOptionsFunctions,
+        filter?: string,
+        paginationToken?: string
+      ) {
+        return searchList.call(this, '/v1/customers/', customerLabel, filter, paginationToken);
+      },
+    },
+
+    loadOptions: {
       async getTicketTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
         const event = await getEvent.call(this);
         const groups = (event?.ticketGroups as IDataObject[] | undefined) ?? [];

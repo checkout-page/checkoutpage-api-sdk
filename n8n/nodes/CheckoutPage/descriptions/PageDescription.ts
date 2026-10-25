@@ -1,15 +1,20 @@
 import type { INodeProperties } from 'n8n-workflow';
 import {
   filtersField,
-  idField,
+  locatorField,
   operationField,
   returnAllAndLimit,
   simplifyField,
   textOption,
 } from './common';
 
-function pageResource(resource: string, singular: string, plural: string): INodeProperties[] {
-  const singularTitle = singular.charAt(0).toUpperCase() + singular.slice(1);
+function pageResource(
+  resource: string,
+  singular: string,
+  plural: string,
+  searchListMethod: string
+): INodeProperties[] {
+  const singularTitle = singular.replace(/\b\w/g, (letter) => letter.toUpperCase());
   return [
     operationField(
       resource,
@@ -29,7 +34,15 @@ function pageResource(resource: string, singular: string, plural: string): INode
       ],
       'getAll'
     ),
-    idField(resource, ['get'], 'pageId', `${singularTitle} ID`, `The ID of the ${singular}`),
+    locatorField({
+      resource,
+      operations: ['get'],
+      name: 'pageId',
+      displayName: singularTitle,
+      singular,
+      searchListMethod,
+      description: `The ${singular} to retrieve`,
+    }),
     ...returnAllAndLimit(resource),
     simplifyField(resource, ['get', 'getAll']),
     filtersField(resource, [
@@ -61,10 +74,11 @@ function pageResource(resource: string, singular: string, plural: string): INode
   ];
 }
 
-export const eventDescription = pageResource('event', 'event', 'events');
+export const eventDescription = pageResource('event', 'event', 'events', 'searchEvents');
 export const checkoutPageDescription = pageResource(
   'checkoutPage',
   'checkout page',
-  'checkout pages'
+  'checkout pages',
+  'searchCheckoutPages'
 );
-export const formDescription = pageResource('form', 'form', 'forms');
+export const formDescription = pageResource('form', 'form', 'forms', 'searchForms');

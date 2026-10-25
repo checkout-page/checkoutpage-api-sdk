@@ -3,7 +3,7 @@ import {
   createdAfterOption,
   createdBeforeOption,
   filtersField,
-  idField,
+  locatorField,
   operationField,
   returnAllAndLimit,
   show,
@@ -48,7 +48,15 @@ export const customerDescription: INodeProperties[] = [
     'get'
   ),
 
-  idField('customer', ['get', 'update'], 'customerId', 'Customer ID', 'The ID of the customer'),
+  locatorField({
+    resource: 'customer',
+    operations: ['get', 'update'],
+    name: 'customerId',
+    displayName: 'Customer',
+    singular: 'customer',
+    searchListMethod: 'searchCustomers',
+    description: 'The customer to retrieve or update',
+  }),
 
   ...returnAllAndLimit('customer'),
   simplifyField('customer', ['get', 'getAll']),

@@ -9,7 +9,14 @@ import {
 import { describe, expect, it } from 'vitest';
 import { CheckoutPage } from '../nodes/CheckoutPage/CheckoutPage.node';
 import { toNodeApiError } from '../nodes/CheckoutPage/transport';
-import { apiError, executeContext, loadOptionsContext, requestOptions, TEST_NODE } from './helpers';
+import {
+  apiError,
+  executeContext,
+  loadOptionsContext,
+  locator,
+  requestOptions,
+  TEST_NODE,
+} from './helpers';
 
 const BASE = 'https://api.checkoutpage.com';
 const node = new CheckoutPage();
@@ -358,7 +365,7 @@ describe('booking create (add an attendee)', () => {
       {
         resource: 'booking',
         operation: 'create',
-        eventId: 'ev_1',
+        eventId: locator('ev_1'),
         tickets: {
           ticket: [
             { ticketTypeId: 'tt_adult', quantity: 2 },
@@ -616,7 +623,7 @@ describe('customer update', () => {
       {
         resource: 'customer',
         operation: 'update',
-        customerId: 'cus_1',
+        customerId: locator('cus_1'),
         updateFields: {
           name: 'Ada Lovelace',
           phone: '+44 20 7946 0000',
@@ -717,21 +724,8 @@ describe('load options', () => {
     },
   };
 
-  it('lists every event across pages', async () => {
-    const { context, http } = loadOptionsContext({}, [
-      list([{ id: 'ev_1', title: 'Summer camp' }], true),
-      list([{ id: 'ev_2', name: 'Gala' }]),
-    ]);
-    const options = await node.methods.loadOptions.getEvents.call(context);
-    expect(options).toEqual([
-      { name: 'Summer camp', value: 'ev_1' },
-      { name: 'Gala', value: 'ev_2' },
-    ]);
-    expect(requestOptions(http, 1).qs).toEqual({ limit: 100, starting_after: 'ev_1' });
-  });
-
   it("lists the selected event's ticket types", async () => {
-    const { context, http } = loadOptionsContext({ eventId: 'ev_1' }, [event]);
+    const { context, http } = loadOptionsContext({ eventId: locator('ev_1') }, [event]);
     const options = await node.methods.loadOptions.getTicketTypes.call(context);
     expect(requestOptions(http).url).toBe(`${BASE}/v1/events/ev_1`);
     expect(options).toEqual([
@@ -741,7 +735,7 @@ describe('load options', () => {
   });
 
   it("lists the selected event's enabled fields", async () => {
-    const { context } = loadOptionsContext({ eventId: 'ev_1' }, [event]);
+    const { context } = loadOptionsContext({ eventId: locator('ev_1', 'id') }, [event]);
     const options = await node.methods.loadOptions.getEventFields.call(context);
     expect(options).toEqual([
       { name: 'Email', value: 'f_email', description: 'Required' },
@@ -750,7 +744,7 @@ describe('load options', () => {
   });
 
   it('returns nothing until an event is chosen', async () => {
-    const { context, http } = loadOptionsContext({}, []);
+    const { context, http } = loadOptionsContext({ eventId: locator('') }, []);
     expect(await node.methods.loadOptions.getTicketTypes.call(context)).toEqual([]);
     expect(http).not.toHaveBeenCalled();
   });

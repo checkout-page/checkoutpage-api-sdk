@@ -8,8 +8,10 @@ things they automate: new bookings and payments, adding an attendee, coupons, cu
 
 - `credentials/CheckoutPageApi.credentials.ts` - API key (password field) and base URL. Sends
   `Authorization: Bearer <key>`; the credential test is `GET /v1/account/`.
-- `nodes/CheckoutPage/` - the action node. `CheckoutPage.node.ts` holds the description, load
-  options (events, ticket types, event fields) and `execute`. `operations.ts` turns parameters
+- `nodes/CheckoutPage/` - the action node. `CheckoutPage.node.ts` holds the description, list
+  search for the resource locators (events, checkout pages, forms, customers), load options
+  (ticket types, event fields) and `execute`. `simplify.ts` holds the fields each resource
+  keeps when **Simplify** is on. `operations.ts` turns parameters
   into `{ method, path, qs, body }`. `transport.ts` is the only place that makes HTTP calls and
   maps errors. `descriptions/` holds the UI parameters per resource.
 - `nodes/CheckoutPageTrigger/` - the webhook trigger. `signature.ts` verifies

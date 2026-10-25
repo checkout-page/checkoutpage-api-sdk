@@ -52,6 +52,44 @@ export function idField(
   };
 }
 
+export function locatorField(options: {
+  resource: string;
+  operations: string[];
+  name: string;
+  displayName: string;
+  singular: string;
+  searchListMethod: string;
+  description: string;
+}): INodeProperties {
+  const { resource, operations, name, displayName, singular, searchListMethod, description } =
+    options;
+  const article = /^[aeiou]/.test(singular) ? 'an' : 'a';
+  return {
+    displayName,
+    name,
+    type: 'resourceLocator',
+    required: true,
+    default: { mode: 'list', value: '' },
+    displayOptions: show(resource, operations),
+    description,
+    modes: [
+      {
+        displayName: 'From List',
+        name: 'list',
+        type: 'list',
+        placeholder: `Select ${article} ${singular}...`,
+        typeOptions: { searchListMethod, searchable: true },
+      },
+      {
+        displayName: 'By ID',
+        name: 'id',
+        type: 'string',
+        placeholder: 'e.g. 66f1c0e2a4b5c6d7e8f90123',
+      },
+    ],
+  };
+}
+
 export function returnAllAndLimit(resource: string): INodeProperties[] {
   return [
     {
