@@ -435,7 +435,7 @@ describe('booking create (add an attendee)', () => {
       },
       []
     );
-    await expect(node.execute.call(context)).rejects.toThrow('Add at least the email field');
+    await expect(node.execute.call(context)).rejects.toThrow('No field values to book with');
     expect(http).not.toHaveBeenCalled();
   });
 
@@ -451,7 +451,7 @@ describe('booking create (add an attendee)', () => {
       },
       []
     );
-    await expect(node.execute.call(context)).rejects.toThrow('Add at least one ticket');
+    await expect(node.execute.call(context)).rejects.toThrow('No tickets to book');
     expect(http).not.toHaveBeenCalled();
   });
 });
@@ -650,7 +650,7 @@ describe('customer update', () => {
       { resource: 'customer', operation: 'update', customerId: 'cus_1', updateFields: {} },
       []
     );
-    await expect(node.execute.call(context)).rejects.toThrow('Add at least one field');
+    await expect(node.execute.call(context)).rejects.toThrow('No fields to update');
     expect(http).not.toHaveBeenCalled();
   });
 });

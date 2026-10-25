@@ -14,6 +14,10 @@ export const CREDENTIAL_NAME = 'checkoutPageApi';
 export const DEFAULT_BASE_URL = 'https://api.checkoutpage.com';
 export const MAX_PAGE_SIZE = 100;
 
+const NO_RESPONSE_MESSAGE = 'Checkout Page did not answer the request';
+const NO_RESPONSE_DESCRIPTION =
+  "Check your connection and the 'Base URL' in the Checkout Page credential, then try again.";
+
 type RequestContext = IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions;
 
 export interface ListResponse {
@@ -83,13 +87,12 @@ export function toNodeApiError(node: INode, error: unknown, itemIndex?: number):
         .join('; ')
     : undefined;
 
-  const source: JsonObject = body
-    ? (body as JsonObject)
-    : { message: (error as Error)?.message ?? 'Unknown error' };
+  const message = apiMessage ?? (error as Error)?.message ?? NO_RESPONSE_MESSAGE;
+  const source: JsonObject = body ? (body as JsonObject) : { message };
 
   const apiError = new NodeApiError(node, source, {
-    message: apiMessage ?? (error as Error)?.message,
-    description: details || undefined,
+    message,
+    description: details || (body || status ? undefined : NO_RESPONSE_DESCRIPTION),
     httpCode: status ? String(status) : undefined,
     itemIndex,
   });

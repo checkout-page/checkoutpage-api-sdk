@@ -178,7 +178,9 @@ export class CheckoutPageTrigger implements INodeType {
           );
         }
         if (!events?.length) {
-          throw new NodeOperationError(this.getNode(), 'Choose at least one event');
+          throw new NodeOperationError(this.getNode(), 'No events chosen', {
+            description: "Choose at least one event in 'Events'.",
+          });
         }
 
         const secret = generateSecret();
@@ -208,7 +210,8 @@ export class CheckoutPageTrigger implements INodeType {
         if (!webhook?.id) {
           throw new NodeOperationError(
             this.getNode(),
-            'Checkout Page did not return the new webhook'
+            'Checkout Page did not return the new webhook',
+            { description: 'Deactivate the workflow and activate it again to retry.' }
           );
         }
 

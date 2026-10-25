@@ -26,14 +26,31 @@ const COLLECTION_PATHS: Record<string, string> = {
   form: '/v1/forms/',
 };
 
-const ID_PARAMETERS: Record<string, string> = {
-  booking: 'bookingId',
-  payment: 'paymentId',
-  customer: 'customerId',
-  subscription: 'subscriptionId',
-  event: 'pageId',
-  checkoutPage: 'pageId',
-  form: 'pageId',
+interface IdParameter {
+  name: string;
+  displayName: string;
+  singular: string;
+  locator: boolean;
+}
+
+const ID_PARAMETERS: Record<string, IdParameter> = {
+  booking: { name: 'bookingId', displayName: 'Booking ID', singular: 'booking', locator: false },
+  payment: { name: 'paymentId', displayName: 'Payment ID', singular: 'payment', locator: false },
+  customer: { name: 'customerId', displayName: 'Customer', singular: 'customer', locator: true },
+  subscription: {
+    name: 'subscriptionId',
+    displayName: 'Subscription ID',
+    singular: 'subscription',
+    locator: false,
+  },
+  event: { name: 'pageId', displayName: 'Event', singular: 'event', locator: true },
+  checkoutPage: {
+    name: 'pageId',
+    displayName: 'Checkout Page',
+    singular: 'checkout page',
+    locator: true,
+  },
+  form: { name: 'pageId', displayName: 'Form', singular: 'form', locator: true },
 };
 
 const RESOURCES_WITH_LIVEMODE_ON_GET = new Set(['booking', 'payment', 'subscription']);
@@ -70,16 +87,21 @@ function compact(values: IDataObject): IDataObject {
   return result;
 }
 
-const DATE_KEYS = ['createdAfter', 'createdBefore', 'redeemBy'];
+const DATE_LABELS: Record<string, string> = {
+  createdAfter: 'Created After',
+  createdBefore: 'Created Before',
+  redeemBy: 'Redeem By',
+};
 
 function withUtcDates(ctx: IExecuteFunctions, values: IDataObject, i: number): IDataObject {
   const result = { ...values };
-  for (const key of DATE_KEYS) {
+  for (const [key, label] of Object.entries(DATE_LABELS)) {
     const value = result[key];
     if (value === '' || value === undefined || value === null) continue;
     const iso = toUtcIso(value, ctx.getTimezone());
     if (!iso) {
-      throw new NodeOperationError(ctx.getNode(), `${key} is not a valid date: ${String(value)}`, {
+      throw new NodeOperationError(ctx.getNode(), `The value of '${label}' is not a date`, {
+        description: `Pick a date with the date picker, or enter one such as 2026-10-01 or 2026-10-01T09:00:00. The value given was "${String(value)}".`,
         itemIndex: i,
       });
     }
@@ -89,11 +111,18 @@ function withUtcDates(ctx: IExecuteFunctions, values: IDataObject, i: number): I
 }
 
 function itemPath(ctx: IExecuteFunctions, resource: string, i: number): string {
+  const parameter = ID_PARAMETERS[resource];
   const id = String(
-    ctx.getNodeParameter(ID_PARAMETERS[resource], i, '', { extractValue: true }) ?? ''
+    ctx.getNodeParameter(parameter.name, i, '', { extractValue: true }) ?? ''
   ).trim();
   if (!id) {
-    throw new NodeOperationError(ctx.getNode(), 'An ID is required', { itemIndex: i });
+    const article = /^[aeiou]/.test(parameter.singular) ? 'an' : 'a';
+    throw new NodeOperationError(ctx.getNode(), `'${parameter.displayName}' is empty`, {
+      description: parameter.locator
+        ? `Choose ${article} ${parameter.singular} from the list, or switch to 'By ID' and enter its ID.`
+        : `Enter the ID of the ${parameter.singular}, or map it from an earlier node.`,
+      itemIndex: i,
+    });
   }
   return `${COLLECTION_PATHS[resource]}${encodeURIComponent(id)}`;
 }
@@ -113,7 +142,8 @@ function bookingCreateBody(ctx: IExecuteFunctions, i: number): IDataObject {
     tickets[id] = ((tickets[id] as number) ?? 0) + Number(row.quantity ?? 1);
   }
   if (!Object.keys(tickets).length) {
-    throw new NodeOperationError(ctx.getNode(), 'Add at least one ticket to book', {
+    throw new NodeOperationError(ctx.getNode(), 'No tickets to book', {
+      description: "Add a row under 'Tickets' with a ticket type and a quantity.",
       itemIndex: i,
     });
   }
@@ -126,8 +156,9 @@ function bookingCreateBody(ctx: IExecuteFunctions, i: number): IDataObject {
     });
 
   if (!fields.length) {
-    throw new NodeOperationError(ctx.getNode(), 'Add at least the email field', {
-      description: "Booking needs a value for the event's email field, so add it under Fields.",
+    throw new NodeOperationError(ctx.getNode(), 'No field values to book with', {
+      description:
+        "Add the event's email field under 'Fields'. The booking's customer is created from it.",
       itemIndex: i,
     });
   }
@@ -201,7 +232,8 @@ function customerUpdateBody(ctx: IExecuteFunctions, i: number): IDataObject {
   const shipping = addressFrom(shippingAddress);
   if (shipping) body.shipping = { address: shipping };
   if (!Object.keys(body).length) {
-    throw new NodeOperationError(ctx.getNode(), 'Add at least one field to update', {
+    throw new NodeOperationError(ctx.getNode(), 'No fields to update', {
+      description: "Add at least one field under 'Update Fields'.",
       itemIndex: i,
     });
   }
@@ -216,7 +248,10 @@ export function planRequest(
 ): PlannedRequest {
   const collection = COLLECTION_PATHS[resource];
   if (!collection) {
-    throw new NodeOperationError(ctx.getNode(), `Unknown resource: ${resource}`, { itemIndex: i });
+    throw new NodeOperationError(ctx.getNode(), `The resource '${resource}' is not available`, {
+      description: "Choose a resource from the 'Resource' list.",
+      itemIndex: i,
+    });
   }
 
   if (operation === 'getAll') {
@@ -258,7 +293,7 @@ export function planRequest(
 
   throw new NodeOperationError(
     ctx.getNode(),
-    `The operation "${operation}" is not supported for ${resource}`,
-    { itemIndex: i }
+    `The operation '${operation}' is not available for this resource`,
+    { description: "Choose an operation from the 'Operation' list.", itemIndex: i }
   );
 }
