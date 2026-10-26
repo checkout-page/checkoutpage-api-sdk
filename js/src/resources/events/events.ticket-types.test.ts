@@ -73,6 +73,65 @@ describe('EventsResource ticketGroups.ticketTypes', () => {
     });
   });
 
+  it('creates a ticket type with a show/hide rule', async () => {
+    const params: CreateEventTicketTypeParams = {
+      name: 'Parking',
+      pricing: 'paid',
+      price: 1500,
+      showHideLogic: { enabled: true, comparison: 'is', ticketTypeIds: ['ticket_vip'] },
+    };
+
+    const mockResponse: CreateEventTicketTypeResponse = {
+      data: {
+        id: 'ticket_parking',
+        name: 'Parking',
+        showHideLogic: { enabled: true, comparison: 'is', ticketTypeIds: ['ticket_vip'] },
+      },
+    };
+
+    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+    const result = await eventsResource.ticketGroups.ticketTypes.create(
+      'event_123',
+      'group_123',
+      params
+    );
+
+    expect(result.data.showHideLogic).toEqual(params.showHideLogic);
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'POST',
+      path: '/v1/events/event_123/ticket-groups/group_123/ticket-types',
+      body: params,
+    });
+  });
+
+  it('clears a show/hide rule by sending null', async () => {
+    const params: UpdateEventTicketTypeParams = { showHideLogic: null };
+
+    const mockResponse: UpdateEventTicketTypeResponse = {
+      data: {
+        id: 'ticket_parking',
+        name: 'Parking',
+        showHideLogic: { enabled: false, comparison: 'is', ticketTypeIds: [] },
+      },
+    };
+
+    vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+    await eventsResource.ticketGroups.ticketTypes.update(
+      'event_123',
+      'group_123',
+      'ticket_parking',
+      params
+    );
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: 'PATCH',
+      path: '/v1/events/event_123/ticket-groups/group_123/ticket-types/ticket_parking',
+      body: { showHideLogic: null },
+    });
+  });
+
   it('gets a ticket type by id', async () => {
     const mockResponse: EventTicketTypeResponse = {
       data: {

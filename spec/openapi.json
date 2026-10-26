@@ -6054,6 +6054,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -7372,6 +7375,44 @@
           "formLayout"
         ],
         "type": "object"
+      },
+      "EventTicketTypeShowHideLogicInput": {
+        "description": "Shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event, e.g. show \"Parking pass\" only while \"VIP\" or \"Weekend pass\" is selected. Ticket types from any ticket group on the event can be named. This only changes what the checkout displays: it is not a security gate, and the API never rejects an order because of it. A named ticket type that is later deleted, archived or disabled counts as never selected, and the rule stays in force. Sent whole: it replaces the stored rule. Pass `null` or `{ \"enabled\": false }` to remove it.",
+        "properties": {
+          "comparison": {
+            "default": "is",
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` removes the rule: the ticket type shows as usual, and `comparison` and `ticketTypeIds` are ignored.",
+            "example": true,
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "The `key` of each ticket type the rule watches, as set on `ticketGroups[].ticketTypes[].key` in this request (any group). Keys become the new ticket type IDs when the event is saved, and responses return IDs. The rule matches while any of them is selected. A ticket type cannot name its own key, and a value that is not the key of another ticket type in this request is rejected. With `enabled: true` and no keys the rule hides nothing.",
+            "example": [
+              "vip"
+            ],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
       },
       "Field": {
         "properties": {
@@ -62237,6 +62278,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/EventTicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -62524,6 +62568,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogic"
+          },
           "showTicketSaleDates": {
             "description": "Whether sale start/end dates are shown to customers.",
             "type": [
@@ -62568,6 +62615,84 @@
           "name"
         ],
         "type": "object"
+      },
+      "TicketTypeShowHideLogic": {
+        "description": "Rule that shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event. Display only: the API never rejects an order because of it.",
+        "properties": {
+          "comparison": {
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` means the ticket type shows as usual.",
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "IDs of the ticket types the rule watches. Can include a ticket type that has since been deleted, archived or disabled: it counts as never selected.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled",
+          "comparison",
+          "ticketTypeIds"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "TicketTypeShowHideLogicInput": {
+        "description": "Shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event, e.g. show \"Parking pass\" only while \"VIP\" or \"Weekend pass\" is selected. Ticket types from any ticket group on the event can be named. This only changes what the checkout displays: it is not a security gate, and the API never rejects an order because of it. A named ticket type that is later deleted, archived or disabled counts as never selected, and the rule stays in force. Sent whole: it replaces the stored rule. Pass `null` or `{ \"enabled\": false }` to remove it.",
+        "properties": {
+          "comparison": {
+            "default": "is",
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` removes the rule: the ticket type shows as usual, and `comparison` and `ticketTypeIds` are ignored.",
+            "example": true,
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "IDs of other ticket types on the same event, from `ticketGroups[].ticketTypes[].id`. The rule matches while any of them is selected. A ticket type cannot name itself, and an ID that is not a ticket type on this event is rejected. With `enabled: true` and no IDs the rule hides nothing.",
+            "example": [
+              "507f1f77bcf86cd799439014"
+            ],
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
       },
       "UniqueIdentifier": {
         "description": "Unique identifier for the ticket.",
@@ -66981,6 +67106,9 @@
               "boolean",
               "null"
             ]
+          },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogicInput"
           },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
