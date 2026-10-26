@@ -1,7 +1,8 @@
 name: Publish n8n node
 
 # n8n only verifies community nodes published from GitHub Actions with an npm
-# provenance statement, so this is the only supported way to release n8n/.
+# provenance statement, so this is the only supported way to release n8n/. npm trusted
+# publishing authenticates the run (no token); the publish-n8n environment requires a reviewer.
 #
 # The bump and tag land on main in one atomic push before npm publish. If a later step fails,
 # re-run with the same version: it resumes from the tag and does only what is missing.
@@ -21,6 +22,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: publish-n8n
     permissions:
       contents: write
       id-token: write
@@ -135,8 +137,6 @@ jobs:
       # `npm publish` with provenance (NPM_CONFIG_PROVENANCE=true).
       - name: Publish to npm with provenance
         if: steps.plan.outputs.publish == 'true'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run release
 
       - name: Create GitHub release

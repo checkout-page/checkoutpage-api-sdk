@@ -35,7 +35,9 @@ before changing any of these.
 - **`eslint.config.mjs` must stay byte-for-byte the scaffold's.** `"strict": true` in the `n8n`
   section of `package.json` makes `n8n-node lint` fail if it changes.
 - **Publish only from GitHub Actions with npm provenance** (required since May 1, 2026). Use
-  `.github/workflows/publish-n8n.yml`; `prepublishOnly` blocks a plain `npm publish`.
+  `.github/workflows/publish-n8n.yml`; `prepublishOnly` blocks a plain `npm publish`. It runs
+  in the `publish-n8n` environment (a reviewer approves each run) and authenticates with npm
+  trusted publishing, so there is no npm token secret.
 - Package name starts with `n8n-nodes-`, keywords include `n8n-community-node-package`, license
   MIT, and `repository` points at this public repo with `directory: "n8n"`.
 - Errors thrown from shipped code are `NodeApiError` (API failures, built by `toNodeApiError`
