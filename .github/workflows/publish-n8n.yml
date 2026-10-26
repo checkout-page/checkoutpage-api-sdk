@@ -53,8 +53,6 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-          cache-dependency-path: n8n/package-lock.json
 
       - name: Install npm
         run: npm install -g npm@11.20.0
