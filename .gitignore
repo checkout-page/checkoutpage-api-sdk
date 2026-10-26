@@ -21,6 +21,10 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# --- n8n (n8n/) ---
+# dist/ and node_modules/ are covered above.
+n8n/*.tgz
+
 # --- Rust (cli/) ---
 target/
 
