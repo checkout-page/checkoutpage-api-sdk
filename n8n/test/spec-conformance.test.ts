@@ -23,6 +23,7 @@ import {
   checkBodyKeys,
   declaredBodyPaths,
   findOperation,
+  isDeprecatedQueryParameter,
   operations,
   queryParameters,
   validateBody,
@@ -71,6 +72,8 @@ function conformance(request: SentRequest): string[] {
   const errors: string[] = [];
   for (const [name, value] of Object.entries(request.qs)) {
     errors.push(...validateQueryValue(op, name, value));
+    if (isDeprecatedQueryParameter(op, name))
+      errors.push(`query.${name} is deprecated in the spec`);
   }
   for (const parameter of queryParameters(op)) {
     if (parameter.required && !(parameter.name in request.qs)) {
@@ -81,8 +84,9 @@ function conformance(request: SentRequest): string[] {
     if (!op.hasBody) {
       errors.push('sends a body, but the spec takes none');
     } else {
-      const { unknown } = checkBodyKeys(op, request.body);
+      const { unknown, deprecated } = checkBodyKeys(op, request.body);
       errors.push(...unknown.map((path) => `body${path} is not a property in the spec`));
+      errors.push(...deprecated.map((path) => `body${path} is deprecated in the spec`));
       errors.push(...validateBody(op, request.body));
     }
   }
@@ -286,9 +290,13 @@ const WRITE_FIXTURES: Record<string, WriteFixtures> = {
           appliesToSetupFee: true,
           appliesToTicketFees: true,
           maxRedemptions: 50,
-          pageIds: `${IDS[0]}, ${IDS[1]}`,
           redeemBy: '2026-12-31T23:59:00',
-          ticketTypeIds: IDS[2],
+        },
+        rules: {
+          rule: [
+            { pageId: IDS[0], appliesTo: 'prices', priceIds: `${IDS[1]}, ${IDS[2]}` },
+            { pageId: IDS[3], appliesTo: 'tickets', ticketTypeIds: IDS[4] },
+          ],
         },
       },
       {
@@ -303,9 +311,26 @@ const WRITE_FIXTURES: Record<string, WriteFixtures> = {
           appliesToSetupFee: false,
           appliesToTicketFees: false,
           maxRedemptions: 1,
-          pageIds: IDS[0],
           redeemBy: '2027-01-01',
-          ticketTypeIds: `${IDS[2]},${IDS[3]}`,
+        },
+        rules: {
+          rule: [
+            { pageId: IDS[3], appliesTo: 'tickets', ticketTypeIds: `${IDS[1]},${IDS[2]}` },
+            { pageId: IDS[0], appliesTo: 'prices', priceIds: '' },
+          ],
+        },
+      },
+      {
+        label: 'Everyone',
+        code: 'EVERYONE',
+        discountType: 'percent',
+        percentOff: 100,
+        duration: 'forever',
+        rules: {
+          rule: [
+            { pageId: IDS[0], appliesTo: 'wholeOrder' },
+            { pageId: IDS[3], appliesTo: 'wholeOrder' },
+          ],
         },
       },
     ],
@@ -382,8 +407,20 @@ const pathLabel = (path: Path) => path.join('.');
 const writeLeaves = (resource: string, operation: string) =>
   opProperties(resource, operation).flatMap((prop) => leaves(prop));
 
+function nested(prop: INodeProperties): INodeProperties[] {
+  if (prop.type === 'collection') return (prop.options as INodeProperties[]).flatMap(nested);
+  if (prop.type === 'fixedCollection') {
+    return (prop.options as INodePropertyCollection[]).flatMap((group) =>
+      group.values.flatMap(nested)
+    );
+  }
+  return [prop];
+}
+
+const allProperties = properties.flatMap((prop) => [prop, ...nested(prop)]);
+
 const drivesDisplay = (name: string) =>
-  properties.some((p) => p.displayOptions?.show && name in p.displayOptions.show);
+  allProperties.some((p) => p.displayOptions?.show && name in p.displayOptions.show);
 
 const allFixtures = (resource: string, operation: string) => {
   const fixtures = WRITE_FIXTURES[`${resource} ${operation}`];
@@ -560,6 +597,17 @@ describe('spec conformance: the node only sends what the seller API spec accepts
       .map(({ resource, operation }) => `${resource} ${operation}`)
       .filter((key) => !WRITE_FIXTURES[key]?.required.length || !WRITE_FIXTURES[key]?.full.length);
     expect(missing, 'add required and full fixtures to WRITE_FIXTURES').toEqual([]);
+  });
+
+  it('reports a deprecated body field with its path', () => {
+    const op = findOperation('POST', '/v1/coupons/')!;
+    const body = { label: 'x', code: 'X', duration: 'once', percentOff: 10, pageIds: [ID] };
+    expect(
+      conformance({ label: 'probe', method: 'POST', path: '/v1/coupons/', qs: {}, body })
+    ).toEqual(['probe: POST /v1/coupons/ body/pageIds is deprecated in the spec']);
+    expect(
+      checkBodyKeys(op, { rules: [{ pageId: ID, appliesTo: 'wholeOrder' }] }).deprecated
+    ).toEqual([]);
   });
 
   describe.each(readOperations)('$resource $operation', ({ resource, operation }) => {
@@ -759,6 +807,13 @@ describe('spec conformance: the node only sends what the seller API spec accepts
             "fields[].values",
             "queryParameters",
             "queryParameters.*",
+          ],
+        },
+        "POST /v1/coupons/": {
+          "body": [
+            "pageIds",
+            "rules[].bumpProductIds",
+            "ticketTypeIds",
           ],
         },
         "POST /v1/webhooks/": {

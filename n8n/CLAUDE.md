@@ -54,6 +54,8 @@ before changing any of these.
   query and body against `spec/openapi.json` with ajv, rejecting undeclared body keys. A spec sync
   PR is expected to fail it when the node falls out of line: fix the node, never loosen the test.
   Its inline snapshot lists spec fields the node never sends; update it when that list changes.
+- The node never sends a property or query parameter the spec marks `deprecated: true`; the
+  conformance test fails if it does. Move to the replacement (coupon `pageIds` became `rules`).
 - Lists use the API's cursor: `limit` up to 100, then `starting_after` set to the last id
   while `has_more` is true (`apiRequestList`).
 - The action node is programmatic (`execute`), not declarative. Declarative routing can't be

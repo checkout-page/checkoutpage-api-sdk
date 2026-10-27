@@ -577,7 +577,7 @@ describe('coupon create', () => {
     });
   });
 
-  it('creates a repeating fixed-amount coupon limited to pages and ticket types', async () => {
+  it('creates a repeating fixed-amount coupon with a rule for a checkout page and an event', async () => {
     const { http } = await run(
       {
         resource: 'coupon',
@@ -589,11 +589,16 @@ describe('coupon create', () => {
         currency: 'gbp',
         duration: 'repeating',
         durationInMonths: 3,
+        rules: {
+          rule: [
+            { pageId: ' pg_1 ', appliesTo: 'prices', priceIds: 'pr_1, pr_2,' },
+            { pageId: 'ev_1', appliesTo: 'tickets', ticketTypeIds: 'tt_1' },
+            { pageId: 'ev_2', appliesTo: 'wholeOrder' },
+          ],
+        },
         additionalFields: {
           maxRedemptions: 50,
           redeemBy: '2026-12-31T23:59:59.000Z',
-          pageIds: 'pg_1, pg_2,',
-          ticketTypeIds: 'tt_1',
           appliesToSetupFee: true,
           appliesToTicketFees: false,
         },
@@ -609,11 +614,91 @@ describe('coupon create', () => {
       currency: 'gbp',
       maxRedemptions: 50,
       redeemBy: '2026-12-31T23:59:59.000Z',
-      pageIds: ['pg_1', 'pg_2'],
-      ticketTypeIds: ['tt_1'],
       appliesToSetupFee: true,
       appliesToTicketFees: false,
+      rules: [
+        { pageId: 'pg_1', appliesTo: 'prices', priceIds: ['pr_1', 'pr_2'] },
+        { pageId: 'ev_1', appliesTo: 'tickets', ticketTypeIds: ['tt_1'] },
+        { pageId: 'ev_2', appliesTo: 'wholeOrder' },
+      ],
     });
+  });
+
+  it('sends only the ID list that matches Applies To, and none when it is empty', async () => {
+    const { http } = await run(
+      {
+        resource: 'coupon',
+        operation: 'create',
+        label: 'Members',
+        code: 'MEMBERS',
+        discountType: 'percent',
+        percentOff: 10,
+        duration: 'once',
+        rules: {
+          rule: [
+            { pageId: 'pg_1', appliesTo: 'wholeOrder', priceIds: 'pr_1', ticketTypeIds: 'tt_1' },
+            { pageId: 'pg_2', appliesTo: 'prices', priceIds: ' ', ticketTypeIds: 'tt_1' },
+            { pageId: 'ev_1', appliesTo: 'tickets', priceIds: 'pr_1', ticketTypeIds: '' },
+          ],
+        },
+        additionalFields: {},
+      },
+      [{ data: {} }]
+    );
+    expect((requestOptions(http).body as IDataObject).rules).toEqual([
+      { pageId: 'pg_1', appliesTo: 'wholeOrder' },
+      { pageId: 'pg_2', appliesTo: 'prices' },
+      { pageId: 'ev_1', appliesTo: 'tickets' },
+    ]);
+  });
+
+  it('sends no rules when none are added', async () => {
+    const { http } = await run(
+      {
+        resource: 'coupon',
+        operation: 'create',
+        label: 'Everyone',
+        code: 'EVERYONE',
+        discountType: 'percent',
+        percentOff: 10,
+        duration: 'once',
+        rules: { rule: [] },
+        additionalFields: {},
+      },
+      [{ data: {} }]
+    );
+    expect(requestOptions(http).body).toEqual({
+      label: 'Everyone',
+      code: 'EVERYONE',
+      duration: 'once',
+      percentOff: 10,
+    });
+  });
+
+  it('refuses a rule with no page', async () => {
+    const { context, http } = executeContext(
+      {
+        resource: 'coupon',
+        operation: 'create',
+        label: 'Members',
+        code: 'MEMBERS',
+        discountType: 'percent',
+        percentOff: 10,
+        duration: 'once',
+        rules: {
+          rule: [
+            { pageId: 'pg_1', appliesTo: 'wholeOrder' },
+            { pageId: ' ', appliesTo: 'tickets' },
+          ],
+        },
+        additionalFields: {},
+      },
+      []
+    );
+    const error = await node.execute.call(context).catch((e) => e);
+    expect(error).toBeInstanceOf(NodeOperationError);
+    expect(error.message).toBe("Rule 2 has no 'Page ID'");
+    expect(http).not.toHaveBeenCalled();
   });
 });
 

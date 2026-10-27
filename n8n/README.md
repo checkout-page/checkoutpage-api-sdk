@@ -69,6 +69,22 @@ ID. Then add:
 Under **Additional fields** you can make the booking complimentary (no charge), record it as
 paid by invoice or cash on delivery, or apply a coupon.
 
+### Create a coupon
+
+**Coupon > Create** makes a percentage or fixed-amount coupon. With no rules, it works on every
+checkout page and event and discounts the whole order. To limit where it works, add a row under
+**Rules** for each checkout page or event, with its ID and what the coupon discounts there:
+
+- **Whole order**: everything in the order. On a checkout page that is the product at any price
+  and every order bump. On an event it is every ticket and add-on.
+- **Prices** (checkout pages): works when the customer buys one of the prices in **Price IDs**,
+  and discounts that price only. Leave **Price IDs** empty for every price.
+- **Tickets** (events): works when the customer buys one of the ticket types in **Ticket type
+  IDs**, and discounts those tickets only. Leave **Ticket type IDs** empty for every ticket type.
+
+Setup fees and ticket fees are discounted only when **Applies to setup fee** or **Applies to
+ticket fees** is on, under **Additional fields**.
+
 ## The trigger
 
 Pick one or more events, such as **Booking Created** or **Payment Paid**. When you activate the

@@ -165,6 +165,77 @@ export const couponDescription: INodeProperties[] = [
     description: 'The number of months the coupon applies for',
   },
   {
+    displayName: 'Rules',
+    name: 'rules',
+    type: 'fixedCollection',
+    placeholder: 'Add Rule',
+    typeOptions: { multipleValues: true },
+    default: {},
+    displayOptions: show('coupon', ['create']),
+    description:
+      'Where the coupon works and what it discounts, one rule for each checkout page or event. With no rules, the coupon works on every checkout page and event and discounts the whole order.',
+    options: [
+      {
+        displayName: 'Rule',
+        name: 'rule',
+        values: [
+          {
+            displayName: 'Page ID',
+            name: 'pageId',
+            type: 'string',
+            required: true,
+            default: '',
+            description: 'The ID of the checkout page or event the coupon works on',
+          },
+          {
+            displayName: 'Applies To',
+            name: 'appliesTo',
+            type: 'options',
+            default: 'wholeOrder',
+            options: [
+              {
+                name: 'Prices (Checkout Pages)',
+                value: 'prices',
+                description:
+                  'For a checkout page. Works when the customer buys one of the chosen prices, and discounts that price only.',
+              },
+              {
+                name: 'Tickets (Events)',
+                value: 'tickets',
+                description:
+                  'For an event. Works when the customer buys one of the chosen ticket types, and discounts those tickets only.',
+              },
+              {
+                name: 'Whole Order',
+                value: 'wholeOrder',
+                description:
+                  'Discounts the whole order: on a checkout page, the product at any price and every order bump; on an event, every ticket and add-on',
+              },
+            ],
+          },
+          {
+            displayName: 'Price IDs',
+            name: 'priceIds',
+            type: 'string',
+            default: '',
+            displayOptions: { show: { appliesTo: ['prices'] } },
+            description:
+              "IDs of prices of the checkout page's product, separated by commas. These are Checkout Page price IDs, not Stripe ones. Leave empty for every price, including prices added later.",
+          },
+          {
+            displayName: 'Ticket Type IDs',
+            name: 'ticketTypeIds',
+            type: 'string',
+            default: '',
+            displayOptions: { show: { appliesTo: ['tickets'] } },
+            description:
+              "IDs of the event's ticket types, separated by commas. Leave empty for every ticket type, including ones added later.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     displayName: 'Additional Fields',
     name: 'additionalFields',
     type: 'collection',
@@ -196,27 +267,11 @@ export const couponDescription: INodeProperties[] = [
           'The total number of times this coupon can be used. It does not limit how often one customer uses it.',
       },
       {
-        displayName: 'Page IDs',
-        name: 'pageIds',
-        type: 'string',
-        default: '',
-        description:
-          'IDs of the checkout pages, events or forms this coupon can be used on, separated by commas',
-      },
-      {
         displayName: 'Redeem By',
         name: 'redeemBy',
         type: 'dateTime',
         default: '',
         description: 'The coupon must be used before this date and time',
-      },
-      {
-        displayName: 'Ticket Type IDs',
-        name: 'ticketTypeIds',
-        type: 'string',
-        default: '',
-        description:
-          'IDs of the ticket types this coupon can be used with, separated by commas. They must belong to one of the pages in Page IDs.',
       },
     ],
   },
