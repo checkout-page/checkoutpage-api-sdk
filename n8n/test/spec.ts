@@ -8,6 +8,7 @@ interface Parameter {
   name: string;
   in: string;
   required?: boolean;
+  deprecated?: boolean;
   schema?: Schema;
   pointer: string;
 }
@@ -151,8 +152,12 @@ function isPlainObject(value: unknown): value is Schema {
 
 interface Walk {
   unknown: string[];
+  deprecated: string[];
   sent: Set<string>;
 }
+
+const isDeprecated = (schemas: Schema[]) =>
+  schemas.some((schema) => expand(schema).some((branch) => branch.deprecated === true));
 
 /**
  * ajv only rejects extra keys where the spec sets `additionalProperties: false`, which many
@@ -190,6 +195,7 @@ function walk(schemas: Schema[], data: unknown, path: string, shape: string, res
     if (named.length) {
       const childShape = shape ? `${shape}.${key}` : key;
       result.sent.add(childShape);
+      if (isDeprecated(named)) result.deprecated.push(childPath);
       walk(named, value, childPath, childShape, result);
     } else if (mapped.length || patterned.length) {
       const childShape = shape ? `${shape}.*` : '*';
@@ -204,10 +210,15 @@ function walk(schemas: Schema[], data: unknown, path: string, shape: string, res
 export function checkBodyKeys(
   op: SpecOperation,
   body: unknown
-): { unknown: string[]; sent: string[] } {
-  const result: Walk = { unknown: [], sent: new Set() };
+): { unknown: string[]; deprecated: string[]; sent: string[] } {
+  const result: Walk = { unknown: [], deprecated: [], sent: new Set() };
   walk([{ $ref: bodySchemaPointer(op) }], body, '', '', result);
-  return { unknown: result.unknown, sent: [...result.sent] };
+  return { unknown: result.unknown, deprecated: result.deprecated, sent: [...result.sent] };
+}
+
+export function isDeprecatedQueryParameter(op: SpecOperation, name: string): boolean {
+  const parameter = queryParameters(op).find((p) => p.name === name);
+  return Boolean(parameter && (parameter.deprecated || isDeprecated([parameter.schema ?? {}])));
 }
 
 export function declaredBodyPaths(op: SpecOperation): string[] {

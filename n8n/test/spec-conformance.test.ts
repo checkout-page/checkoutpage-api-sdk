@@ -23,6 +23,7 @@ import {
   checkBodyKeys,
   declaredBodyPaths,
   findOperation,
+  isDeprecatedQueryParameter,
   operations,
   queryParameters,
   validateBody,
@@ -71,6 +72,8 @@ function conformance(request: SentRequest): string[] {
   const errors: string[] = [];
   for (const [name, value] of Object.entries(request.qs)) {
     errors.push(...validateQueryValue(op, name, value));
+    if (isDeprecatedQueryParameter(op, name))
+      errors.push(`query.${name} is deprecated in the spec`);
   }
   for (const parameter of queryParameters(op)) {
     if (parameter.required && !(parameter.name in request.qs)) {
@@ -81,8 +84,9 @@ function conformance(request: SentRequest): string[] {
     if (!op.hasBody) {
       errors.push('sends a body, but the spec takes none');
     } else {
-      const { unknown } = checkBodyKeys(op, request.body);
+      const { unknown, deprecated } = checkBodyKeys(op, request.body);
       errors.push(...unknown.map((path) => `body${path} is not a property in the spec`));
+      errors.push(...deprecated.map((path) => `body${path} is deprecated in the spec`));
       errors.push(...validateBody(op, request.body));
     }
   }
@@ -593,6 +597,17 @@ describe('spec conformance: the node only sends what the seller API spec accepts
       .map(({ resource, operation }) => `${resource} ${operation}`)
       .filter((key) => !WRITE_FIXTURES[key]?.required.length || !WRITE_FIXTURES[key]?.full.length);
     expect(missing, 'add required and full fixtures to WRITE_FIXTURES').toEqual([]);
+  });
+
+  it('reports a deprecated body field with its path', () => {
+    const op = findOperation('POST', '/v1/coupons/')!;
+    const body = { label: 'x', code: 'X', duration: 'once', percentOff: 10, pageIds: [ID] };
+    expect(
+      conformance({ label: 'probe', method: 'POST', path: '/v1/coupons/', qs: {}, body })
+    ).toEqual(['probe: POST /v1/coupons/ body/pageIds is deprecated in the spec']);
+    expect(
+      checkBodyKeys(op, { rules: [{ pageId: ID, appliesTo: 'wholeOrder' }] }).deprecated
+    ).toEqual([]);
   });
 
   describe.each(readOperations)('$resource $operation', ({ resource, operation }) => {
