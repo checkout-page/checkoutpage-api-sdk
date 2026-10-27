@@ -2017,6 +2017,8 @@
             "type": "number"
           },
           "pageIds": {
+            "deprecated": true,
+            "description": "Deprecated: use `rules`. The checkout pages and events this coupon can be used on, each discounting the whole order. Accepted only without `rules`. In responses, the pages named by `rules`.",
             "items": {
               "type": "string"
             },
@@ -2034,6 +2036,59 @@
             "format": "date-time",
             "type": "string"
           },
+          "rules": {
+            "description": "Where the coupon works and what it discounts, one rule per page. A coupon works on a page when any of its rules names that page, and on each page the rules are combined with OR (an event cannot mix `tickets` and `ticketsAndAddOns` rules). Omit `rules` (and `pageIds`), or send an empty list, for a coupon that discounts the whole order on every checkout page and event.",
+            "items": {
+              "properties": {
+                "appliesTo": {
+                  "description": "What the coupon discounts on the page. Checkout pages: `wholeOrder` (the main product at any price and every order bump), `prices` (applies when the customer buys one of `priceIds`, discounting that price only), `pricesAndBumps` (applies only when the customer buys one of `priceIds` and one of `bumpProductIds`, discounting both). Events: `wholeOrder` (every ticket and add-on), `tickets` (applies when the customer buys one of `ticketTypeIds`, discounting those tickets only), `ticketsAndAddOns` (applies only when the customer buys one of `ticketTypeIds` and one of `bumpProductIds`, discounting both). Setup fees and ticket fees follow `appliesToSetupFee` and `appliesToTicketFees`.",
+                  "enum": [
+                    "wholeOrder",
+                    "prices",
+                    "pricesAndBumps",
+                    "tickets",
+                    "ticketsAndAddOns"
+                  ],
+                  "example": "prices",
+                  "type": "string"
+                },
+                "bumpProductIds": {
+                  "description": "Products of order bumps (checkout pages) or add-ons (events) on the page, only for `pricesAndBumps` and `ticketsAndAddOns`. An empty list or no list means every bump or add-on on the page, including ones added later; the coupon still needs one of them bought.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "pageId": {
+                  "description": "The checkout page or event this rule applies to.",
+                  "type": "string"
+                },
+                "priceIds": {
+                  "description": "Prices of the page's main product, only for `prices` and `pricesAndBumps`. An empty list or no list means every price of the main product, including prices added later. These are the `id`s of a product's `prices`, not Stripe price ids.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "ticketTypeIds": {
+                  "description": "Ticket types of the event, only for `tickets` and `ticketsAndAddOns`. An empty list or no list means every ticket type of the event, including ticket types added later.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "pageId",
+                "appliesTo",
+                "priceIds",
+                "ticketTypeIds",
+                "bumpProductIds"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "sellerId": {
             "type": "string"
           },
@@ -2042,7 +2097,8 @@
             "type": "string"
           },
           "ticketTypeIds": {
-            "description": "List of ticket type IDs that this coupon can be used with.",
+            "deprecated": true,
+            "description": "Deprecated: use `rules`. Ticket types of events in `pageIds`: on such an event the coupon discounts only those tickets. Accepted only without `rules`. In responses, every ticket type named by `rules`.",
             "example": [
               "67ee075004de439ab0b675b6",
               "67fcbdac6a91c25ef2d3534a"
@@ -2076,6 +2132,7 @@
           "timesRedeemed",
           "deleted",
           "sellerId",
+          "rules",
           "createdAt",
           "updatedAt"
         ],
@@ -16514,6 +16571,8 @@
                     "type": "number"
                   },
                   "pageIds": {
+                    "deprecated": true,
+                    "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                     "items": {
                       "allOf": [
                         {
@@ -71075,7 +71134,8 @@
                     "type": "number"
                   },
                   "pageIds": {
-                    "description": "A list of pageIds that this coupon can be used within.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. The checkout pages and events this coupon can be used on, each discounting the whole order. Accepted only without `rules`. In responses, the pages named by `rules`.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -71104,8 +71164,99 @@
                     "format": "date-time",
                     "type": "string"
                   },
+                  "rules": {
+                    "description": "Where the coupon works and what it discounts, one rule per page. A coupon works on a page when any of its rules names that page, and on each page the rules are combined with OR (an event cannot mix `tickets` and `ticketsAndAddOns` rules). Omit `rules` (and `pageIds`), or send an empty list, for a coupon that discounts the whole order on every checkout page and event.",
+                    "example": [
+                      {
+                        "appliesTo": "pricesAndBumps",
+                        "bumpProductIds": [],
+                        "pageId": "67ee075004de439ab0b675b6",
+                        "priceIds": [
+                          "67fcbdac6a91c25ef2d3534a"
+                        ]
+                      }
+                    ],
+                    "items": {
+                      "properties": {
+                        "appliesTo": {
+                          "description": "What the coupon discounts on the page. Checkout pages: `wholeOrder` (the main product at any price and every order bump), `prices` (applies when the customer buys one of `priceIds`, discounting that price only), `pricesAndBumps` (applies only when the customer buys one of `priceIds` and one of `bumpProductIds`, discounting both). Events: `wholeOrder` (every ticket and add-on), `tickets` (applies when the customer buys one of `ticketTypeIds`, discounting those tickets only), `ticketsAndAddOns` (applies only when the customer buys one of `ticketTypeIds` and one of `bumpProductIds`, discounting both). Setup fees and ticket fees follow `appliesToSetupFee` and `appliesToTicketFees`.",
+                          "enum": [
+                            "wholeOrder",
+                            "prices",
+                            "pricesAndBumps",
+                            "tickets",
+                            "ticketsAndAddOns"
+                          ],
+                          "example": "prices",
+                          "type": "string"
+                        },
+                        "bumpProductIds": {
+                          "description": "Products of order bumps (checkout pages) or add-ons (events) on the page, only for `pricesAndBumps` and `ticketsAndAddOns`. An empty list or no list means every bump or add-on on the page, including ones added later; the coupon still needs one of them bought.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "pageId": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "The checkout page or event this rule applies to."
+                            }
+                          ]
+                        },
+                        "priceIds": {
+                          "description": "Prices of the page's main product, only for `prices` and `pricesAndBumps`. An empty list or no list means every price of the main product, including prices added later. These are the `id`s of a product's `prices`, not Stripe price ids.",
+                          "example": [
+                            "67fcbdac6a91c25ef2d3534a"
+                          ],
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "ticketTypeIds": {
+                          "description": "Ticket types of the event, only for `tickets` and `ticketsAndAddOns`. An empty list or no list means every ticket type of the event, including ticket types added later.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "pageId",
+                        "appliesTo"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
                   "ticketTypeIds": {
-                    "description": "List of ticket type IDs that this coupon can be used with. Ticket ticket ids must belong to a page specified in the `pageIds` array.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. Ticket types of events in `pageIds`: on such an event the coupon discounts only those tickets. Accepted only without `rules`. In responses, every ticket type named by `rules`.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -71226,7 +71377,7 @@
     },
     "/v1/coupons/:couponId": {
       "patch": {
-        "description": "Updates a coupon. Ticket types are scoped through pages, so any ticketTypeIds must belong to the pageIds sent in the same request, or — when pageIds are omitted — to the pages already on the coupon.",
+        "description": "Updates a coupon. `rules` replaces every stored rule, and an empty list makes the coupon work everywhere. `pageIds` and `ticketTypeIds` are accepted only without `rules` and replace the rules with whole-order rules (or tickets rules on events with picked ticket types); `ticketTypeIds` sent without `pageIds` must belong to the pages already on the coupon. A coupon whose rules go beyond one `wholeOrder` or `tickets` rule per page returns a 400 for `pageIds` or `ticketTypeIds`: send `rules` instead.",
         "operationId": "coupons/update",
         "parameters": [
           {
@@ -71266,7 +71417,8 @@
                     ]
                   },
                   "pageIds": {
-                    "description": "A list of pageIds that this coupon can be used within.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. The checkout pages and events this coupon can be used on, each discounting the whole order. Accepted only without `rules`. In responses, the pages named by `rules`. Replaces the stored rules with whole-order rules for these pages; an empty array makes the coupon work everywhere.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -71286,8 +71438,99 @@
                       "null"
                     ]
                   },
+                  "rules": {
+                    "description": "Where the coupon works and what it discounts, one rule per page. A coupon works on a page when any of its rules names that page, and on each page the rules are combined with OR (an event cannot mix `tickets` and `ticketsAndAddOns` rules). Omit `rules` (and `pageIds`), or send an empty list, for a coupon that discounts the whole order on every checkout page and event. Replaces every stored rule; an empty list makes the coupon work everywhere.",
+                    "example": [
+                      {
+                        "appliesTo": "pricesAndBumps",
+                        "bumpProductIds": [],
+                        "pageId": "67ee075004de439ab0b675b6",
+                        "priceIds": [
+                          "67fcbdac6a91c25ef2d3534a"
+                        ]
+                      }
+                    ],
+                    "items": {
+                      "properties": {
+                        "appliesTo": {
+                          "description": "What the coupon discounts on the page. Checkout pages: `wholeOrder` (the main product at any price and every order bump), `prices` (applies when the customer buys one of `priceIds`, discounting that price only), `pricesAndBumps` (applies only when the customer buys one of `priceIds` and one of `bumpProductIds`, discounting both). Events: `wholeOrder` (every ticket and add-on), `tickets` (applies when the customer buys one of `ticketTypeIds`, discounting those tickets only), `ticketsAndAddOns` (applies only when the customer buys one of `ticketTypeIds` and one of `bumpProductIds`, discounting both). Setup fees and ticket fees follow `appliesToSetupFee` and `appliesToTicketFees`.",
+                          "enum": [
+                            "wholeOrder",
+                            "prices",
+                            "pricesAndBumps",
+                            "tickets",
+                            "ticketsAndAddOns"
+                          ],
+                          "example": "prices",
+                          "type": "string"
+                        },
+                        "bumpProductIds": {
+                          "description": "Products of order bumps (checkout pages) or add-ons (events) on the page, only for `pricesAndBumps` and `ticketsAndAddOns`. An empty list or no list means every bump or add-on on the page, including ones added later; the coupon still needs one of them bought.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "pageId": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "The checkout page or event this rule applies to."
+                            }
+                          ]
+                        },
+                        "priceIds": {
+                          "description": "Prices of the page's main product, only for `prices` and `pricesAndBumps`. An empty list or no list means every price of the main product, including prices added later. These are the `id`s of a product's `prices`, not Stripe price ids.",
+                          "example": [
+                            "67fcbdac6a91c25ef2d3534a"
+                          ],
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "ticketTypeIds": {
+                          "description": "Ticket types of the event, only for `tickets` and `ticketsAndAddOns`. An empty list or no list means every ticket type of the event, including ticket types added later.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "pageId",
+                        "appliesTo"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
                   "ticketTypeIds": {
-                    "description": "A list of ticketTypeIds that this coupon can be used with. Empty array will clear the list.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. Ticket types of events in `pageIds`: on such an event the coupon discounts only those tickets. Accepted only without `rules`. In responses, every ticket type named by `rules`. Without `pageIds`, checked against the pages already on the coupon.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -83761,6 +84004,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -89590,6 +89835,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -90428,6 +90675,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -91266,6 +91515,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -92104,6 +92355,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -92942,6 +93195,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -93780,6 +94035,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -94618,6 +94875,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -95456,6 +95715,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {

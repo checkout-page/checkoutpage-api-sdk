@@ -92,6 +92,10 @@ type CouponCreateArgs = NonNullable<
   operations['coupons/create']['requestBody']
 >['content']['application/json'];
 
+export type CouponRuleInput = NonNullable<CouponCreateArgs['rules']>[number];
+
+export type CouponRule = NonNullable<Coupon['rules']>[number];
+
 type NonRepeatingParams = CouponCreateArgs & {
   duration: 'once' | 'forever';
   durationInMonths?: never;

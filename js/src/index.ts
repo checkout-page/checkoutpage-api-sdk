@@ -85,6 +85,8 @@ export type {
   Shipping,
   Coupon,
   CouponList,
+  CouponRule,
+  CouponRuleInput,
   Payment,
   PaymentList,
   PriceSnapshot,

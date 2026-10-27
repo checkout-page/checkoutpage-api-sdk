@@ -127,6 +127,40 @@ const results = await checkoutpage.coupons.create({
 });
 ```
 
+Without `rules` a coupon discounts the whole order on every checkout page and event. `rules`
+limits it, one rule per checkout page or event, combined with OR:
+
+- Checkout pages: `wholeOrder`, `prices` (only when the customer buys one of `priceIds`, and
+  only that price is discounted) or `pricesAndBumps` (only when the customer buys one of
+  `priceIds` **and** one of `bumpProductIds`, and both are discounted).
+- Events: `wholeOrder`, `tickets` or `ticketsAndAddOns`, the same with `ticketTypeIds` and
+  add-ons.
+- An empty or missing `priceIds`, `ticketTypeIds` or `bumpProductIds` means all of them,
+  including ones added later. `priceIds` are the `id`s of the page's main product `prices`, not
+  Stripe price ids.
+
+```typescript
+const results = await checkoutpage.coupons.create({
+  type: 'percent',
+  label: 'Monthly plus workbook',
+  code: 'BUNDLE20',
+  percentOff: 20,
+  duration: 'once',
+  rules: [
+    {
+      pageId,
+      appliesTo: 'pricesAndBumps',
+      priceIds: [monthlyPriceId],
+      bumpProductIds: [workbookProductId],
+    },
+    { pageId: eventId, appliesTo: 'tickets', ticketTypeIds: [vipTicketTypeId] },
+  ],
+});
+```
+
+`pageIds` and `ticketTypeIds` are deprecated in favour of `rules`. They still work, but only
+without `rules`, and responses derive them from the rules.
+
 ### Subscriptions
 
 #### List subscriptions

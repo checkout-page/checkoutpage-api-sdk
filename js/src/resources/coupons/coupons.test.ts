@@ -4,6 +4,7 @@ import { CheckoutPageApiClient } from '../../client';
 import {
   AmountNonRepeating,
   CouponList,
+  PercentNonRepeating,
   CreateCouponResponse,
   UpdateCouponResponse,
 } from '../../types';
@@ -41,6 +42,23 @@ describe('CouponResource', () => {
 
       expect(client.request).toHaveBeenCalledWith(
         expect.objectContaining({ body: { ticketTypeIds: [] } })
+      );
+    });
+
+    it('should forward rules, an empty list included', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: COUPON_ID } } as never);
+
+      const rules = [{ pageId: 'page_1', appliesTo: 'prices' as const, priceIds: ['price_1'] }];
+      await couponResource.update(COUPON_ID, { rules });
+      await couponResource.update(COUPON_ID, { rules: [] });
+
+      expect(client.request).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ body: { rules } })
+      );
+      expect(client.request).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ body: { rules: [] } })
       );
     });
 
@@ -558,6 +576,53 @@ describe('CouponResource', () => {
           maxRedemptions: 100,
           redeemBy: '2025-12-31T23:59:59.000Z',
         },
+      });
+    });
+
+    describe('rules', () => {
+      const ruleParams: PercentNonRepeating = {
+        type: 'percent',
+        label: 'Monthly plus workbook',
+        code: 'BUNDLE20',
+        percentOff: 20,
+        duration: 'once',
+      };
+
+      it('should send rules as given', async () => {
+        const spy = vi
+          .spyOn(client, 'request')
+          .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+        const rules = [
+          {
+            pageId: 'page_1',
+            appliesTo: 'pricesAndBumps' as const,
+            priceIds: ['price_monthly'],
+            bumpProductIds: ['product_workbook'],
+          },
+          { pageId: 'event_1', appliesTo: 'tickets' as const, ticketTypeIds: ['ticket_vip'] },
+        ];
+
+        await couponResource.create({ ...ruleParams, rules });
+
+        const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
+        expect(sent.body).toEqual({
+          label: 'Monthly plus workbook',
+          code: 'BUNDLE20',
+          percentOff: 20,
+          duration: 'once',
+          rules,
+        });
+      });
+
+      it('should omit rules when they are not given', async () => {
+        const spy = vi
+          .spyOn(client, 'request')
+          .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+
+        await couponResource.create(ruleParams);
+
+        const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
+        expect(sent.body).not.toHaveProperty('rules');
       });
     });
 
