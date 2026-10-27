@@ -29,10 +29,10 @@ export class CouponResource {
   /**
    * Update an existing coupon. Only the fields you supply are changed.
    *
-   * `pageIds`, `ticketTypeIds`, `productIds` and `priceIds` replace the
-   * existing lists rather than merging — pass an empty array to clear one.
-   * Any `priceIds` must belong to the `productIds` sent in the same request,
-   * or to the products already on the coupon.
+   * `rules` replaces every stored rule rather than merging; an empty list makes
+   * the coupon work on every checkout page and event. `pageIds` and
+   * `ticketTypeIds` are deprecated: they are accepted only without `rules`, and
+   * the API refuses them with a 400 when the coupon has rules they can't express.
    *
    * The discount itself (`code`, `amountOff`, `percentOff`, `currency`,
    * `duration`) is fixed once the coupon is mirrored into Stripe. To change a
@@ -53,6 +53,24 @@ export class CouponResource {
     });
   }
 
+  /**
+   * Create a coupon. `rules` says where it works and what it discounts, one rule
+   * per checkout page or event; omit it for a coupon that discounts the whole
+   * order everywhere. `pageIds` and `ticketTypeIds` are deprecated in favour of
+   * `rules` and cannot be sent with it.
+   *
+   * @example
+   * await client.coupons.create({
+   *   type: 'percent',
+   *   label: 'Monthly plus workbook',
+   *   code: 'BUNDLE20',
+   *   percentOff: 20,
+   *   duration: 'once',
+   *   rules: [
+   *     { pageId, appliesTo: 'pricesAndBumps', priceIds: [monthlyPriceId], bumpProductIds: [workbookId] },
+   *   ],
+   * });
+   */
   async create(params: CreateCouponParams): Promise<CreateCouponResponse> {
     const body: Record<string, unknown> = {
       label: params.label,
@@ -70,17 +88,14 @@ export class CouponResource {
     if (params.appliesToTicketFees !== undefined) {
       body.appliesToTicketFees = params.appliesToTicketFees;
     }
+    if (params.rules !== undefined) {
+      body.rules = params.rules;
+    }
     if (params.pageIds !== undefined) {
       body.pageIds = params.pageIds;
     }
     if (params.ticketTypeIds !== undefined) {
       body.ticketTypeIds = params.ticketTypeIds;
-    }
-    if (params.productIds !== undefined) {
-      body.productIds = params.productIds;
-    }
-    if (params.priceIds !== undefined) {
-      body.priceIds = params.priceIds;
     }
     if (params.maxRedemptions !== undefined) {
       body.maxRedemptions = params.maxRedemptions;

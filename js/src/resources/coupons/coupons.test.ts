@@ -4,6 +4,7 @@ import { CheckoutPageApiClient } from '../../client';
 import {
   AmountNonRepeating,
   CouponList,
+  PercentNonRepeating,
   CreateCouponResponse,
   UpdateCouponResponse,
 } from '../../types';
@@ -44,31 +45,20 @@ describe('CouponResource', () => {
       );
     });
 
-    it('should forward productIds and priceIds', async () => {
+    it('should forward rules, an empty list included', async () => {
       vi.spyOn(client, 'request').mockResolvedValue({ data: { id: COUPON_ID } } as never);
 
-      await couponResource.update(COUPON_ID, {
-        productIds: ['67ee075004de439ab0b675c1'],
-        priceIds: ['67ee075004de439ab0b675c2'],
-      });
+      const rules = [{ pageId: 'page_1', appliesTo: 'prices' as const, priceIds: ['price_1'] }];
+      await couponResource.update(COUPON_ID, { rules });
+      await couponResource.update(COUPON_ID, { rules: [] });
 
-      expect(client.request).toHaveBeenCalledWith({
-        method: 'PATCH',
-        path: `/v1/coupons/${COUPON_ID}`,
-        body: {
-          productIds: ['67ee075004de439ab0b675c1'],
-          priceIds: ['67ee075004de439ab0b675c2'],
-        },
-      });
-    });
-
-    it('should forward an empty priceIds so every price of the coupon products is discounted', async () => {
-      vi.spyOn(client, 'request').mockResolvedValue({ data: { id: COUPON_ID } } as never);
-
-      await couponResource.update(COUPON_ID, { priceIds: [] });
-
-      expect(client.request).toHaveBeenCalledWith(
-        expect.objectContaining({ body: { priceIds: [] } })
+      expect(client.request).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ body: { rules } })
+      );
+      expect(client.request).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ body: { rules: [] } })
       );
     });
 
@@ -589,84 +579,50 @@ describe('CouponResource', () => {
       });
     });
 
-    describe('productIds and priceIds', () => {
-      const PRODUCT_ID = '67ee075004de439ab0b675c1';
-      const PRICE_ID = '67ee075004de439ab0b675c2';
-      const productParams: AmountNonRepeating = {
-        type: 'amount',
-        label: 'Members',
-        code: 'MEMBERS10',
-        amountOff: 1000,
-        currency: 'usd',
+    describe('rules', () => {
+      const ruleParams: PercentNonRepeating = {
+        type: 'percent',
+        label: 'Monthly plus workbook',
+        code: 'BUNDLE20',
+        percentOff: 20,
         duration: 'once',
       };
 
-      it('should send productIds and priceIds when given', async () => {
+      it('should send rules as given', async () => {
         const spy = vi
           .spyOn(client, 'request')
           .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
+        const rules = [
+          {
+            pageId: 'page_1',
+            appliesTo: 'pricesAndBumps' as const,
+            priceIds: ['price_monthly'],
+            bumpProductIds: ['product_workbook'],
+          },
+          { pageId: 'event_1', appliesTo: 'tickets' as const, ticketTypeIds: ['ticket_vip'] },
+        ];
 
-        await couponResource.create({
-          ...productParams,
-          productIds: [PRODUCT_ID],
-          priceIds: [PRICE_ID],
-        });
+        await couponResource.create({ ...ruleParams, rules });
 
         const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
         expect(sent.body).toEqual({
-          label: 'Members',
-          code: 'MEMBERS10',
-          amountOff: 1000,
-          currency: 'usd',
+          label: 'Monthly plus workbook',
+          code: 'BUNDLE20',
+          percentOff: 20,
           duration: 'once',
-          productIds: [PRODUCT_ID],
-          priceIds: [PRICE_ID],
+          rules,
         });
       });
 
-      it('should omit productIds and priceIds when they are not given', async () => {
+      it('should omit rules when they are not given', async () => {
         const spy = vi
           .spyOn(client, 'request')
           .mockResolvedValue({ data: { id: 'coupon_1' } } as unknown as CreateCouponResponse);
 
-        await couponResource.create(productParams);
+        await couponResource.create(ruleParams);
 
         const sent = spy.mock.calls[0][0] as { body: Record<string, unknown> };
-        expect(sent.body).not.toHaveProperty('productIds');
-        expect(sent.body).not.toHaveProperty('priceIds');
-      });
-
-      it('should return productIds and priceIds from the create response unchanged', async () => {
-        const mockCoupon: CreateCouponResponse = {
-          data: {
-            id: '67ee075004de439ab0b675bb',
-            label: 'Members',
-            code: 'MEMBERS10',
-            amountOff: 1000,
-            currency: 'usd',
-            percentOff: null,
-            appliesToSetupFee: false,
-            duration: 'once',
-            timesRedeemed: 0,
-            deleted: false,
-            stripeCouponId: 'mPV2YLWF',
-            sellerId: 'seller123',
-            productIds: [PRODUCT_ID],
-            priceIds: [PRICE_ID],
-            createdAt: '2024-01-06T00:00:00.000Z',
-            updatedAt: '2024-01-06T00:00:00.000Z',
-          },
-        };
-        vi.spyOn(client, 'request').mockResolvedValue(mockCoupon);
-
-        const result = await couponResource.create({
-          ...productParams,
-          productIds: [PRODUCT_ID],
-          priceIds: [PRICE_ID],
-        });
-
-        expect(result.data.productIds).toEqual([PRODUCT_ID]);
-        expect(result.data.priceIds).toEqual([PRICE_ID]);
+        expect(sent.body).not.toHaveProperty('rules');
       });
     });
 
