@@ -286,9 +286,13 @@ const WRITE_FIXTURES: Record<string, WriteFixtures> = {
           appliesToSetupFee: true,
           appliesToTicketFees: true,
           maxRedemptions: 50,
-          pageIds: `${IDS[0]}, ${IDS[1]}`,
           redeemBy: '2026-12-31T23:59:00',
-          ticketTypeIds: IDS[2],
+        },
+        rules: {
+          rule: [
+            { pageId: IDS[0], appliesTo: 'prices', priceIds: `${IDS[1]}, ${IDS[2]}` },
+            { pageId: IDS[3], appliesTo: 'tickets', ticketTypeIds: IDS[4] },
+          ],
         },
       },
       {
@@ -303,9 +307,26 @@ const WRITE_FIXTURES: Record<string, WriteFixtures> = {
           appliesToSetupFee: false,
           appliesToTicketFees: false,
           maxRedemptions: 1,
-          pageIds: IDS[0],
           redeemBy: '2027-01-01',
-          ticketTypeIds: `${IDS[2]},${IDS[3]}`,
+        },
+        rules: {
+          rule: [
+            { pageId: IDS[3], appliesTo: 'tickets', ticketTypeIds: `${IDS[1]},${IDS[2]}` },
+            { pageId: IDS[0], appliesTo: 'prices', priceIds: '' },
+          ],
+        },
+      },
+      {
+        label: 'Everyone',
+        code: 'EVERYONE',
+        discountType: 'percent',
+        percentOff: 100,
+        duration: 'forever',
+        rules: {
+          rule: [
+            { pageId: IDS[0], appliesTo: 'wholeOrder' },
+            { pageId: IDS[3], appliesTo: 'wholeOrder' },
+          ],
         },
       },
     ],
@@ -382,8 +403,20 @@ const pathLabel = (path: Path) => path.join('.');
 const writeLeaves = (resource: string, operation: string) =>
   opProperties(resource, operation).flatMap((prop) => leaves(prop));
 
+function nested(prop: INodeProperties): INodeProperties[] {
+  if (prop.type === 'collection') return (prop.options as INodeProperties[]).flatMap(nested);
+  if (prop.type === 'fixedCollection') {
+    return (prop.options as INodePropertyCollection[]).flatMap((group) =>
+      group.values.flatMap(nested)
+    );
+  }
+  return [prop];
+}
+
+const allProperties = properties.flatMap((prop) => [prop, ...nested(prop)]);
+
 const drivesDisplay = (name: string) =>
-  properties.some((p) => p.displayOptions?.show && name in p.displayOptions.show);
+  allProperties.some((p) => p.displayOptions?.show && name in p.displayOptions.show);
 
 const allFixtures = (resource: string, operation: string) => {
   const fixtures = WRITE_FIXTURES[`${resource} ${operation}`];
@@ -759,6 +792,13 @@ describe('spec conformance: the node only sends what the seller API spec accepts
             "fields[].values",
             "queryParameters",
             "queryParameters.*",
+          ],
+        },
+        "POST /v1/coupons/": {
+          "body": [
+            "pageIds",
+            "rules[].bumpProductIds",
+            "ticketTypeIds",
           ],
         },
         "POST /v1/webhooks/": {

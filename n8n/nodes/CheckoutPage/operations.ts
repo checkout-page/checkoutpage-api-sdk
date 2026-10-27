@@ -203,14 +203,38 @@ function couponCreateBody(ctx: IExecuteFunctions, i: number): IDataObject {
     body.durationInMonths = ctx.getNodeParameter('durationInMonths', i);
   }
 
-  const { pageIds, ticketTypeIds, ...rest } = withUtcDates(ctx, additional, i);
-  Object.assign(body, compact(rest));
-  const pages = splitList(pageIds);
-  if (pages.length) body.pageIds = pages;
-  const ticketTypes = splitList(ticketTypeIds);
-  if (ticketTypes.length) body.ticketTypeIds = ticketTypes;
+  Object.assign(body, compact(withUtcDates(ctx, additional, i)));
+
+  const rules = couponRules(ctx, i);
+  if (rules.length) body.rules = rules;
 
   return body;
+}
+
+function couponRules(ctx: IExecuteFunctions, i: number): IDataObject[] {
+  const rows =
+    ((ctx.getNodeParameter('rules', i, {}) as IDataObject).rule as IDataObject[] | undefined) ?? [];
+  return rows.map((row, index) => {
+    const pageId = String(row.pageId ?? '').trim();
+    if (!pageId) {
+      throw new NodeOperationError(ctx.getNode(), `Rule ${index + 1} has no 'Page ID'`, {
+        description:
+          "Enter the ID of a checkout page or event in 'Page ID' for each rule under 'Rules', or remove the rule.",
+        itemIndex: i,
+      });
+    }
+    const appliesTo = String(row.appliesTo ?? 'wholeOrder');
+    const rule: IDataObject = { pageId, appliesTo };
+    if (appliesTo === 'prices') {
+      const priceIds = splitList(row.priceIds);
+      if (priceIds.length) rule.priceIds = priceIds;
+    }
+    if (appliesTo === 'tickets') {
+      const ticketTypeIds = splitList(row.ticketTypeIds);
+      if (ticketTypeIds.length) rule.ticketTypeIds = ticketTypeIds;
+    }
+    return rule;
+  });
 }
 
 function addressFrom(value: unknown): IDataObject | undefined {
