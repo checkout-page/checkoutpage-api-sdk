@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-checkoutpage",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n nodes for Checkout Page: react to new bookings and payments, add attendees, create coupons and look up customers.",
   "license": "MIT",
   "homepage": "https://github.com/checkout-page/checkoutpage-api-sdk/tree/main/n8n#readme",
