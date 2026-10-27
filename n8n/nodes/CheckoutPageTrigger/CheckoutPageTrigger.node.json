@@ -1,0 +1,18 @@
+{
+  "node": "n8n-nodes-checkoutpage.checkoutPageTrigger",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Sales", "Finance & Accounting"],
+  "resources": {
+    "credentialDocumentation": [
+      {
+        "url": "https://github.com/checkout-page/checkoutpage-api-sdk/tree/main/n8n#credentials"
+      }
+    ],
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/checkout-page/checkoutpage-api-sdk/tree/main/n8n#the-trigger"
+      }
+    ]
+  }
+}

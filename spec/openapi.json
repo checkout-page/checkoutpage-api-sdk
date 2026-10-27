@@ -2402,6 +2402,42 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by `fieldKey`: the `key` you gave it in `fields` in this request. Each item is one of: `field` (`fieldKey`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldKey": "first-name",
+                    "type": "field"
+                  },
+                  {
+                    "fieldKey": "last-name",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItemInput"
+            },
+            "maxItems": 500,
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
             "examples": [
@@ -3386,6 +3422,14 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by `fieldKey`: the `key` you gave it in `fields` in this request. Each item is one of: `field` (`fieldKey`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItemInput"
+            },
+            "maxItems": 500,
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
             "examples": [
@@ -4091,6 +4135,42 @@
               "object",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by `fieldKey`: the `key` you gave it in `fields` in this request. Each item is one of: `field` (`fieldKey`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldKey": "first-name",
+                    "type": "field"
+                  },
+                  {
+                    "fieldKey": "last-name",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItemInput"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
@@ -5999,6 +6079,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -6627,6 +6710,41 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "How the page's form is arranged, top to bottom: fields, headings, dividers, groups of fields shown side by side in columns, and where the discount code box sits. Always returned, even for a page that was never arranged: every field on the page is listed, and `fieldId` matches the `id` of an entry in `fields`. A `discount-code` item only places the box, which shows while `showCouponCodeField` is on. A placement you saved is returned whether the box is on or off; when none was saved and the box is on, the item is at the end, where the box shows. Forms never have one. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel steps for this page. The response uses the public response structure, including `pageId`, `redirectPageId`, and redirect token `identifier` values.",
@@ -7278,9 +7396,48 @@
           "testmodeEnabledAt",
           "themeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "formLayout"
         ],
         "type": "object"
+      },
+      "EventTicketTypeShowHideLogicInput": {
+        "description": "Shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event, e.g. show \"Parking pass\" only while \"VIP\" or \"Weekend pass\" is selected. Ticket types from any ticket group on the event can be named. This only changes what the checkout displays: it is not a security gate, and the API never rejects an order because of it. A named ticket type that is later deleted, archived or disabled counts as never selected, and the rule stays in force. Sent whole: it replaces the stored rule. Pass `null` or `{ \"enabled\": false }` to remove it.",
+        "properties": {
+          "comparison": {
+            "default": "is",
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` removes the rule: the ticket type shows as usual, and `comparison` and `ticketTypeIds` are ignored.",
+            "example": true,
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "The `key` of each ticket type the rule watches, as set on `ticketGroups[].ticketTypes[].key` in this request (any group). Keys become the new ticket type IDs when the event is saved, and responses return IDs. The rule matches while any of them is selected. A ticket type cannot name its own key, and a value that is not the key of another ticket type in this request is rejected. With `enabled: true` and no keys the rule hides nothing.",
+            "example": [
+              "vip"
+            ],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
       },
       "Field": {
         "properties": {
@@ -7553,7 +7710,7 @@
             ]
           },
           "order": {
-            "description": "Display order of the field within the form.",
+            "description": "Position of the field among the page's fields, from 0. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
             "example": 0,
             "type": "number"
           },
@@ -8227,7 +8384,7 @@
             ]
           },
           "order": {
-            "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+            "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
             "example": 0,
             "minimum": 0,
             "type": [
@@ -8465,6 +8622,326 @@
           "id"
         ],
         "type": "object"
+      },
+      "FormLayoutDiscountCode": {
+        "description": "Where the discount code box sits. This item only places the box: the box shows while the page has `showCouponCodeField` on. Checkout pages and events only.",
+        "properties": {
+          "type": {
+            "description": "Always `discount-code`.",
+            "enum": [
+              "discount-code"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "FormLayoutDivider": {
+        "description": "A line that separates parts of the form.",
+        "properties": {
+          "id": {
+            "description": "The divider's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `divider`.",
+            "enum": [
+              "divider"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "type": "object"
+      },
+      "FormLayoutField": {
+        "description": "A field on the page, shown where it sits in the layout.",
+        "properties": {
+          "fieldId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The `id` of a field in the page's `fields`."
+              }
+            ]
+          },
+          "type": {
+            "description": "Always `field`.",
+            "enum": [
+              "field"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "fieldId"
+        ],
+        "type": "object"
+      },
+      "FormLayoutFieldInput": {
+        "description": "A field on the page, shown where it sits in the layout.",
+        "properties": {
+          "fieldKey": {
+            "description": "The `key` you gave the field in `fields` in this request. A key that matches no field is rejected.",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `field`.",
+            "enum": [
+              "field"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "fieldKey"
+        ],
+        "type": "object"
+      },
+      "FormLayoutGroup": {
+        "description": "Items shown side by side in columns.",
+        "properties": {
+          "columns": {
+            "description": "How many items sit side by side, 1 to 4. On phones the group stacks by default.",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "description": "The group's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "items": {
+            "description": "What the group holds, filled row by row: fields, headings, dividers and the discount code. Groups never nest.",
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+                  "divider": "#/components/schemas/FormLayoutDivider",
+                  "field": "#/components/schemas/FormLayoutField",
+                  "heading": "#/components/schemas/FormLayoutHeading"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FormLayoutField"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutHeading"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDivider"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDiscountCode"
+                }
+              ]
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "name": {
+            "description": "A name for the group, seen only in the dashboard. Up to 100 characters.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `group`.",
+            "enum": [
+              "group"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "columns",
+          "items"
+        ],
+        "type": "object"
+      },
+      "FormLayoutGroupInput": {
+        "description": "Items shown side by side in columns.",
+        "properties": {
+          "columns": {
+            "description": "How many items sit side by side, 1 to 4. On phones the group stacks by default.",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "description": "The group's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "items": {
+            "description": "What the group holds, filled row by row: fields, headings, dividers and the discount code. Groups never nest.",
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+                  "divider": "#/components/schemas/FormLayoutDivider",
+                  "field": "#/components/schemas/FormLayoutFieldInput",
+                  "heading": "#/components/schemas/FormLayoutHeading"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FormLayoutFieldInput"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutHeading"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDivider"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDiscountCode"
+                }
+              ]
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "name": {
+            "description": "A name for the group, seen only in the dashboard. Up to 100 characters.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `group`.",
+            "enum": [
+              "group"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "columns",
+          "items"
+        ],
+        "type": "object"
+      },
+      "FormLayoutHeading": {
+        "description": "A heading or subheading shown above the items after it.",
+        "properties": {
+          "id": {
+            "description": "The heading's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "level": {
+            "description": "`heading` for a section title, `subheading` for a smaller one.",
+            "enum": [
+              "heading",
+              "subheading"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "description": "The text shown, up to 200 characters.",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `heading`.",
+            "enum": [
+              "heading"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "text",
+          "level"
+        ],
+        "type": "object"
+      },
+      "FormLayoutItem": {
+        "description": "More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+        "discriminator": {
+          "mapping": {
+            "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+            "divider": "#/components/schemas/FormLayoutDivider",
+            "field": "#/components/schemas/FormLayoutField",
+            "group": "#/components/schemas/FormLayoutGroup",
+            "heading": "#/components/schemas/FormLayoutHeading"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FormLayoutField"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutHeading"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDivider"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDiscountCode"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutGroup"
+          }
+        ]
+      },
+      "FormLayoutItemInput": {
+        "description": "More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+        "discriminator": {
+          "mapping": {
+            "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+            "divider": "#/components/schemas/FormLayoutDivider",
+            "field": "#/components/schemas/FormLayoutFieldInput",
+            "group": "#/components/schemas/FormLayoutGroupInput",
+            "heading": "#/components/schemas/FormLayoutHeading"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FormLayoutFieldInput"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutHeading"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDivider"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDiscountCode"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutGroupInput"
+          }
+        ]
       },
       "FormPageResponse": {
         "allOf": [
@@ -14773,6 +15250,41 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How the page's form is arranged, top to bottom: fields, headings, dividers, groups of fields shown side by side in columns, and where the discount code box sits. Always returned, even for a page that was never arranged: every field on the page is listed, and `fieldId` matches the `id` of an entry in `fields`. A `discount-code` item only places the box, which shows while `showCouponCodeField` is on. A placement you saved is returned whether the box is on or off; when none was saved and the box is on, the item is at the end, where the box shows. Forms never have one. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel steps for this page. The response uses the same public structure as the input schema, including `pageId` and `redirectPageId` field names.",
             "examples": [
@@ -15123,7 +15635,8 @@
           "testmodeEnabledAt",
           "themeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "formLayout"
         ],
         "type": "object"
       },
@@ -61802,6 +62315,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/EventTicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -62089,6 +62605,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogic"
+          },
           "showTicketSaleDates": {
             "description": "Whether sale start/end dates are shown to customers.",
             "type": [
@@ -62133,6 +62652,84 @@
           "name"
         ],
         "type": "object"
+      },
+      "TicketTypeShowHideLogic": {
+        "description": "Rule that shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event. Display only: the API never rejects an order because of it.",
+        "properties": {
+          "comparison": {
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` means the ticket type shows as usual.",
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "IDs of the ticket types the rule watches. Can include a ticket type that has since been deleted, archived or disabled: it counts as never selected.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled",
+          "comparison",
+          "ticketTypeIds"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "TicketTypeShowHideLogicInput": {
+        "description": "Shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event, e.g. show \"Parking pass\" only while \"VIP\" or \"Weekend pass\" is selected. Ticket types from any ticket group on the event can be named. This only changes what the checkout displays: it is not a security gate, and the API never rejects an order because of it. A named ticket type that is later deleted, archived or disabled counts as never selected, and the rule stays in force. Sent whole: it replaces the stored rule. Pass `null` or `{ \"enabled\": false }` to remove it.",
+        "properties": {
+          "comparison": {
+            "default": "is",
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` removes the rule: the ticket type shows as usual, and `comparison` and `ticketTypeIds` are ignored.",
+            "example": true,
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "IDs of other ticket types on the same event, from `ticketGroups[].ticketTypes[].id`. The rule matches while any of them is selected. A ticket type cannot name itself, and an ID that is not a ticket type on this event is rejected. With `enabled: true` and no IDs the rule hides nothing.",
+            "example": [
+              "507f1f77bcf86cd799439014"
+            ],
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
       },
       "UniqueIdentifier": {
         "description": "Unique identifier for the ticket.",
@@ -62321,6 +62918,42 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by `fieldId`, the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
@@ -63297,6 +63930,42 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by `fieldId`, the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
@@ -66475,6 +67144,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -68431,7 +69103,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -69310,7 +69982,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -72434,7 +73106,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -73313,7 +73985,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -76540,6 +77212,42 @@
                       "null"
                     ]
                   },
+                  "formLayout": {
+                    "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by `fieldId`, the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+                    "example": [
+                      {
+                        "id": "your-details",
+                        "level": "heading",
+                        "text": "Your details",
+                        "type": "heading"
+                      },
+                      {
+                        "columns": 2,
+                        "id": "name-row",
+                        "items": [
+                          {
+                            "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                            "type": "field"
+                          },
+                          {
+                            "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                            "type": "field"
+                          }
+                        ],
+                        "name": "Name",
+                        "type": "group"
+                      },
+                      {
+                        "id": "divider-1",
+                        "type": "divider"
+                      }
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/FormLayoutItem"
+                    },
+                    "maxItems": 500,
+                    "type": "array"
+                  },
                   "funnelSteps": {
                     "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
                     "items": {
@@ -77477,7 +78185,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -78356,7 +79064,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [

@@ -1,0 +1,81 @@
+name: Publish Postman collection
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: publish-postman
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # The secrets live in this environment, which only main can use. See postman/README.md.
+    environment: postman
+    permissions:
+      contents: read
+
+    steps:
+      - name: Require main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Run this workflow from main, not $GITHUB_REF"
+          exit 1
+
+      - name: Check secrets
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
+        run: |
+          missing=0
+          if [ -z "$POSTMAN_API_KEY" ]; then
+            echo "::error::The POSTMAN_API_KEY secret is not set in the postman environment. See postman/README.md."
+            missing=1
+          fi
+          if [ -z "$POSTMAN_COLLECTION_UID" ]; then
+            echo "::error::The POSTMAN_COLLECTION_UID secret is not set in the postman environment. See postman/README.md."
+            missing=1
+          fi
+          exit "$missing"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm --filter @checkoutpage/postman test
+
+      - name: Push the collection to Postman
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
+        run: |
+          # The uid is "<owner id>-<collection id>". The body carries the target's own id, since
+          # Postman rejects a body whose collection id belongs to a different collection.
+          jq --arg uid "$POSTMAN_COLLECTION_UID" \
+            '.info._postman_id = ($uid | sub("^[0-9]+-"; "")) | {collection: .}' \
+            postman/checkoutpage-api.postman_collection.json > "$RUNNER_TEMP/body.json"
+          status=$(curl --silent --show-error --output "$RUNNER_TEMP/response.json" --write-out '%{http_code}' \
+            --request PUT "https://api.postman.com/collections/$POSTMAN_COLLECTION_UID" \
+            --header "X-API-Key: $POSTMAN_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data-binary "@$RUNNER_TEMP/body.json")
+          if [ "$status" != "200" ]; then
+            echo "::error::Postman API returned HTTP $status"
+            cat "$RUNNER_TEMP/response.json"
+            exit 1
+          fi
+          jq '{id: .collection.id, uid: .collection.uid, name: .collection.name}' "$RUNNER_TEMP/response.json"

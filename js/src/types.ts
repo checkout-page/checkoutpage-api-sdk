@@ -524,6 +524,38 @@ export type UpdateCheckoutPageResponse =
 export type DeleteCheckoutPageResponse =
   operations['checkout-pages/delete']['responses'][200]['content']['application/json'];
 
+// Form layout. Checkout pages, events and forms share one shape.
+/**
+ * How a page's form is arranged, top to bottom, as page responses return it and `update` takes it.
+ * Fields are referenced by `fieldId`. More item types may be added later: skip any item type you
+ * do not recognise when reading, and send it back as you received it when updating.
+ */
+export type FormLayout = FormLayoutItem[];
+
+/** One entry in a `FormLayout`: a field, heading, divider, the discount code box or a group. */
+export type FormLayoutItem = components['schemas']['FormLayoutItem'];
+
+/** A row of up to 4 columns holding fields, headings, dividers or the discount code. Groups never nest. */
+export type FormLayoutGroup = components['schemas']['FormLayoutGroup'];
+
+/** One entry inside a `FormLayoutGroup`. */
+export type FormLayoutGroupItem = FormLayoutGroup['items'][number];
+
+/**
+ * The `formLayout` a `create` takes: fields are referenced by `fieldKey`, the `key` you gave the
+ * field in `fields` in the same request. More item types may be added later.
+ */
+export type CreateFormLayout = CreateFormLayoutItem[];
+
+/** One entry in a `CreateFormLayout`. */
+export type CreateFormLayoutItem = components['schemas']['FormLayoutItemInput'];
+
+/** A group in a `CreateFormLayout`. Groups never nest. */
+export type CreateFormLayoutGroup = components['schemas']['FormLayoutGroupInput'];
+
+/** One entry inside a `CreateFormLayoutGroup`. */
+export type CreateFormLayoutGroupItem = CreateFormLayoutGroup['items'][number];
+
 // Checkout page fields
 export type CheckoutPageFieldList =
   operations['checkout-pages/fields/list']['responses'][200]['content']['application/json'];

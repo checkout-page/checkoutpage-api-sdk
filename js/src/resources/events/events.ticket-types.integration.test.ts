@@ -796,4 +796,99 @@ describe('EventsResource ticketGroups.ticketTypes integration tests', () => {
       ).rejects.toThrow(ValidationError);
     });
   });
+  describe('show/hide rules', () => {
+    it('creates an event whose rules name other ticket types by key', async () => {
+      const event = await createEvent({
+        ticketGroups: [
+          {
+            name: 'Extras',
+            ticketTypes: [
+              {
+                name: 'Parking',
+                pricing: 'paid',
+                price: 1500,
+                showHideLogic: {
+                  enabled: true,
+                  comparison: 'is',
+                  ticketTypeIds: ['vip', 'exhibitor'],
+                },
+              },
+            ],
+          },
+          {
+            name: 'Passes',
+            ticketTypes: [
+              { key: 'vip', name: 'VIP', pricing: 'paid', price: 15000 },
+              { key: 'exhibitor', name: 'Exhibitor', pricing: 'paid', price: 30000 },
+            ],
+          },
+        ],
+      });
+
+      const read = await events.get(event.data.id);
+      const tickets = (read.data.ticketGroups ?? []).flatMap((group) => group.ticketTypes ?? []);
+      const byName = Object.fromEntries(tickets.map((ticket) => [ticket.name, ticket]));
+
+      expect(byName.Parking?.showHideLogic).toEqual({
+        enabled: true,
+        comparison: 'is',
+        ticketTypeIds: [byName.VIP?.id, byName.Exhibitor?.id],
+      });
+      expect(byName.VIP?.showHideLogic).toEqual({
+        enabled: false,
+        comparison: 'is',
+        ticketTypeIds: [],
+      });
+    });
+
+    it('sets, reads back and clears a rule on a ticket type', async () => {
+      const event = await createEvent();
+      const group = await createTicketGroup(event.data.id);
+      const vip = await createTicketType(event.data.id, group.data.id, { name: 'VIP' });
+      const parking = await createTicketType(event.data.id, group.data.id, { name: 'Parking' });
+
+      const ruled = await events.ticketGroups.ticketTypes.update(
+        event.data.id,
+        group.data.id,
+        parking.data.id,
+        { showHideLogic: { enabled: true, comparison: 'is_not', ticketTypeIds: [vip.data.id] } }
+      );
+      expect(ruled.data.showHideLogic).toEqual({
+        enabled: true,
+        comparison: 'is_not',
+        ticketTypeIds: [vip.data.id],
+      });
+
+      const read = await events.ticketGroups.ticketTypes.get(
+        event.data.id,
+        group.data.id,
+        parking.data.id
+      );
+      expect(read.data.showHideLogic?.ticketTypeIds).toEqual([vip.data.id]);
+
+      const cleared = await events.ticketGroups.ticketTypes.update(
+        event.data.id,
+        group.data.id,
+        parking.data.id,
+        { showHideLogic: null }
+      );
+      expect(cleared.data.showHideLogic).toEqual({
+        enabled: false,
+        comparison: 'is',
+        ticketTypeIds: [],
+      });
+    });
+
+    it('rejects a rule naming a ticket type that is not on the event', async () => {
+      const event = await createEvent();
+      const group = await createTicketGroup(event.data.id);
+      const parking = await createTicketType(event.data.id, group.data.id, { name: 'Parking' });
+
+      await expect(
+        events.ticketGroups.ticketTypes.update(event.data.id, group.data.id, parking.data.id, {
+          showHideLogic: { enabled: true, ticketTypeIds: [fakeObjectId('missingticket')] },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+  });
 });

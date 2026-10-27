@@ -699,14 +699,13 @@ describe('ProductResource Integration Tests', () => {
       expect(annual!.amount).toBe(9900);
     });
 
-    it('defaultPriceId is set on the product', async () => {
+    it('defaultPriceId is null when no default is saved', async () => {
       if (!multiPriceProductId) return;
 
       const { data: product } = await client.products.get(multiPriceProductId);
 
-      expect(product.defaultPriceId).toBeDefined();
-      const priceIds = (product.prices ?? []).map((p: Price) => p.id);
-      expect(priceIds).toContain(product.defaultPriceId);
+      expect(product.defaultPriceId).toBeNull();
+      expect((product.prices ?? []).some((p: Price) => p.isDefault)).toBe(false);
     });
 
     it('prices[] fields round-trip with correct billingType', async () => {
