@@ -71377,7 +71377,7 @@
     },
     "/v1/coupons/:couponId": {
       "patch": {
-        "description": "Updates a coupon. `rules` replaces every stored rule, and an empty list makes the coupon work everywhere. `pageIds` and `ticketTypeIds` are accepted only without `rules` and replace the rules with whole-order rules (or tickets rules on events with picked ticket types); `ticketTypeIds` sent without `pageIds` must belong to the pages already on the coupon. A coupon whose rules go beyond one `wholeOrder` or `tickets` rule per page returns a 400 for `pageIds` or `ticketTypeIds`: send `rules` instead.",
+        "description": "Updates a coupon. `rules` replaces every stored rule, and an empty list makes the coupon work everywhere. `pageIds` and `ticketTypeIds` are accepted only without `rules` and replace the rules with whole-order rules (or tickets rules on events with picked ticket types); `ticketTypeIds` sent without `pageIds` must belong to the pages already on the coupon. A coupon whose rules go beyond one `wholeOrder` rule, or one `tickets` rule with picked `ticketTypeIds`, per page returns a 400 for `pageIds` or `ticketTypeIds`: send `rules` instead.",
         "operationId": "coupons/update",
         "parameters": [
           {
