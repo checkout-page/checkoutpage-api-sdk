@@ -22105,169 +22105,6 @@
                           "null"
                         ]
                       },
-                      "paymentDetails": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "enabled": {
-                            "description": "Whether the payment details is visible in the fields section.",
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "styles": {
-                            "additionalProperties": false,
-                            "properties": {
-                              "color": {
-                                "additionalProperties": false,
-                                "description": "Color of the payment details heading.",
-                                "properties": {
-                                  "dark": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  },
-                                  "light": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  }
-                                },
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              },
-                              "fontFamily": {
-                                "description": "Font family for the payment details heading in the fields section.",
-                                "pattern": "^[A-Za-z0-9][A-Za-z0-9 ]{0,63}$",
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontSize": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      ""
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      10
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      11
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      12
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      13
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      14
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      16
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      18
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      20
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      24
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      32
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      40
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      48
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      64
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ],
-                                "description": "Font size for the payment details heading in the fields section."
-                              },
-                              "fontStyle": {
-                                "description": "Font style for the payment details heading in the fields section.",
-                                "enum": [
-                                  "",
-                                  "normal",
-                                  "italic",
-                                  null
-                                ],
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontWeight": {
-                                "description": "Font weight for the payment details heading in the fields section.",
-                                "maximum": 900,
-                                "minimum": 100,
-                                "type": [
-                                  "integer",
-                                  "null"
-                                ]
-                              }
-                            },
-                            "type": [
-                              "object",
-                              "null"
-                            ]
-                          }
-                        },
-                        "type": [
-                          "object",
-                          "null"
-                        ]
-                      },
                       "priceBreakdown": {
                         "additionalProperties": false,
                         "properties": {
@@ -37707,15 +37544,6 @@
                   "null"
                 ]
               },
-              "formDetailsText": {
-                "description": "Label for form details section. Default: \"Complete your details\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
               "getTicketsButtonText": {
                 "description": "Label for get tickets button. Default: \"Get tickets\".",
                 "maxLength": 500,
@@ -37835,15 +37663,6 @@
               },
               "payWhatYouWantText": {
                 "description": "Label for pay what you want field. Default: \"Pay what you want\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "paymentDetailsText": {
-                "description": "Label for payment details section. Default: \"Payment details\".",
                 "maxLength": 500,
                 "pattern": "^[^<>]*$",
                 "type": [
@@ -43307,169 +43126,6 @@
                           "null"
                         ]
                       },
-                      "paymentDetails": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "enabled": {
-                            "description": "Whether the payment details is visible in the fields section.",
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "styles": {
-                            "additionalProperties": false,
-                            "properties": {
-                              "color": {
-                                "additionalProperties": false,
-                                "description": "Color of the payment details heading.",
-                                "properties": {
-                                  "dark": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  },
-                                  "light": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  }
-                                },
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              },
-                              "fontFamily": {
-                                "description": "Font family for the payment details heading in the fields section.",
-                                "pattern": "^[A-Za-z0-9][A-Za-z0-9 ]{0,63}$",
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontSize": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      ""
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      10
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      11
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      12
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      13
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      14
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      16
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      18
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      20
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      24
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      32
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      40
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      48
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      64
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ],
-                                "description": "Font size for the payment details heading in the fields section."
-                              },
-                              "fontStyle": {
-                                "description": "Font style for the payment details heading in the fields section.",
-                                "enum": [
-                                  "",
-                                  "normal",
-                                  "italic",
-                                  null
-                                ],
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontWeight": {
-                                "description": "Font weight for the payment details heading in the fields section.",
-                                "maximum": 900,
-                                "minimum": 100,
-                                "type": [
-                                  "integer",
-                                  "null"
-                                ]
-                              }
-                            },
-                            "type": [
-                              "object",
-                              "null"
-                            ]
-                          }
-                        },
-                        "type": [
-                          "object",
-                          "null"
-                        ]
-                      },
                       "priceBreakdown": {
                         "additionalProperties": false,
                         "properties": {
@@ -58909,15 +58565,6 @@
                   "null"
                 ]
               },
-              "formDetailsText": {
-                "description": "Label for form details section. Default: \"Complete your details\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
               "getTicketsButtonText": {
                 "description": "Label for get tickets button. Default: \"Get tickets\".",
                 "maxLength": 500,
@@ -59037,15 +58684,6 @@
               },
               "payWhatYouWantText": {
                 "description": "Label for pay what you want field. Default: \"Pay what you want\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "paymentDetailsText": {
-                "description": "Label for payment details section. Default: \"Payment details\".",
                 "maxLength": 500,
                 "pattern": "^[^<>]*$",
                 "type": [
