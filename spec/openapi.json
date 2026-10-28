@@ -228,6 +228,18 @@
               "null"
             ]
           },
+          "archivedAt": {
+            "description": "The date this was archived. Archiving ends a booking or payment that never took money: like a cancel, any tickets are canceled and their capacity is released, but the customer is not notified. It can't be undone. Absent when `orderStatus` is not `archived`, and on some records archived before this field was added.",
+            "type": "string"
+          },
+          "archivedBy": {
+            "description": "The userId of the team member who archived this. Absent unless archived.",
+            "type": "string"
+          },
+          "archivedReason": {
+            "description": "The reason given when this was archived. Separate from `canceledReason`. Absent unless archived with a reason.",
+            "type": "string"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -695,7 +707,7 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled, archived. `active`: not ended. `canceled`: ended by the merchant; any tickets are canceled. `archived`: a booking or payment that never took money, ended by the merchant like a cancel but without notifying the customer; it can't be undone. Treat `archived` as ended, the same as `canceled`.",
             "enum": [
               "active",
               "canceled",
@@ -10703,6 +10715,18 @@
               "null"
             ]
           },
+          "archivedAt": {
+            "description": "The date this was archived. Archiving ends a booking or payment that never took money: like a cancel, any tickets are canceled and their capacity is released, but the customer is not notified. It can't be undone. Absent when `orderStatus` is not `archived`, and on some records archived before this field was added.",
+            "type": "string"
+          },
+          "archivedBy": {
+            "description": "The userId of the team member who archived this. Absent unless archived.",
+            "type": "string"
+          },
+          "archivedReason": {
+            "description": "The reason given when this was archived. Separate from `canceledReason`. Absent unless archived with a reason.",
+            "type": "string"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -11177,7 +11201,7 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled, archived. `active`: not ended. `canceled`: ended by the merchant; any tickets are canceled. `archived`: a booking or payment that never took money, ended by the merchant like a cancel but without notifying the customer; it can't be undone. Treat `archived` as ended, the same as `canceled`.",
             "enum": [
               "active",
               "canceled",
@@ -67432,10 +67456,12 @@
             }
           },
           {
+            "description": "Filter by order lifecycle status: `active`, `canceled` or `archived`. Without it the list includes canceled and archived records. An archived record never took money and was ended by the merchant like a cancel, without notifying the customer.",
             "in": "query",
             "name": "orderStatus",
             "required": false,
             "schema": {
+              "description": "Filter by order lifecycle status: `active`, `canceled` or `archived`. Without it the list includes canceled and archived records. An archived record never took money and was ended by the merchant like a cancel, without notifying the customer.",
               "enum": [
                 "archived",
                 "active",
@@ -81999,10 +82025,12 @@
             }
           },
           {
+            "description": "Filter by order lifecycle status: `active`, `canceled` or `archived`. Without it the list includes canceled and archived records. An archived record never took money and was ended by the merchant like a cancel, without notifying the customer.",
             "in": "query",
             "name": "orderStatus",
             "required": false,
             "schema": {
+              "description": "Filter by order lifecycle status: `active`, `canceled` or `archived`. Without it the list includes canceled and archived records. An archived record never took money and was ended by the merchant like a cancel, without notifying the customer.",
               "enum": [
                 "archived",
                 "active",
