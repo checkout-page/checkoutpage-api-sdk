@@ -9,6 +9,13 @@
     "output": {
       "label": "{{ifempty(item.name, ifempty(item.product.title, item.id))}}",
       "value": "{{item.id}}"
-    }
+    },
+    "limit": 300
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
   }
 }

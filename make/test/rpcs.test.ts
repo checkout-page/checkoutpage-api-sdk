@@ -61,11 +61,16 @@ describe('rpcs', () => {
 
   const listRpcs = rpcs.filter((r) => !['listTicketTypes', 'listEventFields'].includes(r.id));
   it.each(listRpcs.map((r) => [r.id, r]))(
-    '%s reads the list and labels with fields the list returns',
+    '%s pages through up to three pages and labels with fields the list returns',
     (_id, r: any) => {
       const c = r.code.communication;
       expect(c.qs).toEqual({ limit: '100' });
       expect(c.response.iterate).toBe('{{body.data}}');
+      expect(c.response.limit).toBe(300);
+      expect(c.pagination).toEqual({
+        qs: { starting_after: '{{last(body.data).id}}' },
+        condition: '{{body.has_more}}',
+      });
       const names = schemaPropertyNames(
         responseDataSchema('GET', requestShape(c).path, { items: true }),
         2
@@ -73,6 +78,10 @@ describe('rpcs', () => {
       for (const reference of itemReferences(c.response.output))
         expect(names, `${r.id} item.${reference}`).toContain(reference);
     }
+  );
+
+  it.each(['listTicketTypes', 'listEventFields'])('%s reads one event, with no pagination', (id) =>
+    expect((app.get('rpc', id).code.communication as any).pagination).toBeUndefined()
   );
 
   it('lists the ticket types of the chosen event', () => {
