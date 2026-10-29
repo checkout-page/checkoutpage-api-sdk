@@ -728,6 +728,7 @@ describe('spec conformance: the node only sends what the seller API spec accepts
       {
         "GET /v1/bookings/": {
           "query": [
+            "archived",
             "ending_before",
           ],
         },
