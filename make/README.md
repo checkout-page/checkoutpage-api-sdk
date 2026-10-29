@@ -67,8 +67,8 @@ from the list, so that its ticket types and fields load. Then add:
   **Pay what you want amount** in the smallest currency unit.
 - **Fields**: a value for each of the event's fields. Always include the email field, because
   the attendee's customer record is created from it. Fields with no value are left out.
-  Multi-select and address fields can't be set from Make yet, so an event that requires one
-  can't be booked from here.
+  Each field takes the value you map to it. For an address field, map an object with the
+  address lines, city, state, postal code and country.
 - **Record as**: required. Choose **Complimentary** (no charge), **To be paid by invoice** or
   **To be paid on arrival**.
 - **Coupon**: optional. A complimentary booking ignores the coupon.

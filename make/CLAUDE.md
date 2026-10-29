@@ -117,6 +117,9 @@ Each developer deploys to their own testing app; only a release deploys to Produ
 
 ## Releasing
 
+`package.json` holds the last released version. The first release is 0.1.0, so it stays at
+`0.0.0` until then; the workflow writes the new version.
+
 1. Add a `## <version>` section to `CHANGELOG.md`.
 2. Deploy `app/` to the Production origin from VS Code.
 3. Run `publish-make.yml` from main with the new version. It checks the version is greater than
