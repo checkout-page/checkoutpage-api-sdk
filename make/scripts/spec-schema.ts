@@ -1,5 +1,5 @@
 import { findOperation, spec } from '../test/spec';
-import type { Target } from './interfaces.config';
+import type { DataSource, Target } from './interfaces.config';
 
 export interface Schema {
   type?: string | string[];
@@ -224,11 +224,10 @@ export function toMakeInterface(schema: Schema, opts: { exclude?: string[] } = {
   return makeFields(resolveSchema(schema), opts.exclude ?? [], '');
 }
 
-export function toMakeSample(schema: Schema): unknown {
-  const resolved = resolveSchema(schema);
-  if (resolved.example !== undefined) return resolved.example;
-  if (resolved.enum?.length) return resolved.enum[0];
-  switch (makeType(resolved)) {
+function sampleOf(schema: Schema, exclude: string[], prefix: string): unknown {
+  if (schema.example !== undefined) return schema.example;
+  if (schema.enum?.length) return schema.enum[0];
+  switch (makeType(schema)) {
     case 'date':
       return SAMPLE_DATE;
     case 'email':
@@ -242,12 +241,14 @@ export function toMakeSample(schema: Schema): unknown {
     case 'array':
       return [];
     case 'collection': {
-      const required = resolved.required ?? [];
+      const required = schema.required ?? [];
       return Object.fromEntries(
-        liveProperties(resolved).map(([name, property]) => [
-          name,
-          !required.includes(name) && property.nullable ? null : toMakeSample(property),
-        ])
+        liveProperties(schema).flatMap(([name, property]) => {
+          const path = prefix ? `${prefix}.${name}` : name;
+          if (exclude.includes(path)) return [];
+          const optionalNull = !required.includes(name) && property.nullable;
+          return [[name, optionalNull ? null : sampleOf(property, exclude, path)]];
+        })
       );
     }
     default:
@@ -255,25 +256,40 @@ export function toMakeSample(schema: Schema): unknown {
   }
 }
 
+export function toMakeSample(schema: Schema, opts: { exclude?: string[] } = {}): unknown {
+  return sampleOf(resolveSchema(schema), opts.exclude ?? [], '');
+}
+
 const snakeCase = (name: string) => name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 
 function targetSchema(target: Target): Schema {
-  const data = responseDataSchema(target.method, target.path, { items: target.items });
-  if (!target.wrap) return data;
+  if (!target.wrap) return responseDataSchema(target.method, target.path, { items: target.items });
   const { key, recoveryUrl } = target.wrap;
+  const sources: DataSource[] =
+    target.wrap.data ??
+    (key ? [{ key, method: target.method, path: target.path, items: target.items }] : []);
+  if (!sources.length) throw new Error(`${target.module} wraps no data: set wrap.key or wrap.data`);
+  const data = Object.fromEntries(
+    sources.map((source) => [
+      source.key,
+      responseDataSchema(source.method, source.path, { items: source.items }),
+    ])
+  );
   return {
     type: 'object',
-    required: ['event', 'eventId', 'timestamp', 'sellerId', key],
+    required: ['event', 'eventId', 'timestamp', 'sellerId', ...Object.keys(data)],
     properties: {
-      event: { type: 'string', example: `${snakeCase(key)}.created` },
+      event: { type: 'string', example: `${snakeCase(sources[0].key)}.created` },
       eventId: { type: 'string' },
       timestamp: { type: 'string', format: 'date-time' },
       sellerId: { type: 'string' },
-      [key]: data,
+      ...data,
       ...(recoveryUrl ? { recoveryUrl: { type: ['string', 'null'], format: 'uri' } } : {}),
     },
   };
 }
 
-export const moduleInterface = (target: Target) => toMakeInterface(targetSchema(target));
-export const moduleSample = (target: Target) => toMakeSample(targetSchema(target));
+export const moduleInterface = (target: Target) =>
+  toMakeInterface(targetSchema(target), { exclude: target.exclude });
+export const moduleSample = (target: Target) =>
+  toMakeSample(targetSchema(target), { exclude: target.exclude });

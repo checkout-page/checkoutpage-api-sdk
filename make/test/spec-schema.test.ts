@@ -231,4 +231,55 @@ describe('module targets', () => {
       toMakeInterface(responseDataSchema('GET', '/v1/customers/:customerId'))
     );
   });
+
+  it('leaves excluded fields out of the interface and the sample', () => {
+    const target = {
+      module: 'searchCheckoutPages',
+      method: 'GET' as const,
+      path: '/v1/checkout-pages/',
+      items: true,
+      exclude: ['themeOverrides'],
+    };
+    expect(
+      toMakeInterface(responseDataSchema('GET', '/v1/checkout-pages/', { items: true })).map(
+        (f) => f.name
+      )
+    ).toContain('themeOverrides');
+    expect(moduleInterface(target).map((f) => f.name)).not.toContain('themeOverrides');
+    expect(Object.keys(moduleSample(target) as Record<string, unknown>)).not.toContain(
+      'themeOverrides'
+    );
+  });
+
+  it('wraps one collection per data entry, in order', () => {
+    const target = {
+      module: 'watchPagesAndProducts',
+      method: 'GET' as const,
+      path: '/v1/checkout-pages/',
+      items: true,
+      wrap: {
+        event: true as const,
+        data: [
+          { key: 'checkoutPage', method: 'GET' as const, path: '/v1/checkout-pages/', items: true },
+          { key: 'product', method: 'GET' as const, path: '/v1/products/', items: true },
+        ],
+      },
+    };
+    const fields = moduleInterface(target);
+    expect(fields.map((f) => f.name)).toEqual([
+      'event',
+      'eventId',
+      'timestamp',
+      'sellerId',
+      'checkoutPage',
+      'product',
+    ]);
+    expect(fields[5].spec).toEqual(
+      toMakeInterface(responseDataSchema('GET', '/v1/products/', { items: true }))
+    );
+    const sample = moduleSample(target) as Record<string, unknown>;
+    expect(sample.event).toBe('checkout_page.created');
+    expect(sample.checkoutPage).toEqual(expect.objectContaining({ id: expect.anything() }));
+    expect(sample.product).toEqual(expect.objectContaining({ id: expect.anything() }));
+  });
 });
