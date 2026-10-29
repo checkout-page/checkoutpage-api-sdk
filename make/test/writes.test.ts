@@ -90,6 +90,30 @@ describe('bookingBody', () => {
     ok(bookingOp, body);
   });
 
+  it('passes an address object through as the field value', () => {
+    const address = {
+      billing: {
+        line1: '1 High Street',
+        city: 'London',
+        region: 'Greater London',
+        postalCode: 'SW1A 1AA',
+        country: 'GB',
+      },
+    };
+    const body = booking({
+      fields: [
+        { fieldId: FIELD, value: 'a@b.co' },
+        { fieldId: PAGE, value: address },
+      ],
+      recordAs: 'invoice',
+    });
+    expect(body.fields).toEqual([
+      { fieldId: FIELD, value: 'a@b.co' },
+      { fieldId: PAGE, value: address },
+    ]);
+    ok(bookingOp, body);
+  });
+
   it('drops fields with no value', () => {
     const body = booking({
       fields: [
@@ -297,6 +321,7 @@ describe('write modules', () => {
       help: 'Include the email field.',
     });
     expect(fields.spec[0]).toMatchObject({ name: 'fieldId', options: 'rpc://listEventFields' });
+    expect(fields.spec[1]).toMatchObject({ name: 'value', type: 'any' });
   });
 
   it('updates the customer named in the URL', () => {

@@ -122,8 +122,7 @@ Things to know:
 - An account can have up to 10 webhooks, and each webhook in Make uses one. Remove the ones
   you no longer use in the Checkout Page dashboard under **Settings**, **Developers**,
   **Webhooks**.
-- Make only accepts deliveries that carry the secret header it set when it created the
-  webhook.
+- Deliveries carry a secret header that Make checks when it can.
 - Make ignores the test delivery you send from the Checkout Page dashboard. To try a trigger,
   select **Run once** in Make, then make a test booking or payment.
 

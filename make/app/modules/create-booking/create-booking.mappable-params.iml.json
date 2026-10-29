@@ -51,8 +51,9 @@
       },
       {
         "name": "value",
-        "type": "text",
-        "label": "Value"
+        "type": "any",
+        "label": "Value",
+        "help": "Text for most fields. For an address field, map an object with the address lines, city, state, postal code and country."
       }
     ]
   },
