@@ -21,7 +21,20 @@
     "webhook": {},
     "module": {},
     "rpc": {},
-    "function": {}
+    "function": {
+      "toQueryBoolean": {
+        "codeFiles": {
+          "code": "functions/to-query-boolean/to-query-boolean.code.js",
+          "test": "functions/to-query-boolean/to-query-boolean.test.js"
+        }
+      },
+      "toQueryDate": {
+        "codeFiles": {
+          "code": "functions/to-query-date/to-query-date.code.js",
+          "test": "functions/to-query-date/to-query-date.test.js"
+        }
+      }
+    }
   },
   "origins": []
 }
