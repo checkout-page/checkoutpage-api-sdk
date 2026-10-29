@@ -1,0 +1,28 @@
+{
+  "baseUrl": "{{connection.baseUrl}}",
+  "headers": {
+    "authorization": "Bearer {{connection.apiKey}}",
+    "content-type": "application/json"
+  },
+  "response": {
+    "error": {
+      "type": "RuntimeError",
+      "message": "[{{statusCode}}] {{ifempty(body.message, 'Checkout Page returned an error')}}{{if(body.errors, ': ' + join(map(body.errors, 'message'), '; '), '')}}",
+      "401": {
+        "type": "InvalidCredentials",
+        "message": "Checkout Page rejected the API key. Create a new key in the dashboard under Settings, Developers."
+      },
+      "403": {
+        "type": "RuntimeError",
+        "message": "[403] {{ifempty(body.message, 'Your Checkout Page plan does not include this feature.')}}"
+      },
+      "429": {
+        "type": "RateLimitError",
+        "message": "Checkout Page rate limit reached. Try again in a minute."
+      }
+    }
+  },
+  "log": {
+    "sanitize": ["request.headers.authorization"]
+  }
+}

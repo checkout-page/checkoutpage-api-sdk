@@ -1,0 +1,27 @@
+{
+  "fileVersion": 1,
+  "generalCodeFiles": {
+    "base": "general/base.iml.json",
+    "common": "general/common.json",
+    "readme": "README.md",
+    "groups": "modules/groups.json"
+  },
+  "components": {
+    "connection": {
+      "checkoutPage": {
+        "label": "Checkout Page",
+        "connectionType": "basic",
+        "codeFiles": {
+          "communication": "connections/checkout-page/checkout-page.communication.iml.json",
+          "params": "connections/checkout-page/checkout-page.params.iml.json",
+          "common": "connections/checkout-page/checkout-page.common.json"
+        }
+      }
+    },
+    "webhook": {},
+    "module": {},
+    "rpc": {},
+    "function": {}
+  },
+  "origins": []
+}

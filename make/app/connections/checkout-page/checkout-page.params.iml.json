@@ -1,0 +1,18 @@
+[
+  {
+    "name": "apiKey",
+    "type": "password",
+    "label": "API key",
+    "required": true,
+    "help": "Create one in the Checkout Page dashboard under Settings, Developers, API keys."
+  },
+  {
+    "name": "baseUrl",
+    "type": "url",
+    "label": "API base URL",
+    "default": "https://api.checkoutpage.com",
+    "required": true,
+    "advanced": true,
+    "help": "Leave the default unless Checkout Page support gave you another URL."
+  }
+]
