@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { loadApp } from './app';
+import { spec } from './spec';
 
 const app = loadApp();
 
@@ -61,6 +62,13 @@ describe('makeApiCall', () => {
     expect(byName.headers.type).toBe('array');
     expect(byName.qs.type).toBe('array');
     expect(byName.body.type).toBe('any');
+  });
+
+  it('samples the bare account that GET /v1/account/ returns', () => {
+    const account = (spec as any).components.schemas.Account.properties;
+    const body = (m.code.samples as { body: Record<string, unknown> }).body;
+    expect(body).not.toHaveProperty('data');
+    expect(Object.keys(body).every((key) => key in account)).toBe(true);
   });
 
   it('declares no static params and no scope', () => {

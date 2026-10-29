@@ -54,6 +54,20 @@ it('drops the coupon from a complimentary booking', () => {
   assert.equal('couponId' in booking({ recordAs: 'complimentary', couponId: 'coupon' }), false);
 });
 
+it('sends an array value as the values of a multi-select field', () => {
+  const body = booking({
+    fields: [
+      { fieldId: 'email', value: 'a@b.co' },
+      { fieldId: 'source', value: ['google', 'facebook'] },
+    ],
+    recordAs: 'complimentary',
+  });
+  assert.deepEqual(body.fields, [
+    { fieldId: 'email', value: 'a@b.co' },
+    { fieldId: 'source', values: ['google', 'facebook'] },
+  ]);
+});
+
 it('rejects a booking with no way to record it', () => {
   assert.throws(() => booking({}), /Choose how to record the booking/);
   assert.throws(() => booking({ recordAs: 'paid' }), /Choose how to record the booking/);

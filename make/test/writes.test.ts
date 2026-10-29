@@ -114,11 +114,27 @@ describe('bookingBody', () => {
     ok(bookingOp, body);
   });
 
+  it('sends an array value as the option values of a multi-select field', () => {
+    const body = booking({
+      fields: [
+        { fieldId: FIELD, value: 'a@b.co' },
+        { fieldId: PAGE, value: ['google', 'facebook'] },
+      ],
+      recordAs: 'invoice',
+    });
+    expect(body.fields).toEqual([
+      { fieldId: FIELD, value: 'a@b.co' },
+      { fieldId: PAGE, values: ['google', 'facebook'] },
+    ]);
+    ok(bookingOp, body);
+  });
+
   it('drops fields with no value', () => {
     const body = booking({
       fields: [
         { fieldId: FIELD, value: 'a@b.co' },
         { fieldId: OTHER_TICKET, value: '' },
+        { fieldId: PAGE, value: [] },
       ],
       recordAs: 'cash_on_delivery',
     });

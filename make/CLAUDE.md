@@ -10,8 +10,8 @@ in private beta, shared by invite link from Make; the public listing comes after
 - `app/` - the app in the local file format of the Make Apps Editor VS Code extension. Make
   reads these files as they are, so their names and shapes follow Make, not this repo.
   - `makecomapp.json` - the manifest: every component (connection, webhooks, modules, RPCs,
-    functions) with its label, description and code files, plus the general files. `origins`
-    stays `[]` in git (see [Deploying](#deploying)).
+    functions) with its label, description and code files, plus the general files. Only the
+    Production origin is committed, never a key (see [Deploying](#deploying)).
   - Code files are named `<type>s/<kebab-id>/<kebab-id>.<code>.iml.json`, for example
     `modules/search-payments/search-payments.mappable-params.iml.json`. `common` files end in
     `.json`, function `code` and `test` files in `.js`. `test/structure.test.ts` enforces it.
@@ -84,12 +84,22 @@ the result.
 - **Never rename or delete a published component** (module, connection, webhook, RPC or
   function id) or a parameter name. Scenarios store them, and Make never lets a public app
   delete a module or connection. Change the label instead.
-- **Never commit `.secrets/` or an `apikeyFile`.** Both are gitignored. No real API keys or Make
-  tokens in tests, fixtures or docs: use placeholders like `YOUR_API_KEY`.
+- **Never commit `.secrets/` or a key file.** `.secrets/` is gitignored. No real API keys or
+  Make tokens in tests, fixtures or docs: use placeholders like `YOUR_API_KEY`.
+- **Commit the Production origin, not the Testing ones.** After the first Production deploy,
+  commit its origin (`label`, `baseUrl`, `appId`, `appVersion`, `idMapping` and
+  `apikeyFile: "../.secrets/production"`) so the component mapping is shared and the next
+  deploy does not create duplicates. Never commit the key file itself; Testing origins stay
+  local.
 
 ## Deploying
 
 Deploying only works from VS Code with the Make Apps Editor extension. There is no CLI.
+
+Hard dependency: Make does not enable custom IML functions for an app by default. Ask Make
+support to turn them on for each app (testing and Production) before the first deploy, or the
+five functions (`toQueryBoolean`, `toQueryDate`, `bookingBody`, `couponBody`, `customerBody`)
+fail to deploy and every search and write that calls them breaks.
 
 1. Create a Make API token with the scopes `sdk-apps:read` and `sdk-apps:write`. Save it in a
    file under `make/.secrets/`, for example `make/.secrets/testing`.
@@ -107,8 +117,12 @@ Deploying only works from VS Code with the Make Apps Editor extension. There is 
    ]
    ```
 
-   The path is relative to `makecomapp.json`. Never commit the origin: `structure.test.ts`
-   fails when `origins` is not `[]`.
+   The path is relative to `makecomapp.json`. The extension keeps each origin's local-to-remote
+   component mapping (`idMapping`) inside the origin. Keep Testing origins local. After the
+   first Production deploy, commit the Production origin (`label`, `baseUrl`, `appId`,
+   `appVersion`, `idMapping`, `apikeyFile: "../.secrets/production"`) so the mapping is shared;
+   never commit the key file itself. `structure.test.ts` fails when an origin's `apikeyFile`
+   is outside `.secrets/` or a key is inline.
 
 3. Right-click `app/makecomapp.json` and select **Deploy to Make**. Try the change in a scenario
    with a test mode API key before deploying to the Production origin.

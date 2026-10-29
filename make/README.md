@@ -67,7 +67,9 @@ from the list, so that its ticket types and fields load. Then add:
   **Pay what you want amount** in the smallest currency unit.
 - **Fields**: a value for each of the event's fields. Always include the email field, because
   the attendee's customer record is created from it. Fields with no value are left out.
-  Each field takes the value you map to it. For an address field, map an object with `billing` or `shipping` holding the address lines, city, state, postal code and two-letter country code.
+  Each field takes the value you map to it. For an address field, map an object with
+  `billing` or `shipping` holding the address lines, city, state, postal code and two-letter
+  country code. For a multi-select field, map an array of option values.
 - **Record as**: required. Choose **Complimentary** (no charge), **To be paid by invoice** or
   **To be paid on arrival**.
 - **Coupon**: optional. A complimentary booking ignores the coupon.
@@ -134,8 +136,9 @@ Google Sheets row, attendees from a form, and a welcome coupon for every new cus
 
 The app's source is in `app/`, in the local file format of Make's Make Apps Editor extension
 for VS Code. Run the tests with `npm ci && npm test`. Deploying needs that extension and a Make
-API token with the `sdk-apps:read` and `sdk-apps:write` scopes. See [CLAUDE.md](CLAUDE.md) for
-how to add a module, deploy and release.
+API token with the `sdk-apps:read` and `sdk-apps:write` scopes. Make support must enable custom
+IML functions for the app before its first deploy, because the app's functions need them. See
+[CLAUDE.md](CLAUDE.md) for how to add a module, deploy and release.
 
 ## Help
 

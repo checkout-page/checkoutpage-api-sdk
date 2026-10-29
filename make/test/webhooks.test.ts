@@ -16,7 +16,7 @@ describe('webhooks', () => {
   });
 
   it.each(app.byType('webhook').map((w) => [w.id, w]))(
-    '%s attaches and detaches through /v1/webhooks',
+    '%s attaches, updates and detaches through /v1/webhooks',
     (_id, w: any) => {
       const attach = requestShape(w.code.attach);
       expect(attach.method).toBe('POST');
@@ -24,6 +24,17 @@ describe('webhooks', () => {
       expect(attach.bodyKeys).toEqual(
         expect.arrayContaining(['name', 'url', 'events', 'customHeaders'])
       );
+      expect(w.code.attach.body.name).toContain('substring(');
+      expect(w.code.attach.log.sanitize).toEqual(
+        expect.arrayContaining([
+          'response.body.data.secret',
+          'request.body.customHeaders.x-make-token',
+        ])
+      );
+      const update = requestShape(w.code.update);
+      expect(update).toMatchObject({ method: 'PATCH', path: '/v1/webhooks/__param__' });
+      expect(conformance(update)).toEqual([]);
+      expect(update.bodyKeys).toContain('events');
       const detach = requestShape(w.code.detach);
       expect(detach).toMatchObject({ method: 'DELETE', path: '/v1/webhooks/__param__' });
       expect(conformance(detach)).toEqual([]);

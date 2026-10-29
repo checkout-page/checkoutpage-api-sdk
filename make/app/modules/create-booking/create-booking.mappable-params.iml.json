@@ -53,7 +53,7 @@
         "name": "value",
         "type": "any",
         "label": "Value",
-        "help": "Text for most fields. For an address field, map an object with `billing` or `shipping` holding the address lines, city, state, postal code and two-letter country code."
+        "help": "Text for most fields. For an address field, map an object with `billing` or `shipping` holding the address lines, city, state, postal code and two-letter country code. For a multi-select field, map an array of option values."
       }
     ]
   },

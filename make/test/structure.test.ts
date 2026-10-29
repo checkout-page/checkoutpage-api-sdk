@@ -11,9 +11,14 @@ const KEBAB_CODES: Record<string, string> = {
 };
 
 describe('makecomapp.json', () => {
-  it('is file version 1 with no committed origins', () => {
+  it('is file version 1', () => {
     expect(app.makecomapp.fileVersion).toBe(1);
-    expect(app.makecomapp.origins).toEqual([]);
+  });
+  it('keeps every committed origin key in a .secrets file, never inline', () => {
+    for (const origin of app.makecomapp.origins as Record<string, unknown>[]) {
+      expect(String(origin.apikeyFile)).toMatch(/^(\.\.\/)?\.secrets\//);
+      expect(origin).not.toHaveProperty('apikey');
+    }
   });
   it('points every code file at an existing file', () => {
     for (const path of Object.values(app.makecomapp.generalCodeFiles))
@@ -63,6 +68,16 @@ describe('base', () => {
   });
   it('shows the API message on errors', () => {
     expect(JSON.stringify((app.base.response as any).error)).toContain('body.message');
+  });
+  it('maps statuses to Make error types', () => {
+    const error = (app.base.response as any).error;
+    expect(error['400'].type).toBe('DataError');
+    expect(error['400'].message).toContain('body.errors');
+    expect(error['401'].type).toBe('InvalidAccessTokenError');
+    expect(error['409'].type).toBe('DuplicateDataError');
+    expect(error['429'].type).toBe('RateLimitError');
+    expect(error['403'].type).toBe('RuntimeError');
+    expect(error.type).toBe('RuntimeError');
   });
 });
 

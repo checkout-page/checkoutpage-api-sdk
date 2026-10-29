@@ -16,8 +16,18 @@ function bookingBody(parameters) {
     eventId: p.eventId,
     tickets,
     fields: (p.fields || [])
-      .filter((field) => field && filled(field.fieldId) && filled(field.value))
-      .map((field) => ({ fieldId: field.fieldId, value: field.value })),
+      .filter(
+        (field) =>
+          field &&
+          filled(field.fieldId) &&
+          filled(field.value) &&
+          !(Array.isArray(field.value) && !field.value.length)
+      )
+      .map((field) =>
+        Array.isArray(field.value)
+          ? { fieldId: field.fieldId, values: field.value }
+          : { fieldId: field.fieldId, value: field.value }
+      ),
   };
   if (p.recordAs === 'complimentary') body.complimentary = true;
   else if (p.recordAs === 'invoice' || p.recordAs === 'cash_on_delivery')
