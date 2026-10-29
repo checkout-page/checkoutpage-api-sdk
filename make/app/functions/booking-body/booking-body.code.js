@@ -19,10 +19,11 @@ function bookingBody(parameters) {
       .filter((field) => field && filled(field.fieldId) && filled(field.value))
       .map((field) => ({ fieldId: field.fieldId, value: field.value })),
   };
-  if (filled(p.complimentary))
-    body.complimentary = p.complimentary === true || p.complimentary === 'true';
-  if (filled(p.couponId)) body.couponId = p.couponId;
-  if (filled(p.manualType)) body.paymentOption = { manualType: p.manualType };
+  if (p.recordAs === 'complimentary') body.complimentary = true;
+  else if (p.recordAs === 'invoice' || p.recordAs === 'cash_on_delivery')
+    body.paymentOption = { manualType: p.recordAs };
+  else throw new Error('Choose how to record the booking');
+  if (filled(p.couponId) && !body.complimentary) body.couponId = p.couponId;
   if (Object.keys(ticketPwywAmounts).length) body.ticketPwywAmounts = ticketPwywAmounts;
   return body;
 }

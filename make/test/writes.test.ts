@@ -26,67 +26,94 @@ const ok = (op: SpecOperation, body: unknown) => {
 };
 
 describe('bookingBody', () => {
-  it('folds ticket rows into the keyed tickets object, summing duplicates', () => {
-    const body = bookingBody({
+  const booking = (overrides: object) =>
+    bookingBody({
       eventId: EVENT,
+      tickets: [{ ticketTypeId: TICKET, quantity: 1 }],
+      fields: [{ fieldId: FIELD, value: 'a@b.co' }],
+      ...overrides,
+    });
+
+  it('folds ticket rows into the keyed tickets object, summing duplicates', () => {
+    const body = booking({
       tickets: [
         { ticketTypeId: TICKET, quantity: 1 },
         { ticketTypeId: TICKET, quantity: 2 },
         { ticketTypeId: OTHER_TICKET, quantity: 1 },
       ],
-      fields: [{ fieldId: FIELD, value: 'a@b.co' }],
+      recordAs: 'complimentary',
     });
     expect(body).toEqual({
       eventId: EVENT,
       tickets: { [TICKET]: 3, [OTHER_TICKET]: 1 },
       fields: [{ fieldId: FIELD, value: 'a@b.co' }],
+      complimentary: true,
     });
+    ok(bookingOp, body);
+  });
+
+  it('records a complimentary booking without a payment option', () => {
+    const body = booking({ recordAs: 'complimentary' });
+    expect(body.complimentary).toBe(true);
     expect(body).not.toHaveProperty('paymentOption');
     ok(bookingOp, body);
   });
 
-  it('records a manual payment option and pwyw amounts', () => {
-    const body = bookingBody({
-      eventId: EVENT,
+  it.each(['invoice', 'cash_on_delivery'])(
+    'records a booking to be paid by %s as a manual payment option',
+    (manualType) => {
+      const body = booking({ recordAs: manualType });
+      expect(body.paymentOption).toEqual({ manualType });
+      expect(body).not.toHaveProperty('complimentary');
+      ok(bookingOp, body);
+    }
+  );
+
+  it('sends pwyw amounts and a chosen coupon on a manual booking', () => {
+    const body = booking({
       tickets: [{ ticketTypeId: TICKET, quantity: 1, pwywAmount: 1500 }],
-      fields: [{ fieldId: FIELD, value: 'a@b.co' }],
-      manualType: 'invoice',
-      complimentary: false,
-      couponId: '',
+      recordAs: 'invoice',
+      couponId: PRICE,
     });
     expect(body).toMatchObject({
       paymentOption: { manualType: 'invoice' },
       ticketPwywAmounts: { [TICKET]: 1500 },
-      complimentary: false,
+      couponId: PRICE,
     });
+    ok(bookingOp, body);
+    expect(booking({ recordAs: 'invoice', couponId: '' })).not.toHaveProperty('couponId');
+  });
+
+  it('drops the coupon from a complimentary booking', () => {
+    const body = booking({ recordAs: 'complimentary', couponId: PRICE });
     expect(body).not.toHaveProperty('couponId');
     ok(bookingOp, body);
   });
 
-  it('drops fields with no value and sends a chosen coupon', () => {
-    const body = bookingBody({
-      eventId: EVENT,
-      tickets: [{ ticketTypeId: TICKET, quantity: 2 }],
+  it('drops fields with no value', () => {
+    const body = booking({
       fields: [
         { fieldId: FIELD, value: 'a@b.co' },
         { fieldId: OTHER_TICKET, value: '' },
       ],
-      couponId: PRICE,
-      manualType: '',
+      recordAs: 'cash_on_delivery',
     });
     expect(body.fields).toEqual([{ fieldId: FIELD, value: 'a@b.co' }]);
-    expect(body.couponId).toBe(PRICE);
-    expect(body).not.toHaveProperty('paymentOption');
-    ok(bookingOp, body);
   });
 
+  it.each([undefined, '', 'paid'])('rejects a booking recorded as %j', (recordAs) =>
+    expect(() => booking({ recordAs })).toThrow('Choose how to record the booking')
+  );
+
   it('rejects a booking without tickets', () => {
-    expect(() => bookingBody({ eventId: EVENT, tickets: [], fields: [] })).toThrow(
+    expect(() => booking({ tickets: [], recordAs: 'complimentary' })).toThrow(
       'Add at least one ticket'
     );
-    expect(() => bookingBody({ eventId: EVENT, fields: [] })).toThrow('Add at least one ticket');
+    expect(() => booking({ tickets: undefined, recordAs: 'complimentary' })).toThrow(
+      'Add at least one ticket'
+    );
     expect(() =>
-      bookingBody({ eventId: EVENT, tickets: [{ ticketTypeId: TICKET, quantity: 0 }], fields: [] })
+      booking({ tickets: [{ ticketTypeId: TICKET, quantity: 0 }], recordAs: 'complimentary' })
     ).toThrow('Add at least one ticket');
   });
 });
@@ -245,6 +272,23 @@ describe('write modules', () => {
     expect(tickets.spec[0]).toMatchObject({
       name: 'ticketTypeId',
       options: 'rpc://listTicketTypes',
+    });
+    expect(tickets.spec[2]).toMatchObject({ name: 'pwywAmount', type: 'uinteger' });
+    expect(params.map((p) => p.name)).not.toContain('complimentary');
+    expect(params.map((p) => p.name)).not.toContain('manualType');
+    expect(params.find((p) => p.name === 'recordAs')).toEqual({
+      name: 'recordAs',
+      type: 'select',
+      label: 'Record as',
+      required: true,
+      options: [
+        { label: 'Complimentary', value: 'complimentary' },
+        { label: 'To be paid by invoice', value: 'invoice' },
+        { label: 'To be paid on arrival', value: 'cash_on_delivery' },
+      ],
+    });
+    expect(params.find((p) => p.name === 'couponId')).toMatchObject({
+      help: 'Ignored for complimentary bookings.',
     });
     const fields = params.find((p) => p.name === 'fields');
     expect(fields).toMatchObject({

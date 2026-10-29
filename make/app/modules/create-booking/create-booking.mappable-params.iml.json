@@ -29,7 +29,7 @@
       },
       {
         "name": "pwywAmount",
-        "type": "number",
+        "type": "uinteger",
         "label": "Pay what you want amount",
         "help": "In the smallest currency unit, for example cents."
       }
@@ -57,31 +57,30 @@
     ]
   },
   {
-    "name": "complimentary",
-    "type": "boolean",
-    "label": "Complimentary",
-    "help": "Issue the tickets at no charge."
-  },
-  {
     "name": "couponId",
     "type": "select",
     "label": "Coupon",
-    "options": "rpc://listCoupons"
+    "options": "rpc://listCoupons",
+    "help": "Ignored for complimentary bookings."
   },
   {
-    "name": "manualType",
+    "name": "recordAs",
     "type": "select",
     "label": "Record as",
+    "required": true,
     "options": [
       {
-        "label": "Cash on delivery",
-        "value": "cash_on_delivery"
+        "label": "Complimentary",
+        "value": "complimentary"
       },
       {
-        "label": "Invoice",
+        "label": "To be paid by invoice",
         "value": "invoice"
+      },
+      {
+        "label": "To be paid on arrival",
+        "value": "cash_on_delivery"
       }
-    ],
-    "help": "Records the booking as unpaid, to be paid on arrival or by invoice."
+    ]
   }
 ]

@@ -545,7 +545,7 @@
       },
       "createBooking": {
         "label": "Create a booking",
-        "description": "Adds an attendee to an event, with or without a payment.",
+        "description": "Adds an attendee to an event, recorded as complimentary or to be paid by invoice or on arrival.",
         "moduleType": "action",
         "actionCrud": "create",
         "connection": "checkoutPage",
