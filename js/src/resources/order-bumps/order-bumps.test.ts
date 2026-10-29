@@ -24,7 +24,7 @@ const orderBump = (productId: string, overrides: Partial<OrderBump> = {}): Order
     enabled: false,
     subject: 'price',
     comparison: 'is',
-    priceId: null,
+    priceIds: [],
     ticketTypeIds: [],
     orderBumpProductIds: [],
   },
@@ -146,6 +146,39 @@ describe('OrderBumpsResource', () => {
       const result = await orderBumps.update('page_123', 'bump_1', params);
 
       expect(result).toEqual(mockResponse);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: `/v1/${prefix}/page_123/order-bumps/bump_1`,
+        body: params,
+      });
+    });
+
+    it('updates a price rule that names several prices', async () => {
+      const params: UpdateOrderBumpParams = {
+        showHideLogic: {
+          enabled: true,
+          subject: 'price',
+          comparison: 'is',
+          priceIds: ['price_standard', 'price_deluxe'],
+        },
+      };
+      const mockResponse: OrderBumpResponse = {
+        data: orderBump('bump_1', {
+          showHideLogic: {
+            enabled: true,
+            subject: 'price',
+            comparison: 'is',
+            priceIds: ['price_standard', 'price_deluxe'],
+            ticketTypeIds: [],
+            orderBumpProductIds: [],
+          },
+        }),
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await orderBumps.update('page_123', 'bump_1', params);
+
+      expect(result.data.showHideLogic.priceIds).toEqual(['price_standard', 'price_deluxe']);
       expect(client.request).toHaveBeenCalledWith({
         method: 'PATCH',
         path: `/v1/${prefix}/page_123/order-bumps/bump_1`,

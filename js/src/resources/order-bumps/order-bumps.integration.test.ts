@@ -6,7 +6,7 @@ import {
   NotFoundError,
   ValidationError,
 } from '../../index';
-import type { CreateProductParams } from '../../index';
+import type { CreateCheckoutPageParams, CreateProductParams } from '../../index';
 import type { OrderBumpsResource } from './order-bumps';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 import { fakeObjectId, uniqueSuffix } from '../../test-helpers/test-lib';
@@ -37,15 +37,16 @@ describe('Order bumps on checkout pages and events (integration)', () => {
     return data;
   };
 
-  const createCheckoutPage = async () => {
-    const { data } = await client.checkoutPages.create({
-      name: name('page'),
-      productData: { price: { amount: 4900, currency: 'usd' } },
-    });
+  const createCheckoutPage = async (
+    productData: CreateCheckoutPageParams['productData'] = {
+      price: { amount: 4900, currency: 'usd' },
+    }
+  ) => {
+    const { data } = await client.checkoutPages.create({ name: name('page'), productData });
     createdCheckoutPageIds.push(data.id);
     const productId = data.product?.id;
     if (!productId) throw new Error('Provisioned page is missing its product');
-    return { pageId: data.id, productId };
+    return { pageId: data.id, productId, prices: data.product?.prices ?? [] };
   };
 
   const createEvent = async () => {
@@ -126,7 +127,7 @@ describe('Order bumps on checkout pages and events (integration)', () => {
           enabled: false,
           subject: 'price',
           comparison: 'is',
-          priceId: null,
+          priceIds: [],
           ticketTypeIds: [],
           orderBumpProductIds: [],
         },
@@ -190,7 +191,7 @@ describe('Order bumps on checkout pages and events (integration)', () => {
           enabled: true,
           subject: 'order_bump',
           comparison: 'is',
-          priceId: null,
+          priceIds: [],
           ticketTypeIds: [],
           orderBumpProductIds: [second.id],
         },
@@ -224,6 +225,44 @@ describe('Order bumps on checkout pages and events (integration)', () => {
       // Detaching keeps the product.
       const { data: kept } = await client.products.get(second.id);
       expect(kept?.role).toBe('orderbump');
+    });
+
+    it('stores a price rule that names several prices and reads it back', async () => {
+      const { pageId, prices } = await createCheckoutPage({
+        prices: [
+          { billingType: 'one_time', amount: 4900, currency: 'usd', label: 'Standard' },
+          { billingType: 'one_time', amount: 7900, currency: 'usd', label: 'Deluxe' },
+          { billingType: 'one_time', amount: 9900, currency: 'usd', label: 'VIP' },
+        ],
+      });
+      const [standard, deluxe] = prices;
+      if (!standard || !deluxe) throw new Error('Provisioned page is missing its prices');
+      const bump = await createBump();
+      await client.checkoutPages.orderBumps.create(pageId, { productId: bump.id });
+
+      const updated = await withStatus(() =>
+        client.checkoutPages.orderBumps.update(pageId, bump.id, {
+          showHideLogic: {
+            enabled: true,
+            subject: 'price',
+            comparison: 'is',
+            priceIds: [standard.id, deluxe.id],
+          },
+        })
+      );
+      const rule = {
+        enabled: true,
+        subject: 'price',
+        comparison: 'is',
+        priceIds: [standard.id, deluxe.id],
+        ticketTypeIds: [],
+        orderBumpProductIds: [],
+      };
+      expect(updated.status).toBe(200);
+      expect(updated.value!.data.showHideLogic).toEqual(rule);
+
+      const { data: listed } = await client.checkoutPages.orderBumps.list(pageId);
+      expect(listed.find((entry) => entry.productId === bump.id)?.showHideLogic).toEqual(rule);
     });
 
     it('attaches a pay what you want order bump at its minimum price', async () => {

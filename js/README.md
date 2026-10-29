@@ -452,6 +452,22 @@ await checkoutpage.checkoutPages.orderBumps.reorder('page_id', {
 await checkoutpage.checkoutPages.orderBumps.delete('page_id', bump.id);
 ```
 
+#### Show it only for some prices
+
+A price rule names prices of the page's product: with `is` the order bump shows
+while the chosen price is any of them, and with `is_not` while it is none of them.
+
+```typescript
+await checkoutpage.checkoutPages.orderBumps.update('page_id', bump.id, {
+  showHideLogic: {
+    enabled: true,
+    subject: 'price',
+    comparison: 'is',
+    priceIds: ['standard_price_id', 'deluxe_price_id'],
+  },
+});
+```
+
 #### Delete an order bump product
 
 Only order bump products that have never been bought can be deleted. A product
