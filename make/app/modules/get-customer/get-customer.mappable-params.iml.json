@@ -1,0 +1,9 @@
+[
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers",
+    "required": true
+  }
+]

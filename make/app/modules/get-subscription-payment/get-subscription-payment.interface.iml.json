@@ -1,0 +1,207 @@
+[
+  {
+    "name": "amount",
+    "type": "number",
+    "label": "Amount"
+  },
+  {
+    "name": "amountUsd",
+    "type": "number",
+    "label": "Amount usd"
+  },
+  {
+    "name": "billingReason",
+    "type": "text",
+    "label": "Billing reason"
+  },
+  {
+    "name": "createdAt",
+    "type": "date",
+    "label": "Created at"
+  },
+  {
+    "name": "currency",
+    "type": "text",
+    "label": "Currency"
+  },
+  {
+    "name": "customerEmail",
+    "type": "text",
+    "label": "Customer email"
+  },
+  {
+    "name": "customerId",
+    "type": "text",
+    "label": "Customer ID"
+  },
+  {
+    "name": "customerName",
+    "type": "text",
+    "label": "Customer name"
+  },
+  {
+    "name": "id",
+    "type": "text",
+    "label": "ID"
+  },
+  {
+    "name": "invoiceStatus",
+    "type": "text",
+    "label": "Invoice status"
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Livemode"
+  },
+  {
+    "name": "pageId",
+    "type": "text",
+    "label": "Checkout page ID"
+  },
+  {
+    "name": "pageSlug",
+    "type": "text",
+    "label": "Checkout page slug"
+  },
+  {
+    "name": "paid",
+    "type": "boolean",
+    "label": "Paid"
+  },
+  {
+    "name": "partiallyRefunded",
+    "type": "boolean",
+    "label": "Partially refunded"
+  },
+  {
+    "name": "paymentMethod",
+    "type": "collection",
+    "label": "Payment method",
+    "spec": [
+      {
+        "name": "brand",
+        "type": "text",
+        "label": "Brand"
+      },
+      {
+        "name": "country",
+        "type": "text",
+        "label": "Country"
+      },
+      {
+        "name": "expMonth",
+        "type": "number",
+        "label": "Exp month"
+      },
+      {
+        "name": "expYear",
+        "type": "number",
+        "label": "Exp year"
+      },
+      {
+        "name": "funding",
+        "type": "text",
+        "label": "Funding"
+      },
+      {
+        "name": "gateway",
+        "type": "text",
+        "label": "Gateway"
+      },
+      {
+        "name": "last4",
+        "type": "text",
+        "label": "Last4"
+      },
+      {
+        "name": "method",
+        "type": "text",
+        "label": "Method"
+      },
+      {
+        "name": "mode",
+        "type": "text",
+        "label": "Mode"
+      },
+      {
+        "name": "wallet",
+        "type": "text",
+        "label": "Wallet"
+      }
+    ]
+  },
+  {
+    "name": "paymentStatus",
+    "type": "text",
+    "label": "Payment status"
+  },
+  {
+    "name": "productId",
+    "type": "text",
+    "label": "Product ID"
+  },
+  {
+    "name": "productTitle",
+    "type": "text",
+    "label": "Product title"
+  },
+  {
+    "name": "refunded",
+    "type": "boolean",
+    "label": "Refunded"
+  },
+  {
+    "name": "sellerId",
+    "type": "text",
+    "label": "Seller ID"
+  },
+  {
+    "name": "stripeInvoiceId",
+    "type": "text",
+    "label": "Stripe invoice ID"
+  },
+  {
+    "name": "stripeInvoicePdf",
+    "type": "text",
+    "label": "Stripe invoice pdf"
+  },
+  {
+    "name": "stripePaymentId",
+    "type": "text",
+    "label": "Stripe payment ID"
+  },
+  {
+    "name": "stripePaymentIntentId",
+    "type": "text",
+    "label": "Stripe payment intent ID"
+  },
+  {
+    "name": "stripeRefundInvoicePdf",
+    "type": "text",
+    "label": "Stripe refund invoice pdf"
+  },
+  {
+    "name": "stripeSubscriptionId",
+    "type": "text",
+    "label": "Stripe subscription ID"
+  },
+  {
+    "name": "subscriptionId",
+    "type": "text",
+    "label": "Subscription ID"
+  },
+  {
+    "name": "transactionIds",
+    "type": "array",
+    "label": "Transaction ids",
+    "spec": {
+      "type": "text"
+    }
+  },
+  {
+    "name": "updatedAt",
+    "type": "date",
+    "label": "Updated at"
+  }
+]

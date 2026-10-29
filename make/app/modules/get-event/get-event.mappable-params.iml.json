@@ -1,0 +1,9 @@
+[
+  {
+    "name": "pageId",
+    "type": "select",
+    "label": "Event",
+    "options": "rpc://listEvents",
+    "required": true
+  }
+]

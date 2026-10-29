@@ -1,0 +1,14 @@
+[
+  {
+    "name": "submissionId",
+    "type": "text",
+    "label": "Submission ID",
+    "required": true
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the API key's mode."
+  }
+]

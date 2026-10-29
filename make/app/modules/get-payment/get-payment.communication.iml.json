@@ -1,0 +1,10 @@
+{
+  "url": "/v1/payments/{{parameters.paymentId}}",
+  "method": "GET",
+  "qs": {
+    "livemode": "{{toQueryBoolean(parameters.livemode)}}"
+  },
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

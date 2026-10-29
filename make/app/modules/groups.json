@@ -1,23 +1,29 @@
 [
   {
     "label": "Payments",
-    "modules": ["watchPayments", "searchPayments"]
+    "modules": ["watchPayments", "searchPayments", "getPayment"]
   },
   {
     "label": "Bookings and tickets",
-    "modules": ["watchBookings", "watchTickets", "searchBookings", "searchTickets"]
+    "modules": ["watchBookings", "watchTickets", "searchBookings", "searchTickets", "getBooking"]
   },
   {
     "label": "Subscriptions",
-    "modules": ["watchSubscriptions", "searchSubscriptions", "searchSubscriptionPayments"]
+    "modules": [
+      "watchSubscriptions",
+      "searchSubscriptions",
+      "searchSubscriptionPayments",
+      "getSubscription",
+      "getSubscriptionPayment"
+    ]
   },
   {
     "label": "Submissions",
-    "modules": ["watchSubmissions", "searchSubmissions"]
+    "modules": ["watchSubmissions", "searchSubmissions", "getSubmission"]
   },
   {
     "label": "Customers",
-    "modules": ["watchCustomers", "searchCustomers"]
+    "modules": ["watchCustomers", "searchCustomers", "getCustomer"]
   },
   {
     "label": "Checkout pages, events and forms",
@@ -26,11 +32,15 @@
       "searchCheckoutPages",
       "searchEvents",
       "searchForms",
-      "searchProducts"
+      "searchProducts",
+      "getCheckoutPage",
+      "getEvent",
+      "getForm",
+      "getProduct"
     ]
   },
   {
     "label": "Coupons and invoices",
-    "modules": ["searchCoupons", "searchInvoices"]
+    "modules": ["searchCoupons", "searchInvoices", "getInvoice"]
   }
 ]

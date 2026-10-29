@@ -1,0 +1,9 @@
+[
+  {
+    "name": "productId",
+    "type": "select",
+    "label": "Product",
+    "options": "rpc://listProducts",
+    "required": true
+  }
+]

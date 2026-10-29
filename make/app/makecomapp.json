@@ -377,6 +377,171 @@
           "samples": "modules/search-invoices/search-invoices.samples.iml.json",
           "scope": "modules/search-invoices/search-invoices.scope.iml.json"
         }
+      },
+      "getPayment": {
+        "label": "Get a payment",
+        "description": "Returns one payment by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-payment/get-payment.communication.iml.json",
+          "staticParams": "modules/get-payment/get-payment.static-params.iml.json",
+          "mappableParams": "modules/get-payment/get-payment.mappable-params.iml.json",
+          "interface": "modules/get-payment/get-payment.interface.iml.json",
+          "samples": "modules/get-payment/get-payment.samples.iml.json",
+          "scope": "modules/get-payment/get-payment.scope.iml.json"
+        }
+      },
+      "getBooking": {
+        "label": "Get a booking",
+        "description": "Returns one event booking by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-booking/get-booking.communication.iml.json",
+          "staticParams": "modules/get-booking/get-booking.static-params.iml.json",
+          "mappableParams": "modules/get-booking/get-booking.mappable-params.iml.json",
+          "interface": "modules/get-booking/get-booking.interface.iml.json",
+          "samples": "modules/get-booking/get-booking.samples.iml.json",
+          "scope": "modules/get-booking/get-booking.scope.iml.json"
+        }
+      },
+      "getSubscription": {
+        "label": "Get a subscription",
+        "description": "Returns one subscription by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-subscription/get-subscription.communication.iml.json",
+          "staticParams": "modules/get-subscription/get-subscription.static-params.iml.json",
+          "mappableParams": "modules/get-subscription/get-subscription.mappable-params.iml.json",
+          "interface": "modules/get-subscription/get-subscription.interface.iml.json",
+          "samples": "modules/get-subscription/get-subscription.samples.iml.json",
+          "scope": "modules/get-subscription/get-subscription.scope.iml.json"
+        }
+      },
+      "getSubscriptionPayment": {
+        "label": "Get a subscription payment",
+        "description": "Returns one subscription payment by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-subscription-payment/get-subscription-payment.communication.iml.json",
+          "staticParams": "modules/get-subscription-payment/get-subscription-payment.static-params.iml.json",
+          "mappableParams": "modules/get-subscription-payment/get-subscription-payment.mappable-params.iml.json",
+          "interface": "modules/get-subscription-payment/get-subscription-payment.interface.iml.json",
+          "samples": "modules/get-subscription-payment/get-subscription-payment.samples.iml.json",
+          "scope": "modules/get-subscription-payment/get-subscription-payment.scope.iml.json"
+        }
+      },
+      "getSubmission": {
+        "label": "Get a submission",
+        "description": "Returns one form submission by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-submission/get-submission.communication.iml.json",
+          "staticParams": "modules/get-submission/get-submission.static-params.iml.json",
+          "mappableParams": "modules/get-submission/get-submission.mappable-params.iml.json",
+          "interface": "modules/get-submission/get-submission.interface.iml.json",
+          "samples": "modules/get-submission/get-submission.samples.iml.json",
+          "scope": "modules/get-submission/get-submission.scope.iml.json"
+        }
+      },
+      "getInvoice": {
+        "label": "Get an invoice",
+        "description": "Returns one invoice by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-invoice/get-invoice.communication.iml.json",
+          "staticParams": "modules/get-invoice/get-invoice.static-params.iml.json",
+          "mappableParams": "modules/get-invoice/get-invoice.mappable-params.iml.json",
+          "interface": "modules/get-invoice/get-invoice.interface.iml.json",
+          "samples": "modules/get-invoice/get-invoice.samples.iml.json",
+          "scope": "modules/get-invoice/get-invoice.scope.iml.json"
+        }
+      },
+      "getCustomer": {
+        "label": "Get a customer",
+        "description": "Returns one customer by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-customer/get-customer.communication.iml.json",
+          "staticParams": "modules/get-customer/get-customer.static-params.iml.json",
+          "mappableParams": "modules/get-customer/get-customer.mappable-params.iml.json",
+          "interface": "modules/get-customer/get-customer.interface.iml.json",
+          "samples": "modules/get-customer/get-customer.samples.iml.json",
+          "scope": "modules/get-customer/get-customer.scope.iml.json"
+        }
+      },
+      "getCheckoutPage": {
+        "label": "Get a checkout page",
+        "description": "Returns one checkout page by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-checkout-page/get-checkout-page.communication.iml.json",
+          "staticParams": "modules/get-checkout-page/get-checkout-page.static-params.iml.json",
+          "mappableParams": "modules/get-checkout-page/get-checkout-page.mappable-params.iml.json",
+          "interface": "modules/get-checkout-page/get-checkout-page.interface.iml.json",
+          "samples": "modules/get-checkout-page/get-checkout-page.samples.iml.json",
+          "scope": "modules/get-checkout-page/get-checkout-page.scope.iml.json"
+        }
+      },
+      "getEvent": {
+        "label": "Get an event",
+        "description": "Returns one event by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-event/get-event.communication.iml.json",
+          "staticParams": "modules/get-event/get-event.static-params.iml.json",
+          "mappableParams": "modules/get-event/get-event.mappable-params.iml.json",
+          "interface": "modules/get-event/get-event.interface.iml.json",
+          "samples": "modules/get-event/get-event.samples.iml.json",
+          "scope": "modules/get-event/get-event.scope.iml.json"
+        }
+      },
+      "getForm": {
+        "label": "Get a form",
+        "description": "Returns one form by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-form/get-form.communication.iml.json",
+          "staticParams": "modules/get-form/get-form.static-params.iml.json",
+          "mappableParams": "modules/get-form/get-form.mappable-params.iml.json",
+          "interface": "modules/get-form/get-form.interface.iml.json",
+          "samples": "modules/get-form/get-form.samples.iml.json",
+          "scope": "modules/get-form/get-form.scope.iml.json"
+        }
+      },
+      "getProduct": {
+        "label": "Get a product",
+        "description": "Returns one product by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-product/get-product.communication.iml.json",
+          "staticParams": "modules/get-product/get-product.static-params.iml.json",
+          "mappableParams": "modules/get-product/get-product.mappable-params.iml.json",
+          "interface": "modules/get-product/get-product.interface.iml.json",
+          "samples": "modules/get-product/get-product.samples.iml.json",
+          "scope": "modules/get-product/get-product.scope.iml.json"
+        }
       }
     },
     "rpc": {

@@ -41,18 +41,18 @@ const trigger = (
   wrap: { event: true, key, ...(opts.recoveryUrl ? { recoveryUrl: true } : {}) },
 });
 
-const search = (
-  module: string,
-  path: string,
-  opts: { labels?: Labels; exclude?: string[] } = {}
-): Target => ({
-  module,
-  method: 'GET',
-  path,
-  items: true,
-  ...(opts.exclude ? { exclude: opts.exclude } : {}),
-  ...(opts.labels ? { labels: opts.labels } : {}),
-});
+const read =
+  (items: boolean) =>
+  (module: string, path: string, opts: { labels?: Labels; exclude?: string[] } = {}): Target => ({
+    module,
+    method: 'GET',
+    path,
+    items,
+    ...(opts.exclude ? { exclude: opts.exclude } : {}),
+    ...(opts.labels ? { labels: opts.labels } : {}),
+  });
+const search = read(true);
+const get = read(false);
 
 export const targets: Target[] = [
   trigger('watchPayments', '/v1/payments/', 'payment', {
@@ -102,4 +102,19 @@ export const targets: Target[] = [
   }),
   search('searchTickets', '/v1/tickets/', { labels: { pageId: EVENT.pageId } }),
   search('searchInvoices', '/v1/invoices/'),
+  get('getPayment', '/v1/payments/:paymentId', { labels: { ...CHECKOUT_PAGE, ...UPSELL } }),
+  get('getBooking', '/v1/bookings/:bookingId', { labels: { ...EVENT, ...UPSELL } }),
+  get('getSubscription', '/v1/subscriptions/:subscriptionId', {
+    labels: { ...CHECKOUT_PAGE, ...UPSELL },
+  }),
+  get('getSubscriptionPayment', '/v1/subscription-payments/:subscriptionPaymentId', {
+    labels: CHECKOUT_PAGE,
+  }),
+  get('getSubmission', '/v1/submissions/:submissionId', { labels: FORM }),
+  get('getInvoice', '/v1/invoices/:id'),
+  get('getCustomer', '/v1/customers/:customerId'),
+  get('getCheckoutPage', '/v1/checkout-pages/:pageId', { exclude: PAGE_EXCLUDE, labels: REDIRECT }),
+  get('getEvent', '/v1/events/:pageId', { exclude: PAGE_EXCLUDE, labels: REDIRECT }),
+  get('getForm', '/v1/forms/:pageId', { exclude: PAGE_EXCLUDE, labels: REDIRECT }),
+  get('getProduct', '/v1/products/:productId'),
 ];

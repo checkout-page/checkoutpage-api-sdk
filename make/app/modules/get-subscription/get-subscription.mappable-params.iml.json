@@ -1,0 +1,14 @@
+[
+  {
+    "name": "subscriptionId",
+    "type": "text",
+    "label": "Subscription ID",
+    "required": true
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the API key's mode."
+  }
+]
