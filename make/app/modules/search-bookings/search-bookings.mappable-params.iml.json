@@ -1,0 +1,146 @@
+[
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the customer email, customer name or event title."
+  },
+  {
+    "name": "isComplimentary",
+    "type": "boolean",
+    "label": "Complimentary"
+  },
+  {
+    "name": "archived",
+    "type": "boolean",
+    "label": "Archived",
+    "help": "Leave empty to include archived and not archived bookings."
+  },
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Created",
+        "value": "created"
+      },
+      {
+        "label": "Pending",
+        "value": "pending"
+      },
+      {
+        "label": "Unpaid",
+        "value": "unpaid"
+      },
+      {
+        "label": "Partially paid",
+        "value": "partially_paid"
+      },
+      {
+        "label": "Paid",
+        "value": "paid"
+      },
+      {
+        "label": "Canceled",
+        "value": "canceled"
+      },
+      {
+        "label": "Failed",
+        "value": "failed"
+      },
+      {
+        "label": "Partial refund",
+        "value": "partial_refund"
+      },
+      {
+        "label": "Refunded",
+        "value": "refunded"
+      },
+      {
+        "label": "Draft",
+        "value": "draft"
+      },
+      {
+        "label": "Draft expired",
+        "value": "draft_expired"
+      }
+    ]
+  },
+  {
+    "name": "orderStatus",
+    "type": "select",
+    "label": "Order status",
+    "options": [
+      {
+        "label": "Active",
+        "value": "active"
+      },
+      {
+        "label": "Canceled",
+        "value": "canceled"
+      }
+    ]
+  },
+  {
+    "name": "pageId",
+    "type": "select",
+    "label": "Event",
+    "options": "rpc://listEvents"
+  },
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers"
+  },
+  {
+    "name": "orderId",
+    "type": "text",
+    "label": "Order ID"
+  },
+  {
+    "name": "couponCode",
+    "type": "text",
+    "label": "Coupon code"
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "abandonmentStatus",
+    "type": "select",
+    "label": "Abandonment status",
+    "options": [
+      {
+        "label": "Abandoned",
+        "value": "abandoned"
+      },
+      {
+        "label": "Recovered",
+        "value": "recovered"
+      }
+    ]
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the mode of the API key. Set to No to return test mode records."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

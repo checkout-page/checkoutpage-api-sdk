@@ -192,36 +192,53 @@ function makeType(schema: Schema): MakeType {
   }
 }
 
+interface FieldOptions {
+  exclude: string[];
+  labels: Record<string, string>;
+  labeled: Set<string>;
+}
+
 function makeSpec(
   schema: Schema,
   type: MakeType,
-  exclude: string[],
+  opts: FieldOptions,
   path: string
 ): MakeItem['spec'] {
-  if (type === 'collection' && schema.properties) return makeFields(schema, exclude, path);
-  if (type === 'array' && schema.items) return makeItem(resolveSchema(schema.items), exclude, path);
+  if (type === 'collection' && schema.properties) return makeFields(schema, opts, path);
+  if (type === 'array' && schema.items) return makeItem(resolveSchema(schema.items), opts, path);
   return undefined;
 }
 
-function makeItem(schema: Schema, exclude: string[], path: string): MakeItem | MakeField[] {
+function makeItem(schema: Schema, opts: FieldOptions, path: string): MakeItem | MakeField[] {
   const type = makeType(schema);
-  const spec = makeSpec(schema, type, exclude, path);
+  const spec = makeSpec(schema, type, opts, path);
   if (type === 'collection' && Array.isArray(spec)) return spec;
   return spec ? { type, spec } : { type };
 }
 
-function makeFields(schema: Schema, exclude: string[], prefix: string): MakeField[] {
+function makeFields(schema: Schema, opts: FieldOptions, prefix: string): MakeField[] {
   return liveProperties(schema).flatMap(([name, property]) => {
     const path = prefix ? `${prefix}.${name}` : name;
-    if (exclude.includes(path)) return [];
+    if (opts.exclude.includes(path)) return [];
     const type = makeType(property);
-    const spec = makeSpec(property, type, exclude, path);
-    return [{ name, type, label: camelCaseToSentence(name), ...(spec ? { spec } : {}) }];
+    const spec = makeSpec(property, type, opts, path);
+    const overridden = Object.hasOwn(opts.labels, path);
+    if (overridden) opts.labeled.add(path);
+    const label = overridden ? opts.labels[path] : camelCaseToSentence(name);
+    return [{ name, type, label, ...(spec ? { spec } : {}) }];
   });
 }
 
-export function toMakeInterface(schema: Schema, opts: { exclude?: string[] } = {}): MakeField[] {
-  return makeFields(resolveSchema(schema), opts.exclude ?? [], '');
+export function toMakeInterface(
+  schema: Schema,
+  opts: { exclude?: string[]; labels?: Record<string, string> } = {}
+): MakeField[] {
+  const labels = opts.labels ?? {};
+  const options: FieldOptions = { exclude: opts.exclude ?? [], labels, labeled: new Set() };
+  const fields = makeFields(resolveSchema(schema), options, '');
+  const unused = Object.keys(labels).filter((path) => !options.labeled.has(path));
+  if (unused.length) throw new Error(`No field to label at ${unused.join(', ')}`);
+  return fields;
 }
 
 // Paths follow the interface: an array's items share the array's path.
@@ -302,6 +319,6 @@ function targetSchema(target: Target): Schema {
 }
 
 export const moduleInterface = (target: Target) =>
-  toMakeInterface(targetSchema(target), { exclude: target.exclude });
+  toMakeInterface(targetSchema(target), { exclude: target.exclude, labels: target.labels });
 export const moduleSample = (target: Target) =>
   toMakeSample(targetSchema(target), { exclude: target.exclude });

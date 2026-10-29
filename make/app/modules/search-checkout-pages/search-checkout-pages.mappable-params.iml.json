@@ -1,0 +1,41 @@
+[
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Published",
+        "value": "published"
+      },
+      {
+        "label": "Draft",
+        "value": "draft"
+      },
+      {
+        "label": "Archived",
+        "value": "archived"
+      }
+    ]
+  },
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the checkout page name, title or product title."
+  },
+  {
+    "name": "testmode",
+    "type": "boolean",
+    "label": "Test mode",
+    "help": "Set to Yes for only checkout pages in test mode, or No for only checkout pages not in test mode."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

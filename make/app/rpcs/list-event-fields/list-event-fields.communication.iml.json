@@ -1,0 +1,14 @@
+{
+  "url": "/v1/events/{{parameters.eventId}}",
+  "method": "GET",
+  "response": {
+    "iterate": {
+      "container": "{{body.data.fields}}",
+      "condition": "{{item.disabled != true}}"
+    },
+    "output": {
+      "label": "{{ifempty(item.label, item.type)}}",
+      "value": "{{item.id}}"
+    }
+  }
+}

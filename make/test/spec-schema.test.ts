@@ -81,6 +81,26 @@ describe('toMakeInterface', () => {
     const billing = fields.find((f) => f.name === 'billing')!;
     expect((billing.spec as MakeField[]).map((f) => f.name)).not.toContain('phone');
   });
+
+  it('overrides labels by field name or nested path', () => {
+    const fields = toMakeInterface(responseDataSchema('GET', '/v1/payments/', { items: true }), {
+      labels: { pageId: 'Checkout page ID', 'billing.email': 'Billing email' },
+    });
+    expect(fields.find((f) => f.name === 'pageId')!.label).toBe('Checkout page ID');
+    const billing = fields.find((f) => f.name === 'billing')!;
+    expect((billing.spec as MakeField[]).find((f) => f.name === 'email')!.label).toBe(
+      'Billing email'
+    );
+    expect(fields.find((f) => f.name === 'pageSlug')!.label).toBe('Page slug');
+  });
+
+  it('throws for a label override that names no field', () => {
+    expect(() =>
+      toMakeInterface(responseDataSchema('GET', '/v1/payments/', { items: true }), {
+        labels: { pageIdd: 'Checkout page ID' },
+      })
+    ).toThrow(/pageIdd/);
+  });
 });
 
 describe('camelCaseToSentence', () => {
@@ -303,6 +323,17 @@ describe('module targets', () => {
     expect(sample.formLayout.length).toBeGreaterThan(0);
     for (const item of sample.formLayout) expect(item).not.toHaveProperty('id');
     expect(sample.formLayout[0]).toHaveProperty('type');
+  });
+
+  it('applies a label path through a wrapped data key', () => {
+    const fields = moduleInterface({
+      ...watchPayments,
+      labels: { 'payment.pageId': 'Checkout page ID' },
+    });
+    const payment = fields.find((f) => f.name === 'payment')!;
+    expect((payment.spec as MakeField[]).find((f) => f.name === 'pageId')!.label).toBe(
+      'Checkout page ID'
+    );
   });
 
   it('applies an exclude path through a wrapped data key', () => {

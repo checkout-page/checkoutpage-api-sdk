@@ -1,0 +1,14 @@
+{
+  "url": "/v1/checkout-pages/",
+  "method": "GET",
+  "qs": {
+    "limit": "100"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": {
+      "label": "{{ifempty(item.name, ifempty(item.product.title, item.id))}}",
+      "value": "{{item.id}}"
+    }
+  }
+}

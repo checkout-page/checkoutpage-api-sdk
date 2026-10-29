@@ -1,0 +1,59 @@
+[
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the customer email, customer name or form title."
+  },
+  {
+    "name": "pageId",
+    "type": "select",
+    "label": "Form",
+    "options": "rpc://listForms"
+  },
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers"
+  },
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Succeeded",
+        "value": "succeeded"
+      },
+      {
+        "label": "Failed",
+        "value": "failed"
+      }
+    ]
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the mode of the API key. Set to No to return test mode records."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

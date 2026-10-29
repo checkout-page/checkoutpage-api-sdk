@@ -1,0 +1,14 @@
+{
+  "url": "/v1/coupons/",
+  "method": "GET",
+  "qs": {
+    "limit": "100"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": {
+      "label": "{{item.label}} ({{item.code}})",
+      "value": "{{item.id}}"
+    }
+  }
+}

@@ -191,12 +191,12 @@
       {
         "name": "pageId",
         "type": "text",
-        "label": "Page ID"
+        "label": "Form ID"
       },
       {
         "name": "pageSlug",
         "type": "text",
-        "label": "Page slug"
+        "label": "Form slug"
       },
       {
         "name": "queryParameters",

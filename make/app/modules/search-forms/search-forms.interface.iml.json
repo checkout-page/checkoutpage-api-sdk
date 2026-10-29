@@ -1,0 +1,652 @@
+[
+  {
+    "name": "afterPaymentAction",
+    "type": "text",
+    "label": "After payment action"
+  },
+  {
+    "name": "closePopupOnClickOutside",
+    "type": "boolean",
+    "label": "Close popup on click outside"
+  },
+  {
+    "name": "confirmationCheckoutMessage",
+    "type": "text",
+    "label": "Confirmation checkout message"
+  },
+  {
+    "name": "confirmationCheckoutTitle",
+    "type": "text",
+    "label": "Confirmation checkout title"
+  },
+  {
+    "name": "confirmationEmailMessage",
+    "type": "text",
+    "label": "Confirmation email message"
+  },
+  {
+    "name": "confirmationEmailShowLogo",
+    "type": "boolean",
+    "label": "Confirmation email show logo"
+  },
+  {
+    "name": "confirmationEmailShowStoreName",
+    "type": "boolean",
+    "label": "Confirmation email show store name"
+  },
+  {
+    "name": "confirmationEmailSubject",
+    "type": "text",
+    "label": "Confirmation email subject"
+  },
+  {
+    "name": "createdAt",
+    "type": "date",
+    "label": "Created at"
+  },
+  {
+    "name": "customizeCheckoutConfirmation",
+    "type": "boolean",
+    "label": "Customize checkout confirmation"
+  },
+  {
+    "name": "customizeEmailConfirmation",
+    "type": "boolean",
+    "label": "Customize email confirmation"
+  },
+  {
+    "name": "fields",
+    "type": "array",
+    "label": "Fields",
+    "spec": [
+      {
+        "name": "collect",
+        "type": "text",
+        "label": "Collect"
+      },
+      {
+        "name": "collectShippingPhone",
+        "type": "boolean",
+        "label": "Collect shipping phone"
+      },
+      {
+        "name": "createdAt",
+        "type": "text",
+        "label": "Created at"
+      },
+      {
+        "name": "defaultCountry",
+        "type": "text",
+        "label": "Default country"
+      },
+      {
+        "name": "defaultValue",
+        "type": "collection",
+        "label": "Default value",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "label": "Values",
+            "spec": {
+              "type": "text"
+            }
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "label": "Description"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "label": "Disabled"
+      },
+      {
+        "name": "element",
+        "type": "text",
+        "label": "Element"
+      },
+      {
+        "name": "hidden",
+        "type": "boolean",
+        "label": "Hidden"
+      },
+      {
+        "name": "id",
+        "type": "text",
+        "label": "ID"
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "label": "Label"
+      },
+      {
+        "name": "layout",
+        "type": "text",
+        "label": "Layout"
+      },
+      {
+        "name": "limitAllowedCountries",
+        "type": "collection",
+        "label": "Limit allowed countries",
+        "spec": [
+          {
+            "name": "countries",
+            "type": "array",
+            "label": "Countries",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      },
+      {
+        "name": "limitBillingCountries",
+        "type": "collection",
+        "label": "Limit billing countries",
+        "spec": [
+          {
+            "name": "countries",
+            "type": "array",
+            "label": "Countries",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      },
+      {
+        "name": "limitShippingCountries",
+        "type": "collection",
+        "label": "Limit shipping countries",
+        "spec": [
+          {
+            "name": "countries",
+            "type": "array",
+            "label": "Countries",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      },
+      {
+        "name": "maxValue",
+        "type": "collection",
+        "label": "Max value",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "minValue",
+        "type": "collection",
+        "label": "Min value",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "options",
+        "type": "array",
+        "label": "Options",
+        "spec": [
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "label",
+            "type": "text",
+            "label": "Label"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "order",
+        "type": "number",
+        "label": "Order"
+      },
+      {
+        "name": "placeholder",
+        "type": "text",
+        "label": "Placeholder"
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "label": "Required"
+      },
+      {
+        "name": "showHideLogic",
+        "type": "collection",
+        "label": "Show hide logic",
+        "spec": [
+          {
+            "name": "comparison",
+            "type": "text",
+            "label": "Comparison"
+          },
+          {
+            "name": "element",
+            "type": "collection",
+            "label": "Element",
+            "spec": [
+              {
+                "name": "elementId",
+                "type": "text",
+                "label": "Element ID"
+              },
+              {
+                "name": "elementTitle",
+                "type": "text",
+                "label": "Element title"
+              },
+              {
+                "name": "elementType",
+                "type": "text",
+                "label": "Element type"
+              }
+            ]
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "showSelectedDialCode",
+        "type": "boolean",
+        "label": "Show selected dial code"
+      },
+      {
+        "name": "type",
+        "type": "text",
+        "label": "Type"
+      },
+      {
+        "name": "updatedAt",
+        "type": "text",
+        "label": "Updated at"
+      }
+    ]
+  },
+  {
+    "name": "googleIndex",
+    "type": "boolean",
+    "label": "Google index"
+  },
+  {
+    "name": "hostedLayoutType",
+    "type": "text",
+    "label": "Hosted layout type"
+  },
+  {
+    "name": "id",
+    "type": "text",
+    "label": "ID"
+  },
+  {
+    "name": "locale",
+    "type": "text",
+    "label": "Locale"
+  },
+  {
+    "name": "name",
+    "type": "text",
+    "label": "Name"
+  },
+  {
+    "name": "notifyEmail",
+    "type": "text",
+    "label": "Notify email"
+  },
+  {
+    "name": "redirect",
+    "type": "collection",
+    "label": "Redirect",
+    "spec": [
+      {
+        "name": "enabled",
+        "type": "boolean",
+        "label": "Enabled"
+      },
+      {
+        "name": "url",
+        "type": "text",
+        "label": "URL"
+      }
+    ]
+  },
+  {
+    "name": "redirectPageId",
+    "type": "text",
+    "label": "Redirect checkout page ID"
+  },
+  {
+    "name": "redirectUrl",
+    "type": "text",
+    "label": "Redirect URL"
+  },
+  {
+    "name": "redirectUrlInsideEmbed",
+    "type": "boolean",
+    "label": "Redirect URL inside embed"
+  },
+  {
+    "name": "redirectUrlPath",
+    "type": "array",
+    "label": "Redirect URL path",
+    "spec": [
+      {
+        "name": "identifier",
+        "type": "text",
+        "label": "Identifier"
+      },
+      {
+        "name": "key",
+        "type": "text",
+        "label": "Key"
+      }
+    ]
+  },
+  {
+    "name": "redirectUrlQuery",
+    "type": "array",
+    "label": "Redirect URL query",
+    "spec": [
+      {
+        "name": "identifier",
+        "type": "text",
+        "label": "Identifier"
+      },
+      {
+        "name": "key",
+        "type": "text",
+        "label": "Key"
+      },
+      {
+        "name": "parameter",
+        "type": "text",
+        "label": "Parameter"
+      }
+    ]
+  },
+  {
+    "name": "sellerId",
+    "type": "text",
+    "label": "Seller ID"
+  },
+  {
+    "name": "sendEmailConfirmation",
+    "type": "boolean",
+    "label": "Send email confirmation"
+  },
+  {
+    "name": "sendPaymentNotification",
+    "type": "boolean",
+    "label": "Send payment notification"
+  },
+  {
+    "name": "slug",
+    "type": "text",
+    "label": "Slug"
+  },
+  {
+    "name": "status",
+    "type": "text",
+    "label": "Status"
+  },
+  {
+    "name": "testmode",
+    "type": "boolean",
+    "label": "Testmode"
+  },
+  {
+    "name": "testmodeEnabledAt",
+    "type": "date",
+    "label": "Testmode enabled at"
+  },
+  {
+    "name": "themeId",
+    "type": "text",
+    "label": "Theme ID"
+  },
+  {
+    "name": "type",
+    "type": "text",
+    "label": "Type"
+  },
+  {
+    "name": "updatedAt",
+    "type": "date",
+    "label": "Updated at"
+  },
+  {
+    "name": "url",
+    "type": "text",
+    "label": "URL"
+  },
+  {
+    "name": "visitCount",
+    "type": "number",
+    "label": "Visit count"
+  },
+  {
+    "name": "allowDynamicDescription",
+    "type": "boolean",
+    "label": "Allow dynamic description"
+  },
+  {
+    "name": "allowDynamicTitle",
+    "type": "boolean",
+    "label": "Allow dynamic title"
+  },
+  {
+    "name": "description",
+    "type": "text",
+    "label": "Description"
+  },
+  {
+    "name": "descriptionHtml",
+    "type": "text",
+    "label": "Description html"
+  },
+  {
+    "name": "files",
+    "type": "array",
+    "label": "Files",
+    "spec": [
+      {
+        "name": "height",
+        "type": "number",
+        "label": "Height"
+      },
+      {
+        "name": "id",
+        "type": "text",
+        "label": "ID"
+      },
+      {
+        "name": "location",
+        "type": "text",
+        "label": "Location"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "purpose",
+        "type": "text",
+        "label": "Purpose"
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "label": "Size"
+      },
+      {
+        "name": "type",
+        "type": "text",
+        "label": "Type"
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "label": "Width"
+      }
+    ]
+  },
+  {
+    "name": "formDetails",
+    "type": "collection",
+    "label": "Form details",
+    "spec": [
+      {
+        "name": "limitSubmissions",
+        "type": "collection",
+        "label": "Limit submissions",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "enabledAt",
+            "type": "text",
+            "label": "Enabled at"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "invoiceSettings",
+    "type": "collection",
+    "label": "Invoice settings",
+    "spec": [
+      {
+        "name": "additionalInformation",
+        "type": "collection",
+        "label": "Additional information",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "message",
+            "type": "text",
+            "label": "Message"
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "label": "Title"
+          }
+        ]
+      },
+      {
+        "name": "bankDetails",
+        "type": "text",
+        "label": "Bank details"
+      },
+      {
+        "name": "dueDays",
+        "type": "collection",
+        "label": "Due days",
+        "spec": [
+          {
+            "name": "days",
+            "type": "number",
+            "label": "Days"
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "submissionCount",
+    "type": "number",
+    "label": "Submission count"
+  },
+  {
+    "name": "title",
+    "type": "text",
+    "label": "Title"
+  }
+]

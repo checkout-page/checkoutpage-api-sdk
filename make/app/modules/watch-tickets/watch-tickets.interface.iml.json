@@ -188,7 +188,7 @@
       {
         "name": "pageId",
         "type": "text",
-        "label": "Page ID"
+        "label": "Event ID"
       },
       {
         "name": "pricing",

@@ -1,0 +1,20 @@
+{
+  "url": "/v1/products/",
+  "method": "GET",
+  "qs": {
+    "limit": "100",
+    "role": "{{parameters.role}}",
+    "search": "{{parameters.search}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": "{{item}}",
+    "limit": "{{parameters.limit}}"
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}

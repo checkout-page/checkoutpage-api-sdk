@@ -411,7 +411,7 @@
       {
         "name": "redirectPageId",
         "type": "text",
-        "label": "Redirect page ID"
+        "label": "Redirect checkout page ID"
       },
       {
         "name": "redirectUrl",

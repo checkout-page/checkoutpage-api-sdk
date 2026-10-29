@@ -1,0 +1,14 @@
+{
+  "url": "/v1/events/",
+  "method": "GET",
+  "qs": {
+    "limit": "100"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": {
+      "label": "{{ifempty(item.title, ifempty(item.name, item.id))}}",
+      "value": "{{item.id}}"
+    }
+  }
+}

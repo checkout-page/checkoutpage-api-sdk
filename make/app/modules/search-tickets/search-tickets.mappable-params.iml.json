@@ -1,0 +1,90 @@
+[
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the attendee name, attendee email, ticket code or order ID."
+  },
+  {
+    "name": "pageId",
+    "type": "select",
+    "label": "Event",
+    "options": "rpc://listEvents"
+  },
+  {
+    "name": "bookingId",
+    "type": "text",
+    "label": "Booking ID"
+  },
+  {
+    "name": "orderId",
+    "type": "text",
+    "label": "Order ID",
+    "help": "Matches the whole order ID only. Use Search for part of one."
+  },
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers"
+  },
+  {
+    "name": "ticketTypeId",
+    "type": "text",
+    "label": "Ticket type ID"
+  },
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Paid",
+        "value": "PAID"
+      },
+      {
+        "label": "Canceled",
+        "value": "CANCELED"
+      }
+    ]
+  },
+  {
+    "name": "checkInStatus",
+    "type": "select",
+    "label": "Check-in status",
+    "options": [
+      {
+        "label": "Not checked in",
+        "value": "UNCHECKEDIN"
+      },
+      {
+        "label": "Checked in",
+        "value": "CHECKEDIN"
+      }
+    ]
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the mode of the API key. Set to No to return test mode records."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

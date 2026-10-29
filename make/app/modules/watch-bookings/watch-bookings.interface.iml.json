@@ -417,12 +417,12 @@
       {
         "name": "pageId",
         "type": "text",
-        "label": "Page ID"
+        "label": "Event ID"
       },
       {
         "name": "pageSlug",
         "type": "text",
-        "label": "Page slug"
+        "label": "Event slug"
       },
       {
         "name": "paymentError",
@@ -900,7 +900,7 @@
       {
         "name": "upsellPageId",
         "type": "text",
-        "label": "Upsell page ID"
+        "label": "Upsell checkout page ID"
       },
       {
         "name": "upsellSubscriptionId",

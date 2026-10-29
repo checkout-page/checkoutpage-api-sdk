@@ -1,0 +1,1118 @@
+[
+  {
+    "name": "abandonedCartEmailSentAt",
+    "type": "date",
+    "label": "Abandoned cart email sent at"
+  },
+  {
+    "name": "abandonedCartEmailStatus",
+    "type": "text",
+    "label": "Abandoned cart email status"
+  },
+  {
+    "name": "abandonmentStatus",
+    "type": "text",
+    "label": "Abandonment status"
+  },
+  {
+    "name": "amount",
+    "type": "number",
+    "label": "Amount"
+  },
+  {
+    "name": "amountUsd",
+    "type": "number",
+    "label": "Amount usd"
+  },
+  {
+    "name": "billing",
+    "type": "collection",
+    "label": "Billing",
+    "spec": [
+      {
+        "name": "address",
+        "type": "collection",
+        "label": "Address",
+        "spec": [
+          {
+            "name": "city",
+            "type": "text",
+            "label": "City"
+          },
+          {
+            "name": "country",
+            "type": "text",
+            "label": "Country"
+          },
+          {
+            "name": "line1",
+            "type": "text",
+            "label": "Line1"
+          },
+          {
+            "name": "line2",
+            "type": "text",
+            "label": "Line2"
+          },
+          {
+            "name": "postalCode",
+            "type": "text",
+            "label": "Postal code"
+          },
+          {
+            "name": "state",
+            "type": "text",
+            "label": "State"
+          }
+        ]
+      },
+      {
+        "name": "billingEmail",
+        "type": "text",
+        "label": "Billing email"
+      },
+      {
+        "name": "companyName",
+        "type": "text",
+        "label": "Company name"
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "label": "Email"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "phone",
+        "type": "text",
+        "label": "Phone"
+      }
+    ]
+  },
+  {
+    "name": "cancelAt",
+    "type": "date",
+    "label": "Cancel at"
+  },
+  {
+    "name": "cancelAtPeriodEnd",
+    "type": "boolean",
+    "label": "Cancel at period end"
+  },
+  {
+    "name": "canceledAt",
+    "type": "date",
+    "label": "Canceled at"
+  },
+  {
+    "name": "canceledBy",
+    "type": "text",
+    "label": "Canceled by"
+  },
+  {
+    "name": "canceledByApiKey",
+    "type": "text",
+    "label": "Canceled by api key"
+  },
+  {
+    "name": "canceledByApiKeyName",
+    "type": "text",
+    "label": "Canceled by api key name"
+  },
+  {
+    "name": "clientIp",
+    "type": "text",
+    "label": "Client ip"
+  },
+  {
+    "name": "couponId",
+    "type": "text",
+    "label": "Coupon ID"
+  },
+  {
+    "name": "couponSnapshot",
+    "type": "collection",
+    "label": "Coupon snapshot",
+    "spec": [
+      {
+        "name": "amountOff",
+        "type": "number",
+        "label": "Amount off"
+      },
+      {
+        "name": "appliesToSetupFee",
+        "type": "boolean",
+        "label": "Applies to setup fee"
+      },
+      {
+        "name": "code",
+        "type": "text",
+        "label": "Code"
+      },
+      {
+        "name": "currency",
+        "type": "text",
+        "label": "Currency"
+      },
+      {
+        "name": "deleted",
+        "type": "boolean",
+        "label": "Deleted"
+      },
+      {
+        "name": "duration",
+        "type": "text",
+        "label": "Duration"
+      },
+      {
+        "name": "durationInMonths",
+        "type": "number",
+        "label": "Duration in months"
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "label": "Label"
+      },
+      {
+        "name": "maxRedemptions",
+        "type": "number",
+        "label": "Max redemptions"
+      },
+      {
+        "name": "percentOff",
+        "type": "number",
+        "label": "Percent off"
+      },
+      {
+        "name": "redeemBy",
+        "type": "date",
+        "label": "Redeem by"
+      },
+      {
+        "name": "timesRedeemed",
+        "type": "number",
+        "label": "Times redeemed"
+      }
+    ]
+  },
+  {
+    "name": "createdAt",
+    "type": "date",
+    "label": "Created at"
+  },
+  {
+    "name": "currency",
+    "type": "text",
+    "label": "Currency"
+  },
+  {
+    "name": "currentPeriodEnd",
+    "type": "date",
+    "label": "Current period end"
+  },
+  {
+    "name": "currentPeriodStart",
+    "type": "date",
+    "label": "Current period start"
+  },
+  {
+    "name": "customerEmail",
+    "type": "text",
+    "label": "Customer email"
+  },
+  {
+    "name": "customerId",
+    "type": "text",
+    "label": "Customer ID"
+  },
+  {
+    "name": "customerName",
+    "type": "text",
+    "label": "Customer name"
+  },
+  {
+    "name": "discountedFromPrice",
+    "type": "number",
+    "label": "Discounted from price"
+  },
+  {
+    "name": "dynamicPrice",
+    "type": "number",
+    "label": "Dynamic price"
+  },
+  {
+    "name": "fees",
+    "type": "array",
+    "label": "Fees",
+    "spec": [
+      {
+        "name": "amount",
+        "type": "number",
+        "label": "Amount"
+      },
+      {
+        "name": "fixedAmount",
+        "type": "number",
+        "label": "Fixed amount"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "percentage",
+        "type": "number",
+        "label": "Percentage"
+      },
+      {
+        "name": "percentageAmount",
+        "type": "number",
+        "label": "Percentage amount"
+      },
+      {
+        "name": "stripeProductId",
+        "type": "text",
+        "label": "Stripe product ID"
+      }
+    ]
+  },
+  {
+    "name": "fields",
+    "type": "array",
+    "label": "Fields",
+    "spec": [
+      {
+        "name": "element",
+        "type": "text",
+        "label": "Element"
+      },
+      {
+        "name": "fieldId",
+        "type": "text",
+        "label": "Field ID"
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "label": "Label"
+      },
+      {
+        "name": "meta",
+        "type": "collection",
+        "label": "Meta"
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "type",
+        "type": "text",
+        "label": "Type"
+      },
+      {
+        "name": "value",
+        "type": "text",
+        "label": "Value"
+      },
+      {
+        "name": "values",
+        "type": "array",
+        "label": "Values",
+        "spec": {
+          "type": "text"
+        }
+      }
+    ]
+  },
+  {
+    "name": "id",
+    "type": "text",
+    "label": "ID"
+  },
+  {
+    "name": "interval",
+    "type": "text",
+    "label": "Interval"
+  },
+  {
+    "name": "intervalCount",
+    "type": "number",
+    "label": "Interval count"
+  },
+  {
+    "name": "isAbandoned",
+    "type": "boolean",
+    "label": "Is abandoned"
+  },
+  {
+    "name": "lastRefundAt",
+    "type": "date",
+    "label": "Last refund at"
+  },
+  {
+    "name": "lastRefundReason",
+    "type": "text",
+    "label": "Last refund reason"
+  },
+  {
+    "name": "lastRefundReasonNote",
+    "type": "text",
+    "label": "Last refund reason note"
+  },
+  {
+    "name": "licenseKeyId",
+    "type": "text",
+    "label": "License key ID"
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Livemode"
+  },
+  {
+    "name": "locale",
+    "type": "text",
+    "label": "Locale"
+  },
+  {
+    "name": "orderId",
+    "type": "text",
+    "label": "Order ID"
+  },
+  {
+    "name": "pageId",
+    "type": "text",
+    "label": "Checkout page ID"
+  },
+  {
+    "name": "pageSlug",
+    "type": "text",
+    "label": "Checkout page slug"
+  },
+  {
+    "name": "paymentError",
+    "type": "text",
+    "label": "Payment error"
+  },
+  {
+    "name": "paymentMethod",
+    "type": "collection",
+    "label": "Payment method",
+    "spec": [
+      {
+        "name": "brand",
+        "type": "text",
+        "label": "Brand"
+      },
+      {
+        "name": "country",
+        "type": "text",
+        "label": "Country"
+      },
+      {
+        "name": "expMonth",
+        "type": "number",
+        "label": "Exp month"
+      },
+      {
+        "name": "expYear",
+        "type": "number",
+        "label": "Exp year"
+      },
+      {
+        "name": "funding",
+        "type": "text",
+        "label": "Funding"
+      },
+      {
+        "name": "gateway",
+        "type": "text",
+        "label": "Gateway"
+      },
+      {
+        "name": "last4",
+        "type": "text",
+        "label": "Last4"
+      },
+      {
+        "name": "method",
+        "type": "text",
+        "label": "Method"
+      },
+      {
+        "name": "mode",
+        "type": "text",
+        "label": "Mode"
+      },
+      {
+        "name": "wallet",
+        "type": "text",
+        "label": "Wallet"
+      }
+    ]
+  },
+  {
+    "name": "paymentStatus",
+    "type": "text",
+    "label": "Payment status"
+  },
+  {
+    "name": "planIterations",
+    "type": "number",
+    "label": "Plan iterations"
+  },
+  {
+    "name": "priceId",
+    "type": "text",
+    "label": "Price ID"
+  },
+  {
+    "name": "priceSnapshot",
+    "type": "collection",
+    "label": "Price snapshot",
+    "spec": [
+      {
+        "name": "amount",
+        "type": "number",
+        "label": "Amount"
+      },
+      {
+        "name": "badge",
+        "type": "text",
+        "label": "Badge"
+      },
+      {
+        "name": "billingType",
+        "type": "text",
+        "label": "Billing type"
+      },
+      {
+        "name": "currency",
+        "type": "text",
+        "label": "Currency"
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "label": "Description"
+      },
+      {
+        "name": "discountedFromPrice",
+        "type": "number",
+        "label": "Discounted from price"
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "label": "Label"
+      },
+      {
+        "name": "managedInStripe",
+        "type": "boolean",
+        "label": "Managed in stripe"
+      },
+      {
+        "name": "payWhatYouWant",
+        "type": "boolean",
+        "label": "Pay what you want"
+      },
+      {
+        "name": "paymentPlan",
+        "type": "collection",
+        "label": "Payment plan",
+        "spec": [
+          {
+            "name": "billingCycleAnchorConfig",
+            "type": "collection",
+            "label": "Billing cycle anchor config",
+            "spec": [
+              {
+                "name": "dayOfMonth",
+                "type": "number",
+                "label": "Day of month"
+              },
+              {
+                "name": "enabled",
+                "type": "boolean",
+                "label": "Enabled"
+              },
+              {
+                "name": "month",
+                "type": "number",
+                "label": "Month"
+              }
+            ]
+          },
+          {
+            "name": "interval",
+            "type": "text",
+            "label": "Interval"
+          },
+          {
+            "name": "intervalCount",
+            "type": "number",
+            "label": "Interval count"
+          },
+          {
+            "name": "planIterations",
+            "type": "number",
+            "label": "Plan iterations"
+          },
+          {
+            "name": "startDate",
+            "type": "date",
+            "label": "Start date"
+          },
+          {
+            "name": "trialPeriodDays",
+            "type": "number",
+            "label": "Trial period days"
+          }
+        ]
+      },
+      {
+        "name": "priceId",
+        "type": "text",
+        "label": "Price ID"
+      },
+      {
+        "name": "pwywSuggestedPrice",
+        "type": "number",
+        "label": "Pwyw suggested price"
+      },
+      {
+        "name": "recurring",
+        "type": "collection",
+        "label": "Recurring",
+        "spec": [
+          {
+            "name": "billingCycleAnchorConfig",
+            "type": "collection",
+            "label": "Billing cycle anchor config",
+            "spec": [
+              {
+                "name": "dayOfMonth",
+                "type": "number",
+                "label": "Day of month"
+              },
+              {
+                "name": "enabled",
+                "type": "boolean",
+                "label": "Enabled"
+              },
+              {
+                "name": "month",
+                "type": "number",
+                "label": "Month"
+              }
+            ]
+          },
+          {
+            "name": "interval",
+            "type": "text",
+            "label": "Interval"
+          },
+          {
+            "name": "intervalCount",
+            "type": "number",
+            "label": "Interval count"
+          },
+          {
+            "name": "startDate",
+            "type": "date",
+            "label": "Start date"
+          },
+          {
+            "name": "trialPeriodDays",
+            "type": "number",
+            "label": "Trial period days"
+          }
+        ]
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "setupFee",
+        "type": "number",
+        "label": "Setup fee"
+      },
+      {
+        "name": "setupFeeMultipliesWithQuantity",
+        "type": "boolean",
+        "label": "Setup fee multiplies with quantity"
+      },
+      {
+        "name": "stripePriceId",
+        "type": "text",
+        "label": "Stripe price ID"
+      },
+      {
+        "name": "stripePriceLivemode",
+        "type": "boolean",
+        "label": "Stripe price livemode"
+      }
+    ]
+  },
+  {
+    "name": "productId",
+    "type": "text",
+    "label": "Product ID"
+  },
+  {
+    "name": "productPrice",
+    "type": "number",
+    "label": "Product price"
+  },
+  {
+    "name": "productTitle",
+    "type": "text",
+    "label": "Product title"
+  },
+  {
+    "name": "quantity",
+    "type": "number",
+    "label": "Quantity"
+  },
+  {
+    "name": "queryParameters",
+    "type": "collection",
+    "label": "Query parameters"
+  },
+  {
+    "name": "reason",
+    "type": "text",
+    "label": "Reason"
+  },
+  {
+    "name": "recoveredAt",
+    "type": "date",
+    "label": "Recovered at"
+  },
+  {
+    "name": "screenWidth",
+    "type": "number",
+    "label": "Screen width"
+  },
+  {
+    "name": "sellerId",
+    "type": "text",
+    "label": "Seller ID"
+  },
+  {
+    "name": "sessionId",
+    "type": "text",
+    "label": "Session ID"
+  },
+  {
+    "name": "setupFee",
+    "type": "number",
+    "label": "Setup fee"
+  },
+  {
+    "name": "setupFeeDiscountAmount",
+    "type": "number",
+    "label": "Setup fee discount amount"
+  },
+  {
+    "name": "setupFeeFees",
+    "type": "array",
+    "label": "Setup fee fees",
+    "spec": [
+      {
+        "name": "amount",
+        "type": "number",
+        "label": "Amount"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "percentage",
+        "type": "number",
+        "label": "Percentage"
+      },
+      {
+        "name": "stripeInvoiceItemId",
+        "type": "text",
+        "label": "Stripe invoice item ID"
+      }
+    ]
+  },
+  {
+    "name": "setupFeeInvoiceItemId",
+    "type": "text",
+    "label": "Setup fee invoice item ID"
+  },
+  {
+    "name": "setupFeeInvoiceItemPaid",
+    "type": "boolean",
+    "label": "Setup fee invoice item paid"
+  },
+  {
+    "name": "setupFeeTotal",
+    "type": "number",
+    "label": "Setup fee total"
+  },
+  {
+    "name": "setupFeeUsd",
+    "type": "number",
+    "label": "Setup fee usd"
+  },
+  {
+    "name": "shipping",
+    "type": "collection",
+    "label": "Shipping",
+    "spec": [
+      {
+        "name": "address",
+        "type": "collection",
+        "label": "Address",
+        "spec": [
+          {
+            "name": "city",
+            "type": "text",
+            "label": "City"
+          },
+          {
+            "name": "country",
+            "type": "text",
+            "label": "Country"
+          },
+          {
+            "name": "line1",
+            "type": "text",
+            "label": "Line1"
+          },
+          {
+            "name": "line2",
+            "type": "text",
+            "label": "Line2"
+          },
+          {
+            "name": "postalCode",
+            "type": "text",
+            "label": "Postal code"
+          },
+          {
+            "name": "state",
+            "type": "text",
+            "label": "State"
+          }
+        ]
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "phone",
+        "type": "text",
+        "label": "Phone"
+      }
+    ]
+  },
+  {
+    "name": "sku",
+    "type": "text",
+    "label": "SKU"
+  },
+  {
+    "name": "startDate",
+    "type": "date",
+    "label": "Start date"
+  },
+  {
+    "name": "status",
+    "type": "text",
+    "label": "Status"
+  },
+  {
+    "name": "stripeCustomerId",
+    "type": "text",
+    "label": "Stripe customer ID"
+  },
+  {
+    "name": "stripePaymentIntentId",
+    "type": "text",
+    "label": "Stripe payment intent ID"
+  },
+  {
+    "name": "stripeSetupIntentId",
+    "type": "text",
+    "label": "Stripe setup intent ID"
+  },
+  {
+    "name": "stripeSubscriptionId",
+    "type": "text",
+    "label": "Stripe subscription ID"
+  },
+  {
+    "name": "taxRates",
+    "type": "array",
+    "label": "Tax rates",
+    "spec": [
+      {
+        "name": "active",
+        "type": "boolean",
+        "label": "Active"
+      },
+      {
+        "name": "createdAt",
+        "type": "date",
+        "label": "Created at"
+      },
+      {
+        "name": "default",
+        "type": "boolean",
+        "label": "Default"
+      },
+      {
+        "name": "displayName",
+        "type": "text",
+        "label": "Display name"
+      },
+      {
+        "name": "inclusive",
+        "type": "boolean",
+        "label": "Inclusive"
+      },
+      {
+        "name": "percentage",
+        "type": "number",
+        "label": "Percentage"
+      },
+      {
+        "name": "stripeId",
+        "type": "text",
+        "label": "Stripe ID"
+      },
+      {
+        "name": "taxRate",
+        "type": "text",
+        "label": "Tax rate"
+      },
+      {
+        "name": "updatedAt",
+        "type": "date",
+        "label": "Updated at"
+      }
+    ]
+  },
+  {
+    "name": "taxSource",
+    "type": "text",
+    "label": "Tax source"
+  },
+  {
+    "name": "trialEnd",
+    "type": "date",
+    "label": "Trial end"
+  },
+  {
+    "name": "trialStart",
+    "type": "date",
+    "label": "Trial start"
+  },
+  {
+    "name": "updatedAt",
+    "type": "date",
+    "label": "Updated at"
+  },
+  {
+    "name": "upsell",
+    "type": "boolean",
+    "label": "Upsell"
+  },
+  {
+    "name": "upsellChargeId",
+    "type": "text",
+    "label": "Upsell charge ID"
+  },
+  {
+    "name": "upsellPageId",
+    "type": "text",
+    "label": "Upsell checkout page ID"
+  },
+  {
+    "name": "upsellSubscriptionId",
+    "type": "text",
+    "label": "Upsell subscription ID"
+  },
+  {
+    "name": "userAgent",
+    "type": "text",
+    "label": "User agent"
+  },
+  {
+    "name": "variants",
+    "type": "array",
+    "label": "Variants",
+    "spec": [
+      {
+        "name": "fees",
+        "type": "array",
+        "label": "Fees",
+        "spec": [
+          {
+            "name": "amount",
+            "type": "number",
+            "label": "Amount"
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "label": "Name"
+          },
+          {
+            "name": "percentage",
+            "type": "number",
+            "label": "Percentage"
+          },
+          {
+            "name": "stripeInvoiceItemId",
+            "type": "text",
+            "label": "Stripe invoice item ID"
+          }
+        ]
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "selectedOptions",
+        "type": "array",
+        "label": "Selected options",
+        "spec": [
+          {
+            "name": "additionalChargeAmount",
+            "type": "number",
+            "label": "Additional charge amount"
+          },
+          {
+            "name": "additionalChargeAmountTotal",
+            "type": "number",
+            "label": "Additional charge amount total"
+          },
+          {
+            "name": "additionalChargeAmountUsd",
+            "type": "number",
+            "label": "Additional charge amount usd"
+          },
+          {
+            "name": "discountAmount",
+            "type": "number",
+            "label": "Discount amount"
+          },
+          {
+            "name": "fees",
+            "type": "array",
+            "label": "Fees",
+            "spec": [
+              {
+                "name": "amount",
+                "type": "number",
+                "label": "Amount"
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              },
+              {
+                "name": "percentage",
+                "type": "number",
+                "label": "Percentage"
+              },
+              {
+                "name": "stripeInvoiceItemId",
+                "type": "text",
+                "label": "Stripe invoice item ID"
+              }
+            ]
+          },
+          {
+            "name": "optionId",
+            "type": "text",
+            "label": "Option ID"
+          },
+          {
+            "name": "optionInvoiceItemId",
+            "type": "text",
+            "label": "Option invoice item ID"
+          },
+          {
+            "name": "optionInvoiceItemPaid",
+            "type": "boolean",
+            "label": "Option invoice item paid"
+          },
+          {
+            "name": "optionName",
+            "type": "text",
+            "label": "Option name"
+          },
+          {
+            "name": "optionStripePriceId",
+            "type": "text",
+            "label": "Option stripe price ID"
+          },
+          {
+            "name": "optionStripeProductId",
+            "type": "text",
+            "label": "Option stripe product ID"
+          },
+          {
+            "name": "optionType",
+            "type": "text",
+            "label": "Option type"
+          },
+          {
+            "name": "quantity",
+            "type": "number",
+            "label": "Quantity"
+          },
+          {
+            "name": "sku",
+            "type": "text",
+            "label": "SKU"
+          }
+        ]
+      },
+      {
+        "name": "selectionType",
+        "type": "text",
+        "label": "Selection type"
+      },
+      {
+        "name": "variantId",
+        "type": "text",
+        "label": "Variant ID"
+      }
+    ]
+  },
+  {
+    "name": "visitId",
+    "type": "text",
+    "label": "Visit ID"
+  }
+]

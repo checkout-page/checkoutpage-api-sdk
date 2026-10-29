@@ -1,0 +1,14 @@
+{
+  "url": "/v1/customers/",
+  "method": "GET",
+  "qs": {
+    "limit": "100"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": {
+      "label": "{{ifempty(item.name, item.email)}} ({{item.email}})",
+      "value": "{{item.id}}"
+    }
+  }
+}

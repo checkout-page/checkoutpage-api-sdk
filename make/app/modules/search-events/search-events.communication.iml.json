@@ -1,0 +1,21 @@
+{
+  "url": "/v1/events/",
+  "method": "GET",
+  "qs": {
+    "limit": "100",
+    "status": "{{parameters.status}}",
+    "search": "{{parameters.search}}",
+    "testmode": "{{toQueryBoolean(parameters.testmode)}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": "{{item}}",
+    "limit": "{{parameters.limit}}"
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}

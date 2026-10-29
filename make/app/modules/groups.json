@@ -1,26 +1,36 @@
 [
   {
     "label": "Payments",
-    "modules": ["watchPayments"]
+    "modules": ["watchPayments", "searchPayments"]
   },
   {
     "label": "Bookings and tickets",
-    "modules": ["watchBookings", "watchTickets"]
+    "modules": ["watchBookings", "watchTickets", "searchBookings", "searchTickets"]
   },
   {
     "label": "Subscriptions",
-    "modules": ["watchSubscriptions"]
+    "modules": ["watchSubscriptions", "searchSubscriptions", "searchSubscriptionPayments"]
   },
   {
     "label": "Submissions",
-    "modules": ["watchSubmissions"]
+    "modules": ["watchSubmissions", "searchSubmissions"]
   },
   {
     "label": "Customers",
-    "modules": ["watchCustomers"]
+    "modules": ["watchCustomers", "searchCustomers"]
   },
   {
     "label": "Checkout pages, events and forms",
-    "modules": ["watchPagesAndProducts"]
+    "modules": [
+      "watchPagesAndProducts",
+      "searchCheckoutPages",
+      "searchEvents",
+      "searchForms",
+      "searchProducts"
+    ]
+  },
+  {
+    "label": "Coupons and invoices",
+    "modules": ["searchCoupons", "searchInvoices"]
   }
 ]

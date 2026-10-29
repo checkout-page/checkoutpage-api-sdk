@@ -1,0 +1,30 @@
+{
+  "url": "/v1/payments/",
+  "method": "GET",
+  "qs": {
+    "limit": "100",
+    "search": "{{parameters.search}}",
+    "productId": "{{parameters.productId}}",
+    "status": "{{parameters.status}}",
+    "orderStatus": "{{parameters.orderStatus}}",
+    "pageId": "{{parameters.pageId}}",
+    "customerId": "{{parameters.customerId}}",
+    "orderId": "{{parameters.orderId}}",
+    "couponCode": "{{parameters.couponCode}}",
+    "createdAfter": "{{toQueryDate(parameters.createdAfter)}}",
+    "createdBefore": "{{toQueryDate(parameters.createdBefore)}}",
+    "abandonmentStatus": "{{parameters.abandonmentStatus}}",
+    "livemode": "{{toQueryBoolean(parameters.livemode)}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": "{{item}}",
+    "limit": "{{parameters.limit}}"
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}

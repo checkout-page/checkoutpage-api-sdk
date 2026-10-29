@@ -1,0 +1,21 @@
+{
+  "url": "/v1/customers/",
+  "method": "GET",
+  "qs": {
+    "limit": "100",
+    "search": "{{parameters.search}}",
+    "createdAfter": "{{toQueryDate(parameters.createdAfter)}}",
+    "createdBefore": "{{toQueryDate(parameters.createdBefore)}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": "{{item}}",
+    "limit": "{{parameters.limit}}"
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}

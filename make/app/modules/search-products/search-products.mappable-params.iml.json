@@ -1,0 +1,32 @@
+[
+  {
+    "name": "role",
+    "type": "select",
+    "label": "Role",
+    "options": [
+      {
+        "label": "Product",
+        "value": "product"
+      },
+      {
+        "label": "Order bump",
+        "value": "orderbump"
+      }
+    ],
+    "help": "Order bump returns the products you can add as order bumps. Leave empty for every product."
+  },
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the product title or SKU."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

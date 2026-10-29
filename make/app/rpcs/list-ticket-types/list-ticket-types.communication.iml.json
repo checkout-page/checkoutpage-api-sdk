@@ -1,0 +1,11 @@
+{
+  "url": "/v1/events/{{parameters.eventId}}",
+  "method": "GET",
+  "response": {
+    "iterate": "{{flatten(map(body.data.ticketGroups, 'ticketTypes'))}}",
+    "output": {
+      "label": "{{item.name}}",
+      "value": "{{item.id}}"
+    }
+  }
+}

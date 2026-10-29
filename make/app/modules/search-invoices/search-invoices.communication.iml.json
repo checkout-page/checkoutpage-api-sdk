@@ -1,0 +1,26 @@
+{
+  "url": "/v1/invoices/",
+  "method": "GET",
+  "qs": {
+    "limit": "100",
+    "search": "{{parameters.search}}",
+    "status": "{{parameters.status}}",
+    "customerId": "{{parameters.customerId}}",
+    "chargeId": "{{parameters.chargeId}}",
+    "poNumber": "{{parameters.poNumber}}",
+    "createdAfter": "{{toQueryDate(parameters.createdAfter)}}",
+    "createdBefore": "{{toQueryDate(parameters.createdBefore)}}",
+    "livemode": "{{toQueryBoolean(parameters.livemode)}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": "{{item}}",
+    "limit": "{{parameters.limit}}"
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}
