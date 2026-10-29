@@ -1,0 +1,125 @@
+[
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers",
+    "required": true
+  },
+  {
+    "name": "name",
+    "type": "text",
+    "label": "Name"
+  },
+  {
+    "name": "email",
+    "type": "text",
+    "label": "Email"
+  },
+  {
+    "name": "phone",
+    "type": "text",
+    "label": "Phone"
+  },
+  {
+    "name": "companyName",
+    "type": "text",
+    "label": "Company name"
+  },
+  {
+    "name": "billingEmail",
+    "type": "text",
+    "label": "Billing email"
+  },
+  {
+    "name": "address",
+    "type": "collection",
+    "label": "Address",
+    "spec": [
+      {
+        "name": "line1",
+        "type": "text",
+        "label": "Address line 1"
+      },
+      {
+        "name": "line2",
+        "type": "text",
+        "label": "Address line 2"
+      },
+      {
+        "name": "city",
+        "type": "text",
+        "label": "City"
+      },
+      {
+        "name": "state",
+        "type": "text",
+        "label": "State"
+      },
+      {
+        "name": "postalCode",
+        "type": "text",
+        "label": "Postal code"
+      },
+      {
+        "name": "country",
+        "type": "text",
+        "label": "Country"
+      }
+    ]
+  },
+  {
+    "name": "shipping",
+    "type": "collection",
+    "label": "Shipping",
+    "spec": [
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "phone",
+        "type": "text",
+        "label": "Phone"
+      },
+      {
+        "name": "address",
+        "type": "collection",
+        "label": "Address",
+        "spec": [
+          {
+            "name": "line1",
+            "type": "text",
+            "label": "Address line 1"
+          },
+          {
+            "name": "line2",
+            "type": "text",
+            "label": "Address line 2"
+          },
+          {
+            "name": "city",
+            "type": "text",
+            "label": "City"
+          },
+          {
+            "name": "state",
+            "type": "text",
+            "label": "State"
+          },
+          {
+            "name": "postalCode",
+            "type": "text",
+            "label": "Postal code"
+          },
+          {
+            "name": "country",
+            "type": "text",
+            "label": "Country"
+          }
+        ]
+      }
+    ]
+  }
+]

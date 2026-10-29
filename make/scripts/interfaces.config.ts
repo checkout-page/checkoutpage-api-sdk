@@ -1,13 +1,15 @@
+type Method = 'GET' | 'POST' | 'PATCH';
+
 export interface DataSource {
   key: string;
-  method: 'GET';
+  method: Method;
   path: string;
   items: boolean;
 }
 
 export interface Target {
   module: string;
-  method: 'GET';
+  method: Method;
   path: string;
   items: boolean;
   exclude?: string[];
@@ -117,4 +119,19 @@ export const targets: Target[] = [
   get('getEvent', '/v1/events/:pageId', { exclude: PAGE_EXCLUDE, labels: REDIRECT }),
   get('getForm', '/v1/forms/:pageId', { exclude: PAGE_EXCLUDE, labels: REDIRECT }),
   get('getProduct', '/v1/products/:productId'),
+  {
+    module: 'createBooking',
+    method: 'POST',
+    path: '/v1/bookings/',
+    items: false,
+    labels: { ...EVENT, ...UPSELL },
+  },
+  {
+    module: 'createCoupon',
+    method: 'POST',
+    path: '/v1/coupons/',
+    items: false,
+    labels: { 'rules.pageId': 'Checkout page or event ID' },
+  },
+  { module: 'updateCustomer', method: 'PATCH', path: '/v1/customers/:customerId', items: false },
 ];

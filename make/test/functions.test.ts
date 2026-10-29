@@ -30,5 +30,5 @@ it('registers every function in makecomapp.json', () => {
       .byType('function')
       .map((f) => f.id)
       .sort()
-  ).toEqual(['toQueryBoolean', 'toQueryDate']);
+  ).toEqual(['bookingBody', 'couponBody', 'customerBody', 'toQueryBoolean', 'toQueryDate']);
 });

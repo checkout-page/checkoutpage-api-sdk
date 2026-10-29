@@ -1,0 +1,8 @@
+{
+  "url": "/v1/customers/{{parameters.customerId}}",
+  "method": "PATCH",
+  "body": "{{customerBody(parameters)}}",
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

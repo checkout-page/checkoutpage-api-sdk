@@ -1,0 +1,133 @@
+[
+  {
+    "name": "amountOff",
+    "type": "number",
+    "label": "Amount off"
+  },
+  {
+    "name": "appliesToSetupFee",
+    "type": "boolean",
+    "label": "Applies to setup fee"
+  },
+  {
+    "name": "appliesToTicketFees",
+    "type": "boolean",
+    "label": "Applies to ticket fees"
+  },
+  {
+    "name": "code",
+    "type": "text",
+    "label": "Code"
+  },
+  {
+    "name": "createdAt",
+    "type": "date",
+    "label": "Created at"
+  },
+  {
+    "name": "currency",
+    "type": "text",
+    "label": "Currency"
+  },
+  {
+    "name": "deleted",
+    "type": "boolean",
+    "label": "Deleted"
+  },
+  {
+    "name": "duration",
+    "type": "text",
+    "label": "Duration"
+  },
+  {
+    "name": "durationInMonths",
+    "type": "number",
+    "label": "Duration in months"
+  },
+  {
+    "name": "id",
+    "type": "text",
+    "label": "ID"
+  },
+  {
+    "name": "label",
+    "type": "text",
+    "label": "Label"
+  },
+  {
+    "name": "maxRedemptions",
+    "type": "number",
+    "label": "Max redemptions"
+  },
+  {
+    "name": "percentOff",
+    "type": "number",
+    "label": "Percent off"
+  },
+  {
+    "name": "redeemBy",
+    "type": "date",
+    "label": "Redeem by"
+  },
+  {
+    "name": "rules",
+    "type": "array",
+    "label": "Rules",
+    "spec": [
+      {
+        "name": "appliesTo",
+        "type": "text",
+        "label": "Applies to"
+      },
+      {
+        "name": "bumpProductIds",
+        "type": "array",
+        "label": "Bump product ids",
+        "spec": {
+          "type": "text"
+        }
+      },
+      {
+        "name": "pageId",
+        "type": "text",
+        "label": "Checkout page or event ID"
+      },
+      {
+        "name": "priceIds",
+        "type": "array",
+        "label": "Price ids",
+        "spec": {
+          "type": "text"
+        }
+      },
+      {
+        "name": "ticketTypeIds",
+        "type": "array",
+        "label": "Ticket type ids",
+        "spec": {
+          "type": "text"
+        }
+      }
+    ]
+  },
+  {
+    "name": "sellerId",
+    "type": "text",
+    "label": "Seller ID"
+  },
+  {
+    "name": "stripeCouponId",
+    "type": "text",
+    "label": "Stripe coupon ID"
+  },
+  {
+    "name": "timesRedeemed",
+    "type": "number",
+    "label": "Times redeemed"
+  },
+  {
+    "name": "updatedAt",
+    "type": "date",
+    "label": "Updated at"
+  }
+]

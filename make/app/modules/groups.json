@@ -5,7 +5,14 @@
   },
   {
     "label": "Bookings and tickets",
-    "modules": ["watchBookings", "watchTickets", "searchBookings", "searchTickets", "getBooking"]
+    "modules": [
+      "watchBookings",
+      "watchTickets",
+      "createBooking",
+      "searchBookings",
+      "searchTickets",
+      "getBooking"
+    ]
   },
   {
     "label": "Subscriptions",
@@ -23,7 +30,7 @@
   },
   {
     "label": "Customers",
-    "modules": ["watchCustomers", "searchCustomers", "getCustomer"]
+    "modules": ["watchCustomers", "updateCustomer", "searchCustomers", "getCustomer"]
   },
   {
     "label": "Checkout pages, events and forms",
@@ -41,6 +48,6 @@
   },
   {
     "label": "Coupons and invoices",
-    "modules": ["searchCoupons", "searchInvoices", "getInvoice"]
+    "modules": ["createCoupon", "searchCoupons", "searchInvoices", "getInvoice"]
   }
 ]

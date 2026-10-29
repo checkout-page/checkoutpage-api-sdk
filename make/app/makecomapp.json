@@ -542,6 +542,51 @@
           "samples": "modules/get-product/get-product.samples.iml.json",
           "scope": "modules/get-product/get-product.scope.iml.json"
         }
+      },
+      "createBooking": {
+        "label": "Create a booking",
+        "description": "Adds an attendee to an event, with or without a payment.",
+        "moduleType": "action",
+        "actionCrud": "create",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/create-booking/create-booking.communication.iml.json",
+          "staticParams": "modules/create-booking/create-booking.static-params.iml.json",
+          "mappableParams": "modules/create-booking/create-booking.mappable-params.iml.json",
+          "interface": "modules/create-booking/create-booking.interface.iml.json",
+          "samples": "modules/create-booking/create-booking.samples.iml.json",
+          "scope": "modules/create-booking/create-booking.scope.iml.json"
+        }
+      },
+      "createCoupon": {
+        "label": "Create a coupon",
+        "description": "Creates a coupon for checkout pages and events.",
+        "moduleType": "action",
+        "actionCrud": "create",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/create-coupon/create-coupon.communication.iml.json",
+          "staticParams": "modules/create-coupon/create-coupon.static-params.iml.json",
+          "mappableParams": "modules/create-coupon/create-coupon.mappable-params.iml.json",
+          "interface": "modules/create-coupon/create-coupon.interface.iml.json",
+          "samples": "modules/create-coupon/create-coupon.samples.iml.json",
+          "scope": "modules/create-coupon/create-coupon.scope.iml.json"
+        }
+      },
+      "updateCustomer": {
+        "label": "Update a customer",
+        "description": "Changes a customer's details. Empty fields are left as they are.",
+        "moduleType": "action",
+        "actionCrud": "update",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/update-customer/update-customer.communication.iml.json",
+          "staticParams": "modules/update-customer/update-customer.static-params.iml.json",
+          "mappableParams": "modules/update-customer/update-customer.mappable-params.iml.json",
+          "interface": "modules/update-customer/update-customer.interface.iml.json",
+          "samples": "modules/update-customer/update-customer.samples.iml.json",
+          "scope": "modules/update-customer/update-customer.scope.iml.json"
+        }
       }
     },
     "rpc": {
@@ -621,6 +666,24 @@
         "codeFiles": {
           "code": "functions/to-query-date/to-query-date.code.js",
           "test": "functions/to-query-date/to-query-date.test.js"
+        }
+      },
+      "bookingBody": {
+        "codeFiles": {
+          "code": "functions/booking-body/booking-body.code.js",
+          "test": "functions/booking-body/booking-body.test.js"
+        }
+      },
+      "couponBody": {
+        "codeFiles": {
+          "code": "functions/coupon-body/coupon-body.code.js",
+          "test": "functions/coupon-body/coupon-body.test.js"
+        }
+      },
+      "customerBody": {
+        "codeFiles": {
+          "code": "functions/customer-body/customer-body.code.js",
+          "test": "functions/customer-body/customer-body.test.js"
         }
       }
     }

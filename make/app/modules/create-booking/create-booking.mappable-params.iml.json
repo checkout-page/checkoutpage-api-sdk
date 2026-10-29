@@ -1,0 +1,87 @@
+[
+  {
+    "name": "eventId",
+    "type": "select",
+    "label": "Event",
+    "options": "rpc://listEvents",
+    "required": true
+  },
+  {
+    "name": "tickets",
+    "type": "array",
+    "label": "Tickets",
+    "required": true,
+    "help": "Add one row per ticket type.",
+    "spec": [
+      {
+        "name": "ticketTypeId",
+        "type": "select",
+        "label": "Ticket type",
+        "options": "rpc://listTicketTypes",
+        "required": true
+      },
+      {
+        "name": "quantity",
+        "type": "uinteger",
+        "label": "Quantity",
+        "default": 1,
+        "required": true
+      },
+      {
+        "name": "pwywAmount",
+        "type": "number",
+        "label": "Pay what you want amount",
+        "help": "In the smallest currency unit, for example cents."
+      }
+    ]
+  },
+  {
+    "name": "fields",
+    "type": "array",
+    "label": "Fields",
+    "required": true,
+    "help": "Include the email field.",
+    "spec": [
+      {
+        "name": "fieldId",
+        "type": "select",
+        "label": "Field",
+        "options": "rpc://listEventFields",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "text",
+        "label": "Value"
+      }
+    ]
+  },
+  {
+    "name": "complimentary",
+    "type": "boolean",
+    "label": "Complimentary",
+    "help": "Issue the tickets at no charge."
+  },
+  {
+    "name": "couponId",
+    "type": "select",
+    "label": "Coupon",
+    "options": "rpc://listCoupons"
+  },
+  {
+    "name": "manualType",
+    "type": "select",
+    "label": "Record as",
+    "options": [
+      {
+        "label": "Cash on delivery",
+        "value": "cash_on_delivery"
+      },
+      {
+        "label": "Invoice",
+        "value": "invoice"
+      }
+    ],
+    "help": "Records the booking as unpaid, to be paid on arrival or by invoice."
+  }
+]

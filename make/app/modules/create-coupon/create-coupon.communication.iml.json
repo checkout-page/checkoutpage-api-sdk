@@ -1,0 +1,8 @@
+{
+  "url": "/v1/coupons/",
+  "method": "POST",
+  "body": "{{couponBody(parameters)}}",
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

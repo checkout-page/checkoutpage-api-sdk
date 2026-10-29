@@ -1,0 +1,151 @@
+[
+  {
+    "name": "label",
+    "type": "text",
+    "label": "Label",
+    "required": true,
+    "help": "Internal name for the coupon."
+  },
+  {
+    "name": "code",
+    "type": "text",
+    "label": "Code",
+    "required": true,
+    "help": "The code a customer enters. Letters, numbers, hyphens and underscores."
+  },
+  {
+    "name": "discountType",
+    "type": "select",
+    "label": "Discount type",
+    "options": [
+      {
+        "label": "Percentage off",
+        "value": "percent"
+      },
+      {
+        "label": "Amount off",
+        "value": "amount"
+      }
+    ],
+    "default": "percent",
+    "required": true
+  },
+  {
+    "name": "percentOff",
+    "type": "number",
+    "label": "Percentage off"
+  },
+  {
+    "name": "amountOff",
+    "type": "uinteger",
+    "label": "Amount off",
+    "help": "In the smallest currency unit, for example cents."
+  },
+  {
+    "name": "currency",
+    "type": "text",
+    "label": "Currency",
+    "help": "Three-letter currency code for the amount off, for example usd."
+  },
+  {
+    "name": "duration",
+    "type": "select",
+    "label": "Duration",
+    "options": [
+      {
+        "label": "Once",
+        "value": "once"
+      },
+      {
+        "label": "Repeating",
+        "value": "repeating"
+      },
+      {
+        "label": "Forever",
+        "value": "forever"
+      }
+    ],
+    "default": "once",
+    "required": true,
+    "help": "How long the discount applies to a subscription."
+  },
+  {
+    "name": "durationInMonths",
+    "type": "uinteger",
+    "label": "Duration in months",
+    "help": "Only for a repeating coupon."
+  },
+  {
+    "name": "maxRedemptions",
+    "type": "uinteger",
+    "label": "Maximum redemptions"
+  },
+  {
+    "name": "redeemBy",
+    "type": "date",
+    "label": "Redeem by"
+  },
+  {
+    "name": "appliesToSetupFee",
+    "type": "boolean",
+    "label": "Applies to setup fee"
+  },
+  {
+    "name": "appliesToTicketFees",
+    "type": "boolean",
+    "label": "Applies to ticket fees"
+  },
+  {
+    "name": "rules",
+    "type": "array",
+    "label": "Rules",
+    "help": "Leave empty for a coupon that works on every checkout page and event.",
+    "spec": [
+      {
+        "name": "pageId",
+        "type": "text",
+        "label": "Checkout page or event ID",
+        "required": true
+      },
+      {
+        "name": "appliesTo",
+        "type": "select",
+        "label": "Applies to",
+        "options": [
+          {
+            "label": "Whole order",
+            "value": "wholeOrder"
+          },
+          {
+            "label": "Prices",
+            "value": "prices"
+          },
+          {
+            "label": "Tickets",
+            "value": "tickets"
+          }
+        ],
+        "default": "wholeOrder",
+        "required": true
+      },
+      {
+        "name": "priceIds",
+        "type": "array",
+        "label": "Price IDs",
+        "spec": {
+          "type": "text",
+          "label": "Price ID"
+        }
+      },
+      {
+        "name": "ticketTypeIds",
+        "type": "array",
+        "label": "Ticket type IDs",
+        "spec": {
+          "type": "text",
+          "label": "Ticket type ID"
+        }
+      }
+    ]
+  }
+]
