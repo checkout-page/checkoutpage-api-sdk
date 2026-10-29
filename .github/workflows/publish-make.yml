@@ -1,0 +1,117 @@
+name: Publish Make app
+
+# Tags a release of make/ and creates its GitHub release. It does not deploy: Make apps are
+# deployed from VS Code with the Make Apps Editor extension, see make/CLAUDE.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (X.Y.Z, greater than make/package.json)'
+        required: true
+        type: string
+
+concurrency:
+  group: publish-make
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    defaults:
+      run:
+        working-directory: make
+
+    env:
+      VERSION: ${{ inputs.version }}
+
+    steps:
+      - name: Require main
+        if: github.ref != 'refs/heads/main'
+        working-directory: .
+        run: |
+          echo "::error::Run this workflow from main, not $GITHUB_REF"
+          exit 1
+
+      - name: Reminder
+        working-directory: .
+        run: echo "Deploy make/app to the Production origin from VS Code before running this workflow."
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # RELEASE_TOKEN can push to a protected main; GITHUB_TOKEN works while main is open.
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      - name: Check version, tag and changelog
+        run: |
+          if ! [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::version must be X.Y.Z, got '$VERSION'"
+            exit 1
+          fi
+          new=("${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}")
+
+          current=$(node -p "require('./package.json').version")
+          IFS=. read -r -a cur <<< "$current"
+          greater=false
+          for i in 0 1 2; do
+            if (( new[i] > cur[i] )); then greater=true; break; fi
+            if (( new[i] < cur[i] )); then break; fi
+          done
+          if [ "$greater" != true ]; then
+            echo "::error::$VERSION is not greater than package.json's $current"
+            exit 1
+          fi
+
+          tag="make-v$VERSION"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null ||
+            git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
+            echo "::error::tag $tag already exists"
+            exit 1
+          fi
+
+          if ! grep -qxF "## $VERSION" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## $VERSION' section"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: make/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update version
+        run: npm version "$VERSION" --no-git-tag-version
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Commit the version bump and tag it
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore(make): release v$VERSION"
+          git tag "make-v$VERSION"
+          git push --atomic origin HEAD:main "refs/tags/make-v$VERSION"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes=$(awk -v h="## $VERSION" '$0 == h { on = 1; next } on && /^##? / { exit } on' CHANGELOG.md)
+          gh release create "make-v$VERSION" \
+            --title "Make app v$VERSION" \
+            --notes "$notes"

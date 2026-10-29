@@ -23,6 +23,9 @@ customer-facing: plain short sentences, sentence-case headings, no em dash chara
   outside the pnpm workspace. It calls the API's `/zapier/v2` endpoints, not the seller API,
   so it does not use the spec. Released with `publish-zapier.yml` (tags `zapier-v<version>`).
   Never break existing Zaps: see [zapier/CLAUDE.md](zapier/CLAUDE.md).
+- **`make/`** - the Checkout Page app for Make.com in the Make Apps Editor's local file format,
+  a standalone npm project outside the pnpm workspace. Deployed from VS Code, released with
+  `publish-make.yml` (tags `make-v<version>`). Conventions in [make/CLAUDE.md](make/CLAUDE.md).
 - **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
 - **`examples/<lang>/`** - usage examples per language or tool (`examples/js/`, `examples/n8n/`).
 - **`scripts/`** - shared tooling (`generate-types.ts`).
