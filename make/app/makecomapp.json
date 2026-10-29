@@ -587,6 +587,20 @@
           "samples": "modules/update-customer/update-customer.samples.iml.json",
           "scope": "modules/update-customer/update-customer.scope.iml.json"
         }
+      },
+      "makeApiCall": {
+        "label": "Make an API call",
+        "description": "Performs an arbitrary authorized API call.",
+        "moduleType": "universal",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/make-api-call/make-api-call.communication.iml.json",
+          "staticParams": "modules/make-api-call/make-api-call.static-params.iml.json",
+          "mappableParams": "modules/make-api-call/make-api-call.mappable-params.iml.json",
+          "interface": "modules/make-api-call/make-api-call.interface.iml.json",
+          "samples": "modules/make-api-call/make-api-call.samples.iml.json",
+          "scope": "modules/make-api-call/make-api-call.scope.iml.json"
+        }
       }
     },
     "rpc": {

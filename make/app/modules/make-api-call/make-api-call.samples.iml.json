@@ -1,0 +1,14 @@
+{
+  "body": {
+    "data": {
+      "id": "68a8381e47da942369156fea",
+      "name": "my-store",
+      "displayName": "My store",
+      "logo": null
+    }
+  },
+  "headers": {
+    "content-type": "application/json"
+  },
+  "statusCode": 200
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadApp, readIml } from './app';
@@ -42,6 +42,16 @@ describe('makecomapp.json', () => {
         .sort()
     );
     expect(new Set(grouped).size).toBe(grouped.length);
+  });
+});
+
+describe('README', () => {
+  const readme = readFileSync(join(app.root, app.makecomapp.generalCodeFiles.readme), 'utf8');
+  it('has no em dash', () => {
+    expect(readme).not.toContain('\u2014');
+  });
+  it('names the kind of page, never a bare page', () => {
+    expect(readme).not.toMatch(/(?<!checkout )\bpages?\b/i);
   });
 });
 

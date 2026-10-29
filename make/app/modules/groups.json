@@ -49,5 +49,9 @@
   {
     "label": "Coupons and invoices",
     "modules": ["createCoupon", "searchCoupons", "searchInvoices", "getInvoice"]
+  },
+  {
+    "label": "Other",
+    "modules": ["makeApiCall"]
   }
 ]
