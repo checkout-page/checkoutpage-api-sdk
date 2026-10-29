@@ -224,8 +224,20 @@ export function toMakeInterface(schema: Schema, opts: { exclude?: string[] } = {
   return makeFields(resolveSchema(schema), opts.exclude ?? [], '');
 }
 
+// Paths follow the interface: an array's items share the array's path.
+function withoutExcluded(value: unknown, exclude: string[], prefix: string): unknown {
+  if (Array.isArray(value)) return value.map((item) => withoutExcluded(item, exclude, prefix));
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([name, child]) => {
+      const path = prefix ? `${prefix}.${name}` : name;
+      return exclude.includes(path) ? [] : [[name, withoutExcluded(child, exclude, path)]];
+    })
+  );
+}
+
 function sampleOf(schema: Schema, exclude: string[], prefix: string): unknown {
-  if (schema.example !== undefined) return schema.example;
+  if (schema.example !== undefined) return withoutExcluded(schema.example, exclude, prefix);
   if (schema.enum?.length) return schema.enum[0];
   switch (makeType(schema)) {
     case 'date':

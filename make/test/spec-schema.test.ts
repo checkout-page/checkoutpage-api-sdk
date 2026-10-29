@@ -282,4 +282,42 @@ describe('module targets', () => {
     expect(sample.checkoutPage).toEqual(expect.objectContaining({ id: expect.anything() }));
     expect(sample.product).toEqual(expect.objectContaining({ id: expect.anything() }));
   });
+
+  it('strips a nested excluded field from a spec example in the sample', () => {
+    const target = {
+      module: 'searchCheckoutPages',
+      method: 'GET' as const,
+      path: '/v1/checkout-pages/',
+      items: true,
+      exclude: ['formLayout.id'],
+    };
+    const plain = toMakeSample(
+      responseDataSchema('GET', '/v1/checkout-pages/', { items: true })
+    ) as {
+      formLayout: Record<string, unknown>[];
+    };
+    expect(plain.formLayout[0]).toHaveProperty('id');
+    const formLayout = moduleInterface(target).find((f) => f.name === 'formLayout')!;
+    expect((formLayout.spec as MakeField[]).map((f) => f.name)).not.toContain('id');
+    const sample = moduleSample(target) as { formLayout: Record<string, unknown>[] };
+    expect(sample.formLayout.length).toBeGreaterThan(0);
+    for (const item of sample.formLayout) expect(item).not.toHaveProperty('id');
+    expect(sample.formLayout[0]).toHaveProperty('type');
+  });
+
+  it('applies an exclude path through a wrapped data key', () => {
+    const target = {
+      module: 'watchPagesAndProducts',
+      method: 'GET' as const,
+      path: '/v1/checkout-pages/',
+      items: true,
+      exclude: ['checkoutPage.themeOverrides'],
+      wrap: { event: true as const, key: 'checkoutPage' },
+    };
+    const checkoutPage = moduleInterface(target).find((f) => f.name === 'checkoutPage')!;
+    expect((checkoutPage.spec as MakeField[]).map((f) => f.name)).not.toContain('themeOverrides');
+    const sample = moduleSample(target) as { checkoutPage: Record<string, unknown> };
+    expect(sample.checkoutPage).toHaveProperty('id');
+    expect(sample.checkoutPage).not.toHaveProperty('themeOverrides');
+  });
 });
