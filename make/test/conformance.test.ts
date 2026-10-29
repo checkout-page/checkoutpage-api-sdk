@@ -66,4 +66,10 @@ describe('conformance', () => {
     ).toEqual([expect.stringContaining('nope')]);
     expect(conformance(shape({ bodyKeys: ['code'] }))).toHaveLength(1);
   });
+  it('accepts any key under a map the spec declares with additionalProperties', () => {
+    const webhook = (bodyKeys: string[]) =>
+      conformance(shape({ method: 'POST', path: '/v1/webhooks/', bodyKeys }));
+    expect(webhook(['customHeaders', 'customHeaders.x-make-token'])).toEqual([]);
+    expect(webhook(['customHeaders.x-make-token.nope'])).toHaveLength(1);
+  });
 });

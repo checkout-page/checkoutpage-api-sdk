@@ -1,0 +1,180 @@
+[
+  {
+    "name": "event",
+    "type": "text",
+    "label": "Event"
+  },
+  {
+    "name": "eventId",
+    "type": "text",
+    "label": "Event ID"
+  },
+  {
+    "name": "timestamp",
+    "type": "date",
+    "label": "Timestamp"
+  },
+  {
+    "name": "sellerId",
+    "type": "text",
+    "label": "Seller ID"
+  },
+  {
+    "name": "customer",
+    "type": "collection",
+    "label": "Customer",
+    "spec": [
+      {
+        "name": "address",
+        "type": "collection",
+        "label": "Address",
+        "spec": [
+          {
+            "name": "city",
+            "type": "text",
+            "label": "City"
+          },
+          {
+            "name": "country",
+            "type": "text",
+            "label": "Country"
+          },
+          {
+            "name": "line1",
+            "type": "text",
+            "label": "Line1"
+          },
+          {
+            "name": "line2",
+            "type": "text",
+            "label": "Line2"
+          },
+          {
+            "name": "postalCode",
+            "type": "text",
+            "label": "Postal code"
+          },
+          {
+            "name": "state",
+            "type": "text",
+            "label": "State"
+          }
+        ]
+      },
+      {
+        "name": "billingEmail",
+        "type": "text",
+        "label": "Billing email"
+      },
+      {
+        "name": "companyName",
+        "type": "text",
+        "label": "Company name"
+      },
+      {
+        "name": "createdAt",
+        "type": "date",
+        "label": "Created at"
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "label": "Email"
+      },
+      {
+        "name": "id",
+        "type": "text",
+        "label": "ID"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "phone",
+        "type": "text",
+        "label": "Phone"
+      },
+      {
+        "name": "sellerId",
+        "type": "text",
+        "label": "Seller ID"
+      },
+      {
+        "name": "shipping",
+        "type": "collection",
+        "label": "Shipping",
+        "spec": [
+          {
+            "name": "address",
+            "type": "collection",
+            "label": "Address",
+            "spec": [
+              {
+                "name": "city",
+                "type": "text",
+                "label": "City"
+              },
+              {
+                "name": "country",
+                "type": "text",
+                "label": "Country"
+              },
+              {
+                "name": "line1",
+                "type": "text",
+                "label": "Line1"
+              },
+              {
+                "name": "line2",
+                "type": "text",
+                "label": "Line2"
+              },
+              {
+                "name": "postalCode",
+                "type": "text",
+                "label": "Postal code"
+              },
+              {
+                "name": "state",
+                "type": "text",
+                "label": "State"
+              }
+            ]
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "label": "Name"
+          },
+          {
+            "name": "phone",
+            "type": "text",
+            "label": "Phone"
+          }
+        ]
+      },
+      {
+        "name": "stripeCustomerId",
+        "type": "text",
+        "label": "Stripe customer ID"
+      },
+      {
+        "name": "taxId",
+        "type": "text",
+        "label": "Tax ID"
+      },
+      {
+        "name": "taxIdType",
+        "type": "text",
+        "label": "Tax ID type"
+      },
+      {
+        "name": "updatedAt",
+        "type": "date",
+        "label": "Updated at"
+      }
+    ]
+  }
+]

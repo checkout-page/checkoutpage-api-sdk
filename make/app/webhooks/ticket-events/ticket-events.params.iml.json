@@ -1,0 +1,16 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": ["ticket.created"],
+    "options": [
+      {
+        "label": "Ticket created",
+        "value": "ticket.created"
+      }
+    ]
+  }
+]

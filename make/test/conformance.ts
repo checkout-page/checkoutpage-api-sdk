@@ -32,6 +32,15 @@ function bodyPaths(value: unknown, shape: string, paths: Set<string>) {
   }
 }
 
+// declaredBodyPaths writes a map's keys (additionalProperties) as `*`.
+const declaredPathPattern = (path: string) =>
+  new RegExp(
+    `^${path
+      .split('*')
+      .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('[^.[]+')}$`
+  );
+
 export function requestShape(communication: Record<string, unknown>): RequestShape {
   const qs = (communication.qs as Record<string, unknown> | undefined) ?? {};
   const bodyKeys = new Set<string>();
@@ -69,9 +78,10 @@ export function conformance(shape: RequestShape): string[] {
   if (shape.bodyKeys.length && !op.hasBody) {
     problems.push(`${label}: sends a body but the operation takes none`);
   } else if (shape.bodyKeys.length) {
-    const declaredBody = new Set(declaredBodyPaths(op));
+    const declaredBody = declaredBodyPaths(op).map(declaredPathPattern);
     for (const key of shape.bodyKeys)
-      if (!declaredBody.has(key)) problems.push(`${label}: body.${key} is not declared`);
+      if (!declaredBody.some((pattern) => pattern.test(key)))
+        problems.push(`${label}: body.${key} is not declared`);
   }
   return problems;
 }

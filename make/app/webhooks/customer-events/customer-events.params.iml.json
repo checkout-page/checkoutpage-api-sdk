@@ -1,0 +1,20 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": ["customer.created", "customer.updated"],
+    "options": [
+      {
+        "label": "Customer created",
+        "value": "customer.created"
+      },
+      {
+        "label": "Customer updated",
+        "value": "customer.updated"
+      }
+    ]
+  }
+]

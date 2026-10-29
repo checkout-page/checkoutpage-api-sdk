@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "label": "Payments",
+    "modules": ["watchPayments"]
+  },
+  {
+    "label": "Bookings and tickets",
+    "modules": ["watchBookings", "watchTickets"]
+  },
+  {
+    "label": "Subscriptions",
+    "modules": ["watchSubscriptions"]
+  },
+  {
+    "label": "Submissions",
+    "modules": ["watchSubmissions"]
+  },
+  {
+    "label": "Customers",
+    "modules": ["watchCustomers"]
+  },
+  {
+    "label": "Checkout pages, events and forms",
+    "modules": ["watchPagesAndProducts"]
+  }
+]

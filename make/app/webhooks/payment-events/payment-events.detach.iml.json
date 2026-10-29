@@ -1,0 +1,7 @@
+{
+  "url": "/v1/webhooks/{{webhook.externalHookId}}",
+  "method": "DELETE",
+  "response": {
+    "valid": "{{statusCode == 200 || statusCode == 404}}"
+  }
+}

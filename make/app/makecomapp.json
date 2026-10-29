@@ -18,8 +18,185 @@
         }
       }
     },
-    "webhook": {},
-    "module": {},
+    "webhook": {
+      "paymentEvents": {
+        "label": "Payment events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/payment-events/payment-events.communication.iml.json",
+          "params": "webhooks/payment-events/payment-events.params.iml.json",
+          "attach": "webhooks/payment-events/payment-events.attach.iml.json",
+          "detach": "webhooks/payment-events/payment-events.detach.iml.json",
+          "update": "webhooks/payment-events/payment-events.update.iml.json"
+        }
+      },
+      "bookingEvents": {
+        "label": "Booking events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/booking-events/booking-events.communication.iml.json",
+          "params": "webhooks/booking-events/booking-events.params.iml.json",
+          "attach": "webhooks/booking-events/booking-events.attach.iml.json",
+          "detach": "webhooks/booking-events/booking-events.detach.iml.json",
+          "update": "webhooks/booking-events/booking-events.update.iml.json"
+        }
+      },
+      "ticketEvents": {
+        "label": "Ticket events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/ticket-events/ticket-events.communication.iml.json",
+          "params": "webhooks/ticket-events/ticket-events.params.iml.json",
+          "attach": "webhooks/ticket-events/ticket-events.attach.iml.json",
+          "detach": "webhooks/ticket-events/ticket-events.detach.iml.json",
+          "update": "webhooks/ticket-events/ticket-events.update.iml.json"
+        }
+      },
+      "subscriptionEvents": {
+        "label": "Subscription events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/subscription-events/subscription-events.communication.iml.json",
+          "params": "webhooks/subscription-events/subscription-events.params.iml.json",
+          "attach": "webhooks/subscription-events/subscription-events.attach.iml.json",
+          "detach": "webhooks/subscription-events/subscription-events.detach.iml.json",
+          "update": "webhooks/subscription-events/subscription-events.update.iml.json"
+        }
+      },
+      "submissionEvents": {
+        "label": "Submission events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/submission-events/submission-events.communication.iml.json",
+          "params": "webhooks/submission-events/submission-events.params.iml.json",
+          "attach": "webhooks/submission-events/submission-events.attach.iml.json",
+          "detach": "webhooks/submission-events/submission-events.detach.iml.json",
+          "update": "webhooks/submission-events/submission-events.update.iml.json"
+        }
+      },
+      "customerEvents": {
+        "label": "Customer events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/customer-events/customer-events.communication.iml.json",
+          "params": "webhooks/customer-events/customer-events.params.iml.json",
+          "attach": "webhooks/customer-events/customer-events.attach.iml.json",
+          "detach": "webhooks/customer-events/customer-events.detach.iml.json",
+          "update": "webhooks/customer-events/customer-events.update.iml.json"
+        }
+      },
+      "catalogEvents": {
+        "label": "Checkout page and product events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/catalog-events/catalog-events.communication.iml.json",
+          "params": "webhooks/catalog-events/catalog-events.params.iml.json",
+          "attach": "webhooks/catalog-events/catalog-events.attach.iml.json",
+          "detach": "webhooks/catalog-events/catalog-events.detach.iml.json",
+          "update": "webhooks/catalog-events/catalog-events.update.iml.json"
+        }
+      }
+    },
+    "module": {
+      "watchPayments": {
+        "label": "Watch payments",
+        "description": "Triggers when a payment is created, paid or abandoned.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "paymentEvents",
+        "codeFiles": {
+          "communication": "modules/watch-payments/watch-payments.communication.iml.json",
+          "staticParams": "modules/watch-payments/watch-payments.static-params.iml.json",
+          "interface": "modules/watch-payments/watch-payments.interface.iml.json",
+          "samples": "modules/watch-payments/watch-payments.samples.iml.json"
+        }
+      },
+      "watchBookings": {
+        "label": "Watch bookings",
+        "description": "Triggers when an event booking is created, paid or abandoned.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "bookingEvents",
+        "codeFiles": {
+          "communication": "modules/watch-bookings/watch-bookings.communication.iml.json",
+          "staticParams": "modules/watch-bookings/watch-bookings.static-params.iml.json",
+          "interface": "modules/watch-bookings/watch-bookings.interface.iml.json",
+          "samples": "modules/watch-bookings/watch-bookings.samples.iml.json"
+        }
+      },
+      "watchTickets": {
+        "label": "Watch tickets",
+        "description": "Triggers when a ticket is created for an event.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "ticketEvents",
+        "codeFiles": {
+          "communication": "modules/watch-tickets/watch-tickets.communication.iml.json",
+          "staticParams": "modules/watch-tickets/watch-tickets.static-params.iml.json",
+          "interface": "modules/watch-tickets/watch-tickets.interface.iml.json",
+          "samples": "modules/watch-tickets/watch-tickets.samples.iml.json"
+        }
+      },
+      "watchSubscriptions": {
+        "label": "Watch subscriptions",
+        "description": "Triggers when a subscription is created or changes status.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "subscriptionEvents",
+        "codeFiles": {
+          "communication": "modules/watch-subscriptions/watch-subscriptions.communication.iml.json",
+          "staticParams": "modules/watch-subscriptions/watch-subscriptions.static-params.iml.json",
+          "interface": "modules/watch-subscriptions/watch-subscriptions.interface.iml.json",
+          "samples": "modules/watch-subscriptions/watch-subscriptions.samples.iml.json"
+        }
+      },
+      "watchSubmissions": {
+        "label": "Watch submissions",
+        "description": "Triggers when a form submission is created or updated.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "submissionEvents",
+        "codeFiles": {
+          "communication": "modules/watch-submissions/watch-submissions.communication.iml.json",
+          "staticParams": "modules/watch-submissions/watch-submissions.static-params.iml.json",
+          "interface": "modules/watch-submissions/watch-submissions.interface.iml.json",
+          "samples": "modules/watch-submissions/watch-submissions.samples.iml.json"
+        }
+      },
+      "watchCustomers": {
+        "label": "Watch customers",
+        "description": "Triggers when a customer is created or updated.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "customerEvents",
+        "codeFiles": {
+          "communication": "modules/watch-customers/watch-customers.communication.iml.json",
+          "staticParams": "modules/watch-customers/watch-customers.static-params.iml.json",
+          "interface": "modules/watch-customers/watch-customers.interface.iml.json",
+          "samples": "modules/watch-customers/watch-customers.samples.iml.json"
+        }
+      },
+      "watchPagesAndProducts": {
+        "label": "Watch checkout pages and products",
+        "description": "Triggers when a checkout page or product is created or updated.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "catalogEvents",
+        "codeFiles": {
+          "communication": "modules/watch-pages-and-products/watch-pages-and-products.communication.iml.json",
+          "staticParams": "modules/watch-pages-and-products/watch-pages-and-products.static-params.iml.json",
+          "interface": "modules/watch-pages-and-products/watch-pages-and-products.interface.iml.json",
+          "samples": "modules/watch-pages-and-products/watch-pages-and-products.samples.iml.json"
+        }
+      }
+    },
     "rpc": {},
     "function": {
       "toQueryBoolean": {
