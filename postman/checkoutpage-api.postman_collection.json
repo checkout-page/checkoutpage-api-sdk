@@ -9499,12 +9499,12 @@
                 },
                 {
                   "description": {
-                    "content": " (This can only be one of archived,active,canceled)",
+                    "content": " (This can only be one of active,canceled)",
                     "type": "text/plain"
                   },
                   "disabled": true,
                   "key": "orderStatus",
-                  "value": "archived"
+                  "value": "active"
                 },
                 {
                   "description": {
@@ -9680,12 +9680,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -9862,12 +9862,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -10044,12 +10044,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -10226,12 +10226,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -10408,12 +10408,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -10590,12 +10590,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -33746,12 +33746,12 @@
                 },
                 {
                   "description": {
-                    "content": " (This can only be one of archived,active,canceled)",
+                    "content": " (This can only be one of active,canceled)",
                     "type": "text/plain"
                   },
                   "disabled": true,
                   "key": "orderStatus",
-                  "value": "archived"
+                  "value": "active"
                 },
                 {
                   "description": {
@@ -33918,12 +33918,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -34091,12 +34091,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -34264,12 +34264,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -34437,12 +34437,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -34610,12 +34610,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -34783,12 +34783,12 @@
                     },
                     {
                       "description": {
-                        "content": " (This can only be one of archived,active,canceled)",
+                        "content": " (This can only be one of active,canceled)",
                         "type": "text/plain"
                       },
                       "disabled": true,
                       "key": "orderStatus",
-                      "value": "archived"
+                      "value": "active"
                     },
                     {
                       "description": {

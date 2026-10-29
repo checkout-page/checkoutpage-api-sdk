@@ -703,11 +703,10 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled.",
             "enum": [
               "active",
               "canceled",
-              "archived",
               null
             ],
             "type": [
@@ -11193,11 +11192,10 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled.",
             "enum": [
               "active",
               "canceled",
-              "archived",
               null
             ],
             "type": [
@@ -67105,7 +67103,6 @@
             "required": false,
             "schema": {
               "enum": [
-                "archived",
                 "active",
                 "canceled"
               ],
@@ -81672,7 +81669,6 @@
             "required": false,
             "schema": {
               "enum": [
-                "archived",
                 "active",
                 "canceled"
               ],
