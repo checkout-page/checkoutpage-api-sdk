@@ -170,7 +170,6 @@ export const orderStatusOption: INodeProperties = {
   default: 'active',
   options: [
     { name: 'Active', value: 'active' },
-    { name: 'Archived', value: 'archived' },
     { name: 'Canceled', value: 'canceled' },
   ],
 };

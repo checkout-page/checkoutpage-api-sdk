@@ -213,7 +213,7 @@ pub struct BookingListArgs {
     pub search: Option<String>,
     #[arg(long, value_parser = CHARGE_STATUSES)]
     pub status: Option<String>,
-    #[arg(long, value_parser = ["active", "canceled", "archived"])]
+    #[arg(long, value_parser = ["active", "canceled"])]
     pub order_status: Option<String>,
     /// Only bookings for this event ID
     #[arg(long, value_name = "EVENT_ID")]
@@ -283,7 +283,7 @@ pub struct PaymentListArgs {
     pub search: Option<String>,
     #[arg(long, value_parser = CHARGE_STATUSES)]
     pub status: Option<String>,
-    #[arg(long, value_parser = ["active", "canceled", "archived"])]
+    #[arg(long, value_parser = ["active", "canceled"])]
     pub order_status: Option<String>,
     #[arg(long, value_name = "PRODUCT_ID")]
     pub product: Option<String>,

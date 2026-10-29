@@ -228,6 +228,14 @@
               "null"
             ]
           },
+          "archivedAt": {
+            "description": "When the merchant archived this, hiding it from their default bookings list in the dashboard. Archiving changes nothing else: the payment, tickets and `orderStatus` stay as they were. Absent unless archived.",
+            "type": "string"
+          },
+          "archivedBy": {
+            "description": "The userId of the team member who archived this. Absent unless archived.",
+            "type": "string"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -695,11 +703,10 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled.",
             "enum": [
               "active",
               "canceled",
-              "archived",
               null
             ],
             "type": [
@@ -10703,6 +10710,14 @@
               "null"
             ]
           },
+          "archivedAt": {
+            "description": "When the merchant archived this, hiding it from their default bookings list in the dashboard. Archiving changes nothing else: the payment, tickets and `orderStatus` stay as they were. Absent unless archived.",
+            "type": "string"
+          },
+          "archivedBy": {
+            "description": "The userId of the team member who archived this. Absent unless archived.",
+            "type": "string"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -11177,11 +11192,10 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled.",
             "enum": [
               "active",
               "canceled",
-              "archived",
               null
             ],
             "type": [
@@ -67049,6 +67063,20 @@
             }
           },
           {
+            "description": "Filter by archived bookings. `true` returns only archived bookings, `false` excludes them. Without it the list includes both.",
+            "in": "query",
+            "name": "archived",
+            "required": false,
+            "schema": {
+              "description": "Filter by archived bookings. `true` returns only archived bookings, `false` excludes them. Without it the list includes both.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "status",
             "required": false,
@@ -67075,7 +67103,6 @@
             "required": false,
             "schema": {
               "enum": [
-                "archived",
                 "active",
                 "canceled"
               ],
@@ -81642,7 +81669,6 @@
             "required": false,
             "schema": {
               "enum": [
-                "archived",
                 "active",
                 "canceled"
               ],

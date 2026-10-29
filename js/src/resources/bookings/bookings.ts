@@ -119,6 +119,7 @@ export class BookingResource {
       createdBefore: args.createdBefore,
       abandonmentStatus: args.abandonmentStatus,
       isComplimentary: args.isComplimentary,
+      archived: args.archived,
       livemode: args.livemode?.toString(),
       limit: args.limit?.toString(),
       starting_after: args.starting_after,
