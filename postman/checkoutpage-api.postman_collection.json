@@ -9613,7 +9613,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": [\n    {\n      \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n      \"abandonedCartEmailStatus\": \"pending\",\n      \"abandonmentStatus\": \"abandoned\",\n      \"amount\": 0,\n      \"amountDue\": 0,\n      \"amountExcludingTax\": 0,\n      \"amountPaid\": 0,\n      \"amountRefunded\": 0,\n      \"amountUsd\": 0,\n      \"archivedAt\": \"string\",\n      \"archivedBy\": \"string\",\n      \"billing\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"billingEmail\": \"string\",\n        \"companyName\": \"string\",\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"canceledAt\": \"string\",\n      \"canceledBy\": \"string\",\n      \"canceledReason\": \"string\",\n      \"clientIp\": \"string\",\n      \"complimentaryDiscountAmount\": 0,\n      \"coupon\": {\n        \"amountOff\": 0,\n        \"code\": \"string\",\n        \"discount\": 0,\n        \"id\": \"string\",\n        \"label\": \"string\",\n        \"percentOff\": 0\n      },\n      \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n      \"currency\": \"string\",\n      \"customerEmail\": \"string\",\n      \"customerId\": \"string\",\n      \"customerName\": \"string\",\n      \"discount\": {\n        \"amount\": 0,\n        \"amountOff\": 0,\n        \"maxQuantity\": 0,\n        \"minQuantity\": 0,\n        \"percentOff\": 0\n      },\n      \"dynamicPrice\": 0,\n      \"eventTitle\": \"string\",\n      \"fees\": [\n        {\n          \"amount\": 0,\n          \"fixedAmount\": 0,\n          \"name\": \"string\",\n          \"percentage\": 0,\n          \"percentageAmount\": 0\n        }\n      ],\n      \"fields\": [\n        {\n          \"element\": \"checkbox\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"id\": \"string\",\n      \"invoiceId\": \"string\",\n      \"isAbandoned\": false,\n      \"isComplimentary\": false,\n      \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n      \"lastRefundReason\": \"string\",\n      \"lastRefundReasonNote\": \"string\",\n      \"livemode\": false,\n      \"locale\": \"string\",\n      \"orderId\": \"string\",\n      \"orderStatus\": \"active\",\n      \"pageId\": \"string\",\n      \"pageSlug\": \"string\",\n      \"paymentError\": \"string\",\n      \"paymentMethod\": {\n        \"brand\": \"string\",\n        \"country\": \"string\",\n        \"expMonth\": 0,\n        \"expYear\": 0,\n        \"exp_month\": 0,\n        \"exp_year\": 0,\n        \"funding\": \"string\",\n        \"gateway\": \"stripe\",\n        \"last4\": \"string\",\n        \"method\": \"string\",\n        \"mode\": \"default\",\n        \"wallet\": \"string\"\n      },\n      \"paymentOption\": {\n        \"description\": \"string\",\n        \"instructions\": \"string\",\n        \"manualType\": \"invoice\",\n        \"name\": \"string\",\n        \"partialAmount\": 0,\n        \"type\": \"manual\"\n      },\n      \"queryParameters\": {},\n      \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n      \"screenWidth\": 0,\n      \"sellerId\": \"string\",\n      \"sessionId\": \"string\",\n      \"shipping\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"status\": \"created\",\n      \"stripeChargeId\": \"string\",\n      \"stripePaymentIntentId\": \"string\",\n      \"stripeTaxCalculationId\": \"string\",\n      \"stripeTaxTransactionId\": \"string\",\n      \"taxAmount\": 0,\n      \"taxBreakdown\": [\n        {\n          \"taxAmount\": 0,\n          \"taxRateDetails\": {\n            \"country\": \"string\",\n            \"percentageDecimal\": 0,\n            \"state\": \"string\",\n            \"taxType\": \"string\"\n          },\n          \"taxType\": \"string\",\n          \"taxabilityReason\": \"string\",\n          \"taxableAmount\": 0\n        }\n      ],\n      \"taxRates\": [\n        {\n          \"active\": false,\n          \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n          \"default\": false,\n          \"displayName\": \"VAT\",\n          \"inclusive\": false,\n          \"percentage\": 0,\n          \"stripeId\": \"string\",\n          \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n          \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n        }\n      ],\n      \"taxSource\": \"fixed_tax_rate\",\n      \"ticketFeesAmount\": 0,\n      \"tickets\": [\n        {\n          \"capacity\": 0,\n          \"discount\": {\n            \"amount\": 0,\n            \"amountOff\": 0,\n            \"maxQuantity\": 0,\n            \"minQuantity\": 0,\n            \"percentOff\": 0\n          },\n          \"fee\": {\n            \"amount\": 0,\n            \"display\": \"included\",\n            \"name\": \"string\",\n            \"totalAmount\": 0\n          },\n          \"name\": \"string\",\n          \"originalPrice\": 0,\n          \"price\": 0,\n          \"pricing\": \"paid\",\n          \"quantity\": 0,\n          \"reference\": \"string\",\n          \"ticketGroupCapacity\": 0,\n          \"ticketGroupId\": \"string\",\n          \"ticketGroupName\": \"string\",\n          \"ticketGroupReference\": \"string\",\n          \"ticketTypeId\": \"string\"\n        }\n      ],\n      \"transactionIds\": [\n        \"string\"\n      ],\n      \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n      \"upsell\": false,\n      \"upsellChargeId\": \"string\",\n      \"upsellPageId\": \"string\",\n      \"upsellSubscriptionId\": \"string\",\n      \"userAgent\": \"string\",\n      \"visitId\": \"string\"\n    }\n  ],\n  \"has_more\": false,\n  \"total\": 0\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n      \"abandonedCartEmailStatus\": \"pending\",\n      \"abandonmentStatus\": \"abandoned\",\n      \"amount\": 0,\n      \"amountDue\": 0,\n      \"amountExcludingTax\": 0,\n      \"amountPaid\": 0,\n      \"amountRefunded\": 0,\n      \"amountUsd\": 0,\n      \"archivedAt\": \"string\",\n      \"archivedBy\": \"string\",\n      \"billing\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"billingEmail\": \"string\",\n        \"companyName\": \"string\",\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"canceledAt\": \"string\",\n      \"canceledBy\": \"string\",\n      \"canceledByApiKey\": \"string\",\n      \"canceledByApiKeyName\": \"string\",\n      \"canceledReason\": \"string\",\n      \"clientIp\": \"string\",\n      \"complimentaryDiscountAmount\": 0,\n      \"coupon\": {\n        \"amountOff\": 0,\n        \"code\": \"string\",\n        \"discount\": 0,\n        \"id\": \"string\",\n        \"label\": \"string\",\n        \"percentOff\": 0\n      },\n      \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n      \"currency\": \"string\",\n      \"customerEmail\": \"string\",\n      \"customerId\": \"string\",\n      \"customerName\": \"string\",\n      \"discount\": {\n        \"amount\": 0,\n        \"amountOff\": 0,\n        \"maxQuantity\": 0,\n        \"minQuantity\": 0,\n        \"percentOff\": 0\n      },\n      \"dynamicPrice\": 0,\n      \"eventTitle\": \"string\",\n      \"fees\": [\n        {\n          \"amount\": 0,\n          \"fixedAmount\": 0,\n          \"name\": \"string\",\n          \"percentage\": 0,\n          \"percentageAmount\": 0\n        }\n      ],\n      \"fields\": [\n        {\n          \"element\": \"checkbox\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"id\": \"string\",\n      \"invoiceId\": \"string\",\n      \"isAbandoned\": false,\n      \"isComplimentary\": false,\n      \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n      \"lastRefundReason\": \"string\",\n      \"lastRefundReasonNote\": \"string\",\n      \"livemode\": false,\n      \"locale\": \"string\",\n      \"orderId\": \"string\",\n      \"orderStatus\": \"active\",\n      \"pageId\": \"string\",\n      \"pageSlug\": \"string\",\n      \"paymentError\": \"string\",\n      \"paymentMethod\": {\n        \"brand\": \"string\",\n        \"country\": \"string\",\n        \"expMonth\": 0,\n        \"expYear\": 0,\n        \"exp_month\": 0,\n        \"exp_year\": 0,\n        \"funding\": \"string\",\n        \"gateway\": \"stripe\",\n        \"last4\": \"string\",\n        \"method\": \"string\",\n        \"mode\": \"default\",\n        \"wallet\": \"string\"\n      },\n      \"paymentOption\": {\n        \"description\": \"string\",\n        \"instructions\": \"string\",\n        \"manualType\": \"invoice\",\n        \"name\": \"string\",\n        \"partialAmount\": 0,\n        \"type\": \"manual\"\n      },\n      \"queryParameters\": {},\n      \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n      \"screenWidth\": 0,\n      \"sellerId\": \"string\",\n      \"sessionId\": \"string\",\n      \"shipping\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"status\": \"created\",\n      \"stripeChargeId\": \"string\",\n      \"stripePaymentIntentId\": \"string\",\n      \"stripeTaxCalculationId\": \"string\",\n      \"stripeTaxTransactionId\": \"string\",\n      \"taxAmount\": 0,\n      \"taxBreakdown\": [\n        {\n          \"taxAmount\": 0,\n          \"taxRateDetails\": {\n            \"country\": \"string\",\n            \"percentageDecimal\": 0,\n            \"state\": \"string\",\n            \"taxType\": \"string\"\n          },\n          \"taxType\": \"string\",\n          \"taxabilityReason\": \"string\",\n          \"taxableAmount\": 0\n        }\n      ],\n      \"taxRates\": [\n        {\n          \"active\": false,\n          \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n          \"default\": false,\n          \"displayName\": \"VAT\",\n          \"inclusive\": false,\n          \"percentage\": 0,\n          \"stripeId\": \"string\",\n          \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n          \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n        }\n      ],\n      \"taxSource\": \"fixed_tax_rate\",\n      \"ticketFeesAmount\": 0,\n      \"tickets\": [\n        {\n          \"capacity\": 0,\n          \"discount\": {\n            \"amount\": 0,\n            \"amountOff\": 0,\n            \"maxQuantity\": 0,\n            \"minQuantity\": 0,\n            \"percentOff\": 0\n          },\n          \"fee\": {\n            \"amount\": 0,\n            \"display\": \"included\",\n            \"name\": \"string\",\n            \"totalAmount\": 0\n          },\n          \"name\": \"string\",\n          \"originalPrice\": 0,\n          \"price\": 0,\n          \"pricing\": \"paid\",\n          \"quantity\": 0,\n          \"reference\": \"string\",\n          \"ticketGroupCapacity\": 0,\n          \"ticketGroupId\": \"string\",\n          \"ticketGroupName\": \"string\",\n          \"ticketGroupReference\": \"string\",\n          \"ticketTypeId\": \"string\"\n        }\n      ],\n      \"transactionIds\": [\n        \"string\"\n      ],\n      \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n      \"upsell\": false,\n      \"upsellChargeId\": \"string\",\n      \"upsellPageId\": \"string\",\n      \"upsellSubscriptionId\": \"string\",\n      \"userAgent\": \"string\",\n      \"visitId\": \"string\"\n    }\n  ],\n  \"has_more\": false,\n  \"total\": 0\n}",
               "code": 200,
               "cookie": [],
               "header": [
@@ -10751,7 +10751,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"dynamicPrice\": 0,\n    \"eventTitle\": \"string\",\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"ticketFeesAmount\": 0,\n    \"tickets\": [\n      {\n        \"capacity\": 0,\n        \"discount\": {\n          \"amount\": 0,\n          \"amountOff\": 0,\n          \"maxQuantity\": 0,\n          \"minQuantity\": 0,\n          \"percentOff\": 0\n        },\n        \"fee\": {\n          \"amount\": 0,\n          \"display\": \"included\",\n          \"name\": \"string\",\n          \"totalAmount\": 0\n        },\n        \"name\": \"string\",\n        \"originalPrice\": 0,\n        \"price\": 0,\n        \"pricing\": \"paid\",\n        \"quantity\": 0,\n        \"reference\": \"string\",\n        \"ticketGroupCapacity\": 0,\n        \"ticketGroupId\": \"string\",\n        \"ticketGroupName\": \"string\",\n        \"ticketGroupReference\": \"string\",\n        \"ticketTypeId\": \"string\"\n      }\n    ],\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledByApiKey\": \"string\",\n    \"canceledByApiKeyName\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"dynamicPrice\": 0,\n    \"eventTitle\": \"string\",\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"ticketFeesAmount\": 0,\n    \"tickets\": [\n      {\n        \"capacity\": 0,\n        \"discount\": {\n          \"amount\": 0,\n          \"amountOff\": 0,\n          \"maxQuantity\": 0,\n          \"minQuantity\": 0,\n          \"percentOff\": 0\n        },\n        \"fee\": {\n          \"amount\": 0,\n          \"display\": \"included\",\n          \"name\": \"string\",\n          \"totalAmount\": 0\n        },\n        \"name\": \"string\",\n        \"originalPrice\": 0,\n        \"price\": 0,\n        \"pricing\": \"paid\",\n        \"quantity\": 0,\n        \"reference\": \"string\",\n        \"ticketGroupCapacity\": 0,\n        \"ticketGroupId\": \"string\",\n        \"ticketGroupName\": \"string\",\n        \"ticketGroupReference\": \"string\",\n        \"ticketTypeId\": \"string\"\n      }\n    ],\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
               "code": 201,
               "cookie": [],
               "header": [
@@ -11130,7 +11130,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"dynamicPrice\": 0,\n    \"eventTitle\": \"string\",\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"ticketFeesAmount\": 0,\n    \"tickets\": [\n      {\n        \"capacity\": 0,\n        \"discount\": {\n          \"amount\": 0,\n          \"amountOff\": 0,\n          \"maxQuantity\": 0,\n          \"minQuantity\": 0,\n          \"percentOff\": 0\n        },\n        \"fee\": {\n          \"amount\": 0,\n          \"display\": \"included\",\n          \"name\": \"string\",\n          \"totalAmount\": 0\n        },\n        \"name\": \"string\",\n        \"originalPrice\": 0,\n        \"price\": 0,\n        \"pricing\": \"paid\",\n        \"quantity\": 0,\n        \"reference\": \"string\",\n        \"ticketGroupCapacity\": 0,\n        \"ticketGroupId\": \"string\",\n        \"ticketGroupName\": \"string\",\n        \"ticketGroupReference\": \"string\",\n        \"ticketTypeId\": \"string\"\n      }\n    ],\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledByApiKey\": \"string\",\n    \"canceledByApiKeyName\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"dynamicPrice\": 0,\n    \"eventTitle\": \"string\",\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"ticketFeesAmount\": 0,\n    \"tickets\": [\n      {\n        \"capacity\": 0,\n        \"discount\": {\n          \"amount\": 0,\n          \"amountOff\": 0,\n          \"maxQuantity\": 0,\n          \"minQuantity\": 0,\n          \"percentOff\": 0\n        },\n        \"fee\": {\n          \"amount\": 0,\n          \"display\": \"included\",\n          \"name\": \"string\",\n          \"totalAmount\": 0\n        },\n        \"name\": \"string\",\n        \"originalPrice\": 0,\n        \"price\": 0,\n        \"pricing\": \"paid\",\n        \"quantity\": 0,\n        \"reference\": \"string\",\n        \"ticketGroupCapacity\": 0,\n        \"ticketGroupId\": \"string\",\n        \"ticketGroupName\": \"string\",\n        \"ticketGroupReference\": \"string\",\n        \"ticketTypeId\": \"string\"\n      }\n    ],\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
               "code": 200,
               "cookie": [],
               "header": [
@@ -30592,7 +30592,7 @@
           "name": "List all submissions",
           "request": {
             "description": {
-              "content": "Returns a paginated list of form submissions owned by the authenticated seller, sorted newest-first. Supports filtering by customer, form page, status, and UTC creation timestamps.",
+              "content": "Returns a paginated list of form submissions owned by the authenticated seller, sorted newest-first. Supports filtering by customer, form page, status, lifecycle status (`orderStatus`), and UTC creation timestamps. Canceled submissions are included unless `orderStatus` filters them out.",
               "type": "text/markdown"
             },
             "header": [
@@ -30647,6 +30647,15 @@
                   "disabled": true,
                   "key": "status",
                   "value": "succeeded"
+                },
+                {
+                  "description": {
+                    "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                    "type": "text/plain"
+                  },
+                  "disabled": true,
+                  "key": "orderStatus",
+                  "value": "active"
                 },
                 {
                   "description": {
@@ -30710,7 +30719,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": [\n    {\n      \"billing\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"billingEmail\": \"string\",\n        \"companyName\": \"string\",\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"clientIp\": \"string\",\n      \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n      \"customerEmail\": \"string\",\n      \"customerId\": \"string\",\n      \"customerName\": \"string\",\n      \"fields\": [\n        {\n          \"element\": \"string\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"string\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"formTitle\": \"string\",\n      \"id\": \"6812fe6e9f39b6760576f01c\",\n      \"livemode\": false,\n      \"locale\": \"string\",\n      \"pageId\": \"string\",\n      \"pageSlug\": \"string\",\n      \"queryParameters\": {},\n      \"screenWidth\": 0,\n      \"sellerId\": \"string\",\n      \"sessionId\": \"string\",\n      \"shipping\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"status\": \"succeeded\",\n      \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n      \"userAgent\": \"string\",\n      \"visitId\": \"string\"\n    }\n  ],\n  \"has_more\": false,\n  \"total\": 0\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"billing\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"billingEmail\": \"string\",\n        \"companyName\": \"string\",\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"canceledAt\": \"2026-01-01T00:00:00.000Z\",\n      \"canceledBy\": \"string\",\n      \"canceledByApiKey\": \"string\",\n      \"canceledByApiKeyName\": \"string\",\n      \"canceledReason\": \"string\",\n      \"clientIp\": \"string\",\n      \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n      \"customerEmail\": \"string\",\n      \"customerId\": \"string\",\n      \"customerName\": \"string\",\n      \"fields\": [\n        {\n          \"element\": \"string\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"string\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"formTitle\": \"string\",\n      \"id\": \"6812fe6e9f39b6760576f01c\",\n      \"livemode\": false,\n      \"locale\": \"string\",\n      \"orderStatus\": \"active\",\n      \"pageId\": \"string\",\n      \"pageSlug\": \"string\",\n      \"queryParameters\": {},\n      \"screenWidth\": 0,\n      \"sellerId\": \"string\",\n      \"sessionId\": \"string\",\n      \"shipping\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"status\": \"succeeded\",\n      \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n      \"userAgent\": \"string\",\n      \"visitId\": \"string\"\n    }\n  ],\n  \"has_more\": false,\n  \"total\": 0\n}",
               "code": 200,
               "cookie": [],
               "header": [
@@ -30774,6 +30783,15 @@
                       "disabled": true,
                       "key": "status",
                       "value": "succeeded"
+                    },
+                    {
+                      "description": {
+                        "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "orderStatus",
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -30905,6 +30923,15 @@
                     },
                     {
                       "description": {
+                        "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "orderStatus",
+                      "value": "active"
+                    },
+                    {
+                      "description": {
                         "content": "Filter by lower bound of createdAt. Use a UTC ISO 8601 timestamp with a `Z` suffix.",
                         "type": "text/plain"
                       },
@@ -31030,6 +31057,15 @@
                       "disabled": true,
                       "key": "status",
                       "value": "succeeded"
+                    },
+                    {
+                      "description": {
+                        "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "orderStatus",
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -31161,6 +31197,15 @@
                     },
                     {
                       "description": {
+                        "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "orderStatus",
+                      "value": "active"
+                    },
+                    {
+                      "description": {
                         "content": "Filter by lower bound of createdAt. Use a UTC ISO 8601 timestamp with a `Z` suffix.",
                         "type": "text/plain"
                       },
@@ -31286,6 +31331,15 @@
                       "disabled": true,
                       "key": "status",
                       "value": "succeeded"
+                    },
+                    {
+                      "description": {
+                        "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "orderStatus",
+                      "value": "active"
                     },
                     {
                       "description": {
@@ -31417,6 +31471,15 @@
                     },
                     {
                       "description": {
+                        "content": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists. (This can only be one of active,canceled,archived)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "orderStatus",
+                      "value": "active"
+                    },
+                    {
+                      "description": {
                         "content": "Filter by lower bound of createdAt. Use a UTC ISO 8601 timestamp with a `Z` suffix.",
                         "type": "text/plain"
                       },
@@ -31529,7 +31592,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": {\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"clientIp\": \"string\",\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"fields\": [\n      {\n        \"element\": \"string\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"string\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"formTitle\": \"string\",\n    \"id\": \"6812fe6e9f39b6760576f01c\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"queryParameters\": {},\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"succeeded\",\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"2026-01-01T00:00:00.000Z\",\n    \"canceledBy\": \"string\",\n    \"canceledByApiKey\": \"string\",\n    \"canceledByApiKeyName\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"fields\": [\n      {\n        \"element\": \"string\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"string\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"formTitle\": \"string\",\n    \"id\": \"6812fe6e9f39b6760576f01c\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"queryParameters\": {},\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"succeeded\",\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
               "code": 200,
               "cookie": [],
               "header": [
@@ -31909,6 +31972,419 @@
                     {
                       "description": {
                         "content": "The ID of the submission to retrieve. Use the list submissions endpoint first if you need to discover a submission ID by email, name, customer, page, or date range.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error"
+            }
+          ]
+        },
+        {
+          "id": "b4632921-b7c9-56da-9a3e-fec10dd7406e",
+          "name": "Cancel a submission",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"reason\": \"string\",\n  \"sendCancellationEmail\": false\n}"
+            },
+            "description": {
+              "content": "Cancels a form submission and returns it with `orderStatus: canceled`. A cancel is final and cannot be undone. A canceled submission no longer counts toward \"Prevent duplicate submissions\", so the same customer can submit the form again, and its files leave the customer portal. Optional `sendCancellationEmail` emails the customer. Fires the `submission.canceled` webhook.",
+              "type": "text/markdown"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "submissions",
+                ":submissionId",
+                "cancel"
+              ],
+              "query": [],
+              "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+              "variable": [
+                {
+                  "description": {
+                    "content": "The ID of the form submission to cancel.",
+                    "type": "text/markdown"
+                  },
+                  "key": "submissionId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": {\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"2026-01-01T00:00:00.000Z\",\n    \"canceledBy\": \"string\",\n    \"canceledByApiKey\": \"string\",\n    \"canceledByApiKeyName\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"fields\": [\n      {\n        \"element\": \"string\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"string\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"formTitle\": \"string\",\n    \"id\": \"6812fe6e9f39b6760576f01c\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"queryParameters\": {},\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"status\": \"succeeded\",\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"userAgent\": \"string\",\n    \"visitId\": \"string\"\n  }\n}",
+              "code": 200,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "91743c63-0861-5108-b4e0-c1644f5d1561",
+              "name": "Submission canceled",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "OK"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 400,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "aed1a499-d443-537e-84fd-abd55d1e7040",
+              "name": "Bad request - invalid body, or the submission is already canceled",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 401,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "d8918b86-214e-5c4c-b492-49f1d7823a7a",
+              "name": "Unauthorized - Missing or invalid API key",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 403,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "dd940c49-57c4-564b-aabd-22a0d1ffff16",
+              "name": "Forbidden - Insufficient permissions or validation error",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 404,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "d3f5c7f8-7b46-507d-97e4-1ec898251b0d",
+              "name": "Submission not found",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 429,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "12b861d5-5cab-5efe-b743-eb540ee58e19",
+              "name": "Rate Limit Exceeded - Please try again later.",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
+                        "type": "text/markdown"
+                      },
+                      "key": "submissionId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 500,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "de1848b3-e04b-597c-a3e7-355b929e67c7",
+              "name": "Internal server error",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "submissions",
+                    ":submissionId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/submissions/:submissionId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the form submission to cancel.",
                         "type": "text/markdown"
                       },
                       "key": "submissionId",
@@ -33860,7 +34336,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": [\n    {\n      \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n      \"abandonedCartEmailStatus\": \"pending\",\n      \"abandonmentStatus\": \"abandoned\",\n      \"amount\": 0,\n      \"amountDue\": 0,\n      \"amountExcludingTax\": 0,\n      \"amountPaid\": 0,\n      \"amountRefunded\": 0,\n      \"amountUsd\": 0,\n      \"archivedAt\": \"string\",\n      \"archivedBy\": \"string\",\n      \"billing\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"billingEmail\": \"string\",\n        \"companyName\": \"string\",\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"canceledAt\": \"string\",\n      \"canceledBy\": \"string\",\n      \"canceledReason\": \"string\",\n      \"clientIp\": \"string\",\n      \"complimentaryDiscountAmount\": 0,\n      \"coupon\": {\n        \"amountOff\": 0,\n        \"code\": \"string\",\n        \"discount\": 0,\n        \"id\": \"string\",\n        \"label\": \"string\",\n        \"percentOff\": 0\n      },\n      \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n      \"currency\": \"string\",\n      \"customerEmail\": \"string\",\n      \"customerId\": \"string\",\n      \"customerName\": \"string\",\n      \"discount\": {\n        \"amount\": 0,\n        \"amountOff\": 0,\n        \"maxQuantity\": 0,\n        \"minQuantity\": 0,\n        \"percentOff\": 0\n      },\n      \"discountedFromPrice\": 0,\n      \"dynamicPrice\": 0,\n      \"fees\": [\n        {\n          \"amount\": 0,\n          \"fixedAmount\": 0,\n          \"name\": \"string\",\n          \"percentage\": 0,\n          \"percentageAmount\": 0\n        }\n      ],\n      \"fields\": [\n        {\n          \"element\": \"checkbox\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"id\": \"string\",\n      \"invoiceId\": \"string\",\n      \"isAbandoned\": false,\n      \"isComplimentary\": false,\n      \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n      \"lastRefundReason\": \"string\",\n      \"lastRefundReasonNote\": \"string\",\n      \"licenseKeyId\": \"string\",\n      \"livemode\": false,\n      \"locale\": \"string\",\n      \"orderId\": \"string\",\n      \"orderStatus\": \"active\",\n      \"pageId\": \"string\",\n      \"pageSlug\": \"string\",\n      \"payWhatYouWantPrice\": 0,\n      \"paymentError\": \"string\",\n      \"paymentMethod\": {\n        \"brand\": \"string\",\n        \"country\": \"string\",\n        \"expMonth\": 0,\n        \"expYear\": 0,\n        \"exp_month\": 0,\n        \"exp_year\": 0,\n        \"funding\": \"string\",\n        \"gateway\": \"stripe\",\n        \"last4\": \"string\",\n        \"method\": \"string\",\n        \"mode\": \"default\",\n        \"wallet\": \"string\"\n      },\n      \"paymentOption\": {\n        \"description\": \"string\",\n        \"instructions\": \"string\",\n        \"manualType\": \"invoice\",\n        \"name\": \"string\",\n        \"partialAmount\": 0,\n        \"type\": \"manual\"\n      },\n      \"priceId\": \"string\",\n      \"priceSnapshot\": {\n        \"amount\": 0,\n        \"badge\": \"string\",\n        \"billingType\": \"string\",\n        \"currency\": \"string\",\n        \"description\": \"string\",\n        \"discountedFromPrice\": 0,\n        \"label\": \"string\",\n        \"managedInStripe\": false,\n        \"payWhatYouWant\": false,\n        \"paymentPlan\": {\n          \"billingCycleAnchorConfig\": {\n            \"dayOfMonth\": 0,\n            \"enabled\": false,\n            \"month\": 0\n          },\n          \"interval\": \"string\",\n          \"intervalCount\": 0,\n          \"planIterations\": 0,\n          \"startDate\": \"2026-01-01T00:00:00.000Z\",\n          \"trialPeriodDays\": 0\n        },\n        \"priceId\": \"string\",\n        \"pwywSuggestedPrice\": 0,\n        \"recurring\": {\n          \"billingCycleAnchorConfig\": {\n            \"dayOfMonth\": 0,\n            \"enabled\": false,\n            \"month\": 0\n          },\n          \"interval\": \"string\",\n          \"intervalCount\": 0,\n          \"startDate\": \"2026-01-01T00:00:00.000Z\",\n          \"trialPeriodDays\": 0\n        },\n        \"reference\": \"string\",\n        \"setupFee\": 0,\n        \"setupFeeMultipliesWithQuantity\": false,\n        \"stripePriceId\": \"string\",\n        \"stripePriceLivemode\": false\n      },\n      \"productId\": \"string\",\n      \"productPrice\": 0,\n      \"productTitle\": \"string\",\n      \"quantity\": 0,\n      \"queryParameters\": {},\n      \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n      \"screenWidth\": 0,\n      \"sellerId\": \"string\",\n      \"sessionId\": \"string\",\n      \"setupFee\": 0,\n      \"shipping\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"sku\": \"string\",\n      \"status\": \"created\",\n      \"stripeChargeId\": \"string\",\n      \"stripePaymentIntentId\": \"string\",\n      \"stripeTaxCalculationId\": \"string\",\n      \"stripeTaxTransactionId\": \"string\",\n      \"taxAmount\": 0,\n      \"taxBreakdown\": [\n        {\n          \"taxAmount\": 0,\n          \"taxRateDetails\": {\n            \"country\": \"string\",\n            \"percentageDecimal\": 0,\n            \"state\": \"string\",\n            \"taxType\": \"string\"\n          },\n          \"taxType\": \"string\",\n          \"taxabilityReason\": \"string\",\n          \"taxableAmount\": 0\n        }\n      ],\n      \"taxRates\": [\n        {\n          \"active\": false,\n          \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n          \"default\": false,\n          \"displayName\": \"VAT\",\n          \"inclusive\": false,\n          \"percentage\": 0,\n          \"stripeId\": \"string\",\n          \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n          \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n        }\n      ],\n      \"taxSource\": \"fixed_tax_rate\",\n      \"transactionIds\": [\n        \"string\"\n      ],\n      \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n      \"upsell\": false,\n      \"upsellChargeId\": \"string\",\n      \"upsellPageId\": \"string\",\n      \"upsellSubscriptionId\": \"string\",\n      \"userAgent\": \"string\",\n      \"variants\": [\n        {\n          \"name\": \"string\",\n          \"reference\": \"string\",\n          \"selectedOptions\": [\n            {\n              \"additionalChargeAmount\": 0,\n              \"discount\": {\n                \"amount\": 0,\n                \"amountOff\": 0,\n                \"maxQuantity\": 0,\n                \"minQuantity\": 0,\n                \"percentOff\": 0\n              },\n              \"optionId\": \"string\",\n              \"optionName\": \"string\",\n              \"originalAdditionalChargeAmount\": 0,\n              \"quantity\": 0,\n              \"sku\": \"string\"\n            }\n          ],\n          \"selectionType\": \"single\",\n          \"variantId\": \"string\"\n        }\n      ],\n      \"visitId\": \"string\"\n    }\n  ],\n  \"has_more\": false,\n  \"total\": 0\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n      \"abandonedCartEmailStatus\": \"pending\",\n      \"abandonmentStatus\": \"abandoned\",\n      \"amount\": 0,\n      \"amountDue\": 0,\n      \"amountExcludingTax\": 0,\n      \"amountPaid\": 0,\n      \"amountRefunded\": 0,\n      \"amountUsd\": 0,\n      \"archivedAt\": \"string\",\n      \"archivedBy\": \"string\",\n      \"billing\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"billingEmail\": \"string\",\n        \"companyName\": \"string\",\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"canceledAt\": \"string\",\n      \"canceledBy\": \"string\",\n      \"canceledByApiKey\": \"string\",\n      \"canceledByApiKeyName\": \"string\",\n      \"canceledReason\": \"string\",\n      \"clientIp\": \"string\",\n      \"complimentaryDiscountAmount\": 0,\n      \"coupon\": {\n        \"amountOff\": 0,\n        \"code\": \"string\",\n        \"discount\": 0,\n        \"id\": \"string\",\n        \"label\": \"string\",\n        \"percentOff\": 0\n      },\n      \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n      \"currency\": \"string\",\n      \"customerEmail\": \"string\",\n      \"customerId\": \"string\",\n      \"customerName\": \"string\",\n      \"discount\": {\n        \"amount\": 0,\n        \"amountOff\": 0,\n        \"maxQuantity\": 0,\n        \"minQuantity\": 0,\n        \"percentOff\": 0\n      },\n      \"discountedFromPrice\": 0,\n      \"dynamicPrice\": 0,\n      \"fees\": [\n        {\n          \"amount\": 0,\n          \"fixedAmount\": 0,\n          \"name\": \"string\",\n          \"percentage\": 0,\n          \"percentageAmount\": 0\n        }\n      ],\n      \"fields\": [\n        {\n          \"element\": \"checkbox\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"id\": \"string\",\n      \"invoiceId\": \"string\",\n      \"isAbandoned\": false,\n      \"isComplimentary\": false,\n      \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n      \"lastRefundReason\": \"string\",\n      \"lastRefundReasonNote\": \"string\",\n      \"licenseKeyId\": \"string\",\n      \"livemode\": false,\n      \"locale\": \"string\",\n      \"orderId\": \"string\",\n      \"orderStatus\": \"active\",\n      \"pageId\": \"string\",\n      \"pageSlug\": \"string\",\n      \"payWhatYouWantPrice\": 0,\n      \"paymentError\": \"string\",\n      \"paymentMethod\": {\n        \"brand\": \"string\",\n        \"country\": \"string\",\n        \"expMonth\": 0,\n        \"expYear\": 0,\n        \"exp_month\": 0,\n        \"exp_year\": 0,\n        \"funding\": \"string\",\n        \"gateway\": \"stripe\",\n        \"last4\": \"string\",\n        \"method\": \"string\",\n        \"mode\": \"default\",\n        \"wallet\": \"string\"\n      },\n      \"paymentOption\": {\n        \"description\": \"string\",\n        \"instructions\": \"string\",\n        \"manualType\": \"invoice\",\n        \"name\": \"string\",\n        \"partialAmount\": 0,\n        \"type\": \"manual\"\n      },\n      \"priceId\": \"string\",\n      \"priceSnapshot\": {\n        \"amount\": 0,\n        \"badge\": \"string\",\n        \"billingType\": \"string\",\n        \"currency\": \"string\",\n        \"description\": \"string\",\n        \"discountedFromPrice\": 0,\n        \"label\": \"string\",\n        \"managedInStripe\": false,\n        \"payWhatYouWant\": false,\n        \"paymentPlan\": {\n          \"billingCycleAnchorConfig\": {\n            \"dayOfMonth\": 0,\n            \"enabled\": false,\n            \"month\": 0\n          },\n          \"interval\": \"string\",\n          \"intervalCount\": 0,\n          \"planIterations\": 0,\n          \"startDate\": \"2026-01-01T00:00:00.000Z\",\n          \"trialPeriodDays\": 0\n        },\n        \"priceId\": \"string\",\n        \"pwywSuggestedPrice\": 0,\n        \"recurring\": {\n          \"billingCycleAnchorConfig\": {\n            \"dayOfMonth\": 0,\n            \"enabled\": false,\n            \"month\": 0\n          },\n          \"interval\": \"string\",\n          \"intervalCount\": 0,\n          \"startDate\": \"2026-01-01T00:00:00.000Z\",\n          \"trialPeriodDays\": 0\n        },\n        \"reference\": \"string\",\n        \"setupFee\": 0,\n        \"setupFeeMultipliesWithQuantity\": false,\n        \"stripePriceId\": \"string\",\n        \"stripePriceLivemode\": false\n      },\n      \"productId\": \"string\",\n      \"productPrice\": 0,\n      \"productTitle\": \"string\",\n      \"quantity\": 0,\n      \"queryParameters\": {},\n      \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n      \"screenWidth\": 0,\n      \"sellerId\": \"string\",\n      \"sessionId\": \"string\",\n      \"setupFee\": 0,\n      \"shipping\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postalCode\": \"string\",\n          \"state\": \"string\"\n        },\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"sku\": \"string\",\n      \"status\": \"created\",\n      \"stripeChargeId\": \"string\",\n      \"stripePaymentIntentId\": \"string\",\n      \"stripeTaxCalculationId\": \"string\",\n      \"stripeTaxTransactionId\": \"string\",\n      \"taxAmount\": 0,\n      \"taxBreakdown\": [\n        {\n          \"taxAmount\": 0,\n          \"taxRateDetails\": {\n            \"country\": \"string\",\n            \"percentageDecimal\": 0,\n            \"state\": \"string\",\n            \"taxType\": \"string\"\n          },\n          \"taxType\": \"string\",\n          \"taxabilityReason\": \"string\",\n          \"taxableAmount\": 0\n        }\n      ],\n      \"taxRates\": [\n        {\n          \"active\": false,\n          \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n          \"default\": false,\n          \"displayName\": \"VAT\",\n          \"inclusive\": false,\n          \"percentage\": 0,\n          \"stripeId\": \"string\",\n          \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n          \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n        }\n      ],\n      \"taxSource\": \"fixed_tax_rate\",\n      \"transactionIds\": [\n        \"string\"\n      ],\n      \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n      \"upsell\": false,\n      \"upsellChargeId\": \"string\",\n      \"upsellPageId\": \"string\",\n      \"upsellSubscriptionId\": \"string\",\n      \"userAgent\": \"string\",\n      \"variants\": [\n        {\n          \"name\": \"string\",\n          \"reference\": \"string\",\n          \"selectedOptions\": [\n            {\n              \"additionalChargeAmount\": 0,\n              \"discount\": {\n                \"amount\": 0,\n                \"amountOff\": 0,\n                \"maxQuantity\": 0,\n                \"minQuantity\": 0,\n                \"percentOff\": 0\n              },\n              \"optionId\": \"string\",\n              \"optionName\": \"string\",\n              \"originalAdditionalChargeAmount\": 0,\n              \"quantity\": 0,\n              \"sku\": \"string\"\n            }\n          ],\n          \"selectionType\": \"single\",\n          \"variantId\": \"string\"\n        }\n      ],\n      \"visitId\": \"string\"\n    }\n  ],\n  \"has_more\": false,\n  \"total\": 0\n}",
               "code": 200,
               "cookie": [],
               "header": [
@@ -34949,7 +35425,7 @@
           "response": [
             {
               "_postman_previewlanguage": "json",
-              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"discountedFromPrice\": 0,\n    \"dynamicPrice\": 0,\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"licenseKeyId\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"payWhatYouWantPrice\": 0,\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"priceId\": \"string\",\n    \"priceSnapshot\": {\n      \"amount\": 0,\n      \"badge\": \"string\",\n      \"billingType\": \"string\",\n      \"currency\": \"string\",\n      \"description\": \"string\",\n      \"discountedFromPrice\": 0,\n      \"label\": \"string\",\n      \"managedInStripe\": false,\n      \"payWhatYouWant\": false,\n      \"paymentPlan\": {\n        \"billingCycleAnchorConfig\": {\n          \"dayOfMonth\": 0,\n          \"enabled\": false,\n          \"month\": 0\n        },\n        \"interval\": \"string\",\n        \"intervalCount\": 0,\n        \"planIterations\": 0,\n        \"startDate\": \"2026-01-01T00:00:00.000Z\",\n        \"trialPeriodDays\": 0\n      },\n      \"priceId\": \"string\",\n      \"pwywSuggestedPrice\": 0,\n      \"recurring\": {\n        \"billingCycleAnchorConfig\": {\n          \"dayOfMonth\": 0,\n          \"enabled\": false,\n          \"month\": 0\n        },\n        \"interval\": \"string\",\n        \"intervalCount\": 0,\n        \"startDate\": \"2026-01-01T00:00:00.000Z\",\n        \"trialPeriodDays\": 0\n      },\n      \"reference\": \"string\",\n      \"setupFee\": 0,\n      \"setupFeeMultipliesWithQuantity\": false,\n      \"stripePriceId\": \"string\",\n      \"stripePriceLivemode\": false\n    },\n    \"productId\": \"string\",\n    \"productPrice\": 0,\n    \"productTitle\": \"string\",\n    \"quantity\": 0,\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"setupFee\": 0,\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"sku\": \"string\",\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"variants\": [\n      {\n        \"name\": \"string\",\n        \"reference\": \"string\",\n        \"selectedOptions\": [\n          {\n            \"additionalChargeAmount\": 0,\n            \"discount\": {\n              \"amount\": 0,\n              \"amountOff\": 0,\n              \"maxQuantity\": 0,\n              \"minQuantity\": 0,\n              \"percentOff\": 0\n            },\n            \"optionId\": \"string\",\n            \"optionName\": \"string\",\n            \"originalAdditionalChargeAmount\": 0,\n            \"quantity\": 0,\n            \"sku\": \"string\"\n          }\n        ],\n        \"selectionType\": \"single\",\n        \"variantId\": \"string\"\n      }\n    ],\n    \"visitId\": \"string\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledByApiKey\": \"string\",\n    \"canceledByApiKeyName\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"discountedFromPrice\": 0,\n    \"dynamicPrice\": 0,\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"licenseKeyId\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"payWhatYouWantPrice\": 0,\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"priceId\": \"string\",\n    \"priceSnapshot\": {\n      \"amount\": 0,\n      \"badge\": \"string\",\n      \"billingType\": \"string\",\n      \"currency\": \"string\",\n      \"description\": \"string\",\n      \"discountedFromPrice\": 0,\n      \"label\": \"string\",\n      \"managedInStripe\": false,\n      \"payWhatYouWant\": false,\n      \"paymentPlan\": {\n        \"billingCycleAnchorConfig\": {\n          \"dayOfMonth\": 0,\n          \"enabled\": false,\n          \"month\": 0\n        },\n        \"interval\": \"string\",\n        \"intervalCount\": 0,\n        \"planIterations\": 0,\n        \"startDate\": \"2026-01-01T00:00:00.000Z\",\n        \"trialPeriodDays\": 0\n      },\n      \"priceId\": \"string\",\n      \"pwywSuggestedPrice\": 0,\n      \"recurring\": {\n        \"billingCycleAnchorConfig\": {\n          \"dayOfMonth\": 0,\n          \"enabled\": false,\n          \"month\": 0\n        },\n        \"interval\": \"string\",\n        \"intervalCount\": 0,\n        \"startDate\": \"2026-01-01T00:00:00.000Z\",\n        \"trialPeriodDays\": 0\n      },\n      \"reference\": \"string\",\n      \"setupFee\": 0,\n      \"setupFeeMultipliesWithQuantity\": false,\n      \"stripePriceId\": \"string\",\n      \"stripePriceLivemode\": false\n    },\n    \"productId\": \"string\",\n    \"productPrice\": 0,\n    \"productTitle\": \"string\",\n    \"quantity\": 0,\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"setupFee\": 0,\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"sku\": \"string\",\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"variants\": [\n      {\n        \"name\": \"string\",\n        \"reference\": \"string\",\n        \"selectedOptions\": [\n          {\n            \"additionalChargeAmount\": 0,\n            \"discount\": {\n              \"amount\": 0,\n              \"amountOff\": 0,\n              \"maxQuantity\": 0,\n              \"minQuantity\": 0,\n              \"percentOff\": 0\n            },\n            \"optionId\": \"string\",\n            \"optionName\": \"string\",\n            \"originalAdditionalChargeAmount\": 0,\n            \"quantity\": 0,\n            \"sku\": \"string\"\n          }\n        ],\n        \"selectionType\": \"single\",\n        \"variantId\": \"string\"\n      }\n    ],\n    \"visitId\": \"string\"\n  }\n}",
               "code": 200,
               "cookie": [],
               "header": [
@@ -35329,6 +35805,419 @@
                     {
                       "description": {
                         "content": "The ID of the payment to retrieve. Use the list payments endpoint first if you need to discover a payment ID by email, name, customer, page, product, or date range.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error"
+            }
+          ]
+        },
+        {
+          "id": "2c8e1cf1-f93a-5433-ba75-613173eeba2c",
+          "name": "Cancel a payment",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"reason\": \"string\",\n  \"refund\": {\n    \"amount\": 0,\n    \"note\": \"string\",\n    \"reason\": \"duplicate\",\n    \"sendEmail\": false\n  },\n  \"sendCancellationEmail\": false\n}"
+            },
+            "description": {
+              "content": "Cancels a one-time payment and returns it with `orderStatus: canceled`. A cancel is final and cannot be undone. It ends the whole order, order bumps included, puts the product, variant and order bump stock back, and removes the buyer's access to the order's files and license key. It does not move money: pass `refund` to also refund the customer in the same request. Revenue totals stay gross. Optional `sendCancellationEmail` emails the customer. Fires the `payment.canceled` webhook.",
+              "type": "text/markdown"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payments",
+                ":paymentId",
+                "cancel"
+              ],
+              "query": [],
+              "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+              "variable": [
+                {
+                  "description": {
+                    "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                    "type": "text/markdown"
+                  },
+                  "key": "paymentId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": {\n    \"abandonedCartEmailSentAt\": \"2026-01-01T00:00:00.000Z\",\n    \"abandonedCartEmailStatus\": \"pending\",\n    \"abandonmentStatus\": \"abandoned\",\n    \"amount\": 0,\n    \"amountDue\": 0,\n    \"amountExcludingTax\": 0,\n    \"amountPaid\": 0,\n    \"amountRefunded\": 0,\n    \"amountUsd\": 0,\n    \"archivedAt\": \"string\",\n    \"archivedBy\": \"string\",\n    \"billing\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"billingEmail\": \"string\",\n      \"companyName\": \"string\",\n      \"email\": \"string\",\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"canceledAt\": \"string\",\n    \"canceledBy\": \"string\",\n    \"canceledByApiKey\": \"string\",\n    \"canceledByApiKeyName\": \"string\",\n    \"canceledReason\": \"string\",\n    \"clientIp\": \"string\",\n    \"complimentaryDiscountAmount\": 0,\n    \"coupon\": {\n      \"amountOff\": 0,\n      \"code\": \"string\",\n      \"discount\": 0,\n      \"id\": \"string\",\n      \"label\": \"string\",\n      \"percentOff\": 0\n    },\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"string\",\n    \"customerName\": \"string\",\n    \"discount\": {\n      \"amount\": 0,\n      \"amountOff\": 0,\n      \"maxQuantity\": 0,\n      \"minQuantity\": 0,\n      \"percentOff\": 0\n    },\n    \"discountedFromPrice\": 0,\n    \"dynamicPrice\": 0,\n    \"fees\": [\n      {\n        \"amount\": 0,\n        \"fixedAmount\": 0,\n        \"name\": \"string\",\n        \"percentage\": 0,\n        \"percentageAmount\": 0\n      }\n    ],\n    \"fields\": [\n      {\n        \"element\": \"checkbox\",\n        \"fieldId\": \"string\",\n        \"label\": \"string\",\n        \"meta\": {},\n        \"reference\": \"string\",\n        \"type\": \"\",\n        \"value\": \"string\",\n        \"values\": [\n          \"string\"\n        ]\n      }\n    ],\n    \"id\": \"string\",\n    \"invoiceId\": \"string\",\n    \"isAbandoned\": false,\n    \"isComplimentary\": false,\n    \"lastRefundAt\": \"2026-01-01T00:00:00.000Z\",\n    \"lastRefundReason\": \"string\",\n    \"lastRefundReasonNote\": \"string\",\n    \"licenseKeyId\": \"string\",\n    \"livemode\": false,\n    \"locale\": \"string\",\n    \"orderId\": \"string\",\n    \"orderStatus\": \"active\",\n    \"pageId\": \"string\",\n    \"pageSlug\": \"string\",\n    \"payWhatYouWantPrice\": 0,\n    \"paymentError\": \"string\",\n    \"paymentMethod\": {\n      \"brand\": \"string\",\n      \"country\": \"string\",\n      \"expMonth\": 0,\n      \"expYear\": 0,\n      \"exp_month\": 0,\n      \"exp_year\": 0,\n      \"funding\": \"string\",\n      \"gateway\": \"stripe\",\n      \"last4\": \"string\",\n      \"method\": \"string\",\n      \"mode\": \"default\",\n      \"wallet\": \"string\"\n    },\n    \"paymentOption\": {\n      \"description\": \"string\",\n      \"instructions\": \"string\",\n      \"manualType\": \"invoice\",\n      \"name\": \"string\",\n      \"partialAmount\": 0,\n      \"type\": \"manual\"\n    },\n    \"priceId\": \"string\",\n    \"priceSnapshot\": {\n      \"amount\": 0,\n      \"badge\": \"string\",\n      \"billingType\": \"string\",\n      \"currency\": \"string\",\n      \"description\": \"string\",\n      \"discountedFromPrice\": 0,\n      \"label\": \"string\",\n      \"managedInStripe\": false,\n      \"payWhatYouWant\": false,\n      \"paymentPlan\": {\n        \"billingCycleAnchorConfig\": {\n          \"dayOfMonth\": 0,\n          \"enabled\": false,\n          \"month\": 0\n        },\n        \"interval\": \"string\",\n        \"intervalCount\": 0,\n        \"planIterations\": 0,\n        \"startDate\": \"2026-01-01T00:00:00.000Z\",\n        \"trialPeriodDays\": 0\n      },\n      \"priceId\": \"string\",\n      \"pwywSuggestedPrice\": 0,\n      \"recurring\": {\n        \"billingCycleAnchorConfig\": {\n          \"dayOfMonth\": 0,\n          \"enabled\": false,\n          \"month\": 0\n        },\n        \"interval\": \"string\",\n        \"intervalCount\": 0,\n        \"startDate\": \"2026-01-01T00:00:00.000Z\",\n        \"trialPeriodDays\": 0\n      },\n      \"reference\": \"string\",\n      \"setupFee\": 0,\n      \"setupFeeMultipliesWithQuantity\": false,\n      \"stripePriceId\": \"string\",\n      \"stripePriceLivemode\": false\n    },\n    \"productId\": \"string\",\n    \"productPrice\": 0,\n    \"productTitle\": \"string\",\n    \"quantity\": 0,\n    \"queryParameters\": {},\n    \"recoveredAt\": \"2026-01-01T00:00:00.000Z\",\n    \"screenWidth\": 0,\n    \"sellerId\": \"string\",\n    \"sessionId\": \"string\",\n    \"setupFee\": 0,\n    \"shipping\": {\n      \"address\": {\n        \"city\": \"string\",\n        \"country\": \"string\",\n        \"line1\": \"string\",\n        \"line2\": \"string\",\n        \"postalCode\": \"string\",\n        \"state\": \"string\"\n      },\n      \"name\": \"string\",\n      \"phone\": \"string\"\n    },\n    \"sku\": \"string\",\n    \"status\": \"created\",\n    \"stripeChargeId\": \"string\",\n    \"stripePaymentIntentId\": \"string\",\n    \"stripeTaxCalculationId\": \"string\",\n    \"stripeTaxTransactionId\": \"string\",\n    \"taxAmount\": 0,\n    \"taxBreakdown\": [\n      {\n        \"taxAmount\": 0,\n        \"taxRateDetails\": {\n          \"country\": \"string\",\n          \"percentageDecimal\": 0,\n          \"state\": \"string\",\n          \"taxType\": \"string\"\n        },\n        \"taxType\": \"string\",\n        \"taxabilityReason\": \"string\",\n        \"taxableAmount\": 0\n      }\n    ],\n    \"taxRates\": [\n      {\n        \"active\": false,\n        \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n        \"default\": false,\n        \"displayName\": \"VAT\",\n        \"inclusive\": false,\n        \"percentage\": 0,\n        \"stripeId\": \"string\",\n        \"taxRate\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n      }\n    ],\n    \"taxSource\": \"fixed_tax_rate\",\n    \"transactionIds\": [\n      \"string\"\n    ],\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"upsell\": false,\n    \"upsellChargeId\": \"string\",\n    \"upsellPageId\": \"string\",\n    \"upsellSubscriptionId\": \"string\",\n    \"userAgent\": \"string\",\n    \"variants\": [\n      {\n        \"name\": \"string\",\n        \"reference\": \"string\",\n        \"selectedOptions\": [\n          {\n            \"additionalChargeAmount\": 0,\n            \"discount\": {\n              \"amount\": 0,\n              \"amountOff\": 0,\n              \"maxQuantity\": 0,\n              \"minQuantity\": 0,\n              \"percentOff\": 0\n            },\n            \"optionId\": \"string\",\n            \"optionName\": \"string\",\n            \"originalAdditionalChargeAmount\": 0,\n            \"quantity\": 0,\n            \"sku\": \"string\"\n          }\n        ],\n        \"selectionType\": \"single\",\n        \"variantId\": \"string\"\n      }\n    ],\n    \"visitId\": \"string\"\n  }\n}",
+              "code": 200,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "6358843c-8172-50c0-9032-c44e2d3c67e3",
+              "name": "Payment canceled",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "OK"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 400,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "67ad28d8-c9ab-5a52-aac4-d11fe009f2da",
+              "name": "Bad request - invalid body, the payment is already canceled, the payment isn't complete yet (status `created` or `draft`), a refund was asked for on a payment with nothing to refund, or Stripe refused the refund",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 401,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "a3693939-cc44-574a-90e8-3e5b68726f89",
+              "name": "Unauthorized - Missing or invalid API key",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 403,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "4305fa5a-e1ab-5373-9843-90c92be20cc7",
+              "name": "Forbidden - Insufficient permissions or validation error",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 404,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "a9d1b609-ac64-5b82-8de8-31f2af66c4cf",
+              "name": "Payment not found",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 429,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "1cc64545-3002-5b9f-8e57-d132cac1e679",
+              "name": "Rate Limit Exceeded - Please try again later.",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+                        "type": "text/markdown"
+                      },
+                      "key": "paymentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 500,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "e3f1d091-9911-50b9-816d-7352f900b10a",
+              "name": "Internal server error",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "payments",
+                    ":paymentId",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "raw": "{{baseUrl}}/v1/payments/:paymentId/cancel",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
                         "type": "text/markdown"
                       },
                       "key": "paymentId",
@@ -44117,7 +45006,7 @@
                 },
                 {
                   "description": {
-                    "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                    "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                     "type": "text/plain"
                   },
                   "disabled": true,
@@ -44199,7 +45088,7 @@
                     },
                     {
                       "description": {
-                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                         "type": "text/plain"
                       },
                       "disabled": true,
@@ -44282,7 +45171,7 @@
                     },
                     {
                       "description": {
-                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                         "type": "text/plain"
                       },
                       "disabled": true,
@@ -44365,7 +45254,7 @@
                     },
                     {
                       "description": {
-                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                         "type": "text/plain"
                       },
                       "disabled": true,
@@ -44448,7 +45337,7 @@
                     },
                     {
                       "description": {
-                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                         "type": "text/plain"
                       },
                       "disabled": true,
@@ -44531,7 +45420,7 @@
                     },
                     {
                       "description": {
-                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                         "type": "text/plain"
                       },
                       "disabled": true,
@@ -44614,7 +45503,7 @@
                     },
                     {
                       "description": {
-                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,booking.abandoned,booking.created,booking.paid,ticket.created,submission.created,submission.updated,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
+                        "content": "Only return webhooks subscribed to this event, for example `payment.paid`. (This can only be one of customer.created,customer.updated,payment.abandoned,payment.created,payment.paid,payment.canceled,booking.abandoned,booking.created,booking.paid,booking.canceled,ticket.created,submission.created,submission.updated,submission.canceled,checkout_page.created,checkout_page.updated,product.created,product.updated,subscription.abandoned,subscription.created,subscription.trialing,subscription.scheduled,subscription.active,subscription.completed,subscription.canceled,subscription.expired)",
                         "type": "text/plain"
                       },
                       "disabled": true,
