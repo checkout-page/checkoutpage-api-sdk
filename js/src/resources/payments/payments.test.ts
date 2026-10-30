@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PaymentResource } from './payments';
 import { CheckoutPageApiClient } from '../../client';
-import type { PaymentList, PaymentResponse } from '../../types';
+import type {
+  CancelPaymentParams,
+  CancelPaymentResponse,
+  PaymentList,
+  PaymentResponse,
+} from '../../types';
 
 const PAYMENT_ID_1 = '6812fe6e9f39b6760576f01c';
 const PAYMENT_ID_2 = '6812fe6e9f39b6760576f01d';
@@ -487,6 +492,86 @@ describe('PaymentResource', () => {
       const result = await paymentResource.list();
 
       expect(result.data[0].priceSnapshot).toEqual(priceSnapshot);
+    });
+  });
+
+  describe('cancel', () => {
+    const CANCELED_PAYMENT: CancelPaymentResponse = {
+      data: {
+        ...BASE_PAYMENT,
+        orderStatus: 'canceled',
+        canceledAt: '2026-10-16T09:00:00.000Z',
+        canceledReason: 'Customer asked to cancel',
+        canceledByApiKey: '507f1f77bcf86cd799439030',
+        canceledByApiKeyName: 'CRM sync',
+      },
+    };
+
+    it('POSTs the params as the body and returns the raw response', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(CANCELED_PAYMENT);
+
+      const params: CancelPaymentParams = {
+        reason: 'Customer asked to cancel',
+        sendCancellationEmail: true,
+      };
+      const result = await paymentResource.cancel(PAYMENT_ID_1, params);
+
+      expect(result).toEqual(CANCELED_PAYMENT);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: `/v1/payments/${PAYMENT_ID_1}/cancel`,
+        body: params,
+      });
+    });
+
+    it('passes a refund through untouched', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(CANCELED_PAYMENT);
+
+      const params: CancelPaymentParams = {
+        reason: 'Event postponed',
+        refund: {
+          amount: 2500,
+          reason: 'requested_by_customer',
+          note: 'Partial refund for the postponed date',
+          sendEmail: true,
+        },
+      };
+      await paymentResource.cancel(PAYMENT_ID_1, params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: `/v1/payments/${PAYMENT_ID_1}/cancel`,
+        body: {
+          reason: 'Event postponed',
+          refund: {
+            amount: 2500,
+            reason: 'requested_by_customer',
+            note: 'Partial refund for the postponed date',
+            sendEmail: true,
+          },
+        },
+      });
+    });
+
+    it('encodes the id in the path', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue(CANCELED_PAYMENT);
+
+      await paymentResource.cancel('a/b?c', { reason: 'x' });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/payments/a%2Fb%3Fc/cancel',
+        body: { reason: 'x' },
+      });
+    });
+
+    it('throws for a missing payment id without calling the API', async () => {
+      const spy = vi.spyOn(client, 'request');
+
+      await expect(paymentResource.cancel('', { reason: 'x' })).rejects.toThrow(
+        'Payment ID is required'
+      );
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 });

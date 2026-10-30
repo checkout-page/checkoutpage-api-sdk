@@ -313,6 +313,20 @@
             "description": "The userId that canceled this. If this is a booking, tickets were canceled in addition.",
             "type": "string"
           },
+          "canceledByApiKey": {
+            "description": "ID of the API key that canceled this, when it was canceled through the seller API. The key may have been deleted since; `canceledByApiKeyName` keeps its name.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canceledByApiKeyName": {
+            "description": "Name of the API key that canceled this, as it was at the time. Kept when the key is deleted later.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "canceledReason": {
             "description": "The reason for the cancellation",
             "type": "string"
@@ -10800,6 +10814,20 @@
             "description": "The userId that canceled this. If this is a booking, tickets were canceled in addition.",
             "type": "string"
           },
+          "canceledByApiKey": {
+            "description": "ID of the API key that canceled this, when it was canceled through the seller API. The key may have been deleted since; `canceledByApiKeyName` keeps its name.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canceledByApiKeyName": {
+            "description": "Name of the API key that canceled this, as it was at the time. Kept when the key is deleted later.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "canceledReason": {
             "description": "The reason for the cancellation",
             "type": "string"
@@ -16140,6 +16168,42 @@
               "null"
             ]
           },
+          "canceledAt": {
+            "description": "ISO 8601 timestamp when the submission was canceled.",
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canceledBy": {
+            "description": "ID of the dashboard user who canceled the submission. Absent when it was canceled through the seller API.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canceledByApiKey": {
+            "description": "ID of the API key that canceled the submission, when it was canceled through the seller API. The key may have been deleted since; `canceledByApiKeyName` keeps its name.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canceledByApiKeyName": {
+            "description": "Name of the API key that canceled the submission, as it was at the time. Kept when the key is deleted later.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canceledReason": {
+            "description": "The reason given when the submission was canceled.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "clientIp": {
             "description": "Client IP address recorded at submission time.",
             "type": [
@@ -16208,6 +16272,15 @@
               "string",
               "null"
             ]
+          },
+          "orderStatus": {
+            "description": "Lifecycle status set by the seller. Valid values: active, canceled, archived. `canceled` means the seller canceled the submission: it no longer counts toward \"Prevent duplicate submissions\" and its files left the customer portal.",
+            "enum": [
+              "active",
+              "canceled",
+              "archived"
+            ],
+            "type": "string"
           },
           "pageId": {
             "description": "Page ID for the form that received this submission.",
@@ -16335,6 +16408,7 @@
         "required": [
           "id",
           "status",
+          "orderStatus",
           "createdAt",
           "updatedAt"
         ],
@@ -82037,6 +82111,171 @@
         ]
       }
     },
+    "/v1/payments/:paymentId/cancel": {
+      "post": {
+        "description": "Cancels a one-time payment and returns it with `orderStatus: canceled`. A cancel is final and cannot be undone. It ends the whole order, order bumps included, puts the product, variant and order bump stock back, and removes the buyer's access to the order's files and license key. It does not move money: pass `refund` to also refund the customer in the same request. Revenue totals stay gross. Optional `sendCancellationEmail` emails the customer. Fires the `payment.canceled` webhook.",
+        "operationId": "payments/cancel",
+        "parameters": [
+          {
+            "description": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here.",
+            "in": "path",
+            "name": "paymentId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the payment to cancel. Bookings for event pages have their own IDs and cannot be canceled here."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "description": "Cancels a one-time payment. A cancel is final and cannot be undone. It ends the whole order, order bumps included, puts the product, variant and order bump stock back, and removes the buyer's access to the order's files and license key. It does not refund unless `refund` is given. Revenue totals stay gross: a cancel does not lower them. A payment that isn't complete yet (status `created` or `draft`) or that is already canceled returns 400.",
+                "properties": {
+                  "reason": {
+                    "description": "Why the payment is being canceled. Stored on the payment and returned as `canceledReason`. Canceling is final: it ends the whole order, order bumps included, puts the stock back and removes the buyer's access to the order's files and license key.",
+                    "maxLength": 500,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "refund": {
+                    "additionalProperties": false,
+                    "description": "Also refund the customer in the same request. The refund runs first: if it fails, the payment is not canceled. Omit it to cancel without refunding.",
+                    "properties": {
+                      "amount": {
+                        "description": "Amount to refund in the smallest currency unit (for example, `2500` for $25.00). Cannot be more than the amount still refundable on the payment.",
+                        "exclusiveMinimum": 0,
+                        "type": "integer"
+                      },
+                      "note": {
+                        "description": "Free-text note stored with the refund.",
+                        "maxLength": 500,
+                        "type": "string"
+                      },
+                      "reason": {
+                        "description": "Why the payment is refunded. Valid values: duplicate, fraudulent, requested_by_customer.",
+                        "enum": [
+                          "duplicate",
+                          "fraudulent",
+                          "requested_by_customer"
+                        ],
+                        "type": "string"
+                      },
+                      "sendEmail": {
+                        "description": "When `true`, emails the customer a refund receipt. Defaults to `false`.",
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "reason"
+                    ],
+                    "type": "object"
+                  },
+                  "sendCancellationEmail": {
+                    "description": "When `true`, emails the customer that their order has been canceled. Defaults to `false`.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "reason"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDetailResponse"
+                }
+              }
+            },
+            "description": "Payment canceled"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - invalid body, the payment is already canceled, the payment isn't complete yet (status `created` or `draft`), a refund was asked for on a payment with nothing to refund, or Stripe refused the refund"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Payment not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Cancel a payment",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
     "/v1/products/": {
       "get": {
         "description": "Returns a paginated list of your products, newest first. Filter by `role=orderbump` to find the products you can offer as order bumps.",
@@ -82648,7 +82887,7 @@
     },
     "/v1/submissions/": {
       "get": {
-        "description": "Returns a paginated list of form submissions owned by the authenticated seller, sorted newest-first. Supports filtering by customer, form page, status, and UTC creation timestamps.",
+        "description": "Returns a paginated list of form submissions owned by the authenticated seller, sorted newest-first. Supports filtering by customer, form page, status, lifecycle status (`orderStatus`), and UTC creation timestamps. Canceled submissions are included unless `orderStatus` filters them out.",
         "operationId": "submissions/list",
         "parameters": [
           {
@@ -82703,6 +82942,21 @@
               "enum": [
                 "succeeded",
                 "failed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists.",
+            "in": "query",
+            "name": "orderStatus",
+            "required": false,
+            "schema": {
+              "description": "Filter by lifecycle status. Valid values: active, canceled, archived. Without this filter, canceled submissions are included, as in the payments and bookings lists.",
+              "enum": [
+                "active",
+                "canceled",
+                "archived"
               ],
               "type": "string"
             }
@@ -82977,6 +83231,137 @@
           }
         ],
         "summary": "Get submission details",
+        "tags": [
+          "Forms"
+        ]
+      }
+    },
+    "/v1/submissions/:submissionId/cancel": {
+      "post": {
+        "description": "Cancels a form submission and returns it with `orderStatus: canceled`. A cancel is final and cannot be undone. A canceled submission no longer counts toward \"Prevent duplicate submissions\", so the same customer can submit the form again, and its files leave the customer portal. Optional `sendCancellationEmail` emails the customer. Fires the `submission.canceled` webhook.",
+        "operationId": "submissions/cancel",
+        "parameters": [
+          {
+            "description": "The ID of the form submission to cancel.",
+            "in": "path",
+            "name": "submissionId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the form submission to cancel."
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "description": "Cancels a form submission. A cancel is final and cannot be undone. A canceled submission no longer counts toward \"Prevent duplicate submissions\", so the same customer can submit the form again, and its files leave the customer portal. A submission that is already canceled returns 400.",
+                "properties": {
+                  "reason": {
+                    "description": "Why the submission is being canceled. Stored on the submission and returned as `canceledReason`. Canceling is final and cannot be undone.",
+                    "maxLength": 500,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "sendCancellationEmail": {
+                    "description": "When `true`, emails the customer that their submission has been canceled. Defaults to `false`.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "reason"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmissionDetailResponse"
+                }
+              }
+            },
+            "description": "Submission canceled"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - invalid body, or the submission is already canceled"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Submission not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Cancel a submission",
         "tags": [
           "Forms"
         ]
@@ -86793,12 +87178,15 @@
                 "payment.abandoned",
                 "payment.created",
                 "payment.paid",
+                "payment.canceled",
                 "booking.abandoned",
                 "booking.created",
                 "booking.paid",
+                "booking.canceled",
                 "ticket.created",
                 "submission.created",
                 "submission.updated",
+                "submission.canceled",
                 "checkout_page.created",
                 "checkout_page.updated",
                 "product.created",
@@ -86851,7 +87239,7 @@
                           "events": {
                             "description": "Events this endpoint receives.",
                             "items": {
-                              "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                              "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                               "enum": [
                                 "webhook.test",
                                 "customer.created",
@@ -86859,12 +87247,15 @@
                                 "payment.abandoned",
                                 "payment.created",
                                 "payment.paid",
+                                "payment.canceled",
                                 "booking.abandoned",
                                 "booking.created",
                                 "booking.paid",
+                                "booking.canceled",
                                 "ticket.created",
                                 "submission.created",
                                 "submission.updated",
+                                "submission.canceled",
                                 "checkout_page.created",
                                 "checkout_page.updated",
                                 "product.created",
@@ -87065,19 +87456,22 @@
                       "subscription.created"
                     ],
                     "items": {
-                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
                       "enum": [
                         "customer.created",
                         "customer.updated",
                         "payment.abandoned",
                         "payment.created",
                         "payment.paid",
+                        "payment.canceled",
                         "booking.abandoned",
                         "booking.created",
                         "booking.paid",
+                        "booking.canceled",
                         "ticket.created",
                         "submission.created",
                         "submission.updated",
+                        "submission.canceled",
                         "checkout_page.created",
                         "checkout_page.updated",
                         "product.created",
@@ -87160,7 +87554,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -87168,12 +87562,15 @@
                               "payment.abandoned",
                               "payment.created",
                               "payment.paid",
+                              "payment.canceled",
                               "booking.abandoned",
                               "booking.created",
                               "booking.paid",
+                              "booking.canceled",
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "submission.canceled",
                               "checkout_page.created",
                               "checkout_page.updated",
                               "product.created",
@@ -87408,7 +87805,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -87416,12 +87813,15 @@
                               "payment.abandoned",
                               "payment.created",
                               "payment.paid",
+                              "payment.canceled",
                               "booking.abandoned",
                               "booking.created",
                               "booking.paid",
+                              "booking.canceled",
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "submission.canceled",
                               "checkout_page.created",
                               "checkout_page.updated",
                               "product.created",
@@ -87649,7 +88049,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -87657,12 +88057,15 @@
                               "payment.abandoned",
                               "payment.created",
                               "payment.paid",
+                              "payment.canceled",
                               "booking.abandoned",
                               "booking.created",
                               "booking.paid",
+                              "booking.canceled",
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "submission.canceled",
                               "checkout_page.created",
                               "checkout_page.updated",
                               "product.created",
@@ -87880,19 +88283,22 @@
                       "subscription.created"
                     ],
                     "items": {
-                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
+                      "description": "An event a webhook can subscribe to. Valid values: customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired.",
                       "enum": [
                         "customer.created",
                         "customer.updated",
                         "payment.abandoned",
                         "payment.created",
                         "payment.paid",
+                        "payment.canceled",
                         "booking.abandoned",
                         "booking.created",
                         "booking.paid",
+                        "booking.canceled",
                         "ticket.created",
                         "submission.created",
                         "submission.updated",
+                        "submission.canceled",
                         "checkout_page.created",
                         "checkout_page.updated",
                         "product.created",
@@ -87973,7 +88379,7 @@
                         "events": {
                           "description": "Events this endpoint receives.",
                           "items": {
-                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, booking.abandoned, booking.created, booking.paid, ticket.created, submission.created, submission.updated, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
+                            "description": "An event a webhook can subscribe to. Valid values: webhook.test, customer.created, customer.updated, payment.abandoned, payment.created, payment.paid, payment.canceled, booking.abandoned, booking.created, booking.paid, booking.canceled, ticket.created, submission.created, submission.updated, submission.canceled, checkout_page.created, checkout_page.updated, product.created, product.updated, subscription.abandoned, subscription.created, subscription.trialing, subscription.scheduled, subscription.active, subscription.completed, subscription.canceled, subscription.expired. `webhook.test` is the payload sent by the dashboard's test-delivery action.",
                             "enum": [
                               "webhook.test",
                               "customer.created",
@@ -87981,12 +88387,15 @@
                               "payment.abandoned",
                               "payment.created",
                               "payment.paid",
+                              "payment.canceled",
                               "booking.abandoned",
                               "booking.created",
                               "booking.paid",
+                              "booking.canceled",
                               "ticket.created",
                               "submission.created",
                               "submission.updated",
+                              "submission.canceled",
                               "checkout_page.created",
                               "checkout_page.updated",
                               "product.created",
@@ -88273,6 +88682,88 @@
           }
         },
         "summary": "booking.abandoned"
+      }
+    },
+    "/webhook/booking_canceled_webhook": {
+      "post": {
+        "description": "Triggered when a booking is canceled",
+        "operationId": "webhooks/booking.canceled",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "booking": {
+                        "$ref": "#/components/schemas/Booking"
+                      }
+                    },
+                    "required": [
+                      "booking"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "booking.canceled"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "booking.canceled"
       }
     },
     "/webhook/booking_created_webhook": {
@@ -88856,6 +89347,88 @@
         "summary": "payment.abandoned"
       }
     },
+    "/webhook/payment_canceled_webhook": {
+      "post": {
+        "description": "Triggered when a payment is canceled",
+        "operationId": "webhooks/payment.canceled",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "payment": {
+                        "$ref": "#/components/schemas/Payment"
+                      }
+                    },
+                    "required": [
+                      "payment"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "payment.canceled"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "payment.canceled"
+      }
+    },
     "/webhook/payment_created_webhook": {
       "post": {
         "description": "Triggered when a new payment is created",
@@ -89182,6 +89755,88 @@
           }
         },
         "summary": "product.updated"
+      }
+    },
+    "/webhook/submission_canceled_webhook": {
+      "post": {
+        "description": "Triggered when a form submission is canceled",
+        "operationId": "webhooks/submission.canceled",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "properties": {
+                      "submission": {
+                        "$ref": "#/components/schemas/Submission"
+                      }
+                    },
+                    "required": [
+                      "submission"
+                    ],
+                    "type": "object"
+                  },
+                  "event": {
+                    "enum": [
+                      "submission.canceled"
+                    ],
+                    "type": "string"
+                  },
+                  "eventId": {
+                    "description": "Unique identifier for idempotency",
+                    "type": "string"
+                  },
+                  "event_id": {
+                    "deprecated": true,
+                    "type": "string"
+                  },
+                  "sellerId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "seller_id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqueIdentifier"
+                      },
+                      {
+                        "deprecated": true,
+                        "description": "Unique identifier. Must be in BSON ObjectId format."
+                      }
+                    ]
+                  },
+                  "timestamp": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "seller_id",
+                  "sellerId",
+                  "timestamp",
+                  "event_id",
+                  "eventId",
+                  "event",
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 status to indicate that the data was received successfully."
+          }
+        },
+        "summary": "submission.canceled"
       }
     },
     "/webhook/submission_created_webhook": {

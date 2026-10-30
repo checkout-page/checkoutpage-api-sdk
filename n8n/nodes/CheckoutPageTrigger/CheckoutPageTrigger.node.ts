@@ -20,6 +20,7 @@ import { generateSecret, verifySignature } from './signature';
 
 export const WEBHOOK_EVENTS = [
   'booking.abandoned',
+  'booking.canceled',
   'booking.created',
   'booking.paid',
   'checkout_page.created',
@@ -27,10 +28,12 @@ export const WEBHOOK_EVENTS = [
   'customer.created',
   'customer.updated',
   'payment.abandoned',
+  'payment.canceled',
   'payment.created',
   'payment.paid',
   'product.created',
   'product.updated',
+  'submission.canceled',
   'submission.created',
   'submission.updated',
   'subscription.abandoned',

@@ -1,5 +1,7 @@
 import type { CheckoutPageApiClient } from '../../client';
 import type {
+  CancelSubmissionParams,
+  CancelSubmissionResponse,
   ReadOptions,
   SubmissionList,
   SubmissionListParams,
@@ -27,6 +29,7 @@ export class SubmissionResource {
       pageId: args.pageId,
       customerId: args.customerId,
       status: args.status,
+      orderStatus: args.orderStatus,
       createdAfter: args.createdAfter,
       createdBefore: args.createdBefore,
       livemode: args.livemode?.toString(),
@@ -39,6 +42,34 @@ export class SubmissionResource {
       method: 'GET',
       path: '/v1/submissions/',
       query,
+    });
+  }
+
+  /**
+   * Cancel a form submission. A cancel is final and cannot be undone; the submission is
+   * returned with `orderStatus: 'canceled'`. Fires the `submission.canceled` webhook.
+   *
+   * Throws a `ValidationError` when the submission is already canceled and a
+   * `NotFoundError` for an unknown id.
+   *
+   * @example
+   * const { data: submission } = await client.submissions.cancel(submissionId, {
+   *   reason: 'Duplicate registration',
+   *   sendCancellationEmail: true,
+   * });
+   */
+  async cancel(
+    submissionId: string,
+    params: CancelSubmissionParams
+  ): Promise<CancelSubmissionResponse> {
+    if (!submissionId) {
+      throw new Error('Submission ID is required');
+    }
+
+    return this.client.request<CancelSubmissionResponse>({
+      method: 'POST',
+      path: `/v1/submissions/${encodeURIComponent(submissionId)}/cancel`,
+      body: params,
     });
   }
 }

@@ -7,6 +7,13 @@ export const fakeObjectId = (seed: string) =>
 
 export const uniqueSuffix = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
+// Storefront order routes allow 5 requests a minute per client IP, read from X-Forwarded-For.
+// A fresh address from the RFC 2544 benchmarking range gives each call its own bucket.
+export const syntheticClientIp = () => {
+  const octet = () => Math.floor(Math.random() * 256);
+  return `198.18.${octet()}.${octet()}`;
+};
+
 export const createImageFile = (name = 'event-test.png') => {
   const base64Image =
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==';

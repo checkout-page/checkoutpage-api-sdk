@@ -67,6 +67,13 @@ export type SubmissionListParams = Omit<NonNullable<SubmissionListArgs>, 'limit'
     limit?: number;
   };
 
+export type CancelSubmissionParams = NonNullable<
+  operations['submissions/cancel']['requestBody']
+>['content']['application/json'];
+
+export type CancelSubmissionResponse =
+  operations['submissions/cancel']['responses'][200]['content']['application/json'];
+
 // Coupons
 export type CouponList =
   operations['coupons/list']['responses'][200]['content']['application/json'];
@@ -144,6 +151,13 @@ export type PaymentListParams = Omit<NonNullable<PaymentListArgs>, 'limit' | 'li
   ReadOptions & {
     limit?: number;
   };
+
+export type CancelPaymentParams = NonNullable<
+  operations['payments/cancel']['requestBody']
+>['content']['application/json'];
+
+export type CancelPaymentResponse =
+  operations['payments/cancel']['responses'][200]['content']['application/json'];
 
 // Subscriptions
 export type SubscriptionList =
