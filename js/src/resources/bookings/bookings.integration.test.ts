@@ -696,6 +696,8 @@ describe('BookingResource Integration Tests', () => {
         'canceledAt',
         'canceledBy',
         'canceledReason',
+        'archivedAt',
+        'archivedBy',
         'recoveredAt',
         'abandonmentStatus',
         'abandonedCartEmailSentAt',

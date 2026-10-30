@@ -1,0 +1,52 @@
+name: Test Zapier app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'zapier/**'
+      - '.prettierrc'
+      - '.github/workflows/test-zapier.yml'
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'zapier/**'
+      - '.prettierrc'
+      - '.github/workflows/test-zapier.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: zapier
+
+    env:
+      DISABLE_ZAPIER_ANALYTICS: '1'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: zapier/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run unit tests
+        run: npm test -- --ci
+
+      - name: Validate (offline, no server-side style checks)
+        run: npm run validate

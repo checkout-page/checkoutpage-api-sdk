@@ -4,250 +4,99 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This repository contains official SDKs for the Checkout Page API, enabling developers to integrate Checkout Page's payment and checkout functionality into their applications. Currently, the JavaScript/TypeScript SDK is actively developed, with Python and Go SDKs planned for the future.
-
-## Repository Structure
-
-This is a monorepo managed with pnpm workspaces:
-
-- **`js/`** - JavaScript/TypeScript SDK with full type definitions and testing infrastructure
-- **`spec/`** - OpenAPI specification that defines the API structure
-- **`scripts/`** - Utility scripts (type generation, etc.)
-- **`examples/`** - Usage examples for SDK integration
-- **`.github/`** - CI/CD workflows
-
-### JavaScript SDK Structure
-
-- **`js/src/`** - Source code
-  - `client.ts` - HTTP client with error handling
-  - `errors.ts` - Error classes for different HTTP status codes
-  - `types.ts` - Convenience exports for commonly-used types
-  - `index.ts` - Main SDK export with factory function
-  - `resources/` - API resource classes (customers, coupons, payments, subscriptions)
-  - `generated/` - Auto-generated types from OpenAPI spec
-  - `test-helpers/` - Utilities for testing
-
-## Core Architecture
-
-### HTTP Client Pattern
-
-The SDK uses a centralized HTTP client (`CheckoutPageApiClient`) that:
-- Handles authentication via Bearer token
-- Builds URLs with query parameters
-- Manages request/response serialization
-- Throws typed error classes based on HTTP status codes
-
-Each resource class (e.g., `CustomerResource`) receives the HTTP client and calls `client.request<T>()` to make API calls.
-
-### Type Generation from OpenAPI Spec
-
-TypeScript types are auto-generated from the OpenAPI specification:
-- Run `pnpm generate:types` to regenerate types from `spec/openapi.json`
-- Generated types are written to `js/src/generated/schema.ts`
-- The script uses `openapi-typescript` CLI to generate types
-- Convenience types are re-exported in `js/src/types.ts`
-
-### Resource Implementation Pattern
-
-Each resource follows this pattern:
-1. Import the HTTP client type
-2. Create a class with methods for API operations
-3. Call `this.client.request<ResponseType>()` with method, path, and optional body
-4. Include tests alongside the resource file (e.g., `customers.test.ts`)
-5. Register the resource in `js/src/index.ts`
-
-Example: `js/src/resources/customers/customers.ts`
-
-### Error Handling
-
-The SDK provides typed error classes:
-- `AuthenticationError` - 401, 403 responses
-- `NotFoundError` - 404 responses
-- `ConflictError` - 409 responses
-- `ValidationError` - 400, 422 responses
-- `RateLimitError` - 429 responses
-- `APIError` - Generic errors with status code and response body
-
-## Development Commands
-
-### Root Level (Monorepo)
-
-```bash
-# Install dependencies
-pnpm install
-
-# Generate TypeScript types from OpenAPI spec
-pnpm generate:types
-
-# Build all SDKs
-pnpm build
-
-# Run all tests
-pnpm test
-
-# Lint all code
-pnpm lint
-
-# Format code
-pnpm format
-```
-
-### JavaScript SDK Only
-
-```bash
-cd js
-
-# Install dependencies (if needed)
-pnpm install
-
-# Run unit tests
-pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Run integration tests (requires .env.test configuration)
-pnpm test:integration
-
-# Run all tests (unit + integration)
-pnpm test:all
-
-# Type check without building
-pnpm type-check
-
-# Build the SDK (creates dist/)
-pnpm build
-
-# Lint code
-pnpm lint
-```
-
-### Running Single Tests
-
-```bash
-# From js directory
-pnpm test src/resources/customers/customers.test.ts
-```
-
-## Testing Strategy
-
-### Unit Tests
-
-- Located alongside source files (e.g., `customers.test.ts` next to `customers.ts`)
-- Use Vitest framework
-- Mock HTTP requests using the HTTP client
-- Test both success and error scenarios
-- Default test command: `pnpm test` (excludes integration tests)
-
-### Integration Tests
-
-- Named with `.integration.test.ts` suffix
-- Make real API requests to validate request/response cycles
-- Require environment variables: `CHECKOUTPAGE_API_KEY`, `CHECKOUTPAGE_BASE_URL`, `TEST_CUSTOMER_ID`, `TEST_CUSTOMER_EMAIL`
-- Can be configured for local development (pointing to `api.checkoutpage.dev`) or production
-- Automatically skip if API key is not configured
-- Run with: `pnpm test:integration`
-
-### Test Configuration
-
-- Copy `.env.test.example` to `.env.test` in the `js` directory
-- Integration tests are optional for contributions
-- Unit tests with mocked dependencies are the standard requirement
-
-## Build and Publishing
-
-### Build Process
-
-```bash
-# From js directory
-pnpm build
-```
-
-- Uses `tsup` for bundling
-- Creates both CommonJS (`dist/index.js`) and ES modules (`dist/index.mjs`)
-- Generates TypeScript declaration files (`dist/index.d.ts`)
-- Published to npm as `@checkoutpage/sdk`
-
-### Package Configuration
-
-- **Main entry point**: `js/package.json` with exports for TypeScript types, import, and require
-- **Files included**: Only `dist/` directory
-- **Minimum Node version**: 18.0.0
-
-## Adding New API Resources
-
-When adding a new API resource:
-
-1. **Update OpenAPI spec** (`spec/openapi.json`) with new endpoint definitions
-
-2. **Generate TypeScript types**
-   ```bash
-   pnpm generate:types
-   ```
-
-3. **Create resource class** in `js/src/resources/{resource-name}/{resource-name}.ts`
-   - Implement methods using `this.client.request<ResponseType>()`
-   - Follow existing resource patterns
-
-4. **Add convenience types** in `js/src/types.ts` if frequently used
-
-5. **Register in SDK** in `js/src/index.ts`
-   - Import the resource class
-   - Add public property to `CheckoutPageClient`
-   - Instantiate in constructor
-
-6. **Write tests** in `js/src/resources/{resource-name}/{resource-name}.test.ts`
-   - Mock the HTTP client
-   - Test success and error scenarios
-
-7. **Add integration tests** (optional) in `js/src/resources/{resource-name}/{resource-name}.integration.test.ts`
-
-8. **Update documentation** in `js/README.md` and `examples/js/`
-
-## Code Style and Conventions
-
-- TypeScript for all source code
-- Prettier for formatting (run `pnpm format`)
-- ESLint for linting (`pnpm lint`)
-- JSDoc comments for public APIs
-- Descriptive variable and function names
-- Small, focused functions
-
-## Key Files and Patterns
-
-- `js/src/client.ts` - HTTP client with error handling logic
-- `js/src/errors.ts` - Error class definitions
-- `js/src/resources/*/` - Resource implementations
-- `js/src/types.ts` - Convenience type exports
-- `spec/openapi.json` - Single source of truth for API structure
-- `scripts/generate-types.ts` - Type generation script
-
-## Common Development Workflows
-
-### Adding a new endpoint to an existing resource
-
-1. Update `spec/openapi.json`
-2. Run `pnpm generate:types`
-3. Add method to resource class in `js/src/resources/{resource}/`
-4. Write tests alongside the implementation
-5. Run `pnpm test` to verify
-
-### Making changes to HTTP client behavior
-
-- Edit `js/src/client.ts`
-- Tests are in `js/src/resources/customers/customers.test.ts` (mocks the client)
-- Run `pnpm test` to verify all resources still work
-
-### Debugging API integration
-
-1. Check `.env.test` configuration for integration tests
-2. Run `pnpm test:integration` to validate real API calls
-3. Update `CHECKOUTPAGE_BASE_URL` if testing against different environments
-
-## Monorepo Management
-
-- Uses pnpm workspaces (see `pnpm-workspace.yaml`)
-- Root `package.json` contains shared dev dependencies and monorepo scripts
-- Each package can have independent dependencies
-- Use `pnpm --filter @checkoutpage/sdk <command>` to run commands in specific workspace
-
+Checkout Page's public developer tools: client libraries and tools for the Checkout Page seller
+API, one top-level directory per language or tool. They all build from one OpenAPI spec.
+
+This repo is public. README, CONTRIBUTING, `spec/README.md`, package READMEs and examples are
+customer-facing: plain short sentences, sentence-case headings, no em dash character.
+
+## Repo map
+
+- **`js/`** - JavaScript/TypeScript SDK, npm `@checkoutpage/sdk`. Conventions in [js/CLAUDE.md](js/CLAUDE.md).
+- **`cli/`** - `checkoutpage` CLI, a standalone Rust crate outside the pnpm workspace. Conventions in [cli/CLAUDE.md](cli/CLAUDE.md).
+- **`postman/`** - Postman collection and environment, generated from the spec and committed.
+  Private workspace package `@checkoutpage/postman`. Conventions in [postman/CLAUDE.md](postman/CLAUDE.md).
+- **`n8n/`** - n8n community nodes, npm `n8n-nodes-checkoutpage`. A standalone npm project
+  outside the pnpm workspace, with no runtime dependencies (n8n verification forbids them, so
+  it calls the API directly instead of using the SDK). Conventions in [n8n/CLAUDE.md](n8n/CLAUDE.md).
+- **`zapier/`** - the Checkout Page Zapier integration (id 140636), a standalone npm project
+  outside the pnpm workspace. It calls the API's `/zapier/v2` endpoints, not the seller API,
+  so it does not use the spec. Released with `publish-zapier.yml` (tags `zapier-v<version>`).
+  Never break existing Zaps: see [zapier/CLAUDE.md](zapier/CLAUDE.md).
+- **`spec/openapi.json`** - the seller API's OpenAPI spec, shared by every language. See [spec/README.md](spec/README.md).
+- **`examples/<lang>/`** - usage examples per language or tool (`examples/js/`, `examples/n8n/`).
+- **`scripts/`** - shared tooling (`generate-types.ts`).
+- **`.github/workflows/`** - one `test-<lang>.yml` and one `publish-<lang>.yml` per language.
+  The CLI also has `checkoutpage-cli-release.yml`, generated by `dist` from the root
+  `dist-workspace.toml`; regenerate it with `dist generate`, never edit it by hand.
+
+Planned later: `php/`, `ruby/`, `python/`, `go/`. Directories never move once published:
+package metadata (npm `repository.directory`, for example), CI path filters and release tags
+depend on them.
+
+The root `package.json` (`@checkoutpage/dev-tools`, private) holds the shared Node tooling and
+the pnpm workspace scripts. Only Node packages (`js/`, `postman/`) belong in `pnpm-workspace.yaml`; other languages
+use their own toolchain inside their directory. `n8n/` is TypeScript but stays out of the
+workspace too: n8n's tooling expects npm, so root `pnpm -r` commands skip it.
+
+## The spec is the source of truth
+
+`spec/openapi.json` comes from the Checkout Page API in the `checkoutpage-mono` repo. Never edit
+it by hand to invent fields; every change must match what the API serves or is about to serve.
+
+How it is refreshed (see `git log --oneline -- spec`):
+
+- **Full refresh from production** - replace the file with the production swagger,
+  `https://api.checkoutpage.com/docs/seller-api/v1/swagger.json`. Used to clear drift once the
+  API changes are live.
+- **Slice for an API change not yet in production** - take only the paths and schemas that
+  one mono PR changes, copied by JSON pointer from that branch's spec (dumped from a local API
+  running the branch). Unrelated drift stays out. Name the mono PR in the commit, for example
+  `chore(spec): ..., from checkoutpage-mono#1740`, and refresh from production once it deploys.
+- Then run `pnpm generate:types` from the root. `scripts/generate-types.ts` rewrites the spec
+  in a stable form (keys sorted, 2-space pretty print) so it diffs line by line, and generates
+  the JS types into `js/src/generated/schema.ts` (gitignored). It then runs
+  `pnpm generate:postman`, which rewrites `postman/*.json`. Commit the normalized spec and the
+  regenerated Postman files together; `test-postman.yml` fails when they drift.
+
+Every language generates from this one file. A spec change lands in one PR with the regenerated
+code and tests for each language it affects. When a new language gets a generator, add it to
+the same `pnpm generate:types` flow (or document its own command in `<lang>/CLAUDE.md`) and
+keep it reading `spec/openapi.json`.
+
+## Per-language conventions
+
+Each language keeps its own conventions in `<lang>/CLAUDE.md`: layout, commands, testing,
+build and publishing. Read it before working in that directory. This file only holds what
+applies everywhere.
+
+## Adding a new language or tool
+
+1. A top-level directory named for the language or tool (`php/`, `ruby/`, `cli/`).
+2. Its own `README.md` (install, quick start, link back to the root README) and `CLAUDE.md`
+   (conventions, commands, how it uses the spec).
+3. Path-filtered workflows: `.github/workflows/test-<lang>.yml` triggered on `<lang>/**`,
+   `spec/**` and the workflow file itself, and a hand-run `.github/workflows/publish-<lang>.yml`
+   that tags the release. Copy `test-js.yml` / `publish-js.yml` for the shape. Every release tag
+   starts with a prefix no other tool uses, so one tool's tag never starts another's release:
+   the JS SDK tags `js-v<version>`, and the CLI tags `checkoutpage-cli-v<version>`, because
+   `dist` (which builds and publishes the CLI) keys tags on the Cargo package name. A new
+   tool follows `<lang>-v<version>` unless its release tooling dictates the form.
+4. Examples in `examples/<lang>/`, with a README.
+5. A row in the tools table in the root `README.md`, and an entry in the repo map above.
+6. Build-output entries for the toolchain in the root `.gitignore`, under its language heading.
+
+## Cross-cutting rules
+
+- **Error classes mirror across languages.** Every client maps HTTP status codes to the same
+  set of errors, named idiomatically per language: authentication (401, 403), not found (404),
+  conflict (409), validation (400, 422), rate limit (429), and a generic API error carrying the
+  status code and response body. The JS names (`AuthenticationError`, `NotFoundError`,
+  `ConflictError`, `ValidationError`, `RateLimitError`, `APIError`) are the reference.
+- **Resource and method names follow the API**, the same across languages (customers, coupons,
+  payments, ...; list, get, create, update, delete).
+- **No secrets in examples, tests or docs.** Read API keys from the environment
+  (`CHECKOUTPAGE_API_KEY`); use placeholders like `YOUR_API_KEY`. Local env files (`.env*`)
+  stay gitignored, with a committed `.env*.example` template.
+- **Integration tests are optional** and skip when no API key is configured. Unit tests with a
+  mocked HTTP layer are the standard.

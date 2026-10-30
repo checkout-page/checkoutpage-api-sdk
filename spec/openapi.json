@@ -228,6 +228,14 @@
               "null"
             ]
           },
+          "archivedAt": {
+            "description": "When the merchant archived this, hiding it from their default bookings list in the dashboard. Archiving changes nothing else: the payment, tickets and `orderStatus` stay as they were. Absent unless archived.",
+            "type": "string"
+          },
+          "archivedBy": {
+            "description": "The userId of the team member who archived this. Absent unless archived.",
+            "type": "string"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -709,11 +717,10 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled.",
             "enum": [
               "active",
               "canceled",
-              "archived",
               null
             ],
             "type": [
@@ -2031,6 +2038,8 @@
             "type": "number"
           },
           "pageIds": {
+            "deprecated": true,
+            "description": "Deprecated: use `rules`. The checkout pages and events this coupon can be used on, each discounting the whole order. Accepted only without `rules`. In responses, the pages named by `rules`.",
             "items": {
               "type": "string"
             },
@@ -2048,6 +2057,59 @@
             "format": "date-time",
             "type": "string"
           },
+          "rules": {
+            "description": "Where the coupon works and what it discounts, one rule per page. A coupon works on a page when any of its rules names that page, and on each page the rules are combined with OR (an event cannot mix `tickets` and `ticketsAndAddOns` rules). Omit `rules` (and `pageIds`), or send an empty list, for a coupon that discounts the whole order on every checkout page and event.",
+            "items": {
+              "properties": {
+                "appliesTo": {
+                  "description": "What the coupon discounts on the page. Checkout pages: `wholeOrder` (the main product at any price and every order bump), `prices` (applies when the customer buys one of `priceIds`, discounting that price only), `pricesAndBumps` (applies only when the customer buys one of `priceIds` and one of `bumpProductIds`, discounting both). Events: `wholeOrder` (every ticket and add-on), `tickets` (applies when the customer buys one of `ticketTypeIds`, discounting those tickets only), `ticketsAndAddOns` (applies only when the customer buys one of `ticketTypeIds` and one of `bumpProductIds`, discounting both). Setup fees and ticket fees follow `appliesToSetupFee` and `appliesToTicketFees`.",
+                  "enum": [
+                    "wholeOrder",
+                    "prices",
+                    "pricesAndBumps",
+                    "tickets",
+                    "ticketsAndAddOns"
+                  ],
+                  "example": "prices",
+                  "type": "string"
+                },
+                "bumpProductIds": {
+                  "description": "Products of order bumps (checkout pages) or add-ons (events) on the page, only for `pricesAndBumps` and `ticketsAndAddOns`. An empty list or no list means every bump or add-on on the page, including ones added later; the coupon still needs one of them bought.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "pageId": {
+                  "description": "The checkout page or event this rule applies to.",
+                  "type": "string"
+                },
+                "priceIds": {
+                  "description": "Prices of the page's main product, only for `prices` and `pricesAndBumps`. An empty list or no list means every price of the main product, including prices added later. These are the `id`s of a product's `prices`, not Stripe price ids.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "ticketTypeIds": {
+                  "description": "Ticket types of the event, only for `tickets` and `ticketsAndAddOns`. An empty list or no list means every ticket type of the event, including ticket types added later.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "pageId",
+                "appliesTo",
+                "priceIds",
+                "ticketTypeIds",
+                "bumpProductIds"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "sellerId": {
             "type": "string"
           },
@@ -2056,7 +2118,8 @@
             "type": "string"
           },
           "ticketTypeIds": {
-            "description": "List of ticket type IDs that this coupon can be used with.",
+            "deprecated": true,
+            "description": "Deprecated: use `rules`. Ticket types of events in `pageIds`: on such an event the coupon discounts only those tickets. Accepted only without `rules`. In responses, every ticket type named by `rules`.",
             "example": [
               "67ee075004de439ab0b675b6",
               "67fcbdac6a91c25ef2d3534a"
@@ -2090,6 +2153,7 @@
           "timesRedeemed",
           "deleted",
           "sellerId",
+          "rules",
           "createdAt",
           "updatedAt"
         ],
@@ -2390,6 +2454,42 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by `fieldKey`: the `key` you gave it in `fields` in this request. Each item is one of: `field` (`fieldKey`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldKey": "first-name",
+                    "type": "field"
+                  },
+                  {
+                    "fieldKey": "last-name",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItemInput"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
@@ -3375,6 +3475,14 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by `fieldKey`: the `key` you gave it in `fields` in this request. Each item is one of: `field` (`fieldKey`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItemInput"
+            },
+            "maxItems": 500,
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
             "examples": [
@@ -4080,6 +4188,42 @@
               "object",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "How to arrange the page's form, top to bottom. Reference a field by `fieldKey`: the `key` you gave it in `fields` in this request. Each item is one of: `field` (`fieldKey`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldKey": "first-name",
+                    "type": "field"
+                  },
+                  {
+                    "fieldKey": "last-name",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItemInput"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior.",
@@ -5032,14 +5176,19 @@
                 },
                 "type": "array"
               },
-              "priceId": {
-                "description": "For `subject: price`: the page product price ID to watch (from get_product). A rule without one is stored but never hides anything.",
-                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
-                "pattern": "^[0-9a-fA-F]{24}$",
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "priceIds": {
+                "description": "For `subject: price`: the page product price IDs to watch (from get_product). The rule matches while the chosen price is any of them, or none of them for `is_not`. A rule without any is stored but never hides anything.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
               },
               "subject": {
                 "description": "What the rule watches. Defaults to `price` on a checkout page and `ticket` on an event.",
@@ -5988,6 +6137,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -6616,6 +6768,41 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "How the page's form is arranged, top to bottom: fields, headings, dividers, groups of fields shown side by side in columns, and where the discount code box sits. Always returned, even for a page that was never arranged: every field on the page is listed, and `fieldId` matches the `id` of an entry in `fields`. A `discount-code` item only places the box, which shows while `showCouponCodeField` is on. A placement you saved is returned whether the box is on or off; when none was saved and the box is on, the item is at the end, where the box shows. Forms never have one. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel steps for this page. The response uses the public response structure, including `pageId`, `redirectPageId`, and redirect token `identifier` values.",
@@ -7267,9 +7454,48 @@
           "testmodeEnabledAt",
           "themeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "formLayout"
         ],
         "type": "object"
+      },
+      "EventTicketTypeShowHideLogicInput": {
+        "description": "Shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event, e.g. show \"Parking pass\" only while \"VIP\" or \"Weekend pass\" is selected. Ticket types from any ticket group on the event can be named. This only changes what the checkout displays: it is not a security gate, and the API never rejects an order because of it. A named ticket type that is later deleted, archived or disabled counts as never selected, and the rule stays in force. Sent whole: it replaces the stored rule. Pass `null` or `{ \"enabled\": false }` to remove it.",
+        "properties": {
+          "comparison": {
+            "default": "is",
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` removes the rule: the ticket type shows as usual, and `comparison` and `ticketTypeIds` are ignored.",
+            "example": true,
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "The `key` of each ticket type the rule watches, as set on `ticketGroups[].ticketTypes[].key` in this request (any group). Keys become the new ticket type IDs when the event is saved, and responses return IDs. The rule matches while any of them is selected. A ticket type cannot name its own key, and a value that is not the key of another ticket type in this request is rejected. With `enabled: true` and no keys the rule hides nothing.",
+            "example": [
+              "vip"
+            ],
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
       },
       "Field": {
         "properties": {
@@ -7542,7 +7768,7 @@
             ]
           },
           "order": {
-            "description": "Display order of the field within the form.",
+            "description": "Position of the field among the page's fields, from 0. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
             "example": 0,
             "type": "number"
           },
@@ -8216,7 +8442,7 @@
             ]
           },
           "order": {
-            "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+            "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
             "example": 0,
             "minimum": 0,
             "type": [
@@ -8454,6 +8680,326 @@
           "id"
         ],
         "type": "object"
+      },
+      "FormLayoutDiscountCode": {
+        "description": "Where the discount code box sits. This item only places the box: the box shows while the page has `showCouponCodeField` on. Checkout pages and events only.",
+        "properties": {
+          "type": {
+            "description": "Always `discount-code`.",
+            "enum": [
+              "discount-code"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "FormLayoutDivider": {
+        "description": "A line that separates parts of the form.",
+        "properties": {
+          "id": {
+            "description": "The divider's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `divider`.",
+            "enum": [
+              "divider"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "type": "object"
+      },
+      "FormLayoutField": {
+        "description": "A field on the page, shown where it sits in the layout.",
+        "properties": {
+          "fieldId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UniqueIdentifier"
+              },
+              {
+                "description": "The `id` of a field in the page's `fields`."
+              }
+            ]
+          },
+          "type": {
+            "description": "Always `field`.",
+            "enum": [
+              "field"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "fieldId"
+        ],
+        "type": "object"
+      },
+      "FormLayoutFieldInput": {
+        "description": "A field on the page, shown where it sits in the layout.",
+        "properties": {
+          "fieldKey": {
+            "description": "The `key` you gave the field in `fields` in this request. A key that matches no field is rejected.",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `field`.",
+            "enum": [
+              "field"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "fieldKey"
+        ],
+        "type": "object"
+      },
+      "FormLayoutGroup": {
+        "description": "Items shown side by side in columns.",
+        "properties": {
+          "columns": {
+            "description": "How many items sit side by side, 1 to 4. On phones the group stacks by default.",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "description": "The group's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "items": {
+            "description": "What the group holds, filled row by row: fields, headings, dividers and the discount code. Groups never nest.",
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+                  "divider": "#/components/schemas/FormLayoutDivider",
+                  "field": "#/components/schemas/FormLayoutField",
+                  "heading": "#/components/schemas/FormLayoutHeading"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FormLayoutField"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutHeading"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDivider"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDiscountCode"
+                }
+              ]
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "name": {
+            "description": "A name for the group, seen only in the dashboard. Up to 100 characters.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `group`.",
+            "enum": [
+              "group"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "columns",
+          "items"
+        ],
+        "type": "object"
+      },
+      "FormLayoutGroupInput": {
+        "description": "Items shown side by side in columns.",
+        "properties": {
+          "columns": {
+            "description": "How many items sit side by side, 1 to 4. On phones the group stacks by default.",
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "id": {
+            "description": "The group's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "items": {
+            "description": "What the group holds, filled row by row: fields, headings, dividers and the discount code. Groups never nest.",
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+                  "divider": "#/components/schemas/FormLayoutDivider",
+                  "field": "#/components/schemas/FormLayoutFieldInput",
+                  "heading": "#/components/schemas/FormLayoutHeading"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FormLayoutFieldInput"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutHeading"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDivider"
+                },
+                {
+                  "$ref": "#/components/schemas/FormLayoutDiscountCode"
+                }
+              ]
+            },
+            "maxItems": 200,
+            "type": "array"
+          },
+          "name": {
+            "description": "A name for the group, seen only in the dashboard. Up to 100 characters.",
+            "maxLength": 100,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `group`.",
+            "enum": [
+              "group"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "columns",
+          "items"
+        ],
+        "type": "object"
+      },
+      "FormLayoutHeading": {
+        "description": "A heading or subheading shown above the items after it.",
+        "properties": {
+          "id": {
+            "description": "The heading's id, chosen by you: 1 to 64 characters, unique in the layout.",
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "level": {
+            "description": "`heading` for a section title, `subheading` for a smaller one.",
+            "enum": [
+              "heading",
+              "subheading"
+            ],
+            "type": "string"
+          },
+          "text": {
+            "description": "The text shown, up to 200 characters.",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "description": "Always `heading`.",
+            "enum": [
+              "heading"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "text",
+          "level"
+        ],
+        "type": "object"
+      },
+      "FormLayoutItem": {
+        "description": "More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+        "discriminator": {
+          "mapping": {
+            "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+            "divider": "#/components/schemas/FormLayoutDivider",
+            "field": "#/components/schemas/FormLayoutField",
+            "group": "#/components/schemas/FormLayoutGroup",
+            "heading": "#/components/schemas/FormLayoutHeading"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FormLayoutField"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutHeading"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDivider"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDiscountCode"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutGroup"
+          }
+        ]
+      },
+      "FormLayoutItemInput": {
+        "description": "More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+        "discriminator": {
+          "mapping": {
+            "discount-code": "#/components/schemas/FormLayoutDiscountCode",
+            "divider": "#/components/schemas/FormLayoutDivider",
+            "field": "#/components/schemas/FormLayoutFieldInput",
+            "group": "#/components/schemas/FormLayoutGroupInput",
+            "heading": "#/components/schemas/FormLayoutHeading"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FormLayoutFieldInput"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutHeading"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDivider"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutDiscountCode"
+          },
+          {
+            "$ref": "#/components/schemas/FormLayoutGroupInput"
+          }
+        ]
       },
       "FormPageResponse": {
         "allOf": [
@@ -9325,11 +9871,11 @@
                 },
                 "type": "array"
               },
-              "priceId": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "priceIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
               },
               "subject": {
                 "description": "What the rule watches. `price`: the page product price the customer picked (checkout pages). `ticket`: the ticket types in the basket (events). `order_bump`: whether other order bumps on the page are ticked.",
@@ -9352,7 +9898,7 @@
               "enabled",
               "subject",
               "comparison",
-              "priceId",
+              "priceIds",
               "ticketTypeIds",
               "orderBumpProductIds"
             ],
@@ -10183,6 +10729,14 @@
               "null"
             ]
           },
+          "archivedAt": {
+            "description": "When the merchant archived this, hiding it from their default bookings list in the dashboard. Archiving changes nothing else: the payment, tickets and `orderStatus` stay as they were. Absent unless archived.",
+            "type": "string"
+          },
+          "archivedBy": {
+            "description": "The userId of the team member who archived this. Absent unless archived.",
+            "type": "string"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -10671,11 +11225,10 @@
             ]
           },
           "orderStatus": {
-            "description": "Order lifecycle status. Valid values are active, canceled, archived.",
+            "description": "Order lifecycle status. Valid values are active, canceled.",
             "enum": [
               "active",
               "canceled",
-              "archived",
               null
             ],
             "type": [
@@ -14776,6 +15329,41 @@
               "null"
             ]
           },
+          "formLayout": {
+            "description": "How the page's form is arranged, top to bottom: fields, headings, dividers, groups of fields shown side by side in columns, and where the discount code box sits. Always returned, even for a page that was never arranged: every field on the page is listed, and `fieldId` matches the `id` of an entry in `fields`. A `discount-code` item only places the box, which shows while `showCouponCodeField` is on. A placement you saved is returned whether the box is on or off; when none was saved and the box is on, the item is at the end, where the box shows. Forms never have one. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "type": "array"
+          },
           "funnelSteps": {
             "description": "Ordered funnel steps for this page. The response uses the same public structure as the input schema, including `pageId` and `redirectPageId` field names.",
             "examples": [
@@ -15126,7 +15714,8 @@
           "testmodeEnabledAt",
           "themeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "formLayout"
         ],
         "type": "object"
       },
@@ -16075,6 +16664,8 @@
                     "type": "number"
                   },
                   "pageIds": {
+                    "deprecated": true,
+                    "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                     "items": {
                       "allOf": [
                         {
@@ -21607,169 +22198,6 @@
                           "null"
                         ]
                       },
-                      "paymentDetails": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "enabled": {
-                            "description": "Whether the payment details is visible in the fields section.",
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "styles": {
-                            "additionalProperties": false,
-                            "properties": {
-                              "color": {
-                                "additionalProperties": false,
-                                "description": "Color of the payment details heading.",
-                                "properties": {
-                                  "dark": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  },
-                                  "light": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  }
-                                },
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              },
-                              "fontFamily": {
-                                "description": "Font family for the payment details heading in the fields section.",
-                                "pattern": "^[A-Za-z0-9][A-Za-z0-9 ]{0,63}$",
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontSize": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      ""
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      10
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      11
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      12
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      13
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      14
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      16
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      18
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      20
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      24
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      32
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      40
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      48
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      64
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ],
-                                "description": "Font size for the payment details heading in the fields section."
-                              },
-                              "fontStyle": {
-                                "description": "Font style for the payment details heading in the fields section.",
-                                "enum": [
-                                  "",
-                                  "normal",
-                                  "italic",
-                                  null
-                                ],
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontWeight": {
-                                "description": "Font weight for the payment details heading in the fields section.",
-                                "maximum": 900,
-                                "minimum": 100,
-                                "type": [
-                                  "integer",
-                                  "null"
-                                ]
-                              }
-                            },
-                            "type": [
-                              "object",
-                              "null"
-                            ]
-                          }
-                        },
-                        "type": [
-                          "object",
-                          "null"
-                        ]
-                      },
                       "priceBreakdown": {
                         "additionalProperties": false,
                         "properties": {
@@ -37209,15 +37637,6 @@
                   "null"
                 ]
               },
-              "formDetailsText": {
-                "description": "Label for form details section. Default: \"Complete your details\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
               "getTicketsButtonText": {
                 "description": "Label for get tickets button. Default: \"Get tickets\".",
                 "maxLength": 500,
@@ -37337,15 +37756,6 @@
               },
               "payWhatYouWantText": {
                 "description": "Label for pay what you want field. Default: \"Pay what you want\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "paymentDetailsText": {
-                "description": "Label for payment details section. Default: \"Payment details\".",
                 "maxLength": 500,
                 "pattern": "^[^<>]*$",
                 "type": [
@@ -42809,169 +43219,6 @@
                           "null"
                         ]
                       },
-                      "paymentDetails": {
-                        "additionalProperties": false,
-                        "properties": {
-                          "enabled": {
-                            "description": "Whether the payment details is visible in the fields section.",
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "styles": {
-                            "additionalProperties": false,
-                            "properties": {
-                              "color": {
-                                "additionalProperties": false,
-                                "description": "Color of the payment details heading.",
-                                "properties": {
-                                  "dark": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  },
-                                  "light": {
-                                    "$ref": "#/components/schemas/ThemeColorValue"
-                                  }
-                                },
-                                "type": [
-                                  "object",
-                                  "null"
-                                ]
-                              },
-                              "fontFamily": {
-                                "description": "Font family for the payment details heading in the fields section.",
-                                "pattern": "^[A-Za-z0-9][A-Za-z0-9 ]{0,63}$",
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontSize": {
-                                "anyOf": [
-                                  {
-                                    "enum": [
-                                      ""
-                                    ],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": [
-                                      10
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      11
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      12
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      13
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      14
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      16
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      18
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      20
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      24
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      32
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      40
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      48
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "enum": [
-                                      64
-                                    ],
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ],
-                                "description": "Font size for the payment details heading in the fields section."
-                              },
-                              "fontStyle": {
-                                "description": "Font style for the payment details heading in the fields section.",
-                                "enum": [
-                                  "",
-                                  "normal",
-                                  "italic",
-                                  null
-                                ],
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "fontWeight": {
-                                "description": "Font weight for the payment details heading in the fields section.",
-                                "maximum": 900,
-                                "minimum": 100,
-                                "type": [
-                                  "integer",
-                                  "null"
-                                ]
-                              }
-                            },
-                            "type": [
-                              "object",
-                              "null"
-                            ]
-                          }
-                        },
-                        "type": [
-                          "object",
-                          "null"
-                        ]
-                      },
                       "priceBreakdown": {
                         "additionalProperties": false,
                         "properties": {
@@ -58411,15 +58658,6 @@
                   "null"
                 ]
               },
-              "formDetailsText": {
-                "description": "Label for form details section. Default: \"Complete your details\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
               "getTicketsButtonText": {
                 "description": "Label for get tickets button. Default: \"Get tickets\".",
                 "maxLength": 500,
@@ -58539,15 +58777,6 @@
               },
               "payWhatYouWantText": {
                 "description": "Label for pay what you want field. Default: \"Pay what you want\".",
-                "maxLength": 500,
-                "pattern": "^[^<>]*$",
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "paymentDetailsText": {
-                "description": "Label for payment details section. Default: \"Payment details\".",
                 "maxLength": 500,
                 "pattern": "^[^<>]*$",
                 "type": [
@@ -61839,6 +62068,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/EventTicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -62126,6 +62358,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogic"
+          },
           "showTicketSaleDates": {
             "description": "Whether sale start/end dates are shown to customers.",
             "type": [
@@ -62170,6 +62405,84 @@
           "name"
         ],
         "type": "object"
+      },
+      "TicketTypeShowHideLogic": {
+        "description": "Rule that shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event. Display only: the API never rejects an order because of it.",
+        "properties": {
+          "comparison": {
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` means the ticket type shows as usual.",
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "IDs of the ticket types the rule watches. Can include a ticket type that has since been deleted, archived or disabled: it counts as never selected.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled",
+          "comparison",
+          "ticketTypeIds"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "TicketTypeShowHideLogicInput": {
+        "description": "Shows this ticket type only while the customer has (or has not) picked certain other ticket types on the same event, e.g. show \"Parking pass\" only while \"VIP\" or \"Weekend pass\" is selected. Ticket types from any ticket group on the event can be named. This only changes what the checkout displays: it is not a security gate, and the API never rejects an order because of it. A named ticket type that is later deleted, archived or disabled counts as never selected, and the rule stays in force. Sent whole: it replaces the stored rule. Pass `null` or `{ \"enabled\": false }` to remove it.",
+        "properties": {
+          "comparison": {
+            "default": "is",
+            "description": "`is` shows the ticket type while any of `ticketTypeIds` is selected. `is_not` shows it while none of them is.",
+            "enum": [
+              "is",
+              "is_not"
+            ],
+            "example": "is",
+            "type": "string"
+          },
+          "enabled": {
+            "description": "Whether the rule is on. `false` removes the rule: the ticket type shows as usual, and `comparison` and `ticketTypeIds` are ignored.",
+            "example": true,
+            "type": "boolean"
+          },
+          "ticketTypeIds": {
+            "description": "IDs of other ticket types on the same event, from `ticketGroups[].ticketTypes[].id`. The rule matches while any of them is selected. A ticket type cannot name itself, and an ID that is not a ticket type on this event is rejected. With `enabled: true` and no IDs the rule hides nothing.",
+            "example": [
+              "507f1f77bcf86cd799439014"
+            ],
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "Unique identifier. Must be in BSON ObjectId format."
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
       },
       "UniqueIdentifier": {
         "description": "Unique identifier for the ticket.",
@@ -62358,6 +62671,42 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by `fieldId`, the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
@@ -63334,6 +63683,42 @@
               "array",
               "null"
             ]
+          },
+          "formLayout": {
+            "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by `fieldId`, the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+            "example": [
+              {
+                "id": "your-details",
+                "level": "heading",
+                "text": "Your details",
+                "type": "heading"
+              },
+              {
+                "columns": 2,
+                "id": "name-row",
+                "items": [
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                    "type": "field"
+                  },
+                  {
+                    "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                    "type": "field"
+                  }
+                ],
+                "name": "Name",
+                "type": "group"
+              },
+              {
+                "id": "divider-1",
+                "type": "divider"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormLayoutItem"
+            },
+            "maxItems": 500,
+            "type": "array"
           },
           "funnelSteps": {
             "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
@@ -64493,14 +64878,19 @@
                 },
                 "type": "array"
               },
-              "priceId": {
-                "description": "For `subject: price`: the page product price ID to watch (from get_product). A rule without one is stored but never hides anything.",
-                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
-                "pattern": "^[0-9a-fA-F]{24}$",
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "priceIds": {
+                "description": "For `subject: price`: the page product price IDs to watch (from get_product). The rule matches while the chosen price is any of them, or none of them for `is_not`. A rule without any is stored but never hides anything.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
               },
               "subject": {
                 "description": "What the rule watches. Defaults to `price` on a checkout page and `ticket` on an event.",
@@ -66512,6 +66902,9 @@
               "null"
             ]
           },
+          "showHideLogic": {
+            "$ref": "#/components/schemas/TicketTypeShowHideLogicInput"
+          },
           "showTicketSaleDates": {
             "description": "Show sale start/end dates to customers.",
             "example": true,
@@ -66754,6 +67147,20 @@
             }
           },
           {
+            "description": "Filter by archived bookings. `true` returns only archived bookings, `false` excludes them. Without it the list includes both.",
+            "in": "query",
+            "name": "archived",
+            "required": false,
+            "schema": {
+              "description": "Filter by archived bookings. `true` returns only archived bookings, `false` excludes them. Without it the list includes both.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "status",
             "required": false,
@@ -66780,7 +67187,6 @@
             "required": false,
             "schema": {
               "enum": [
-                "archived",
                 "active",
                 "canceled"
               ],
@@ -68468,7 +68874,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -69347,7 +69753,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -70477,7 +70883,8 @@
                     "type": "number"
                   },
                   "pageIds": {
-                    "description": "A list of pageIds that this coupon can be used within.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. The checkout pages and events this coupon can be used on, each discounting the whole order. Accepted only without `rules`. In responses, the pages named by `rules`.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -70506,8 +70913,99 @@
                     "format": "date-time",
                     "type": "string"
                   },
+                  "rules": {
+                    "description": "Where the coupon works and what it discounts, one rule per page. A coupon works on a page when any of its rules names that page, and on each page the rules are combined with OR (an event cannot mix `tickets` and `ticketsAndAddOns` rules). Omit `rules` (and `pageIds`), or send an empty list, for a coupon that discounts the whole order on every checkout page and event.",
+                    "example": [
+                      {
+                        "appliesTo": "pricesAndBumps",
+                        "bumpProductIds": [],
+                        "pageId": "67ee075004de439ab0b675b6",
+                        "priceIds": [
+                          "67fcbdac6a91c25ef2d3534a"
+                        ]
+                      }
+                    ],
+                    "items": {
+                      "properties": {
+                        "appliesTo": {
+                          "description": "What the coupon discounts on the page. Checkout pages: `wholeOrder` (the main product at any price and every order bump), `prices` (applies when the customer buys one of `priceIds`, discounting that price only), `pricesAndBumps` (applies only when the customer buys one of `priceIds` and one of `bumpProductIds`, discounting both). Events: `wholeOrder` (every ticket and add-on), `tickets` (applies when the customer buys one of `ticketTypeIds`, discounting those tickets only), `ticketsAndAddOns` (applies only when the customer buys one of `ticketTypeIds` and one of `bumpProductIds`, discounting both). Setup fees and ticket fees follow `appliesToSetupFee` and `appliesToTicketFees`.",
+                          "enum": [
+                            "wholeOrder",
+                            "prices",
+                            "pricesAndBumps",
+                            "tickets",
+                            "ticketsAndAddOns"
+                          ],
+                          "example": "prices",
+                          "type": "string"
+                        },
+                        "bumpProductIds": {
+                          "description": "Products of order bumps (checkout pages) or add-ons (events) on the page, only for `pricesAndBumps` and `ticketsAndAddOns`. An empty list or no list means every bump or add-on on the page, including ones added later; the coupon still needs one of them bought.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "pageId": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "The checkout page or event this rule applies to."
+                            }
+                          ]
+                        },
+                        "priceIds": {
+                          "description": "Prices of the page's main product, only for `prices` and `pricesAndBumps`. An empty list or no list means every price of the main product, including prices added later. These are the `id`s of a product's `prices`, not Stripe price ids.",
+                          "example": [
+                            "67fcbdac6a91c25ef2d3534a"
+                          ],
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "ticketTypeIds": {
+                          "description": "Ticket types of the event, only for `tickets` and `ticketsAndAddOns`. An empty list or no list means every ticket type of the event, including ticket types added later.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "pageId",
+                        "appliesTo"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
                   "ticketTypeIds": {
-                    "description": "List of ticket type IDs that this coupon can be used with. Ticket ticket ids must belong to a page specified in the `pageIds` array.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. Ticket types of events in `pageIds`: on such an event the coupon discounts only those tickets. Accepted only without `rules`. In responses, every ticket type named by `rules`.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -70628,7 +71126,7 @@
     },
     "/v1/coupons/:couponId": {
       "patch": {
-        "description": "Updates a coupon. Ticket types are scoped through pages, so any ticketTypeIds must belong to the pageIds sent in the same request, or — when pageIds are omitted — to the pages already on the coupon.",
+        "description": "Updates a coupon. `rules` replaces every stored rule, and an empty list makes the coupon work everywhere. `pageIds` and `ticketTypeIds` are accepted only without `rules` and replace the rules with whole-order rules (or tickets rules on events with picked ticket types); `ticketTypeIds` sent without `pageIds` must belong to the pages already on the coupon. A coupon whose rules go beyond one `wholeOrder` or `tickets` rule per page returns a 400 for `pageIds` or `ticketTypeIds`: send `rules` instead.",
         "operationId": "coupons/update",
         "parameters": [
           {
@@ -70668,7 +71166,8 @@
                     ]
                   },
                   "pageIds": {
-                    "description": "A list of pageIds that this coupon can be used within.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. The checkout pages and events this coupon can be used on, each discounting the whole order. Accepted only without `rules`. In responses, the pages named by `rules`. Replaces the stored rules with whole-order rules for these pages; an empty array makes the coupon work everywhere.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -70688,8 +71187,99 @@
                       "null"
                     ]
                   },
+                  "rules": {
+                    "description": "Where the coupon works and what it discounts, one rule per page. A coupon works on a page when any of its rules names that page, and on each page the rules are combined with OR (an event cannot mix `tickets` and `ticketsAndAddOns` rules). Omit `rules` (and `pageIds`), or send an empty list, for a coupon that discounts the whole order on every checkout page and event. Replaces every stored rule; an empty list makes the coupon work everywhere.",
+                    "example": [
+                      {
+                        "appliesTo": "pricesAndBumps",
+                        "bumpProductIds": [],
+                        "pageId": "67ee075004de439ab0b675b6",
+                        "priceIds": [
+                          "67fcbdac6a91c25ef2d3534a"
+                        ]
+                      }
+                    ],
+                    "items": {
+                      "properties": {
+                        "appliesTo": {
+                          "description": "What the coupon discounts on the page. Checkout pages: `wholeOrder` (the main product at any price and every order bump), `prices` (applies when the customer buys one of `priceIds`, discounting that price only), `pricesAndBumps` (applies only when the customer buys one of `priceIds` and one of `bumpProductIds`, discounting both). Events: `wholeOrder` (every ticket and add-on), `tickets` (applies when the customer buys one of `ticketTypeIds`, discounting those tickets only), `ticketsAndAddOns` (applies only when the customer buys one of `ticketTypeIds` and one of `bumpProductIds`, discounting both). Setup fees and ticket fees follow `appliesToSetupFee` and `appliesToTicketFees`.",
+                          "enum": [
+                            "wholeOrder",
+                            "prices",
+                            "pricesAndBumps",
+                            "tickets",
+                            "ticketsAndAddOns"
+                          ],
+                          "example": "prices",
+                          "type": "string"
+                        },
+                        "bumpProductIds": {
+                          "description": "Products of order bumps (checkout pages) or add-ons (events) on the page, only for `pricesAndBumps` and `ticketsAndAddOns`. An empty list or no list means every bump or add-on on the page, including ones added later; the coupon still needs one of them bought.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "pageId": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/UniqueIdentifier"
+                            },
+                            {
+                              "description": "The checkout page or event this rule applies to."
+                            }
+                          ]
+                        },
+                        "priceIds": {
+                          "description": "Prices of the page's main product, only for `prices` and `pricesAndBumps`. An empty list or no list means every price of the main product, including prices added later. These are the `id`s of a product's `prices`, not Stripe price ids.",
+                          "example": [
+                            "67fcbdac6a91c25ef2d3534a"
+                          ],
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        },
+                        "ticketTypeIds": {
+                          "description": "Ticket types of the event, only for `tickets` and `ticketsAndAddOns`. An empty list or no list means every ticket type of the event, including ticket types added later.",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/UniqueIdentifier"
+                              },
+                              {
+                                "description": "Unique identifier. Must be in BSON ObjectId format."
+                              }
+                            ]
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "pageId",
+                        "appliesTo"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
                   "ticketTypeIds": {
-                    "description": "A list of ticketTypeIds that this coupon can be used with. Empty array will clear the list.",
+                    "deprecated": true,
+                    "description": "Deprecated: use `rules`. Ticket types of events in `pageIds`: on such an event the coupon discounts only those tickets. Accepted only without `rules`. In responses, every ticket type named by `rules`. Without `pageIds`, checked against the pages already on the coupon.",
                     "example": [
                       "67ee075004de439ab0b675b6",
                       "67fcbdac6a91c25ef2d3534a"
@@ -72415,7 +73005,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -73294,7 +73884,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -76521,6 +77111,42 @@
                       "null"
                     ]
                   },
+                  "formLayout": {
+                    "description": "Replaces how the page's form is arranged, top to bottom. Reference fields by `fieldId`, the ids in the page's `fields`; an id that is not on the page is rejected. Send the whole layout: read the current one from `formLayout` on the page, change it and send it back. Each item is one of: `field` (`fieldId`), `heading` (`id`, `text`, `level` `heading` or `subheading`), `divider` (`id`), `discount-code` (no other properties) and `group` (`id`, optional `name`, `columns` 1 to 4, and `items` holding fields, headings, dividers or the discount code; groups never nest). You choose the `id` of each heading, divider and group: 1 to 64 characters, unique in the layout. Fields the layout leaves out are added after it, in their current order. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead. A `discount-code` item only places the discount code box: the box shows while `showCouponCodeField` is on, and the item does not switch it on. Forms have no discount code, so a form layout must leave it out. More item types may be added later. When reading a layout, skip any item type you do not recognise. When updating, send every item back as you received it, including those.",
+                    "example": [
+                      {
+                        "id": "your-details",
+                        "level": "heading",
+                        "text": "Your details",
+                        "type": "heading"
+                      },
+                      {
+                        "columns": 2,
+                        "id": "name-row",
+                        "items": [
+                          {
+                            "fieldId": "665f1c2e4a9f3d2b1c0a9e81",
+                            "type": "field"
+                          },
+                          {
+                            "fieldId": "665f1c2e4a9f3d2b1c0a9e82",
+                            "type": "field"
+                          }
+                        ],
+                        "name": "Name",
+                        "type": "group"
+                      },
+                      {
+                        "id": "divider-1",
+                        "type": "divider"
+                      }
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/FormLayoutItem"
+                    },
+                    "maxItems": 500,
+                    "type": "array"
+                  },
                   "funnelSteps": {
                     "description": "Ordered funnel configuration for this page. Supports intermediate checkout steps, one-click upsells, and confirmation behavior. Field references inside upsell/confirmation redirect steps resolve by `fieldId` (get current field IDs from the page detail response) — the create-time `fieldKey` string is rejected.",
                     "items": {
@@ -77458,7 +78084,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -78337,7 +78963,7 @@
                     ]
                   },
                   "order": {
-                    "description": "Display order of this field. When omitted, order is determined by the position of the field in the array.",
+                    "description": "Position of this field among the page's fields, from 0. When omitted, a new field goes after the current ones, or follows its position in `fields` when a page is created. `formLayout` on the page decides the form's order. Each field's `order` is its position among the page's fields and follows the layout: saving a layout (in the dashboard or through the API) rewrites every field's `order`. On a page that has never saved a layout, setting `order` moves the field; once a layout is saved, move fields with `formLayout` instead.",
                     "example": 0,
                     "minimum": 0,
                     "type": [
@@ -81127,7 +81753,6 @@
             "required": false,
             "schema": {
               "enum": [
-                "archived",
                 "active",
                 "canceled"
               ],
@@ -83438,6 +84063,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -89537,6 +90164,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -90375,6 +91004,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -91213,6 +91844,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -92051,6 +92684,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -92889,6 +93524,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -93727,6 +94364,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -94565,6 +95204,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {
@@ -95403,6 +96044,8 @@
                                 "type": "number"
                               },
                               "pageIds": {
+                                "deprecated": true,
+                                "description": "Deprecated: what a coupon covers is now its `rules`; read them from the coupon (`couponId`). The pages the coupon was limited to when the subscription was bought.",
                                 "items": {
                                   "allOf": [
                                     {

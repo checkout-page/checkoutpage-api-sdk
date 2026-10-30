@@ -1,0 +1,57 @@
+name: Test n8n node
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'n8n/**'
+      - 'spec/**'
+      - '.github/workflows/test-n8n.yml'
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'n8n/**'
+      - 'spec/**'
+      - '.github/workflows/test-n8n.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # n8n-workflow 2.x needs Node 24: its isolated-vm dependency won't build on older versions.
+    strategy:
+      matrix:
+        node-version: [24]
+
+    defaults:
+      run:
+        working-directory: n8n
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: n8n/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check the package contents
+        run: npm pack --dry-run

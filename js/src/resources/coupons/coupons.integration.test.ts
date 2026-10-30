@@ -690,4 +690,175 @@ describe('CouponResource Integration Tests', () => {
       await expect(client.coupons.create(params)).rejects.toThrow(ValidationError);
     });
   });
+  describe('rules', () => {
+    const createdPageIds: string[] = [];
+    const createdProductIds: string[] = [];
+    const createdCouponIds: string[] = [];
+
+    afterEach(async () => {
+      for (const id of createdCouponIds.splice(0)) {
+        await client.coupons.update(id, { deleted: true }).catch(() => undefined);
+      }
+      for (const id of createdPageIds.splice(0)) {
+        await client.checkoutPages.delete(id).catch(() => undefined);
+      }
+      for (const id of createdProductIds.splice(0)) {
+        await client.products.delete(id, { fromAllPages: true }).catch(() => undefined);
+      }
+    }, 180_000);
+
+    const createCheckoutWithBump = async () => {
+      const suffix = uniqueSuffix();
+      const { data: bump } = await client.products.create({
+        role: 'orderbump',
+        title: `SDK Coupon Bump ${suffix}`,
+        price: { amount: 1500, currency: 'usd' },
+      });
+      if (!bump) throw new Error('Order bump product was not returned');
+      createdProductIds.push(bump.id);
+
+      const { data: page } = await client.checkoutPages.create({
+        name: `SDK Coupon Rules ${suffix}`,
+        productData: {
+          title: `SDK Coupon Rules Product ${suffix}`,
+          prices: [
+            { billingType: 'one_time', amount: 2000, currency: 'usd', label: 'Standard' },
+            { billingType: 'one_time', amount: 4000, currency: 'usd', label: 'Premium' },
+          ],
+        },
+      } as never);
+      createdPageIds.push(page.id);
+      await client.checkoutPages.orderBumps.create(page.id, { productId: bump.id });
+
+      const priceIds = (page.product?.prices ?? []).map((price) => price.id);
+      if (priceIds.length !== 2) throw new Error('Provisioned page is missing its prices');
+      return { pageId: page.id, priceIds, bumpProductId: bump.id };
+    };
+
+    const createCoupon = async (extra: Record<string, unknown>) => {
+      const { data } = await client.coupons.create({
+        type: 'percent',
+        label: 'SDK rules coupon',
+        code: `SDK_RULES_${uniqueSuffix().replace(/-/g, '_').toUpperCase()}`,
+        percentOff: 20,
+        duration: 'once',
+        ...extra,
+      } as never);
+      createdCouponIds.push(data.id);
+      return data;
+    };
+
+    it('creates a coupon with rules and returns them, with pageIds and ticketTypeIds derived', async () => {
+      const checkout = await createCheckoutWithBump();
+      const event = await createEventWithTicketType();
+
+      const coupon = await createCoupon({
+        rules: [
+          {
+            pageId: checkout.pageId,
+            appliesTo: 'pricesAndBumps',
+            priceIds: [checkout.priceIds[1]],
+            bumpProductIds: [checkout.bumpProductId],
+          },
+          { pageId: event.eventId, appliesTo: 'tickets', ticketTypeIds: [event.ticketTypeId] },
+        ],
+      });
+
+      expect(coupon.rules).toEqual([
+        {
+          pageId: checkout.pageId,
+          appliesTo: 'pricesAndBumps',
+          priceIds: [checkout.priceIds[1]],
+          ticketTypeIds: [],
+          bumpProductIds: [checkout.bumpProductId],
+        },
+        {
+          pageId: event.eventId,
+          appliesTo: 'tickets',
+          priceIds: [],
+          ticketTypeIds: [event.ticketTypeId],
+          bumpProductIds: [],
+        },
+      ]);
+      expect(coupon.pageIds).toEqual([checkout.pageId, event.eventId]);
+      expect(coupon.ticketTypeIds).toEqual([event.ticketTypeId]);
+    });
+
+    it('replaces the rules on update, and makes the coupon work everywhere with an empty list', async () => {
+      const checkout = await createCheckoutWithBump();
+      const coupon = await createCoupon({
+        rules: [{ pageId: checkout.pageId, appliesTo: 'wholeOrder' }],
+      });
+
+      const { data: narrowed } = await client.coupons.update(coupon.id, {
+        rules: [{ pageId: checkout.pageId, appliesTo: 'prices', priceIds: [checkout.priceIds[0]] }],
+      });
+      expect(narrowed.rules).toEqual([
+        {
+          pageId: checkout.pageId,
+          appliesTo: 'prices',
+          priceIds: [checkout.priceIds[0]],
+          ticketTypeIds: [],
+          bumpProductIds: [],
+        },
+      ]);
+
+      const { data: global } = await client.coupons.update(coupon.id, { rules: [] });
+      expect(global.rules).toEqual([]);
+    });
+
+    it('still accepts the deprecated pageIds, as whole-order rules', async () => {
+      const checkout = await createCheckoutWithBump();
+
+      const coupon = await createCoupon({ pageIds: [checkout.pageId] });
+
+      expect(coupon.rules).toEqual([
+        {
+          pageId: checkout.pageId,
+          appliesTo: 'wholeOrder',
+          priceIds: [],
+          ticketTypeIds: [],
+          bumpProductIds: [],
+        },
+      ]);
+      expect(coupon.pageIds).toEqual([checkout.pageId]);
+    });
+
+    it('refuses rules sent together with pageIds', async () => {
+      const checkout = await createCheckoutWithBump();
+
+      await expect(
+        createCoupon({
+          rules: [{ pageId: checkout.pageId, appliesTo: 'wholeOrder' }],
+          pageIds: [checkout.pageId],
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it('refuses a pageIds-only update to a coupon whose rules it cannot express', async () => {
+      const checkout = await createCheckoutWithBump();
+      const coupon = await createCoupon({
+        rules: [{ pageId: checkout.pageId, appliesTo: 'prices', priceIds: [checkout.priceIds[0]] }],
+      });
+
+      await expect(
+        client.coupons.update(coupon.id, { pageIds: [checkout.pageId] })
+      ).rejects.toThrow(ValidationError);
+
+      const { data: list } = await client.coupons.list({ search: coupon.code });
+      expect(list.find((item) => item.id === coupon.id)?.rules[0]?.appliesTo).toBe('prices');
+    });
+
+    it('refuses a price that is not on the page', async () => {
+      const checkout = await createCheckoutWithBump();
+
+      await expect(
+        createCoupon({
+          rules: [
+            { pageId: checkout.pageId, appliesTo: 'prices', priceIds: [checkout.bumpProductId] },
+          ],
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+  });
 });

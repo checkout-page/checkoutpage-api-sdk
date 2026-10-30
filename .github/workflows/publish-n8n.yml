@@ -1,0 +1,157 @@
+name: Publish n8n node
+
+# n8n only verifies community nodes published from GitHub Actions with an npm
+# provenance statement, so this is the only supported way to release n8n/. npm trusted
+# publishing authenticates the run (no token); the publish-n8n environment requires a reviewer.
+#
+# The bump and tag land on main in one atomic push before npm publish. If a later step fails,
+# re-run with the same version: it resumes from the tag and does only what is missing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (X.Y.Z, e.g. 0.1.0)'
+        required: true
+        type: string
+
+concurrency:
+  group: publish-n8n
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: publish-n8n
+    permissions:
+      contents: write
+      id-token: write
+
+    defaults:
+      run:
+        working-directory: n8n
+
+    env:
+      VERSION: ${{ inputs.version }}
+      PACKAGE: n8n-nodes-checkoutpage
+
+    steps:
+      - name: Require main
+        if: github.ref != 'refs/heads/main'
+        working-directory: .
+        run: |
+          echo "::error::Run this workflow from main, not $GITHUB_REF"
+          exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+          cache-dependency-path: n8n/package-lock.json
+
+      - name: Install npm
+        run: npm install -g npm@11.20.0
+
+      - name: Check version and tag
+        id: plan
+        run: |
+          if ! [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::version must be X.Y.Z, got '$VERSION'"
+            exit 1
+          fi
+          new=("${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}")
+
+          published=$(npm view "$PACKAGE@$VERSION" version 2>/dev/null || true)
+          tag="n8n-v$VERSION"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
+            echo "resume=true" >> "$GITHUB_OUTPUT"
+            if [ -n "$published" ]; then
+              echo "Tag $tag and $PACKAGE@$VERSION exist: only the GitHub release is left"
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "Tag $tag exists but $VERSION is not on npm: publishing the tag"
+              echo "publish=true" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+          if [ -n "$published" ]; then
+            echo "::error::$PACKAGE@$VERSION is already on npm but main has no $tag tag"
+            exit 1
+          fi
+
+          current=$(node -p "require('./package.json').version")
+          IFS=. read -r -a cur <<< "$current"
+          greater=false
+          for i in 0 1 2; do
+            if (( new[i] > cur[i] )); then greater=true; break; fi
+            if (( new[i] < cur[i] )); then break; fi
+          done
+          if [ "$greater" != true ]; then
+            echo "::error::$VERSION is not greater than package.json's $current"
+            exit 1
+          fi
+          echo "resume=false" >> "$GITHUB_OUTPUT"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the existing tag
+        if: steps.plan.outputs.resume == 'true'
+        run: |
+          git fetch --force origin "refs/tags/n8n-v$VERSION:refs/tags/n8n-v$VERSION"
+          git checkout --detach "n8n-v$VERSION"
+          test "$(node -p "require('./package.json').version")" = "$VERSION"
+
+      - name: Install dependencies
+        if: steps.plan.outputs.publish == 'true'
+        run: npm ci
+
+      - name: Update version
+        if: steps.plan.outputs.resume != 'true'
+        run: npm version "$VERSION" --no-git-tag-version
+
+      - name: Type check
+        if: steps.plan.outputs.publish == 'true'
+        run: npm run type-check
+
+      - name: Run tests
+        if: steps.plan.outputs.publish == 'true'
+        run: npm test
+
+      - name: Commit the version bump and tag it
+        if: steps.plan.outputs.resume != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore(n8n): release v$VERSION"
+          git tag "n8n-v$VERSION"
+          git push --atomic origin HEAD:main "refs/tags/n8n-v$VERSION"
+
+      # In GitHub Actions `n8n-node release` lints, builds and runs
+      # `npm publish` with provenance (NPM_CONFIG_PROVENANCE=true).
+      - name: Publish to npm with provenance
+        if: steps.plan.outputs.publish == 'true'
+        run: npm run release
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="n8n-v$VERSION"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists"
+            exit 0
+          fi
+          gh release create "$tag" \
+            --title "n8n node v$VERSION" \
+            --notes "## n8n node v$VERSION
+
+          ### Installation
+
+          In n8n, open Settings > Community nodes, select Install and enter \`$PACKAGE\`."

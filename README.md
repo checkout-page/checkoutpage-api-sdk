@@ -1,134 +1,109 @@
-# Checkout Page API SDK
+# Checkout Page developer tools
 
-Official SDKs for the Checkout Page API, enabling developers to integrate Checkout Page's payment and checkout functionality into their applications.
+Official developer tools for the Checkout Page API: client libraries and command-line tools
+for building on Checkout Page from your own code.
 
-## Available SDKs
+Each language or tool lives in its own top-level directory. The SDKs, the CLI and the Postman
+collection are built from the same OpenAPI spec, so they cover the same API. The Zapier
+integration is the source of Checkout Page's app on Zapier.
 
-### JavaScript/TypeScript ✅
+## Tools
 
-The official JavaScript SDK with full TypeScript support.
+| Tool                      | Status                    | Install                                                   | Docs                                   |
+| ------------------------- | ------------------------- | --------------------------------------------------------- | -------------------------------------- |
+| JavaScript/TypeScript SDK | Active                    | `npm install @checkoutpage/sdk`                           | [js/README.md](js/README.md)           |
+| CLI (`checkoutpage`)      | First release coming soon | [Build from source](cli/README.md#from-source)            | [cli/README.md](cli/README.md)         |
+| Postman collection        | Active                    | Import the collection file                                | [postman/README.md](postman/README.md) |
+| n8n nodes                 | Coming soon               | n8n Settings > Community nodes > `n8n-nodes-checkoutpage` | [n8n/README.md](n8n/README.md)         |
+| Zapier integration        | Active                    | Connect it in Zapier                                      | [zapier/README.md](zapier/README.md)   |
+| PHP                       | Planned                   | -                                                         | -                                      |
+| Ruby                      | Planned                   | -                                                         | -                                      |
+| Python                    | Planned                   | -                                                         | -                                      |
+| Go                        | Planned                   | -                                                         | -                                      |
 
-- **Package**: `@checkoutpage/sdk`
-- **Installation**: `npm install @checkoutpage/sdk`
-- **Documentation**: [js/README.md](js/README.md)
-- **Status**: Active development
+## JavaScript/TypeScript SDK
 
-```typescript
-import { createCheckoutPageClient } from '@checkoutpage/sdk';
+The JavaScript SDK has full TypeScript support and runs on Node.js 18 or later.
 
-const checkoutpage = createCheckoutPageClient({ apiKey: 'YOUR_API_KEY' });
-const customer = await checkoutpage.customers.get('customer_id');
-```
+1. Get your API key from the [Checkout Page dashboard](https://checkoutpage.com/).
 
-### Python (Coming Soon)
-
-Python SDK planned for future release.
-
-### Go (Coming Soon)
-
-Go SDK planned for future release.
-
-## Quick Start
-
-1. **Get your API key** from the [Checkout Page Dashboard](https://checkoutpage.com/)
-
-2. **Install the SDK** for your language:
+2. Install the SDK:
 
    ```bash
    npm install @checkoutpage/sdk
    ```
 
-3. **Start using the SDK**:
+3. Create a client and make a request:
 
    ```typescript
    import { createCheckoutPageClient } from '@checkoutpage/sdk';
 
    const checkoutpage = createCheckoutPageClient({ apiKey: 'YOUR_API_KEY' });
+   const customer = await checkoutpage.customers.get('customer_id');
    ```
 
-## Repository Structure
+More in the [JS SDK README](js/README.md) and the [JavaScript examples](examples/js/).
+
+## CLI
+
+`checkoutpage` works with your account from the terminal: look up bookings, payments and
+customers, export them as CSV, and create coupons and bookings. Install and usage are in
+[cli/README.md](cli/README.md).
+
+## Postman collection
+
+Try the API without writing code. The [Postman collection](postman/README.md) has a request
+for every endpoint, with descriptions and example bodies. Import
+`postman/checkoutpage-api.postman_collection.json`, then set the `apiKey` variable to
+your API key.
+
+## n8n nodes
+
+Automate Checkout Page in [n8n](https://n8n.io) without writing code. Start a workflow when
+someone books or pays, add attendees, create coupons and look up customers.
+
+In n8n, open **Settings > Community nodes**, select **Install** and enter
+`n8n-nodes-checkoutpage`. See the [n8n README](n8n/README.md) and the
+[n8n examples](examples/n8n/).
+
+## The API spec
+
+[`spec/openapi.json`](spec/openapi.json) is the OpenAPI spec for the Checkout Page seller API.
+It is the single source for every tool in this repo: each language generates its types or
+client code from it. See [spec/README.md](spec/README.md) for where it comes from and how it is
+refreshed.
+
+For the full API reference, visit [docs.checkoutpage.com](https://docs.checkoutpage.com).
+
+## Repository layout
 
 ```
 checkoutpage-api-sdk/
-├─ js/                      # JavaScript/TypeScript SDK
-│  ├─ src/                  # Source code
-│  ├─ package.json
-│  └─ README.md
-├─ spec/                    # OpenAPI specification
-│  └─ openapi.json
-├─ examples/                # Usage examples
-│  └─ js/
-├─ .github/
-│  └─ workflows/            # CI/CD workflows
-└─ README.md
-```
-
-## API Reference
-
-For detailed API documentation, visit [docs.checkoutpage.com](https://docs.checkoutpage.com).
-
-The SDKs are generated from our OpenAPI specification located in `spec/openapi.json`.
-
-## Examples
-
-Check out the [examples](examples/) directory for language-specific examples:
-
-- [JavaScript Examples](examples/js/)
-
-## Development
-
-This is a monorepo managed with pnpm workspaces.
-
-### Setup
-
-```bash
-# Install pnpm if you haven't already
-npm install -g pnpm
-
-# Install dependencies
-pnpm install
-
-# Generate TypeScript types from OpenAPI spec
-pnpm generate:types
-
-# Build all SDKs
-pnpm build
-
-# Run tests
-pnpm test
-
-# Lint code
-pnpm lint
-```
-
-### Working on the JS SDK
-
-```bash
-cd js
-
-# Install dependencies
-pnpm install
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Build the SDK
-pnpm build
-
-# Type check
-pnpm type-check
+├─ js/                  # JavaScript/TypeScript SDK (@checkoutpage/sdk)
+├─ cli/                 # Checkout Page CLI (Rust)
+├─ postman/             # Postman collection and environment, generated from the spec
+├─ n8n/                 # n8n community nodes (n8n-nodes-checkoutpage)
+├─ zapier/              # Zapier integration (standalone npm project)
+├─ spec/
+│  └─ openapi.json      # Shared OpenAPI spec
+├─ examples/
+│  ├─ js/               # Examples, one directory per language or tool
+│  └─ n8n/
+├─ scripts/             # Shared tooling, such as type generation
+└─ .github/workflows/   # Test and publish workflows, one pair per language or tool
 ```
 
 ## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, the development
+flow and how to add a new language.
 
 ## Support
 
 - **Documentation**: https://docs.checkoutpage.com
-- **GitHub Issues**: https://github.com/checkout-page/checkoutpage-api-sdk/issues
+- **GitHub issues**: https://github.com/checkout-page/checkoutpage-api-sdk/issues
 - **Email**: support@checkoutpage.com
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License.

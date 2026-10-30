@@ -78,6 +78,7 @@ const DEFAULT_QUERY = {
   createdBefore: undefined,
   abandonmentStatus: undefined,
   isComplimentary: undefined,
+  archived: undefined,
   livemode: undefined,
   limit: undefined,
   starting_after: undefined,
@@ -487,6 +488,18 @@ describe('BookingResource', () => {
       expect(client.request).toHaveBeenCalledWith({
         method: 'GET',
         query: { ...DEFAULT_QUERY, isComplimentary: 'false' },
+        path: '/v1/bookings/',
+      });
+    });
+
+    it.each(['true', 'false'] as const)('should pass archived=%s', async (archived) => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [], total: 0, has_more: false });
+
+      await bookingResource.list({ archived });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        query: { ...DEFAULT_QUERY, archived },
         path: '/v1/bookings/',
       });
     });

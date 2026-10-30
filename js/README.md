@@ -127,6 +127,40 @@ const results = await checkoutpage.coupons.create({
 });
 ```
 
+Without `rules` a coupon discounts the whole order on every checkout page and event. `rules`
+limits it, one rule per checkout page or event, combined with OR:
+
+- Checkout pages: `wholeOrder`, `prices` (only when the customer buys one of `priceIds`, and
+  only that price is discounted) or `pricesAndBumps` (only when the customer buys one of
+  `priceIds` **and** one of `bumpProductIds`, and both are discounted).
+- Events: `wholeOrder`, `tickets` or `ticketsAndAddOns`, the same with `ticketTypeIds` and
+  add-ons.
+- An empty or missing `priceIds`, `ticketTypeIds` or `bumpProductIds` means all of them,
+  including ones added later. `priceIds` are the `id`s of the page's main product `prices`, not
+  Stripe price ids.
+
+```typescript
+const results = await checkoutpage.coupons.create({
+  type: 'percent',
+  label: 'Monthly plus workbook',
+  code: 'BUNDLE20',
+  percentOff: 20,
+  duration: 'once',
+  rules: [
+    {
+      pageId,
+      appliesTo: 'pricesAndBumps',
+      priceIds: [monthlyPriceId],
+      bumpProductIds: [workbookProductId],
+    },
+    { pageId: eventId, appliesTo: 'tickets', ticketTypeIds: [vipTicketTypeId] },
+  ],
+});
+```
+
+`pageIds` and `ticketTypeIds` are deprecated in favour of `rules`. They still work, but only
+without `rules`, and responses derive them from the rules.
+
 ### Subscriptions
 
 #### List subscriptions
@@ -480,6 +514,22 @@ await checkoutpage.checkoutPages.orderBumps.reorder('page_id', {
 await checkoutpage.checkoutPages.orderBumps.delete('page_id', bump.id);
 ```
 
+#### Show it only for some prices
+
+A price rule names prices of the page's product: with `is` the order bump shows
+while the chosen price is any of them, and with `is_not` while it is none of them.
+
+```typescript
+await checkoutpage.checkoutPages.orderBumps.update('page_id', bump.id, {
+  showHideLogic: {
+    enabled: true,
+    subject: 'price',
+    comparison: 'is',
+    priceIds: ['standard_price_id', 'deluxe_price_id'],
+  },
+});
+```
+
 #### Delete an order bump product
 
 Only order bump products that have never been bought can be deleted. A product
@@ -579,6 +629,52 @@ const { data: deleted } = await checkoutpage.themes.delete(themeId);
 A theme that any of your pages uses, archived ones included, or that is your store's default theme,
 can't be deleted and throws a `ConflictError`. Move those pages to another theme with `themeId`
 first.
+
+### Form layout
+
+`formLayout` arranges a page's form, top to bottom: fields, headings, dividers, the discount code
+box and groups that put up to 4 items side by side. Checkout pages, events and forms take it on
+`create` and `update`, and page responses always include it. On `create`, reference a field by
+`fieldKey`, the `key` you gave it in `fields` in the same request.
+
+```typescript
+import type { CreateFormLayout } from '@checkoutpage/sdk';
+
+const formLayout: CreateFormLayout = [
+  { type: 'heading', id: 'your-details', text: 'Your details', level: 'heading' },
+  {
+    type: 'group',
+    id: 'name-row',
+    columns: 2,
+    items: [
+      { type: 'field', fieldKey: 'first-name' },
+      { type: 'field', fieldKey: 'last-name' },
+    ],
+  },
+  { type: 'divider', id: 'divider-1' },
+  { type: 'discount-code' },
+];
+
+const { data: page } = await checkoutpage.checkoutPages.create({
+  name: 'Workshop',
+  productData: { title: 'Workshop', price: { amount: 4900, currency: 'usd' } },
+  fields: [
+    { label: 'Email', element: 'email', type: 'email', required: true },
+    { key: 'first-name', element: 'text', label: 'First name' },
+    { key: 'last-name', element: 'text', label: 'Last name' },
+  ],
+  showCouponCodeField: true,
+  formLayout,
+});
+```
+
+Responses and `update` reference fields by `fieldId` (the `FormLayout` type). `update` replaces the
+whole layout, so read `page.formLayout`, change it and send it back. Fields the layout leaves out
+are added after it. A `fieldKey` that matches no field, a field id that is not on the page, or a
+`discount-code` item on a form, throws a `ValidationError`. The `discount-code` item only places
+the box: `showCouponCodeField` switches it on, and a saved placement is returned while the box is
+off too. More item types may be added later: skip any type you do not recognise when reading, and
+send it back as you received it when updating.
 
 ### Webhooks
 
