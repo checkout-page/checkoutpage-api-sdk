@@ -1,0 +1,106 @@
+[
+  {
+    "name": "subscriptionId",
+    "type": "text",
+    "label": "Subscription ID"
+  },
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers"
+  },
+  {
+    "name": "pageId",
+    "type": "text",
+    "label": "Checkout page ID"
+  },
+  {
+    "name": "paymentStatus",
+    "type": "select",
+    "label": "Payment status",
+    "options": [
+      {
+        "label": "Succeeded",
+        "value": "succeeded"
+      },
+      {
+        "label": "Pending",
+        "value": "pending"
+      },
+      {
+        "label": "Failed",
+        "value": "failed"
+      },
+      {
+        "label": "Incomplete",
+        "value": "incomplete"
+      }
+    ]
+  },
+  {
+    "name": "paid",
+    "type": "boolean",
+    "label": "Paid"
+  },
+  {
+    "name": "refunded",
+    "type": "boolean",
+    "label": "Refunded"
+  },
+  {
+    "name": "billingReason",
+    "type": "select",
+    "label": "Billing reason",
+    "options": [
+      {
+        "label": "Manual",
+        "value": "manual"
+      },
+      {
+        "label": "Subscription created",
+        "value": "subscription_create"
+      },
+      {
+        "label": "Subscription cycle",
+        "value": "subscription_cycle"
+      },
+      {
+        "label": "Subscription threshold",
+        "value": "subscription_threshold"
+      },
+      {
+        "label": "Subscription updated",
+        "value": "subscription_update"
+      },
+      {
+        "label": "Upcoming",
+        "value": "upcoming"
+      }
+    ]
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the mode of the API key. Set to No to return test mode records."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "condition": "{{body.event != 'webhook.test' && (webhook.token == null || headers.`x-make-token` == webhook.token)}}",
+  "respond": {
+    "status": 200,
+    "type": "json",
+    "body": {
+      "received": true
+    }
+  },
+  "output": {
+    "event": "{{body.event}}",
+    "eventId": "{{body.eventId}}",
+    "timestamp": "{{body.timestamp}}",
+    "sellerId": "{{body.sellerId}}",
+    "subscription": "{{body.data.subscription}}",
+    "recoveryUrl": "{{body.data.recoveryUrl}}"
+  }
+}

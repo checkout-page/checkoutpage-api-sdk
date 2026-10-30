@@ -25,6 +25,10 @@ yarn-error.log*
 # dist/ and node_modules/ are covered above.
 n8n/*.tgz
 
+# --- Make (make/) ---
+make/.secrets/
+.secrets/
+
 # --- Rust (cli/) ---
 target/
 

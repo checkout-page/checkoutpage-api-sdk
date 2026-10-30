@@ -1,0 +1,30 @@
+{
+  "event": "submission.created",
+  "eventId": "text",
+  "timestamp": "2026-01-01T12:00:00.000Z",
+  "sellerId": "text",
+  "submission": {
+    "billing": null,
+    "clientIp": null,
+    "createdAt": "2026-01-01T12:00:00.000Z",
+    "customerEmail": null,
+    "customerId": null,
+    "customerName": null,
+    "fields": null,
+    "formTitle": null,
+    "id": "6812fe6e9f39b6760576f01c",
+    "livemode": null,
+    "locale": null,
+    "pageId": null,
+    "pageSlug": null,
+    "queryParameters": null,
+    "screenWidth": null,
+    "sellerId": null,
+    "sessionId": null,
+    "shipping": null,
+    "status": "succeeded",
+    "updatedAt": "2026-01-01T12:00:00.000Z",
+    "userAgent": null,
+    "visitId": null
+  }
+}

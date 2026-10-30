@@ -1,0 +1,28 @@
+{
+  "url": "/v1/subscription-payments/",
+  "method": "GET",
+  "qs": {
+    "limit": "100",
+    "subscriptionId": "{{parameters.subscriptionId}}",
+    "customerId": "{{parameters.customerId}}",
+    "pageId": "{{parameters.pageId}}",
+    "paymentStatus": "{{parameters.paymentStatus}}",
+    "paid": "{{toQueryBoolean(parameters.paid)}}",
+    "refunded": "{{toQueryBoolean(parameters.refunded)}}",
+    "billingReason": "{{parameters.billingReason}}",
+    "createdAfter": "{{toQueryDate(parameters.createdAfter)}}",
+    "createdBefore": "{{toQueryDate(parameters.createdBefore)}}",
+    "livemode": "{{toQueryBoolean(parameters.livemode)}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": "{{item}}",
+    "limit": "{{parameters.limit}}"
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}

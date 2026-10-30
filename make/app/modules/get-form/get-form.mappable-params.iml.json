@@ -1,0 +1,9 @@
+[
+  {
+    "name": "pageId",
+    "type": "select",
+    "label": "Form",
+    "options": "rpc://listForms",
+    "required": true
+  }
+]

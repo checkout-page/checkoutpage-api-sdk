@@ -1,0 +1,19 @@
+{
+  "url": "{{parameters.baseUrl}}/v1/account/",
+  "method": "GET",
+  "headers": {
+    "authorization": "Bearer {{parameters.apiKey}}"
+  },
+  "response": {
+    "metadata": {
+      "type": "text",
+      "value": "{{ifempty(body.displayName, ifempty(body.name, body.id))}}"
+    },
+    "error": {
+      "message": "[{{statusCode}}] {{ifempty(body.message, 'Could not connect to Checkout Page. Check the API key.')}}"
+    }
+  },
+  "log": {
+    "sanitize": ["request.headers.authorization"]
+  }
+}

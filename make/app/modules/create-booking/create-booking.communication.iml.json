@@ -1,0 +1,8 @@
+{
+  "url": "/v1/bookings/",
+  "method": "POST",
+  "body": "{{bookingBody(parameters)}}",
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

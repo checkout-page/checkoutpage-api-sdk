@@ -1,0 +1,26 @@
+[
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the customer name or email."
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

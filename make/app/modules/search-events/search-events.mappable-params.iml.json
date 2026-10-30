@@ -1,0 +1,41 @@
+[
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Published",
+        "value": "published"
+      },
+      {
+        "label": "Draft",
+        "value": "draft"
+      },
+      {
+        "label": "Archived",
+        "value": "archived"
+      }
+    ]
+  },
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the event name or title."
+  },
+  {
+    "name": "testmode",
+    "type": "boolean",
+    "label": "Test mode",
+    "help": "Set to Yes for only events in test mode, or No for only events not in test mode."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

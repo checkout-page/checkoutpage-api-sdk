@@ -1,0 +1,21 @@
+{
+  "amountOff": null,
+  "appliesToSetupFee": false,
+  "appliesToTicketFees": false,
+  "code": "10Off",
+  "createdAt": "2026-01-01T12:00:00.000Z",
+  "currency": "text",
+  "deleted": false,
+  "duration": "once",
+  "durationInMonths": 0,
+  "id": "text",
+  "label": "Free shipping within US",
+  "maxRedemptions": 0,
+  "percentOff": null,
+  "redeemBy": "2026-01-01T12:00:00.000Z",
+  "rules": [],
+  "sellerId": "text",
+  "stripeCouponId": "text",
+  "timesRedeemed": 0,
+  "updatedAt": "2026-01-01T12:00:00.000Z"
+}

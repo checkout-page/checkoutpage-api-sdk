@@ -1,0 +1,24 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": ["payment.created", "payment.paid", "payment.abandoned"],
+    "options": [
+      {
+        "label": "Payment created",
+        "value": "payment.created"
+      },
+      {
+        "label": "Payment paid",
+        "value": "payment.paid"
+      },
+      {
+        "label": "Payment abandoned",
+        "value": "payment.abandoned"
+      }
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "url": "/v1/subscription-payments/{{parameters.subscriptionPaymentId}}",
+  "method": "GET",
+  "qs": {
+    "livemode": "{{toQueryBoolean(parameters.livemode)}}"
+  },
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

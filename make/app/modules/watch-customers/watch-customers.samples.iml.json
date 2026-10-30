@@ -1,0 +1,40 @@
+{
+  "event": "customer.created",
+  "eventId": "text",
+  "timestamp": "2026-01-01T12:00:00.000Z",
+  "sellerId": "text",
+  "customer": {
+    "address": {
+      "city": "text",
+      "country": "text",
+      "line1": "text",
+      "line2": "text",
+      "postalCode": "text",
+      "state": "text"
+    },
+    "billingEmail": "text",
+    "companyName": "text",
+    "createdAt": "2026-01-01T12:00:00.000Z",
+    "email": "text",
+    "id": "text",
+    "name": "text",
+    "phone": "text",
+    "sellerId": "text",
+    "shipping": {
+      "address": {
+        "city": "text",
+        "country": "text",
+        "line1": "text",
+        "line2": "text",
+        "postalCode": "text",
+        "state": "text"
+      },
+      "name": "text",
+      "phone": "text"
+    },
+    "stripeCustomerId": "text",
+    "taxId": "text",
+    "taxIdType": "text",
+    "updatedAt": "2026-01-01T12:00:00.000Z"
+  }
+}

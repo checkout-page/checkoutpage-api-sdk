@@ -1,0 +1,24 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": ["booking.created", "booking.paid", "booking.abandoned"],
+    "options": [
+      {
+        "label": "Booking created",
+        "value": "booking.created"
+      },
+      {
+        "label": "Booking paid",
+        "value": "booking.paid"
+      },
+      {
+        "label": "Booking abandoned",
+        "value": "booking.abandoned"
+      }
+    ]
+  }
+]

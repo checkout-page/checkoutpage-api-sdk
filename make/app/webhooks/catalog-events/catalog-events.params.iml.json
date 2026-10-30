@@ -1,0 +1,33 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": [
+      "checkout_page.created",
+      "checkout_page.updated",
+      "product.created",
+      "product.updated"
+    ],
+    "options": [
+      {
+        "label": "Checkout page created",
+        "value": "checkout_page.created"
+      },
+      {
+        "label": "Checkout page updated",
+        "value": "checkout_page.updated"
+      },
+      {
+        "label": "Product created",
+        "value": "product.created"
+      },
+      {
+        "label": "Product updated",
+        "value": "product.updated"
+      }
+    ]
+  }
+]

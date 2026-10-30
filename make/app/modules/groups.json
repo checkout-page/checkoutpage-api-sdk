@@ -1,0 +1,57 @@
+[
+  {
+    "label": "Payments",
+    "modules": ["watchPayments", "searchPayments", "getPayment"]
+  },
+  {
+    "label": "Bookings and tickets",
+    "modules": [
+      "watchBookings",
+      "watchTickets",
+      "createBooking",
+      "searchBookings",
+      "searchTickets",
+      "getBooking"
+    ]
+  },
+  {
+    "label": "Subscriptions",
+    "modules": [
+      "watchSubscriptions",
+      "searchSubscriptions",
+      "searchSubscriptionPayments",
+      "getSubscription",
+      "getSubscriptionPayment"
+    ]
+  },
+  {
+    "label": "Submissions",
+    "modules": ["watchSubmissions", "searchSubmissions", "getSubmission"]
+  },
+  {
+    "label": "Customers",
+    "modules": ["watchCustomers", "updateCustomer", "searchCustomers", "getCustomer"]
+  },
+  {
+    "label": "Checkout pages, events and forms",
+    "modules": [
+      "watchPagesAndProducts",
+      "searchCheckoutPages",
+      "searchEvents",
+      "searchForms",
+      "searchProducts",
+      "getCheckoutPage",
+      "getEvent",
+      "getForm",
+      "getProduct"
+    ]
+  },
+  {
+    "label": "Coupons and invoices",
+    "modules": ["createCoupon", "searchCoupons", "searchInvoices", "getInvoice"]
+  },
+  {
+    "label": "Other",
+    "modules": ["makeApiCall"]
+  }
+]

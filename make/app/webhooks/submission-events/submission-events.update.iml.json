@@ -1,0 +1,7 @@
+{
+  "url": "/v1/webhooks/{{webhook.externalHookId}}",
+  "method": "PATCH",
+  "body": {
+    "events": "{{parameters.events}}"
+  }
+}

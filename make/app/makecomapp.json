@@ -1,0 +1,706 @@
+{
+  "fileVersion": 1,
+  "generalCodeFiles": {
+    "base": "general/base.iml.json",
+    "common": "general/common.json",
+    "readme": "README.md",
+    "groups": "modules/groups.json"
+  },
+  "components": {
+    "connection": {
+      "checkoutPage": {
+        "label": "Checkout Page",
+        "connectionType": "basic",
+        "codeFiles": {
+          "communication": "connections/checkout-page/checkout-page.communication.iml.json",
+          "params": "connections/checkout-page/checkout-page.params.iml.json",
+          "common": "connections/checkout-page/checkout-page.common.json"
+        }
+      }
+    },
+    "webhook": {
+      "paymentEvents": {
+        "label": "Payment events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/payment-events/payment-events.communication.iml.json",
+          "params": "webhooks/payment-events/payment-events.params.iml.json",
+          "attach": "webhooks/payment-events/payment-events.attach.iml.json",
+          "detach": "webhooks/payment-events/payment-events.detach.iml.json",
+          "update": "webhooks/payment-events/payment-events.update.iml.json"
+        }
+      },
+      "bookingEvents": {
+        "label": "Booking events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/booking-events/booking-events.communication.iml.json",
+          "params": "webhooks/booking-events/booking-events.params.iml.json",
+          "attach": "webhooks/booking-events/booking-events.attach.iml.json",
+          "detach": "webhooks/booking-events/booking-events.detach.iml.json",
+          "update": "webhooks/booking-events/booking-events.update.iml.json"
+        }
+      },
+      "ticketEvents": {
+        "label": "Ticket events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/ticket-events/ticket-events.communication.iml.json",
+          "params": "webhooks/ticket-events/ticket-events.params.iml.json",
+          "attach": "webhooks/ticket-events/ticket-events.attach.iml.json",
+          "detach": "webhooks/ticket-events/ticket-events.detach.iml.json",
+          "update": "webhooks/ticket-events/ticket-events.update.iml.json"
+        }
+      },
+      "subscriptionEvents": {
+        "label": "Subscription events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/subscription-events/subscription-events.communication.iml.json",
+          "params": "webhooks/subscription-events/subscription-events.params.iml.json",
+          "attach": "webhooks/subscription-events/subscription-events.attach.iml.json",
+          "detach": "webhooks/subscription-events/subscription-events.detach.iml.json",
+          "update": "webhooks/subscription-events/subscription-events.update.iml.json"
+        }
+      },
+      "submissionEvents": {
+        "label": "Submission events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/submission-events/submission-events.communication.iml.json",
+          "params": "webhooks/submission-events/submission-events.params.iml.json",
+          "attach": "webhooks/submission-events/submission-events.attach.iml.json",
+          "detach": "webhooks/submission-events/submission-events.detach.iml.json",
+          "update": "webhooks/submission-events/submission-events.update.iml.json"
+        }
+      },
+      "customerEvents": {
+        "label": "Customer events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/customer-events/customer-events.communication.iml.json",
+          "params": "webhooks/customer-events/customer-events.params.iml.json",
+          "attach": "webhooks/customer-events/customer-events.attach.iml.json",
+          "detach": "webhooks/customer-events/customer-events.detach.iml.json",
+          "update": "webhooks/customer-events/customer-events.update.iml.json"
+        }
+      },
+      "catalogEvents": {
+        "label": "Checkout page and product events",
+        "webhookType": "web",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "webhooks/catalog-events/catalog-events.communication.iml.json",
+          "params": "webhooks/catalog-events/catalog-events.params.iml.json",
+          "attach": "webhooks/catalog-events/catalog-events.attach.iml.json",
+          "detach": "webhooks/catalog-events/catalog-events.detach.iml.json",
+          "update": "webhooks/catalog-events/catalog-events.update.iml.json"
+        }
+      }
+    },
+    "module": {
+      "watchPayments": {
+        "label": "Watch payments",
+        "description": "Triggers when a payment is created, paid or abandoned.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "paymentEvents",
+        "codeFiles": {
+          "communication": "modules/watch-payments/watch-payments.communication.iml.json",
+          "staticParams": "modules/watch-payments/watch-payments.static-params.iml.json",
+          "interface": "modules/watch-payments/watch-payments.interface.iml.json",
+          "samples": "modules/watch-payments/watch-payments.samples.iml.json"
+        }
+      },
+      "watchBookings": {
+        "label": "Watch bookings",
+        "description": "Triggers when an event booking is created, paid or abandoned.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "bookingEvents",
+        "codeFiles": {
+          "communication": "modules/watch-bookings/watch-bookings.communication.iml.json",
+          "staticParams": "modules/watch-bookings/watch-bookings.static-params.iml.json",
+          "interface": "modules/watch-bookings/watch-bookings.interface.iml.json",
+          "samples": "modules/watch-bookings/watch-bookings.samples.iml.json"
+        }
+      },
+      "watchTickets": {
+        "label": "Watch tickets",
+        "description": "Triggers when a ticket is created for an event.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "ticketEvents",
+        "codeFiles": {
+          "communication": "modules/watch-tickets/watch-tickets.communication.iml.json",
+          "staticParams": "modules/watch-tickets/watch-tickets.static-params.iml.json",
+          "interface": "modules/watch-tickets/watch-tickets.interface.iml.json",
+          "samples": "modules/watch-tickets/watch-tickets.samples.iml.json"
+        }
+      },
+      "watchSubscriptions": {
+        "label": "Watch subscriptions",
+        "description": "Triggers when a subscription is created or changes status.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "subscriptionEvents",
+        "codeFiles": {
+          "communication": "modules/watch-subscriptions/watch-subscriptions.communication.iml.json",
+          "staticParams": "modules/watch-subscriptions/watch-subscriptions.static-params.iml.json",
+          "interface": "modules/watch-subscriptions/watch-subscriptions.interface.iml.json",
+          "samples": "modules/watch-subscriptions/watch-subscriptions.samples.iml.json"
+        }
+      },
+      "watchSubmissions": {
+        "label": "Watch submissions",
+        "description": "Triggers when a form submission is created or updated.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "submissionEvents",
+        "codeFiles": {
+          "communication": "modules/watch-submissions/watch-submissions.communication.iml.json",
+          "staticParams": "modules/watch-submissions/watch-submissions.static-params.iml.json",
+          "interface": "modules/watch-submissions/watch-submissions.interface.iml.json",
+          "samples": "modules/watch-submissions/watch-submissions.samples.iml.json"
+        }
+      },
+      "watchCustomers": {
+        "label": "Watch customers",
+        "description": "Triggers when a customer is created or updated.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "customerEvents",
+        "codeFiles": {
+          "communication": "modules/watch-customers/watch-customers.communication.iml.json",
+          "staticParams": "modules/watch-customers/watch-customers.static-params.iml.json",
+          "interface": "modules/watch-customers/watch-customers.interface.iml.json",
+          "samples": "modules/watch-customers/watch-customers.samples.iml.json"
+        }
+      },
+      "watchPagesAndProducts": {
+        "label": "Watch checkout pages and products",
+        "description": "Triggers when a checkout page or product is created or updated.",
+        "moduleType": "instant_trigger",
+        "connection": "checkoutPage",
+        "webhook": "catalogEvents",
+        "codeFiles": {
+          "communication": "modules/watch-pages-and-products/watch-pages-and-products.communication.iml.json",
+          "staticParams": "modules/watch-pages-and-products/watch-pages-and-products.static-params.iml.json",
+          "interface": "modules/watch-pages-and-products/watch-pages-and-products.interface.iml.json",
+          "samples": "modules/watch-pages-and-products/watch-pages-and-products.samples.iml.json"
+        }
+      },
+      "searchPayments": {
+        "label": "Search payments",
+        "description": "Returns payments that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-payments/search-payments.communication.iml.json",
+          "staticParams": "modules/search-payments/search-payments.static-params.iml.json",
+          "mappableParams": "modules/search-payments/search-payments.mappable-params.iml.json",
+          "interface": "modules/search-payments/search-payments.interface.iml.json",
+          "samples": "modules/search-payments/search-payments.samples.iml.json",
+          "scope": "modules/search-payments/search-payments.scope.iml.json"
+        }
+      },
+      "searchBookings": {
+        "label": "Search bookings",
+        "description": "Returns event bookings that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-bookings/search-bookings.communication.iml.json",
+          "staticParams": "modules/search-bookings/search-bookings.static-params.iml.json",
+          "mappableParams": "modules/search-bookings/search-bookings.mappable-params.iml.json",
+          "interface": "modules/search-bookings/search-bookings.interface.iml.json",
+          "samples": "modules/search-bookings/search-bookings.samples.iml.json",
+          "scope": "modules/search-bookings/search-bookings.scope.iml.json"
+        }
+      },
+      "searchSubscriptions": {
+        "label": "Search subscriptions",
+        "description": "Returns subscriptions that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-subscriptions/search-subscriptions.communication.iml.json",
+          "staticParams": "modules/search-subscriptions/search-subscriptions.static-params.iml.json",
+          "mappableParams": "modules/search-subscriptions/search-subscriptions.mappable-params.iml.json",
+          "interface": "modules/search-subscriptions/search-subscriptions.interface.iml.json",
+          "samples": "modules/search-subscriptions/search-subscriptions.samples.iml.json",
+          "scope": "modules/search-subscriptions/search-subscriptions.scope.iml.json"
+        }
+      },
+      "searchSubscriptionPayments": {
+        "label": "Search subscription payments",
+        "description": "Returns subscription payments that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-subscription-payments/search-subscription-payments.communication.iml.json",
+          "staticParams": "modules/search-subscription-payments/search-subscription-payments.static-params.iml.json",
+          "mappableParams": "modules/search-subscription-payments/search-subscription-payments.mappable-params.iml.json",
+          "interface": "modules/search-subscription-payments/search-subscription-payments.interface.iml.json",
+          "samples": "modules/search-subscription-payments/search-subscription-payments.samples.iml.json",
+          "scope": "modules/search-subscription-payments/search-subscription-payments.scope.iml.json"
+        }
+      },
+      "searchSubmissions": {
+        "label": "Search submissions",
+        "description": "Returns form submissions that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-submissions/search-submissions.communication.iml.json",
+          "staticParams": "modules/search-submissions/search-submissions.static-params.iml.json",
+          "mappableParams": "modules/search-submissions/search-submissions.mappable-params.iml.json",
+          "interface": "modules/search-submissions/search-submissions.interface.iml.json",
+          "samples": "modules/search-submissions/search-submissions.samples.iml.json",
+          "scope": "modules/search-submissions/search-submissions.scope.iml.json"
+        }
+      },
+      "searchCustomers": {
+        "label": "Search customers",
+        "description": "Returns customers that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-customers/search-customers.communication.iml.json",
+          "staticParams": "modules/search-customers/search-customers.static-params.iml.json",
+          "mappableParams": "modules/search-customers/search-customers.mappable-params.iml.json",
+          "interface": "modules/search-customers/search-customers.interface.iml.json",
+          "samples": "modules/search-customers/search-customers.samples.iml.json",
+          "scope": "modules/search-customers/search-customers.scope.iml.json"
+        }
+      },
+      "searchCheckoutPages": {
+        "label": "Search checkout pages",
+        "description": "Returns checkout pages that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-checkout-pages/search-checkout-pages.communication.iml.json",
+          "staticParams": "modules/search-checkout-pages/search-checkout-pages.static-params.iml.json",
+          "mappableParams": "modules/search-checkout-pages/search-checkout-pages.mappable-params.iml.json",
+          "interface": "modules/search-checkout-pages/search-checkout-pages.interface.iml.json",
+          "samples": "modules/search-checkout-pages/search-checkout-pages.samples.iml.json",
+          "scope": "modules/search-checkout-pages/search-checkout-pages.scope.iml.json"
+        }
+      },
+      "searchEvents": {
+        "label": "Search events",
+        "description": "Returns events that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-events/search-events.communication.iml.json",
+          "staticParams": "modules/search-events/search-events.static-params.iml.json",
+          "mappableParams": "modules/search-events/search-events.mappable-params.iml.json",
+          "interface": "modules/search-events/search-events.interface.iml.json",
+          "samples": "modules/search-events/search-events.samples.iml.json",
+          "scope": "modules/search-events/search-events.scope.iml.json"
+        }
+      },
+      "searchForms": {
+        "label": "Search forms",
+        "description": "Returns forms that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-forms/search-forms.communication.iml.json",
+          "staticParams": "modules/search-forms/search-forms.static-params.iml.json",
+          "mappableParams": "modules/search-forms/search-forms.mappable-params.iml.json",
+          "interface": "modules/search-forms/search-forms.interface.iml.json",
+          "samples": "modules/search-forms/search-forms.samples.iml.json",
+          "scope": "modules/search-forms/search-forms.scope.iml.json"
+        }
+      },
+      "searchProducts": {
+        "label": "Search products",
+        "description": "Returns products that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-products/search-products.communication.iml.json",
+          "staticParams": "modules/search-products/search-products.static-params.iml.json",
+          "mappableParams": "modules/search-products/search-products.mappable-params.iml.json",
+          "interface": "modules/search-products/search-products.interface.iml.json",
+          "samples": "modules/search-products/search-products.samples.iml.json",
+          "scope": "modules/search-products/search-products.scope.iml.json"
+        }
+      },
+      "searchCoupons": {
+        "label": "Search coupons",
+        "description": "Returns coupons that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-coupons/search-coupons.communication.iml.json",
+          "staticParams": "modules/search-coupons/search-coupons.static-params.iml.json",
+          "mappableParams": "modules/search-coupons/search-coupons.mappable-params.iml.json",
+          "interface": "modules/search-coupons/search-coupons.interface.iml.json",
+          "samples": "modules/search-coupons/search-coupons.samples.iml.json",
+          "scope": "modules/search-coupons/search-coupons.scope.iml.json"
+        }
+      },
+      "searchTickets": {
+        "label": "Search tickets",
+        "description": "Returns event tickets that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-tickets/search-tickets.communication.iml.json",
+          "staticParams": "modules/search-tickets/search-tickets.static-params.iml.json",
+          "mappableParams": "modules/search-tickets/search-tickets.mappable-params.iml.json",
+          "interface": "modules/search-tickets/search-tickets.interface.iml.json",
+          "samples": "modules/search-tickets/search-tickets.samples.iml.json",
+          "scope": "modules/search-tickets/search-tickets.scope.iml.json"
+        }
+      },
+      "searchInvoices": {
+        "label": "Search invoices",
+        "description": "Returns invoices that match the filters.",
+        "moduleType": "search",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/search-invoices/search-invoices.communication.iml.json",
+          "staticParams": "modules/search-invoices/search-invoices.static-params.iml.json",
+          "mappableParams": "modules/search-invoices/search-invoices.mappable-params.iml.json",
+          "interface": "modules/search-invoices/search-invoices.interface.iml.json",
+          "samples": "modules/search-invoices/search-invoices.samples.iml.json",
+          "scope": "modules/search-invoices/search-invoices.scope.iml.json"
+        }
+      },
+      "getPayment": {
+        "label": "Get a payment",
+        "description": "Returns one payment by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-payment/get-payment.communication.iml.json",
+          "staticParams": "modules/get-payment/get-payment.static-params.iml.json",
+          "mappableParams": "modules/get-payment/get-payment.mappable-params.iml.json",
+          "interface": "modules/get-payment/get-payment.interface.iml.json",
+          "samples": "modules/get-payment/get-payment.samples.iml.json",
+          "scope": "modules/get-payment/get-payment.scope.iml.json"
+        }
+      },
+      "getBooking": {
+        "label": "Get a booking",
+        "description": "Returns one event booking by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-booking/get-booking.communication.iml.json",
+          "staticParams": "modules/get-booking/get-booking.static-params.iml.json",
+          "mappableParams": "modules/get-booking/get-booking.mappable-params.iml.json",
+          "interface": "modules/get-booking/get-booking.interface.iml.json",
+          "samples": "modules/get-booking/get-booking.samples.iml.json",
+          "scope": "modules/get-booking/get-booking.scope.iml.json"
+        }
+      },
+      "getSubscription": {
+        "label": "Get a subscription",
+        "description": "Returns one subscription by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-subscription/get-subscription.communication.iml.json",
+          "staticParams": "modules/get-subscription/get-subscription.static-params.iml.json",
+          "mappableParams": "modules/get-subscription/get-subscription.mappable-params.iml.json",
+          "interface": "modules/get-subscription/get-subscription.interface.iml.json",
+          "samples": "modules/get-subscription/get-subscription.samples.iml.json",
+          "scope": "modules/get-subscription/get-subscription.scope.iml.json"
+        }
+      },
+      "getSubscriptionPayment": {
+        "label": "Get a subscription payment",
+        "description": "Returns one subscription payment by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-subscription-payment/get-subscription-payment.communication.iml.json",
+          "staticParams": "modules/get-subscription-payment/get-subscription-payment.static-params.iml.json",
+          "mappableParams": "modules/get-subscription-payment/get-subscription-payment.mappable-params.iml.json",
+          "interface": "modules/get-subscription-payment/get-subscription-payment.interface.iml.json",
+          "samples": "modules/get-subscription-payment/get-subscription-payment.samples.iml.json",
+          "scope": "modules/get-subscription-payment/get-subscription-payment.scope.iml.json"
+        }
+      },
+      "getSubmission": {
+        "label": "Get a submission",
+        "description": "Returns one form submission by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-submission/get-submission.communication.iml.json",
+          "staticParams": "modules/get-submission/get-submission.static-params.iml.json",
+          "mappableParams": "modules/get-submission/get-submission.mappable-params.iml.json",
+          "interface": "modules/get-submission/get-submission.interface.iml.json",
+          "samples": "modules/get-submission/get-submission.samples.iml.json",
+          "scope": "modules/get-submission/get-submission.scope.iml.json"
+        }
+      },
+      "getInvoice": {
+        "label": "Get an invoice",
+        "description": "Returns one invoice by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-invoice/get-invoice.communication.iml.json",
+          "staticParams": "modules/get-invoice/get-invoice.static-params.iml.json",
+          "mappableParams": "modules/get-invoice/get-invoice.mappable-params.iml.json",
+          "interface": "modules/get-invoice/get-invoice.interface.iml.json",
+          "samples": "modules/get-invoice/get-invoice.samples.iml.json",
+          "scope": "modules/get-invoice/get-invoice.scope.iml.json"
+        }
+      },
+      "getCustomer": {
+        "label": "Get a customer",
+        "description": "Returns one customer by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-customer/get-customer.communication.iml.json",
+          "staticParams": "modules/get-customer/get-customer.static-params.iml.json",
+          "mappableParams": "modules/get-customer/get-customer.mappable-params.iml.json",
+          "interface": "modules/get-customer/get-customer.interface.iml.json",
+          "samples": "modules/get-customer/get-customer.samples.iml.json",
+          "scope": "modules/get-customer/get-customer.scope.iml.json"
+        }
+      },
+      "getCheckoutPage": {
+        "label": "Get a checkout page",
+        "description": "Returns one checkout page by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-checkout-page/get-checkout-page.communication.iml.json",
+          "staticParams": "modules/get-checkout-page/get-checkout-page.static-params.iml.json",
+          "mappableParams": "modules/get-checkout-page/get-checkout-page.mappable-params.iml.json",
+          "interface": "modules/get-checkout-page/get-checkout-page.interface.iml.json",
+          "samples": "modules/get-checkout-page/get-checkout-page.samples.iml.json",
+          "scope": "modules/get-checkout-page/get-checkout-page.scope.iml.json"
+        }
+      },
+      "getEvent": {
+        "label": "Get an event",
+        "description": "Returns one event by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-event/get-event.communication.iml.json",
+          "staticParams": "modules/get-event/get-event.static-params.iml.json",
+          "mappableParams": "modules/get-event/get-event.mappable-params.iml.json",
+          "interface": "modules/get-event/get-event.interface.iml.json",
+          "samples": "modules/get-event/get-event.samples.iml.json",
+          "scope": "modules/get-event/get-event.scope.iml.json"
+        }
+      },
+      "getForm": {
+        "label": "Get a form",
+        "description": "Returns one form by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-form/get-form.communication.iml.json",
+          "staticParams": "modules/get-form/get-form.static-params.iml.json",
+          "mappableParams": "modules/get-form/get-form.mappable-params.iml.json",
+          "interface": "modules/get-form/get-form.interface.iml.json",
+          "samples": "modules/get-form/get-form.samples.iml.json",
+          "scope": "modules/get-form/get-form.scope.iml.json"
+        }
+      },
+      "getProduct": {
+        "label": "Get a product",
+        "description": "Returns one product by its ID.",
+        "moduleType": "action",
+        "actionCrud": "read",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/get-product/get-product.communication.iml.json",
+          "staticParams": "modules/get-product/get-product.static-params.iml.json",
+          "mappableParams": "modules/get-product/get-product.mappable-params.iml.json",
+          "interface": "modules/get-product/get-product.interface.iml.json",
+          "samples": "modules/get-product/get-product.samples.iml.json",
+          "scope": "modules/get-product/get-product.scope.iml.json"
+        }
+      },
+      "createBooking": {
+        "label": "Create a booking",
+        "description": "Adds an attendee to an event, recorded as complimentary or to be paid by invoice or on arrival.",
+        "moduleType": "action",
+        "actionCrud": "create",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/create-booking/create-booking.communication.iml.json",
+          "staticParams": "modules/create-booking/create-booking.static-params.iml.json",
+          "mappableParams": "modules/create-booking/create-booking.mappable-params.iml.json",
+          "interface": "modules/create-booking/create-booking.interface.iml.json",
+          "samples": "modules/create-booking/create-booking.samples.iml.json",
+          "scope": "modules/create-booking/create-booking.scope.iml.json"
+        }
+      },
+      "createCoupon": {
+        "label": "Create a coupon",
+        "description": "Creates a coupon for checkout pages and events.",
+        "moduleType": "action",
+        "actionCrud": "create",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/create-coupon/create-coupon.communication.iml.json",
+          "staticParams": "modules/create-coupon/create-coupon.static-params.iml.json",
+          "mappableParams": "modules/create-coupon/create-coupon.mappable-params.iml.json",
+          "interface": "modules/create-coupon/create-coupon.interface.iml.json",
+          "samples": "modules/create-coupon/create-coupon.samples.iml.json",
+          "scope": "modules/create-coupon/create-coupon.scope.iml.json"
+        }
+      },
+      "updateCustomer": {
+        "label": "Update a customer",
+        "description": "Changes a customer's details. Empty fields are left as they are.",
+        "moduleType": "action",
+        "actionCrud": "update",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/update-customer/update-customer.communication.iml.json",
+          "staticParams": "modules/update-customer/update-customer.static-params.iml.json",
+          "mappableParams": "modules/update-customer/update-customer.mappable-params.iml.json",
+          "interface": "modules/update-customer/update-customer.interface.iml.json",
+          "samples": "modules/update-customer/update-customer.samples.iml.json",
+          "scope": "modules/update-customer/update-customer.scope.iml.json"
+        }
+      },
+      "makeApiCall": {
+        "label": "Make an API call",
+        "description": "Performs an arbitrary authorized API call.",
+        "moduleType": "universal",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "modules/make-api-call/make-api-call.communication.iml.json",
+          "staticParams": "modules/make-api-call/make-api-call.static-params.iml.json",
+          "mappableParams": "modules/make-api-call/make-api-call.mappable-params.iml.json",
+          "interface": "modules/make-api-call/make-api-call.interface.iml.json",
+          "samples": "modules/make-api-call/make-api-call.samples.iml.json",
+          "scope": "modules/make-api-call/make-api-call.scope.iml.json"
+        }
+      }
+    },
+    "rpc": {
+      "listEvents": {
+        "label": "List events",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-events/list-events.communication.iml.json",
+          "params": "rpcs/list-events/list-events.params.iml.json"
+        }
+      },
+      "listCheckoutPages": {
+        "label": "List checkout pages",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-checkout-pages/list-checkout-pages.communication.iml.json",
+          "params": "rpcs/list-checkout-pages/list-checkout-pages.params.iml.json"
+        }
+      },
+      "listForms": {
+        "label": "List forms",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-forms/list-forms.communication.iml.json",
+          "params": "rpcs/list-forms/list-forms.params.iml.json"
+        }
+      },
+      "listCustomers": {
+        "label": "List customers",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-customers/list-customers.communication.iml.json",
+          "params": "rpcs/list-customers/list-customers.params.iml.json"
+        }
+      },
+      "listProducts": {
+        "label": "List products",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-products/list-products.communication.iml.json",
+          "params": "rpcs/list-products/list-products.params.iml.json"
+        }
+      },
+      "listCoupons": {
+        "label": "List coupons",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-coupons/list-coupons.communication.iml.json",
+          "params": "rpcs/list-coupons/list-coupons.params.iml.json"
+        }
+      },
+      "listTicketTypes": {
+        "label": "List ticket types",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-ticket-types/list-ticket-types.communication.iml.json",
+          "params": "rpcs/list-ticket-types/list-ticket-types.params.iml.json"
+        }
+      },
+      "listEventFields": {
+        "label": "List event fields",
+        "connection": "checkoutPage",
+        "codeFiles": {
+          "communication": "rpcs/list-event-fields/list-event-fields.communication.iml.json",
+          "params": "rpcs/list-event-fields/list-event-fields.params.iml.json"
+        }
+      }
+    },
+    "function": {
+      "toQueryBoolean": {
+        "codeFiles": {
+          "code": "functions/to-query-boolean/to-query-boolean.code.js",
+          "test": "functions/to-query-boolean/to-query-boolean.test.js"
+        }
+      },
+      "toQueryDate": {
+        "codeFiles": {
+          "code": "functions/to-query-date/to-query-date.code.js",
+          "test": "functions/to-query-date/to-query-date.test.js"
+        }
+      },
+      "bookingBody": {
+        "codeFiles": {
+          "code": "functions/booking-body/booking-body.code.js",
+          "test": "functions/booking-body/booking-body.test.js"
+        }
+      },
+      "couponBody": {
+        "codeFiles": {
+          "code": "functions/coupon-body/coupon-body.code.js",
+          "test": "functions/coupon-body/coupon-body.test.js"
+        }
+      },
+      "customerBody": {
+        "codeFiles": {
+          "code": "functions/customer-body/customer-body.code.js",
+          "test": "functions/customer-body/customer-body.test.js"
+        }
+      }
+    }
+  },
+  "origins": []
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": ["submission.created", "submission.updated"],
+    "options": [
+      {
+        "label": "Submission created",
+        "value": "submission.created"
+      },
+      {
+        "label": "Submission updated",
+        "value": "submission.updated"
+      }
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "url": "/v1/events/{{parameters.pageId}}",
+  "method": "GET",
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "name": "events",
+    "type": "select",
+    "label": "Events",
+    "required": true,
+    "multiple": true,
+    "default": [
+      "subscription.created",
+      "subscription.trialing",
+      "subscription.scheduled",
+      "subscription.active",
+      "subscription.completed",
+      "subscription.canceled",
+      "subscription.expired",
+      "subscription.abandoned"
+    ],
+    "options": [
+      {
+        "label": "Subscription created",
+        "value": "subscription.created"
+      },
+      {
+        "label": "Subscription trialing",
+        "value": "subscription.trialing"
+      },
+      {
+        "label": "Subscription scheduled",
+        "value": "subscription.scheduled"
+      },
+      {
+        "label": "Subscription active",
+        "value": "subscription.active"
+      },
+      {
+        "label": "Subscription completed",
+        "value": "subscription.completed"
+      },
+      {
+        "label": "Subscription canceled",
+        "value": "subscription.canceled"
+      },
+      {
+        "label": "Subscription expired",
+        "value": "subscription.expired"
+      },
+      {
+        "label": "Subscription abandoned",
+        "value": "subscription.abandoned"
+      }
+    ]
+  }
+]

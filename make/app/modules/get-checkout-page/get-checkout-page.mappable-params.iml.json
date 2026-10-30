@@ -1,0 +1,9 @@
+[
+  {
+    "name": "pageId",
+    "type": "select",
+    "label": "Checkout page",
+    "options": "rpc://listCheckoutPages",
+    "required": true
+  }
+]

@@ -1,0 +1,775 @@
+[
+  {
+    "name": "callToActionText",
+    "type": "text",
+    "label": "Call to action text"
+  },
+  {
+    "name": "calloutIcon",
+    "type": "text",
+    "label": "Callout icon"
+  },
+  {
+    "name": "calloutText",
+    "type": "text",
+    "label": "Callout text"
+  },
+  {
+    "name": "createdAt",
+    "type": "text",
+    "label": "Created at"
+  },
+  {
+    "name": "defaultPriceId",
+    "type": "text",
+    "label": "Default price ID"
+  },
+  {
+    "name": "description",
+    "type": "text",
+    "label": "Description"
+  },
+  {
+    "name": "discounts",
+    "type": "array",
+    "label": "Discounts",
+    "spec": [
+      {
+        "name": "amountOff",
+        "type": "number",
+        "label": "Amount off"
+      },
+      {
+        "name": "maxQuantity",
+        "type": "number",
+        "label": "Max quantity"
+      },
+      {
+        "name": "minQuantity",
+        "type": "number",
+        "label": "Min quantity"
+      },
+      {
+        "name": "percentOff",
+        "type": "number",
+        "label": "Percent off"
+      },
+      {
+        "name": "quantityCondition",
+        "type": "text",
+        "label": "Quantity condition"
+      },
+      {
+        "name": "variantOptionIds",
+        "type": "array",
+        "label": "Variant option ids",
+        "spec": {
+          "type": "text"
+        }
+      }
+    ]
+  },
+  {
+    "name": "enableFileAccessForInactiveSubscriptions",
+    "type": "boolean",
+    "label": "Enable file access for inactive subscriptions"
+  },
+  {
+    "name": "features",
+    "type": "array",
+    "label": "Features",
+    "spec": [
+      {
+        "name": "icon",
+        "type": "text",
+        "label": "Icon"
+      },
+      {
+        "name": "text",
+        "type": "text",
+        "label": "Text"
+      }
+    ]
+  },
+  {
+    "name": "fileIds",
+    "type": "array",
+    "label": "File ids",
+    "spec": {
+      "type": "text"
+    }
+  },
+  {
+    "name": "fixedTaxRateIds",
+    "type": "array",
+    "label": "Fixed tax rate ids",
+    "spec": {
+      "type": "text"
+    }
+  },
+  {
+    "name": "generateLicenseKeys",
+    "type": "boolean",
+    "label": "Generate license keys"
+  },
+  {
+    "name": "hasUnlimitedStock",
+    "type": "boolean",
+    "label": "Has unlimited stock"
+  },
+  {
+    "name": "headingText",
+    "type": "text",
+    "label": "Heading text"
+  },
+  {
+    "name": "id",
+    "type": "text",
+    "label": "ID"
+  },
+  {
+    "name": "limitPayments",
+    "type": "collection",
+    "label": "Limit payments",
+    "spec": [
+      {
+        "name": "enabled",
+        "type": "boolean",
+        "label": "Enabled"
+      },
+      {
+        "name": "enabledAt",
+        "type": "text",
+        "label": "Enabled at"
+      }
+    ]
+  },
+  {
+    "name": "limitSubscriptions",
+    "type": "collection",
+    "label": "Limit subscriptions",
+    "spec": [
+      {
+        "name": "enabled",
+        "type": "boolean",
+        "label": "Enabled"
+      },
+      {
+        "name": "limitSubscriptionsStripe",
+        "type": "collection",
+        "label": "Limit subscriptions stripe",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "media",
+    "type": "array",
+    "label": "Media",
+    "spec": [
+      {
+        "name": "fileId",
+        "type": "text",
+        "label": "File ID"
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "label": "Height"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "label": "Size"
+      },
+      {
+        "name": "url",
+        "type": "url",
+        "label": "URL"
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "label": "Width"
+      }
+    ]
+  },
+  {
+    "name": "pricePicker",
+    "type": "collection",
+    "label": "Price picker",
+    "spec": [
+      {
+        "name": "description",
+        "type": "text",
+        "label": "Description"
+      },
+      {
+        "name": "priceDisplayDefaults",
+        "type": "collection",
+        "label": "Price display defaults"
+      },
+      {
+        "name": "priceDisplayLabels",
+        "type": "collection",
+        "label": "Price display labels"
+      },
+      {
+        "name": "priceDisplayTabOrder",
+        "type": "collection",
+        "label": "Price display tab order"
+      },
+      {
+        "name": "shortenDescription",
+        "type": "boolean",
+        "label": "Shorten description"
+      },
+      {
+        "name": "title",
+        "type": "text",
+        "label": "Title"
+      }
+    ]
+  },
+  {
+    "name": "prices",
+    "type": "array",
+    "label": "Prices",
+    "spec": [
+      {
+        "name": "amount",
+        "type": "number",
+        "label": "Amount"
+      },
+      {
+        "name": "badge",
+        "type": "text",
+        "label": "Badge"
+      },
+      {
+        "name": "badgeIcon",
+        "type": "text",
+        "label": "Badge icon"
+      },
+      {
+        "name": "billingType",
+        "type": "text",
+        "label": "Billing type"
+      },
+      {
+        "name": "currency",
+        "type": "text",
+        "label": "Currency"
+      },
+      {
+        "name": "discountedFromPrice",
+        "type": "number",
+        "label": "Discounted from price"
+      },
+      {
+        "name": "enabled",
+        "type": "boolean",
+        "label": "Enabled"
+      },
+      {
+        "name": "hidden",
+        "type": "boolean",
+        "label": "Hidden"
+      },
+      {
+        "name": "id",
+        "type": "text",
+        "label": "ID"
+      },
+      {
+        "name": "isDefault",
+        "type": "boolean",
+        "label": "Is default"
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "label": "Label"
+      },
+      {
+        "name": "order",
+        "type": "number",
+        "label": "Order"
+      },
+      {
+        "name": "payWhatYouWant",
+        "type": "boolean",
+        "label": "Pay what you want"
+      },
+      {
+        "name": "paymentPlan",
+        "type": "collection",
+        "label": "Payment plan",
+        "spec": [
+          {
+            "name": "billingCycleAnchorConfig",
+            "type": "collection",
+            "label": "Billing cycle anchor config",
+            "spec": [
+              {
+                "name": "dayOfMonth",
+                "type": "number",
+                "label": "Day of month"
+              },
+              {
+                "name": "enabled",
+                "type": "boolean",
+                "label": "Enabled"
+              },
+              {
+                "name": "month",
+                "type": "number",
+                "label": "Month"
+              }
+            ]
+          },
+          {
+            "name": "interval",
+            "type": "text",
+            "label": "Interval"
+          },
+          {
+            "name": "intervalCount",
+            "type": "number",
+            "label": "Interval count"
+          },
+          {
+            "name": "planIterations",
+            "type": "number",
+            "label": "Plan iterations"
+          },
+          {
+            "name": "startDate",
+            "type": "date",
+            "label": "Start date"
+          },
+          {
+            "name": "trialPeriodDays",
+            "type": "number",
+            "label": "Trial period days"
+          }
+        ]
+      },
+      {
+        "name": "pwywSuggestedPrice",
+        "type": "number",
+        "label": "Pwyw suggested price"
+      },
+      {
+        "name": "recurring",
+        "type": "collection",
+        "label": "Recurring",
+        "spec": [
+          {
+            "name": "billingCycleAnchorConfig",
+            "type": "collection",
+            "label": "Billing cycle anchor config",
+            "spec": [
+              {
+                "name": "dayOfMonth",
+                "type": "number",
+                "label": "Day of month"
+              },
+              {
+                "name": "enabled",
+                "type": "boolean",
+                "label": "Enabled"
+              },
+              {
+                "name": "month",
+                "type": "number",
+                "label": "Month"
+              }
+            ]
+          },
+          {
+            "name": "interval",
+            "type": "text",
+            "label": "Interval"
+          },
+          {
+            "name": "intervalCount",
+            "type": "number",
+            "label": "Interval count"
+          },
+          {
+            "name": "startDate",
+            "type": "date",
+            "label": "Start date"
+          },
+          {
+            "name": "trialPeriodDays",
+            "type": "number",
+            "label": "Trial period days"
+          }
+        ]
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "setupFee",
+        "type": "number",
+        "label": "Setup fee"
+      },
+      {
+        "name": "setupFeeMultipliesWithQuantity",
+        "type": "boolean",
+        "label": "Setup fee multiplies with quantity"
+      }
+    ]
+  },
+  {
+    "name": "role",
+    "type": "text",
+    "label": "Role"
+  },
+  {
+    "name": "shortDescription",
+    "type": "text",
+    "label": "Short description"
+  },
+  {
+    "name": "sku",
+    "type": "text",
+    "label": "SKU"
+  },
+  {
+    "name": "stock",
+    "type": "number",
+    "label": "Stock"
+  },
+  {
+    "name": "taxBehavior",
+    "type": "text",
+    "label": "Tax behavior"
+  },
+  {
+    "name": "taxCode",
+    "type": "text",
+    "label": "Tax code"
+  },
+  {
+    "name": "title",
+    "type": "text",
+    "label": "Title"
+  },
+  {
+    "name": "updatedAt",
+    "type": "text",
+    "label": "Updated at"
+  },
+  {
+    "name": "variants",
+    "type": "array",
+    "label": "Variants",
+    "spec": [
+      {
+        "name": "hidden",
+        "type": "boolean",
+        "label": "Hidden"
+      },
+      {
+        "name": "id",
+        "type": "text",
+        "label": "ID"
+      },
+      {
+        "name": "increasesWithQuantity",
+        "type": "boolean",
+        "label": "Increases with quantity"
+      },
+      {
+        "name": "layout",
+        "type": "collection",
+        "label": "Layout",
+        "spec": [
+          {
+            "name": "collapseVariantOptions",
+            "type": "boolean",
+            "label": "Collapse variant options"
+          },
+          {
+            "name": "imageSize",
+            "type": "text",
+            "label": "Image size"
+          },
+          {
+            "name": "showPwywPlaceholder",
+            "type": "boolean",
+            "label": "Show pwyw placeholder"
+          },
+          {
+            "name": "showVariantName",
+            "type": "boolean",
+            "label": "Show variant name"
+          },
+          {
+            "name": "showVariantOptionNames",
+            "type": "boolean",
+            "label": "Show variant option names"
+          },
+          {
+            "name": "showVariantOptionPriceSign",
+            "type": "boolean",
+            "label": "Show variant option price sign"
+          },
+          {
+            "name": "showVariantOptionPrices",
+            "type": "boolean",
+            "label": "Show variant option prices"
+          },
+          {
+            "name": "spacing",
+            "type": "text",
+            "label": "Spacing"
+          },
+          {
+            "name": "textAlign",
+            "type": "text",
+            "label": "Text align"
+          },
+          {
+            "name": "variantOptionColumns",
+            "type": "number",
+            "label": "Variant option columns"
+          },
+          {
+            "name": "variantOptionLayout",
+            "type": "text",
+            "label": "Variant option layout"
+          }
+        ]
+      },
+      {
+        "name": "manageVariantOptionStock",
+        "type": "boolean",
+        "label": "Manage variant option stock"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "options",
+        "type": "array",
+        "label": "Options",
+        "spec": [
+          {
+            "name": "additionalChargeAmount",
+            "type": "number",
+            "label": "Additional charge amount"
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "label": "Description"
+          },
+          {
+            "name": "fileIds",
+            "type": "array",
+            "label": "File ids",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "image",
+            "type": "collection",
+            "label": "Image",
+            "spec": [
+              {
+                "name": "fileId",
+                "type": "text",
+                "label": "File ID"
+              },
+              {
+                "name": "height",
+                "type": "number",
+                "label": "Height"
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              },
+              {
+                "name": "size",
+                "type": "number",
+                "label": "Size"
+              },
+              {
+                "name": "url",
+                "type": "text",
+                "label": "URL"
+              },
+              {
+                "name": "width",
+                "type": "number",
+                "label": "Width"
+              }
+            ]
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "label": "Name"
+          },
+          {
+            "name": "payWhatYouWant",
+            "type": "boolean",
+            "label": "Pay what you want"
+          },
+          {
+            "name": "pwywSuggestedPrice",
+            "type": "number",
+            "label": "Pwyw suggested price"
+          },
+          {
+            "name": "sku",
+            "type": "text",
+            "label": "SKU"
+          },
+          {
+            "name": "status",
+            "type": "text",
+            "label": "Status"
+          },
+          {
+            "name": "stock",
+            "type": "number",
+            "label": "Stock"
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "label": "Type"
+          }
+        ]
+      },
+      {
+        "name": "order",
+        "type": "number",
+        "label": "Order"
+      },
+      {
+        "name": "preselect",
+        "type": "collection",
+        "label": "Preselect",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "optionId",
+            "type": "text",
+            "label": "Option ID"
+          },
+          {
+            "name": "quantity",
+            "type": "number",
+            "label": "Quantity"
+          }
+        ]
+      },
+      {
+        "name": "priceIds",
+        "type": "array",
+        "label": "Price ids",
+        "spec": {
+          "type": "text"
+        }
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "label": "Required"
+      },
+      {
+        "name": "selectionType",
+        "type": "text",
+        "label": "Selection type"
+      },
+      {
+        "name": "showHideLogic",
+        "type": "collection",
+        "label": "Show hide logic",
+        "spec": [
+          {
+            "name": "comparison",
+            "type": "text",
+            "label": "Comparison"
+          },
+          {
+            "name": "element",
+            "type": "collection",
+            "label": "Element",
+            "spec": [
+              {
+                "name": "elementId",
+                "type": "text",
+                "label": "Element ID"
+              }
+            ]
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "label": "Status"
+      },
+      {
+        "name": "useVariantOptionSkus",
+        "type": "boolean",
+        "label": "Use variant option skus"
+      }
+    ]
+  },
+  {
+    "name": "variantsRequired",
+    "type": "boolean",
+    "label": "Variants required"
+  }
+]

@@ -16,6 +16,7 @@ integration is the source of Checkout Page's app on Zapier.
 | Postman collection        | Active                    | Import the collection file                                | [postman/README.md](postman/README.md) |
 | n8n nodes                 | Coming soon               | n8n Settings > Community nodes > `n8n-nodes-checkoutpage` | [n8n/README.md](n8n/README.md)         |
 | Zapier integration        | Active                    | Connect it in Zapier                                      | [zapier/README.md](zapier/README.md)   |
+| Make app                  | Private beta              | Ask support for the invite link                           | [make/README.md](make/README.md)       |
 | PHP                       | Planned                   | -                                                         | -                                      |
 | Ruby                      | Planned                   | -                                                         | -                                      |
 | Python                    | Planned                   | -                                                         | -                                      |
@@ -84,11 +85,13 @@ checkoutpage-api-sdk/
 ├─ postman/             # Postman collection and environment, generated from the spec
 ├─ n8n/                 # n8n community nodes (n8n-nodes-checkoutpage)
 ├─ zapier/              # Zapier integration (standalone npm project)
+├─ make/                # Make app (standalone npm project)
 ├─ spec/
 │  └─ openapi.json      # Shared OpenAPI spec
 ├─ examples/
 │  ├─ js/               # Examples, one directory per language or tool
-│  └─ n8n/
+│  ├─ n8n/
+│  └─ make/
 ├─ scripts/             # Shared tooling, such as type generation
 └─ .github/workflows/   # Test and publish workflows, one pair per language or tool
 ```

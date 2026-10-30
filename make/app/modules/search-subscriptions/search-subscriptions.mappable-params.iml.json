@@ -1,0 +1,122 @@
+[
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the customer email, customer name, product title, order ID or subscription ID."
+  },
+  {
+    "name": "pageId",
+    "type": "text",
+    "label": "Checkout page ID"
+  },
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers"
+  },
+  {
+    "name": "orderId",
+    "type": "text",
+    "label": "Order ID"
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "abandonmentStatus",
+    "type": "select",
+    "label": "Abandonment status",
+    "options": [
+      {
+        "label": "Abandoned",
+        "value": "abandoned"
+      },
+      {
+        "label": "Recovered",
+        "value": "recovered"
+      }
+    ]
+  },
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Draft",
+        "value": "draft"
+      },
+      {
+        "label": "Draft expired",
+        "value": "draft_expired"
+      },
+      {
+        "label": "Incomplete",
+        "value": "incomplete"
+      },
+      {
+        "label": "Incomplete expired",
+        "value": "incomplete_expired"
+      },
+      {
+        "label": "Trialing",
+        "value": "trialing"
+      },
+      {
+        "label": "Paused",
+        "value": "paused"
+      },
+      {
+        "label": "Scheduled",
+        "value": "scheduled"
+      },
+      {
+        "label": "Active",
+        "value": "active"
+      },
+      {
+        "label": "Past due",
+        "value": "past_due"
+      },
+      {
+        "label": "Canceled",
+        "value": "canceled"
+      },
+      {
+        "label": "Unpaid",
+        "value": "unpaid"
+      },
+      {
+        "label": "Failed",
+        "value": "failed"
+      },
+      {
+        "label": "Completed",
+        "value": "completed"
+      }
+    ]
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the mode of the API key. Set to No to return test mode records."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

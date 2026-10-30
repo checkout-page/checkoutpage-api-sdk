@@ -1,0 +1,7 @@
+{
+  "url": "/v1/customers/{{parameters.customerId}}",
+  "method": "GET",
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

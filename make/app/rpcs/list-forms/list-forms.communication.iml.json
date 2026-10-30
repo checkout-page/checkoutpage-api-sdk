@@ -1,0 +1,21 @@
+{
+  "url": "/v1/forms/",
+  "method": "GET",
+  "qs": {
+    "limit": "100"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": {
+      "label": "{{ifempty(item.title, ifempty(item.name, item.id))}}",
+      "value": "{{item.id}}"
+    },
+    "limit": 300
+  },
+  "pagination": {
+    "qs": {
+      "starting_after": "{{last(body.data).id}}"
+    },
+    "condition": "{{body.has_more}}"
+  }
+}

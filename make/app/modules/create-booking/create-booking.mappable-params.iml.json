@@ -1,0 +1,87 @@
+[
+  {
+    "name": "eventId",
+    "type": "select",
+    "label": "Event",
+    "options": "rpc://listEvents",
+    "required": true
+  },
+  {
+    "name": "tickets",
+    "type": "array",
+    "label": "Tickets",
+    "required": true,
+    "help": "Add one row per ticket type.",
+    "spec": [
+      {
+        "name": "ticketTypeId",
+        "type": "select",
+        "label": "Ticket type",
+        "options": "rpc://listTicketTypes",
+        "required": true
+      },
+      {
+        "name": "quantity",
+        "type": "uinteger",
+        "label": "Quantity",
+        "default": 1,
+        "required": true
+      },
+      {
+        "name": "pwywAmount",
+        "type": "uinteger",
+        "label": "Pay what you want amount",
+        "help": "In the smallest currency unit, for example cents."
+      }
+    ]
+  },
+  {
+    "name": "fields",
+    "type": "array",
+    "label": "Fields",
+    "required": true,
+    "help": "Include the email field.",
+    "spec": [
+      {
+        "name": "fieldId",
+        "type": "select",
+        "label": "Field",
+        "options": "rpc://listEventFields",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "any",
+        "label": "Value",
+        "help": "Text for most fields. For an address field, map an object with `billing` or `shipping` holding the address lines, city, state, postal code and two-letter country code. For a multi-select field, map an array of option values."
+      }
+    ]
+  },
+  {
+    "name": "couponId",
+    "type": "select",
+    "label": "Coupon",
+    "options": "rpc://listCoupons",
+    "help": "Ignored for complimentary bookings."
+  },
+  {
+    "name": "recordAs",
+    "type": "select",
+    "label": "Record as",
+    "required": true,
+    "options": [
+      {
+        "label": "Complimentary",
+        "value": "complimentary"
+      },
+      {
+        "label": "To be paid by invoice",
+        "value": "invoice"
+      },
+      {
+        "label": "To be paid on arrival",
+        "value": "cash_on_delivery"
+      }
+    ]
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "url": "/v1/webhooks/",
+  "method": "POST",
+  "body": {
+    "name": "Make: {{substring(ifempty(scenario.name, 'scenario'), 0, 94)}}",
+    "url": "{{webhook.url}}",
+    "events": "{{parameters.events}}",
+    "customHeaders": {
+      "x-make-token": "{{sha256(toString(random) + toString(now))}}"
+    }
+  },
+  "response": {
+    "data": {
+      "externalHookId": "{{body.data.id}}",
+      "token": "{{get(body.data.customHeaders, 'x-make-token')}}"
+    }
+  },
+  "log": {
+    "sanitize": ["response.body.data.secret", "request.body.customHeaders.x-make-token"]
+  }
+}

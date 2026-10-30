@@ -1,0 +1,84 @@
+[
+  {
+    "name": "search",
+    "type": "text",
+    "label": "Search",
+    "help": "Matches the customer email, customer name, product title or invoice number."
+  },
+  {
+    "name": "status",
+    "type": "select",
+    "label": "Status",
+    "options": [
+      {
+        "label": "Draft",
+        "value": "draft"
+      },
+      {
+        "label": "Open",
+        "value": "open"
+      },
+      {
+        "label": "Paid",
+        "value": "paid"
+      },
+      {
+        "label": "Uncollectible",
+        "value": "uncollectible"
+      },
+      {
+        "label": "Refunded",
+        "value": "refunded"
+      },
+      {
+        "label": "Partially refunded",
+        "value": "partially_refunded"
+      },
+      {
+        "label": "Void",
+        "value": "void"
+      }
+    ]
+  },
+  {
+    "name": "customerId",
+    "type": "select",
+    "label": "Customer",
+    "options": "rpc://listCustomers"
+  },
+  {
+    "name": "chargeId",
+    "type": "text",
+    "label": "Payment ID"
+  },
+  {
+    "name": "poNumber",
+    "type": "text",
+    "label": "PO number",
+    "help": "Matches the whole PO number only."
+  },
+  {
+    "name": "createdAfter",
+    "type": "date",
+    "label": "Created after"
+  },
+  {
+    "name": "createdBefore",
+    "type": "date",
+    "label": "Created before"
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Live mode",
+    "help": "Leave empty to use the mode of the API key. Set to No to return test mode records."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "default": 10,
+    "required": true,
+    "help": "The maximum number of results to return."
+  }
+]

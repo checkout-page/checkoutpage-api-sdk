@@ -1,0 +1,208 @@
+[
+  {
+    "name": "attendeeEmail",
+    "type": "text",
+    "label": "Attendee email"
+  },
+  {
+    "name": "attendeeName",
+    "type": "text",
+    "label": "Attendee name"
+  },
+  {
+    "name": "bookingId",
+    "type": "text",
+    "label": "Booking ID"
+  },
+  {
+    "name": "canceledAt",
+    "type": "date",
+    "label": "Canceled at"
+  },
+  {
+    "name": "checkInCode",
+    "type": "text",
+    "label": "Check in code"
+  },
+  {
+    "name": "checkIns",
+    "type": "array",
+    "label": "Check ins",
+    "spec": [
+      {
+        "name": "checkedInAt",
+        "type": "date",
+        "label": "Checked in at"
+      },
+      {
+        "name": "checkedInBy",
+        "type": "text",
+        "label": "Checked in by"
+      },
+      {
+        "name": "method",
+        "type": "text",
+        "label": "Method"
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "label": "Status"
+      }
+    ]
+  },
+  {
+    "name": "complimentaryAmount",
+    "type": "number",
+    "label": "Complimentary amount"
+  },
+  {
+    "name": "couponAmount",
+    "type": "number",
+    "label": "Coupon amount"
+  },
+  {
+    "name": "createdAt",
+    "type": "date",
+    "label": "Created at"
+  },
+  {
+    "name": "currency",
+    "type": "text",
+    "label": "Currency"
+  },
+  {
+    "name": "customerId",
+    "type": "text",
+    "label": "Customer ID"
+  },
+  {
+    "name": "discountAmount",
+    "type": "number",
+    "label": "Discount amount"
+  },
+  {
+    "name": "feeAmount",
+    "type": "number",
+    "label": "Fee amount"
+  },
+  {
+    "name": "id",
+    "type": "text",
+    "label": "ID"
+  },
+  {
+    "name": "latestCheckIn",
+    "type": "collection",
+    "label": "Latest check in",
+    "spec": [
+      {
+        "name": "checkedInAt",
+        "type": "date",
+        "label": "Checked in at"
+      },
+      {
+        "name": "checkedInBy",
+        "type": "text",
+        "label": "Checked in by"
+      },
+      {
+        "name": "method",
+        "type": "text",
+        "label": "Method"
+      },
+      {
+        "name": "status",
+        "type": "text",
+        "label": "Status"
+      }
+    ]
+  },
+  {
+    "name": "livemode",
+    "type": "boolean",
+    "label": "Livemode"
+  },
+  {
+    "name": "metadata",
+    "type": "array",
+    "label": "Metadata",
+    "spec": [
+      {
+        "name": "addedAt",
+        "type": "date",
+        "label": "Added at"
+      },
+      {
+        "name": "key",
+        "type": "text",
+        "label": "Key"
+      },
+      {
+        "name": "value",
+        "type": "text",
+        "label": "Value"
+      }
+    ]
+  },
+  {
+    "name": "orderId",
+    "type": "text",
+    "label": "Order ID"
+  },
+  {
+    "name": "orderedAt",
+    "type": "date",
+    "label": "Ordered at"
+  },
+  {
+    "name": "originalPrice",
+    "type": "number",
+    "label": "Original price"
+  },
+  {
+    "name": "pageId",
+    "type": "text",
+    "label": "Event ID"
+  },
+  {
+    "name": "pricing",
+    "type": "text",
+    "label": "Pricing"
+  },
+  {
+    "name": "revenue",
+    "type": "number",
+    "label": "Revenue"
+  },
+  {
+    "name": "sellerId",
+    "type": "text",
+    "label": "Seller ID"
+  },
+  {
+    "name": "status",
+    "type": "text",
+    "label": "Status"
+  },
+  {
+    "name": "taxAmount",
+    "type": "number",
+    "label": "Tax amount"
+  },
+  {
+    "name": "ticketShortId",
+    "type": "text",
+    "label": "Ticket short ID"
+  },
+  {
+    "name": "ticketTypeId",
+    "type": "text",
+    "label": "Ticket type ID"
+  },
+  {
+    "name": "updatedAt",
+    "type": "date",
+    "label": "Updated at"
+  }
+]
