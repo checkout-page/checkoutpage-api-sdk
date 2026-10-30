@@ -5162,14 +5162,19 @@
                 },
                 "type": "array"
               },
-              "priceId": {
-                "description": "For `subject: price`: the page product price ID to watch (from get_product). A rule without one is stored but never hides anything.",
-                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
-                "pattern": "^[0-9a-fA-F]{24}$",
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "priceIds": {
+                "description": "For `subject: price`: the page product price IDs to watch (from get_product). The rule matches while the chosen price is any of them, or none of them for `is_not`. A rule without any is stored but never hides anything.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
               },
               "subject": {
                 "description": "What the rule watches. Defaults to `price` on a checkout page and `ticket` on an event.",
@@ -9852,11 +9857,11 @@
                 },
                 "type": "array"
               },
-              "priceId": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "priceIds": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
               },
               "subject": {
                 "description": "What the rule watches. `price`: the page product price the customer picked (checkout pages). `ticket`: the ticket types in the basket (events). `order_bump`: whether other order bumps on the page are ticked.",
@@ -9879,7 +9884,7 @@
               "enabled",
               "subject",
               "comparison",
-              "priceId",
+              "priceIds",
               "ticketTypeIds",
               "orderBumpProductIds"
             ],
@@ -64799,14 +64804,19 @@
                 },
                 "type": "array"
               },
-              "priceId": {
-                "description": "For `subject: price`: the page product price ID to watch (from get_product). A rule without one is stored but never hides anything.",
-                "example": "65f4a1c2e4a9f3d2b1c0a9e8",
-                "pattern": "^[0-9a-fA-F]{24}$",
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "priceIds": {
+                "description": "For `subject: price`: the page product price IDs to watch (from get_product). The rule matches while the chosen price is any of them, or none of them for `is_not`. A rule without any is stored but never hides anything.",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                },
+                "type": "array"
               },
               "subject": {
                 "description": "What the rule watches. Defaults to `price` on a checkout page and `ticket` on an event.",
