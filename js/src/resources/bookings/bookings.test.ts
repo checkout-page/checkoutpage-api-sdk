@@ -593,6 +593,37 @@ describe('BookingResource', () => {
       paymentOption: { manualType: 'invoice' },
     };
 
+    it('sends guests with the booking and returns them with its guest status', async () => {
+      const guests = [
+        { ticketType: TICKET_TYPE_ID, name: 'Grace Hopper', email: 'grace@example.com' },
+      ];
+      const mockResponse: BookingResponse = {
+        data: {
+          ...BASE_BOOKING,
+          status: 'unpaid',
+          guestStatus: 'missing',
+          guests: [
+            {
+              position: 1,
+              ticketTypeId: TICKET_TYPE_ID,
+              name: 'Grace Hopper',
+              email: 'grace@example.com',
+            },
+          ],
+        },
+      };
+      const requestSpy = vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create({ ...createParams, guests });
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: { ...createParams, guests },
+      });
+      expect(result.data.guestStatus).toBe('missing');
+    });
+
     it('POSTs the booking body to /v1/bookings/', async () => {
       const mockResponse: BookingResponse = {
         data: { ...BASE_BOOKING, status: 'unpaid' },

@@ -648,6 +648,45 @@
               "null"
             ]
           },
+          "guestStatus": {
+            "description": "Guest details: `complete` (every ticket has a guest), `missing` (some tickets don't yet), `flagged` (one or more guests flagged for the seller to review) or `optional` (the customer isn't asked, so the seller adds guests if they want to). Absent while a booking has no guest details to track.",
+            "enum": [
+              "complete",
+              "missing",
+              "flagged",
+              "optional"
+            ],
+            "type": "string"
+          },
+          "guests": {
+            "description": "The guests added so far, one per ticket, on events that collect guest details. A ticket without a guest has no entry. Answers to guest questions are not included.",
+            "items": {
+              "properties": {
+                "email": {
+                  "description": "The guest's email address.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "The guest's name.",
+                  "type": "string"
+                },
+                "position": {
+                  "description": "Guest number, 1 for the first ticket, in the order the event lists its ticket types.",
+                  "type": "number"
+                },
+                "ticketTypeId": {
+                  "description": "ID of the ticket type this guest holds.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "position",
+                "ticketTypeId"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "id": {
             "description": "Unique record ID. Use this for pagination cursors.",
             "type": "string"
@@ -2199,6 +2238,62 @@
             },
             "maxItems": 100,
             "minItems": 1,
+            "type": "array"
+          },
+          "guests": {
+            "description": "Guest details for an event that collects them: one entry per ticket, in the order the event lists its ticket types (for 2 Standard and 1 VIP: Standard, Standard, VIP). Guests may be left blank or omitted, and the booking then waits for them. Ignored for events that don't collect guest details.",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "answers": {
+                  "items": {
+                    "properties": {
+                      "fieldId": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "maxLength": 5000,
+                        "type": "string"
+                      },
+                      "values": {
+                        "items": {
+                          "maxLength": 1000,
+                          "type": "string"
+                        },
+                        "maxItems": 100,
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "fieldId"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 100,
+                  "type": "array"
+                },
+                "email": {
+                  "maxLength": 320,
+                  "type": "string"
+                },
+                "name": {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                "ticketType": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "Unique identifier. Must be in BSON ObjectId format."
+                    }
+                  ]
+                }
+              },
+              "type": "object"
+            },
+            "maxItems": 1000,
             "type": "array"
           },
           "paymentOption": {
@@ -59846,11 +59941,11 @@
             "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
             "properties": {
               "attendeeEmail": {
-                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                 "type": "string"
               },
               "attendeeName": {
-                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                 "type": "string"
               },
               "bookingId": {
@@ -59987,6 +60082,20 @@
               "feeAmount": {
                 "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                 "type": "number"
+              },
+              "guest": {
+                "description": "The guest this ticket is for, on events that collect guest details. Absent until the booker or seller adds them. Answers to guest questions are not included.",
+                "properties": {
+                  "email": {
+                    "description": "The guest's email address.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The guest's name.",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
               },
               "id": {
                 "$ref": "#/components/schemas/UniqueIdentifier"
@@ -86328,11 +86437,11 @@
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
                           "attendeeEmail": {
-                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "attendeeName": {
-                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "bookingId": {
@@ -86469,6 +86578,20 @@
                           "feeAmount": {
                             "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                             "type": "number"
+                          },
+                          "guest": {
+                            "description": "The guest this ticket is for, on events that collect guest details. Absent until the booker or seller adds them. Answers to guest questions are not included.",
+                            "properties": {
+                              "email": {
+                                "description": "The guest's email address.",
+                                "type": "string"
+                              },
+                              "name": {
+                                "description": "The guest's name.",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
                           },
                           "id": {
                             "$ref": "#/components/schemas/UniqueIdentifier"
@@ -86777,7 +86900,7 @@
     },
     "/v1/tickets/:ticketId": {
       "patch": {
-        "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. The booking and customer records are not affected.",
+        "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. On a booking that collects attendee details, the guest details on the ticket change with them and the booking guest status is updated. The customer record is not affected.",
         "operationId": "tickets/update",
         "parameters": [
           {
@@ -96745,11 +96868,11 @@
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
                           "attendeeEmail": {
-                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "attendeeName": {
-                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "bookingId": {
@@ -96886,6 +97009,20 @@
                           "feeAmount": {
                             "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                             "type": "number"
+                          },
+                          "guest": {
+                            "description": "The guest this ticket is for, on events that collect guest details. Absent until the booker or seller adds them. Answers to guest questions are not included.",
+                            "properties": {
+                              "email": {
+                                "description": "The guest's email address.",
+                                "type": "string"
+                              },
+                              "name": {
+                                "description": "The guest's name.",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
                           },
                           "id": {
                             "$ref": "#/components/schemas/UniqueIdentifier"
