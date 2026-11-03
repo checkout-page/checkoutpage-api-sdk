@@ -160,6 +160,46 @@ describe('EventsResource', () => {
       });
     });
 
+    it('creates an event with attendee details on and returns its settings and questions', async () => {
+      const params: CreateEventParams = {
+        name: 'Leadership summit',
+        eventDetails: { attendeeDetails: { enabled: true, when: 'checkout', emailDomains: 'workFlag' } },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: {
+          id: 'event_123',
+          eventDetails: {
+            attendeeDetails: {
+              enabled: true,
+              when: 'checkout',
+              requireAllBeforePayment: true,
+              emailDomains: 'workFlag',
+              sendReminders: true,
+              enabledAt: '2026-11-03T08:00:00.000Z',
+            },
+          },
+          attendeeQuestions: [
+            {
+              id: '507f1f77bcf86cd799439040',
+              label: 'Name',
+              element: 'text',
+              type: 'name',
+              required: true,
+              order: 0,
+              createdAt: '2026-11-03T08:00:00.000Z',
+              updatedAt: '2026-11-03T08:00:00.000Z',
+            },
+          ],
+        },
+      });
+
+      const result = await eventsResource.create(params);
+
+      expect(client.request).toHaveBeenCalledWith({ method: 'POST', path: '/v1/events/', body: params });
+      expect(result.data.eventDetails?.attendeeDetails?.enabledAt).toBe('2026-11-03T08:00:00.000Z');
+      expect(result.data.attendeeQuestions?.map((question) => question.label)).toEqual(['Name']);
+    });
+
     it('forwards testmode when creating an event', async () => {
       const params: CreateEventParams = {
         name: 'Test mode event',
@@ -309,6 +349,27 @@ describe('EventsResource', () => {
         path: '/v1/events/event_123',
         body: params,
       });
+    });
+
+    it('changes only the attendee settings it sends', async () => {
+      const params: UpdateEventParams = {
+        eventDetails: { attendeeDetails: { when: 'afterBooking', sendReminders: false } },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: {
+          id: 'event_123',
+          eventDetails: { attendeeDetails: { enabled: true, when: 'afterBooking', sendReminders: false } },
+        },
+      });
+
+      const result = await eventsResource.update('event_123', params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/events/event_123',
+        body: params,
+      });
+      expect(result.data.eventDetails?.attendeeDetails).toMatchObject({ enabled: true, when: 'afterBooking' });
     });
 
     it('switches test mode on and returns when it was enabled', async () => {

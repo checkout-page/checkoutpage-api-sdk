@@ -236,6 +236,171 @@
             "description": "The userId of the team member who archived this. Absent unless archived.",
             "type": "string"
           },
+          "attendeeStatus": {
+            "description": "Attendee details: `complete` (every ticket has an attendee), `missing` (some tickets don't yet), `flagged` (one or more attendees flagged for the seller to review) or `optional` (the customer isn't asked, so the seller adds attendees if they want to). Absent while a booking has no attendee details to track.",
+            "enum": [
+              "complete",
+              "missing",
+              "flagged",
+              "optional"
+            ],
+            "type": "string"
+          },
+          "attendees": {
+            "description": "The attendees added so far, one per ticket, on events that collect attendee details. A ticket without an attendee has no entry.",
+            "items": {
+              "properties": {
+                "answers": {
+                  "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
+                  "items": {
+                    "properties": {
+                      "element": {
+                        "enum": [
+                          "checkbox",
+                          "quantity",
+                          "multiple-choice",
+                          "select",
+                          "multi-select",
+                          "po-number",
+                          "text",
+                          "textarea",
+                          "number",
+                          "date-time",
+                          "date",
+                          "time",
+                          "address",
+                          "email",
+                          "tax-id",
+                          "phone",
+                          "country",
+                          null
+                        ],
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "fieldId": {
+                        "description": "Unique field ID.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "description": "Label shown for the field.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "meta": {
+                        "additionalProperties": {},
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "description": "Reference key for the field.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "enum": [
+                          "",
+                          "company-name",
+                          "po-number",
+                          "name",
+                          "first-name",
+                          "last-name",
+                          "email",
+                          "billing-email",
+                          "phone",
+                          "address-line1",
+                          "address-city",
+                          "address-country",
+                          "address-line2",
+                          "address-postal_code",
+                          "address-state",
+                          "shipping-name",
+                          "shipping-phone",
+                          "shipping-address-line1",
+                          "shipping-address-city",
+                          "shipping-address-country",
+                          "shipping-address-line2",
+                          "shipping-address-postal_code",
+                          "shipping-address-state",
+                          "tax-id",
+                          null
+                        ],
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "value": {
+                        "description": "Submitted value for the field.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "values": {
+                        "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "email": {
+                  "description": "The attendee's email address.",
+                  "type": "string"
+                },
+                "flagged": {
+                  "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
+                  "type": "boolean"
+                },
+                "name": {
+                  "description": "The attendee's name.",
+                  "type": "string"
+                },
+                "position": {
+                  "description": "Attendee number, 1 for the first ticket, in the order the event lists its ticket types.",
+                  "type": "number"
+                },
+                "reviewedAt": {
+                  "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "ticketId": {
+                  "description": "ID of the attendee's ticket. Absent until the booking's tickets are created, which happens once it's paid or confirmed.",
+                  "type": "string"
+                },
+                "ticketTypeId": {
+                  "description": "ID of the ticket type this attendee holds.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "position",
+                "ticketTypeId"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "billing": {
             "description": "Billing details, including name, email, phone, and address.",
             "properties": {
@@ -647,45 +812,6 @@
               "array",
               "null"
             ]
-          },
-          "guestStatus": {
-            "description": "Guest details: `complete` (every ticket has a guest), `missing` (some tickets don't yet), `flagged` (one or more guests flagged for the seller to review) or `optional` (the customer isn't asked, so the seller adds guests if they want to). Absent while a booking has no guest details to track.",
-            "enum": [
-              "complete",
-              "missing",
-              "flagged",
-              "optional"
-            ],
-            "type": "string"
-          },
-          "guests": {
-            "description": "The guests added so far, one per ticket, on events that collect guest details. A ticket without a guest has no entry. Answers to guest questions are not included.",
-            "items": {
-              "properties": {
-                "email": {
-                  "description": "The guest's email address.",
-                  "type": "string"
-                },
-                "name": {
-                  "description": "The guest's name.",
-                  "type": "string"
-                },
-                "position": {
-                  "description": "Guest number, 1 for the first ticket, in the order the event lists its ticket types.",
-                  "type": "number"
-                },
-                "ticketTypeId": {
-                  "description": "ID of the ticket type this guest holds.",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "position",
-                "ticketTypeId"
-              ],
-              "type": "object"
-            },
-            "type": "array"
           },
           "id": {
             "description": "Unique record ID. Use this for pagination cursors.",
@@ -2206,6 +2332,66 @@
         "additionalProperties": false,
         "description": "Creates an event booking without collecting card payment. With `paymentOption` the booking is recorded as unpaid and settled outside checkout; with `complimentary: true` it is recorded as paid at no charge.",
         "properties": {
+          "attendees": {
+            "description": "Attendees for an event that collects attendee details, at most one per ticket. Each attendee names its ticket type and takes the next ticket of that type, so the order of the list doesn't matter. Tickets without an attendee are left blank, and the booking then waits for them. Answer the event's `attendeeQuestions` in `answers`; Name and Email address go in `name` and `email`. Ignored for events that don't collect attendee details.",
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "answers": {
+                  "items": {
+                    "properties": {
+                      "fieldId": {
+                        "description": "ID of one of the event's `attendeeQuestions`.",
+                        "type": "string"
+                      },
+                      "value": {
+                        "maxLength": 5000,
+                        "type": "string"
+                      },
+                      "values": {
+                        "items": {
+                          "maxLength": 1000,
+                          "type": "string"
+                        },
+                        "maxItems": 100,
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "fieldId"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 100,
+                  "type": "array"
+                },
+                "email": {
+                  "maxLength": 320,
+                  "type": "string"
+                },
+                "name": {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                "ticketTypeId": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UniqueIdentifier"
+                    },
+                    {
+                      "description": "ID of the ticket type this attendee holds. Must be one of the ticket types in `tickets`."
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "ticketTypeId"
+              ],
+              "type": "object"
+            },
+            "maxItems": 1000,
+            "type": "array"
+          },
           "complimentary": {
             "description": "Issue the tickets at no charge. The booking is recorded as `paid` with `amount`, `amountPaid` and `amountDue` of 0, `isComplimentary: true`, and the ticket lines at their face value with a matching complimentary discount. Mutually exclusive with `paymentOption` and `couponId`.",
             "example": true,
@@ -2238,62 +2424,6 @@
             },
             "maxItems": 100,
             "minItems": 1,
-            "type": "array"
-          },
-          "guests": {
-            "description": "Guest details for an event that collects them: one entry per ticket, in the order the event lists its ticket types (for 2 Standard and 1 VIP: Standard, Standard, VIP). Guests may be left blank or omitted, and the booking then waits for them. Ignored for events that don't collect guest details.",
-            "items": {
-              "additionalProperties": false,
-              "properties": {
-                "answers": {
-                  "items": {
-                    "properties": {
-                      "fieldId": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "maxLength": 5000,
-                        "type": "string"
-                      },
-                      "values": {
-                        "items": {
-                          "maxLength": 1000,
-                          "type": "string"
-                        },
-                        "maxItems": 100,
-                        "type": "array"
-                      }
-                    },
-                    "required": [
-                      "fieldId"
-                    ],
-                    "type": "object"
-                  },
-                  "maxItems": 100,
-                  "type": "array"
-                },
-                "email": {
-                  "maxLength": 320,
-                  "type": "string"
-                },
-                "name": {
-                  "maxLength": 200,
-                  "type": "string"
-                },
-                "ticketType": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UniqueIdentifier"
-                    },
-                    {
-                      "description": "Unique identifier. Must be in BSON ObjectId format."
-                    }
-                  ]
-                }
-              },
-              "type": "object"
-            },
-            "maxItems": 1000,
             "type": "array"
           },
           "paymentOption": {
@@ -3265,6 +3395,61 @@
           "eventDetails": {
             "description": "Event-specific details like type, dates, location.",
             "properties": {
+              "attendeeDetails": {
+                "description": "Attendee details for this event: whether a name and email address are collected for each ticket, when, and which email addresses are accepted. The attendee questions start as Name and Email address; add more in the dashboard.",
+                "properties": {
+                  "description": {
+                    "description": "Text under the heading.",
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  "emailDomains": {
+                    "description": "Which attendee email addresses are accepted. `any` (default): any address. `flag`: any, with personal addresses (Gmail, Outlook and the like) flagged for review. `work`: work addresses only. `workFlag`: work addresses only, with ones outside the booker's company flagged for review. `same`: addresses at the booker's company only.",
+                    "enum": [
+                      "any",
+                      "flag",
+                      "work",
+                      "workFlag",
+                      "same"
+                    ],
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "description": "Collect a name, an email address and the answers to any attendee questions for each ticket. Defaults to `false`.",
+                    "type": "boolean"
+                  },
+                  "heading": {
+                    "description": "Heading above the attendee rows.",
+                    "maxLength": 200,
+                    "type": "string"
+                  },
+                  "requireAllBeforePayment": {
+                    "description": "With `when: checkout`, every attendee must be added before the customer can pay. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "saveButton": {
+                    "description": "Label of each attendee row's save button.",
+                    "maxLength": 40,
+                    "type": "string"
+                  },
+                  "sendReminders": {
+                    "description": "Email the booker reminders until every attendee is added. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "when": {
+                    "description": "`checkout`: the customer adds attendees before paying. `afterBooking`: they add them after booking, from the confirmation page, their email or the customer portal. Defaults to `checkout`.",
+                    "enum": [
+                      "checkout",
+                      "afterBooking"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
               "capacity": {
                 "description": "Total event capacity. Omit for unlimited. `0` marks the event as sold out.",
                 "minimum": 0,
@@ -6473,6 +6658,13 @@
               "null"
             ]
           },
+          "attendeeQuestions": {
+            "description": "The questions each attendee is asked, on events that collect attendee details. Answer them by `id` in a booking's `attendees[].answers`. Name and Email address go in `attendees[].name` and `attendees[].email`, not in `answers`.",
+            "items": {
+              "$ref": "#/components/schemas/Field"
+            },
+            "type": "array"
+          },
           "checkoutAbandonment": {
             "description": "Checkout abandonment email reminder settings.",
             "properties": {
@@ -6599,6 +6791,65 @@
           "eventDetails": {
             "description": "Event-specific details.",
             "properties": {
+              "attendeeDetails": {
+                "description": "Attendee details settings for this event.",
+                "properties": {
+                  "description": {
+                    "description": "Text under the heading.",
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  "emailDomains": {
+                    "description": "Which attendee email addresses are accepted. `any` (default): any address. `flag`: any, with personal addresses (Gmail, Outlook and the like) flagged for review. `work`: work addresses only. `workFlag`: work addresses only, with ones outside the booker's company flagged for review. `same`: addresses at the booker's company only.",
+                    "enum": [
+                      "any",
+                      "flag",
+                      "work",
+                      "workFlag",
+                      "same"
+                    ],
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "description": "Collect a name, an email address and the answers to any attendee questions for each ticket. Defaults to `false`.",
+                    "type": "boolean"
+                  },
+                  "enabledAt": {
+                    "description": "ISO 8601 timestamp of when attendee details were first switched on. Bookings made before it get no automatic reminders.",
+                    "type": "string"
+                  },
+                  "heading": {
+                    "description": "Heading above the attendee rows.",
+                    "maxLength": 200,
+                    "type": "string"
+                  },
+                  "requireAllBeforePayment": {
+                    "description": "With `when: checkout`, every attendee must be added before the customer can pay. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "saveButton": {
+                    "description": "Label of each attendee row's save button.",
+                    "maxLength": 40,
+                    "type": "string"
+                  },
+                  "sendReminders": {
+                    "description": "Email the booker reminders until every attendee is added. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "when": {
+                    "description": "`checkout`: the customer adds attendees before paying. `afterBooking`: they add them after booking, from the confirmation page, their email or the customer portal. Defaults to `checkout`.",
+                    "enum": [
+                      "checkout",
+                      "afterBooking"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
               "capacity": {
                 "description": "Total event capacity. Null means unlimited.",
                 "type": [
@@ -59940,6 +60191,142 @@
           "data": {
             "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
             "properties": {
+              "attendee": {
+                "description": "The attendee this ticket is for, with their answers, on events that collect attendee details. Absent until the booker or seller adds them. `attendeeName` and `attendeeEmail` follow it.",
+                "properties": {
+                  "answers": {
+                    "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
+                    "items": {
+                      "properties": {
+                        "element": {
+                          "enum": [
+                            "checkbox",
+                            "quantity",
+                            "multiple-choice",
+                            "select",
+                            "multi-select",
+                            "po-number",
+                            "text",
+                            "textarea",
+                            "number",
+                            "date-time",
+                            "date",
+                            "time",
+                            "address",
+                            "email",
+                            "tax-id",
+                            "phone",
+                            "country",
+                            null
+                          ],
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "fieldId": {
+                          "description": "Unique field ID.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "label": {
+                          "description": "Label shown for the field.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "meta": {
+                          "additionalProperties": {},
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        },
+                        "reference": {
+                          "description": "Reference key for the field.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "enum": [
+                            "",
+                            "company-name",
+                            "po-number",
+                            "name",
+                            "first-name",
+                            "last-name",
+                            "email",
+                            "billing-email",
+                            "phone",
+                            "address-line1",
+                            "address-city",
+                            "address-country",
+                            "address-line2",
+                            "address-postal_code",
+                            "address-state",
+                            "shipping-name",
+                            "shipping-phone",
+                            "shipping-address-line1",
+                            "shipping-address-city",
+                            "shipping-address-country",
+                            "shipping-address-line2",
+                            "shipping-address-postal_code",
+                            "shipping-address-state",
+                            "tax-id",
+                            null
+                          ],
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "value": {
+                          "description": "Submitted value for the field.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "values": {
+                          "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ]
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "email": {
+                    "description": "The attendee's email address.",
+                    "type": "string"
+                  },
+                  "flagged": {
+                    "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "description": "The attendee's name.",
+                    "type": "string"
+                  },
+                  "reviewedAt": {
+                    "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
               "attendeeEmail": {
                 "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                 "type": "string"
@@ -60082,20 +60469,6 @@
               "feeAmount": {
                 "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                 "type": "number"
-              },
-              "guest": {
-                "description": "The guest this ticket is for, on events that collect guest details. Absent until the booker or seller adds them. Answers to guest questions are not included.",
-                "properties": {
-                  "email": {
-                    "description": "The guest's email address.",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "The guest's name.",
-                    "type": "string"
-                  }
-                },
-                "type": "object"
               },
               "id": {
                 "$ref": "#/components/schemas/UniqueIdentifier"
@@ -63506,6 +63879,61 @@
           "eventDetails": {
             "description": "Event-specific details like type, dates, location. Ticket-specific discounts (`discounts[].ticketTypeIds`) must reference existing ticket types by `{ id }` — update cannot create new ticket types to key against, so the create-time `{ key }` form is rejected.",
             "properties": {
+              "attendeeDetails": {
+                "description": "Attendee details for this event. Only the settings you send change; the rest keep their current values.",
+                "properties": {
+                  "description": {
+                    "description": "Text under the heading.",
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  "emailDomains": {
+                    "description": "Which attendee email addresses are accepted. `any` (default): any address. `flag`: any, with personal addresses (Gmail, Outlook and the like) flagged for review. `work`: work addresses only. `workFlag`: work addresses only, with ones outside the booker's company flagged for review. `same`: addresses at the booker's company only.",
+                    "enum": [
+                      "any",
+                      "flag",
+                      "work",
+                      "workFlag",
+                      "same"
+                    ],
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "description": "Collect a name, an email address and the answers to any attendee questions for each ticket. Defaults to `false`.",
+                    "type": "boolean"
+                  },
+                  "heading": {
+                    "description": "Heading above the attendee rows.",
+                    "maxLength": 200,
+                    "type": "string"
+                  },
+                  "requireAllBeforePayment": {
+                    "description": "With `when: checkout`, every attendee must be added before the customer can pay. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "saveButton": {
+                    "description": "Label of each attendee row's save button.",
+                    "maxLength": 40,
+                    "type": "string"
+                  },
+                  "sendReminders": {
+                    "description": "Email the booker reminders until every attendee is added. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "when": {
+                    "description": "`checkout`: the customer adds attendees before paying. `afterBooking`: they add them after booking, from the confirmation page, their email or the customer portal. Defaults to `checkout`.",
+                    "enum": [
+                      "checkout",
+                      "afterBooking"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
               "capacity": {
                 "description": "Total event capacity. Omit for unlimited. `0` marks the event as sold out.",
                 "minimum": 0,
@@ -86436,6 +86864,142 @@
                       "items": {
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
+                          "attendee": {
+                            "description": "The attendee this ticket is for, with their answers, on events that collect attendee details. Absent until the booker or seller adds them. `attendeeName` and `attendeeEmail` follow it.",
+                            "properties": {
+                              "answers": {
+                                "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
+                                "items": {
+                                  "properties": {
+                                    "element": {
+                                      "enum": [
+                                        "checkbox",
+                                        "quantity",
+                                        "multiple-choice",
+                                        "select",
+                                        "multi-select",
+                                        "po-number",
+                                        "text",
+                                        "textarea",
+                                        "number",
+                                        "date-time",
+                                        "date",
+                                        "time",
+                                        "address",
+                                        "email",
+                                        "tax-id",
+                                        "phone",
+                                        "country",
+                                        null
+                                      ],
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "fieldId": {
+                                      "description": "Unique field ID.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "label": {
+                                      "description": "Label shown for the field.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "meta": {
+                                      "additionalProperties": {},
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ]
+                                    },
+                                    "reference": {
+                                      "description": "Reference key for the field.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "type": {
+                                      "enum": [
+                                        "",
+                                        "company-name",
+                                        "po-number",
+                                        "name",
+                                        "first-name",
+                                        "last-name",
+                                        "email",
+                                        "billing-email",
+                                        "phone",
+                                        "address-line1",
+                                        "address-city",
+                                        "address-country",
+                                        "address-line2",
+                                        "address-postal_code",
+                                        "address-state",
+                                        "shipping-name",
+                                        "shipping-phone",
+                                        "shipping-address-line1",
+                                        "shipping-address-city",
+                                        "shipping-address-country",
+                                        "shipping-address-line2",
+                                        "shipping-address-postal_code",
+                                        "shipping-address-state",
+                                        "tax-id",
+                                        null
+                                      ],
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "value": {
+                                      "description": "Submitted value for the field.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "values": {
+                                      "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "type": "array"
+                              },
+                              "email": {
+                                "description": "The attendee's email address.",
+                                "type": "string"
+                              },
+                              "flagged": {
+                                "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
+                                "type": "boolean"
+                              },
+                              "name": {
+                                "description": "The attendee's name.",
+                                "type": "string"
+                              },
+                              "reviewedAt": {
+                                "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
+                                "format": "date-time",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
                           "attendeeEmail": {
                             "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                             "type": "string"
@@ -86578,20 +87142,6 @@
                           "feeAmount": {
                             "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                             "type": "number"
-                          },
-                          "guest": {
-                            "description": "The guest this ticket is for, on events that collect guest details. Absent until the booker or seller adds them. Answers to guest questions are not included.",
-                            "properties": {
-                              "email": {
-                                "description": "The guest's email address.",
-                                "type": "string"
-                              },
-                              "name": {
-                                "description": "The guest's name.",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
                           },
                           "id": {
                             "$ref": "#/components/schemas/UniqueIdentifier"
@@ -96867,6 +97417,142 @@
                       "ticket": {
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
+                          "attendee": {
+                            "description": "The attendee this ticket is for, with their answers, on events that collect attendee details. Absent until the booker or seller adds them. `attendeeName` and `attendeeEmail` follow it.",
+                            "properties": {
+                              "answers": {
+                                "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
+                                "items": {
+                                  "properties": {
+                                    "element": {
+                                      "enum": [
+                                        "checkbox",
+                                        "quantity",
+                                        "multiple-choice",
+                                        "select",
+                                        "multi-select",
+                                        "po-number",
+                                        "text",
+                                        "textarea",
+                                        "number",
+                                        "date-time",
+                                        "date",
+                                        "time",
+                                        "address",
+                                        "email",
+                                        "tax-id",
+                                        "phone",
+                                        "country",
+                                        null
+                                      ],
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "fieldId": {
+                                      "description": "Unique field ID.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "label": {
+                                      "description": "Label shown for the field.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "meta": {
+                                      "additionalProperties": {},
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ]
+                                    },
+                                    "reference": {
+                                      "description": "Reference key for the field.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "type": {
+                                      "enum": [
+                                        "",
+                                        "company-name",
+                                        "po-number",
+                                        "name",
+                                        "first-name",
+                                        "last-name",
+                                        "email",
+                                        "billing-email",
+                                        "phone",
+                                        "address-line1",
+                                        "address-city",
+                                        "address-country",
+                                        "address-line2",
+                                        "address-postal_code",
+                                        "address-state",
+                                        "shipping-name",
+                                        "shipping-phone",
+                                        "shipping-address-line1",
+                                        "shipping-address-city",
+                                        "shipping-address-country",
+                                        "shipping-address-line2",
+                                        "shipping-address-postal_code",
+                                        "shipping-address-state",
+                                        "tax-id",
+                                        null
+                                      ],
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "value": {
+                                      "description": "Submitted value for the field.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "values": {
+                                      "description": "Chosen option values of a multi-select field (an option without a value is named by its label), in the order the options are defined. `value` holds the same values joined with \", \". The matching labels, as they were when the answer was written, are in `meta.selectedOptionLabels` and joined in `meta.selectedOptionLabel`. Absent on every other field type.",
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "type": "array"
+                              },
+                              "email": {
+                                "description": "The attendee's email address.",
+                                "type": "string"
+                              },
+                              "flagged": {
+                                "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
+                                "type": "boolean"
+                              },
+                              "name": {
+                                "description": "The attendee's name.",
+                                "type": "string"
+                              },
+                              "reviewedAt": {
+                                "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
+                                "format": "date-time",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
                           "attendeeEmail": {
                             "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
                             "type": "string"
@@ -97009,20 +97695,6 @@
                           "feeAmount": {
                             "description": "Booking fees allocated to this ticket, in the smallest currency unit. Booking-level fees are apportioned across the tickets in the booking.",
                             "type": "number"
-                          },
-                          "guest": {
-                            "description": "The guest this ticket is for, on events that collect guest details. Absent until the booker or seller adds them. Answers to guest questions are not included.",
-                            "properties": {
-                              "email": {
-                                "description": "The guest's email address.",
-                                "type": "string"
-                              },
-                              "name": {
-                                "description": "The guest's name.",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
                           },
                           "id": {
                             "$ref": "#/components/schemas/UniqueIdentifier"
