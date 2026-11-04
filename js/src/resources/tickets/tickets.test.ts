@@ -150,6 +150,26 @@ describe('TicketResource', () => {
     });
   });
 
+  describe('attendee', () => {
+    it("returns the attendee's answers and flag on a listed ticket", async () => {
+      const ticket: TicketList['data'][number] = {
+        ...BASE_TICKET,
+        attendee: {
+          name: 'Priya Shah',
+          email: 'priya@gmail.com',
+          answers: [{ fieldId: '507f1f77bcf86cd799439050', label: 'Company', value: 'Northwind' }],
+          flagged: true,
+        },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({ data: [ticket], has_more: false, total: 1 });
+
+      const result = await ticketResource.list({ bookingId: BOOKING_ID });
+
+      expect(result.data[0].attendee).toMatchObject({ name: 'Priya Shah', flagged: true });
+      expect(result.data[0].attendee?.answers?.[0].value).toBe('Northwind');
+    });
+  });
+
   describe('update', () => {
     it('updates the attendee name and email', async () => {
       const updated = {

@@ -593,6 +593,80 @@ describe('BookingResource', () => {
       paymentOption: { manualType: 'invoice' },
     };
 
+    it('sends attendees by ticket type and returns them with their tickets and attendee status', async () => {
+      const attendees = [
+        {
+          ticketTypeId: TICKET_TYPE_ID,
+          name: 'Grace Hopper',
+          email: 'grace@example.com',
+          answers: [{ fieldId: '507f1f77bcf86cd799439030', value: 'Vegan' }],
+        },
+        { ticketTypeId: TICKET_TYPE_ID },
+      ];
+      const mockResponse: BookingResponse = {
+        data: {
+          ...BASE_BOOKING,
+          status: 'unpaid',
+          attendeeStatus: 'missing',
+          attendees: [
+            {
+              position: 1,
+              ticketTypeId: TICKET_TYPE_ID,
+              ticketId: '507f1f77bcf86cd799439031',
+              name: 'Grace Hopper',
+              email: 'grace@example.com',
+              answers: [
+                {
+                  fieldId: '507f1f77bcf86cd799439030',
+                  label: 'Dietary requirements',
+                  reference: 'dietary_requirements',
+                  value: 'Vegan',
+                },
+              ],
+            },
+          ],
+        },
+      };
+      const requestSpy = vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create({ ...createParams, attendees });
+
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/bookings/',
+        body: { ...createParams, attendees },
+      });
+      expect(result.data.attendeeStatus).toBe('missing');
+      expect(result.data.attendees?.[0].ticketId).toBe('507f1f77bcf86cd799439031');
+      expect(result.data.attendees?.[0].answers?.[0].reference).toBe('dietary_requirements');
+    });
+
+    it('returns a flagged attendee and when the seller reviewed them', async () => {
+      const mockResponse: BookingResponse = {
+        data: {
+          ...BASE_BOOKING,
+          attendeeStatus: 'complete',
+          attendees: [
+            {
+              position: 1,
+              ticketTypeId: TICKET_TYPE_ID,
+              name: 'Priya Shah',
+              email: 'priya@gmail.com',
+              flagged: true,
+              reviewedAt: '2026-11-03T09:00:00.000Z',
+            },
+          ],
+        },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue(mockResponse);
+
+      const result = await bookingResource.create(createParams);
+
+      const [attendee] = result.data.attendees ?? [];
+      expect(attendee.flagged).toBe(true);
+      expect(attendee.reviewedAt).toBe('2026-11-03T09:00:00.000Z');
+    });
+
     it('POSTs the booking body to /v1/bookings/', async () => {
       const mockResponse: BookingResponse = {
         data: { ...BASE_BOOKING, status: 'unpaid' },
