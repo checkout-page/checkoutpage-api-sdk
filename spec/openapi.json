@@ -2333,7 +2333,7 @@
         "description": "Creates an event booking without collecting card payment. With `paymentOption` the booking is recorded as unpaid and settled outside checkout; with `complimentary: true` it is recorded as paid at no charge.",
         "properties": {
           "attendees": {
-            "description": "Attendees for an event that collects attendee details, at most one per ticket. Each attendee names its ticket type and takes the next ticket of that type, so the order of the list doesn't matter. Tickets without an attendee are left blank, and the booking then waits for them. Answer the event's `attendeeQuestions` in `answers`; Name and Email address go in `name` and `email`. Ignored for events that don't collect attendee details.",
+            "description": "Attendees for an event that collects attendee details, at most one per ticket. Each attendee names its ticket type and takes the next ticket of that type, so the order of the list doesn't matter. Tickets without an attendee are left blank, and the booking then waits for them. An attendee with answers must have a `name` or an `email`. Answer the event's `attendeeQuestions` by `id` in `answers`; the name and email address go in `name` and `email`. Ignored for events that don't collect attendee details.",
             "items": {
               "additionalProperties": false,
               "properties": {
@@ -2341,7 +2341,7 @@
                   "items": {
                     "properties": {
                       "fieldId": {
-                        "description": "ID of one of the event's `attendeeQuestions`.",
+                        "description": "ID of one of the event's `attendeeQuestions`. Any other ID, including the event's Name and Email address questions, is refused with a 400.",
                         "type": "string"
                       },
                       "value": {
@@ -3445,10 +3445,7 @@
                     "type": "string"
                   }
                 },
-                "type": [
-                  "object",
-                  "null"
-                ]
+                "type": "object"
               },
               "capacity": {
                 "description": "Total event capacity. Omit for unlimited. `0` marks the event as sold out.",
@@ -6659,7 +6656,7 @@
             ]
           },
           "attendeeQuestions": {
-            "description": "The questions each attendee is asked, on events that collect attendee details. Answer them by `id` in a booking's `attendees[].answers`. Name and Email address go in `attendees[].name` and `attendees[].email`, not in `answers`.",
+            "description": "The questions each attendee is asked besides their name and email address, on events that collect attendee details. Answer them by `id` in a booking's `attendees[].answers`; an answer to any other ID is refused. The name and email address go in `attendees[].name` and `attendees[].email`.",
             "items": {
               "$ref": "#/components/schemas/Field"
             },
@@ -60328,11 +60325,11 @@
                 "type": "object"
               },
               "attendeeEmail": {
-                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
+                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
                 "type": "string"
               },
               "attendeeName": {
-                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
+                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
                 "type": "string"
               },
               "bookingId": {
@@ -63929,10 +63926,7 @@
                     "type": "string"
                   }
                 },
-                "type": [
-                  "object",
-                  "null"
-                ]
+                "type": "object"
               },
               "capacity": {
                 "description": "Total event capacity. Omit for unlimited. `0` marks the event as sold out.",
@@ -87001,11 +86995,11 @@
                             "type": "object"
                           },
                           "attendeeEmail": {
-                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "attendeeName": {
-                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "bookingId": {
@@ -87450,7 +87444,7 @@
     },
     "/v1/tickets/:ticketId": {
       "patch": {
-        "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. On a booking that collects attendee details, the guest details on the ticket change with them and the booking guest status is updated. The customer record is not affected.",
+        "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. On a booking that collects attendee details, the `attendee` on the ticket changes with them and the `attendeeStatus` of the booking is updated. The customer record is not affected.",
         "operationId": "tickets/update",
         "parameters": [
           {
@@ -97554,11 +97548,11 @@
                             "type": "object"
                           },
                           "attendeeEmail": {
-                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "attendeeName": {
-                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's guest on events that collect guest details; editable via the ticket update endpoint.",
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "bookingId": {

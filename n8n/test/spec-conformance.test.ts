@@ -782,6 +782,14 @@ describe('spec conformance: the node only sends what the seller API spec accepts
         },
         "POST /v1/bookings/": {
           "body": [
+            "attendees",
+            "attendees[].answers",
+            "attendees[].answers[].fieldId",
+            "attendees[].answers[].value",
+            "attendees[].answers[].values",
+            "attendees[].email",
+            "attendees[].name",
+            "attendees[].ticketTypeId",
             "fields[].meta",
             "fields[].meta.type",
             "fields[].value.billing",
