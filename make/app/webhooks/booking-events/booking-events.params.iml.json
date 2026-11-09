@@ -5,7 +5,7 @@
     "label": "Events",
     "required": true,
     "multiple": true,
-    "default": ["booking.created", "booking.paid", "booking.abandoned"],
+    "default": ["booking.created", "booking.paid", "booking.abandoned", "booking.canceled"],
     "options": [
       {
         "label": "Booking created",
@@ -18,6 +18,10 @@
       {
         "label": "Booking abandoned",
         "value": "booking.abandoned"
+      },
+      {
+        "label": "Booking canceled",
+        "value": "booking.canceled"
       }
     ]
   }

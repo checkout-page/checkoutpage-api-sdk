@@ -159,6 +159,16 @@
         "label": "Canceled by"
       },
       {
+        "name": "canceledByApiKey",
+        "type": "text",
+        "label": "Canceled by api key"
+      },
+      {
+        "name": "canceledByApiKeyName",
+        "type": "text",
+        "label": "Canceled by api key name"
+      },
+      {
         "name": "canceledReason",
         "type": "text",
         "label": "Canceled reason"

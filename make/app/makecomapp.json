@@ -107,7 +107,7 @@
     "module": {
       "watchPayments": {
         "label": "Watch payments",
-        "description": "Triggers when a payment is created, paid or abandoned.",
+        "description": "Triggers when a payment is created, paid, abandoned or canceled.",
         "moduleType": "instant_trigger",
         "connection": "checkoutPage",
         "webhook": "paymentEvents",
@@ -120,7 +120,7 @@
       },
       "watchBookings": {
         "label": "Watch bookings",
-        "description": "Triggers when an event booking is created, paid or abandoned.",
+        "description": "Triggers when an event booking is created, paid, abandoned or canceled.",
         "moduleType": "instant_trigger",
         "connection": "checkoutPage",
         "webhook": "bookingEvents",
@@ -159,7 +159,7 @@
       },
       "watchSubmissions": {
         "label": "Watch submissions",
-        "description": "Triggers when a form submission is created or updated.",
+        "description": "Triggers when a form submission is created, updated or canceled.",
         "moduleType": "instant_trigger",
         "connection": "checkoutPage",
         "webhook": "submissionEvents",

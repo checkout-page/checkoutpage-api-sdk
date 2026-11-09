@@ -40,6 +40,288 @@
     "label": "Allow dynamic title"
   },
   {
+    "name": "attendeeQuestions",
+    "type": "array",
+    "label": "Attendee questions",
+    "spec": [
+      {
+        "name": "collect",
+        "type": "text",
+        "label": "Collect"
+      },
+      {
+        "name": "collectShippingPhone",
+        "type": "boolean",
+        "label": "Collect shipping phone"
+      },
+      {
+        "name": "createdAt",
+        "type": "text",
+        "label": "Created at"
+      },
+      {
+        "name": "defaultCountry",
+        "type": "text",
+        "label": "Default country"
+      },
+      {
+        "name": "defaultValue",
+        "type": "collection",
+        "label": "Default value",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "label": "Values",
+            "spec": {
+              "type": "text"
+            }
+          }
+        ]
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "label": "Description"
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "label": "Disabled"
+      },
+      {
+        "name": "element",
+        "type": "text",
+        "label": "Element"
+      },
+      {
+        "name": "hidden",
+        "type": "boolean",
+        "label": "Hidden"
+      },
+      {
+        "name": "id",
+        "type": "text",
+        "label": "ID"
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "label": "Label"
+      },
+      {
+        "name": "layout",
+        "type": "text",
+        "label": "Layout"
+      },
+      {
+        "name": "limitAllowedCountries",
+        "type": "collection",
+        "label": "Limit allowed countries",
+        "spec": [
+          {
+            "name": "countries",
+            "type": "array",
+            "label": "Countries",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      },
+      {
+        "name": "limitBillingCountries",
+        "type": "collection",
+        "label": "Limit billing countries",
+        "spec": [
+          {
+            "name": "countries",
+            "type": "array",
+            "label": "Countries",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      },
+      {
+        "name": "limitShippingCountries",
+        "type": "collection",
+        "label": "Limit shipping countries",
+        "spec": [
+          {
+            "name": "countries",
+            "type": "array",
+            "label": "Countries",
+            "spec": {
+              "type": "text"
+            }
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          }
+        ]
+      },
+      {
+        "name": "maxValue",
+        "type": "collection",
+        "label": "Max value",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "minValue",
+        "type": "collection",
+        "label": "Min value",
+        "spec": [
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "options",
+        "type": "array",
+        "label": "Options",
+        "spec": [
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "label",
+            "type": "text",
+            "label": "Label"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "order",
+        "type": "number",
+        "label": "Order"
+      },
+      {
+        "name": "placeholder",
+        "type": "text",
+        "label": "Placeholder"
+      },
+      {
+        "name": "reference",
+        "type": "text",
+        "label": "Reference"
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "label": "Required"
+      },
+      {
+        "name": "showHideLogic",
+        "type": "collection",
+        "label": "Show hide logic",
+        "spec": [
+          {
+            "name": "comparison",
+            "type": "text",
+            "label": "Comparison"
+          },
+          {
+            "name": "element",
+            "type": "collection",
+            "label": "Element",
+            "spec": [
+              {
+                "name": "elementId",
+                "type": "text",
+                "label": "Element ID"
+              },
+              {
+                "name": "elementTitle",
+                "type": "text",
+                "label": "Element title"
+              },
+              {
+                "name": "elementType",
+                "type": "text",
+                "label": "Element type"
+              }
+            ]
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          }
+        ]
+      },
+      {
+        "name": "showSelectedDialCode",
+        "type": "boolean",
+        "label": "Show selected dial code"
+      },
+      {
+        "name": "type",
+        "type": "text",
+        "label": "Type"
+      },
+      {
+        "name": "updatedAt",
+        "type": "text",
+        "label": "Updated at"
+      }
+    ]
+  },
+  {
     "name": "checkoutAbandonment",
     "type": "collection",
     "label": "Checkout abandonment",
@@ -131,6 +413,58 @@
     "type": "collection",
     "label": "Event details",
     "spec": [
+      {
+        "name": "attendeeDetails",
+        "type": "collection",
+        "label": "Attendee details",
+        "spec": [
+          {
+            "name": "description",
+            "type": "text",
+            "label": "Description"
+          },
+          {
+            "name": "emailDomains",
+            "type": "text",
+            "label": "Email domains"
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "label": "Enabled"
+          },
+          {
+            "name": "enabledAt",
+            "type": "text",
+            "label": "Enabled at"
+          },
+          {
+            "name": "heading",
+            "type": "text",
+            "label": "Heading"
+          },
+          {
+            "name": "requireAllBeforePayment",
+            "type": "boolean",
+            "label": "Require all before payment"
+          },
+          {
+            "name": "saveButton",
+            "type": "text",
+            "label": "Save button"
+          },
+          {
+            "name": "sendReminders",
+            "type": "boolean",
+            "label": "Send reminders"
+          },
+          {
+            "name": "when",
+            "type": "text",
+            "label": "When"
+          }
+        ]
+      },
       {
         "name": "capacity",
         "type": "number",

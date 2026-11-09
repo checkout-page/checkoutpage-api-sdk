@@ -33,6 +33,25 @@
     ]
   },
   {
+    "name": "orderStatus",
+    "type": "select",
+    "label": "Order status",
+    "options": [
+      {
+        "label": "Active",
+        "value": "active"
+      },
+      {
+        "label": "Canceled",
+        "value": "canceled"
+      },
+      {
+        "label": "Archived",
+        "value": "archived"
+      }
+    ]
+  },
+  {
     "name": "createdAfter",
     "type": "date",
     "label": "Created after"

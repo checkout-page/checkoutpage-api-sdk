@@ -69,6 +69,31 @@
     ]
   },
   {
+    "name": "canceledAt",
+    "type": "date",
+    "label": "Canceled at"
+  },
+  {
+    "name": "canceledBy",
+    "type": "text",
+    "label": "Canceled by"
+  },
+  {
+    "name": "canceledByApiKey",
+    "type": "text",
+    "label": "Canceled by api key"
+  },
+  {
+    "name": "canceledByApiKeyName",
+    "type": "text",
+    "label": "Canceled by api key name"
+  },
+  {
+    "name": "canceledReason",
+    "type": "text",
+    "label": "Canceled reason"
+  },
+  {
     "name": "clientIp",
     "type": "text",
     "label": "Client ip"
@@ -162,6 +187,11 @@
     "name": "locale",
     "type": "text",
     "label": "Locale"
+  },
+  {
+    "name": "orderStatus",
+    "type": "text",
+    "label": "Order status"
   },
   {
     "name": "pageId",

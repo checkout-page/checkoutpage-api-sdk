@@ -55,6 +55,103 @@
     "label": "Archived by"
   },
   {
+    "name": "attendeeStatus",
+    "type": "text",
+    "label": "Attendee status"
+  },
+  {
+    "name": "attendees",
+    "type": "array",
+    "label": "Attendees",
+    "spec": [
+      {
+        "name": "answers",
+        "type": "array",
+        "label": "Answers",
+        "spec": [
+          {
+            "name": "element",
+            "type": "text",
+            "label": "Element"
+          },
+          {
+            "name": "fieldId",
+            "type": "text",
+            "label": "Field ID"
+          },
+          {
+            "name": "label",
+            "type": "text",
+            "label": "Label"
+          },
+          {
+            "name": "meta",
+            "type": "collection",
+            "label": "Meta"
+          },
+          {
+            "name": "reference",
+            "type": "text",
+            "label": "Reference"
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "label": "Type"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "label": "Values",
+            "spec": {
+              "type": "text"
+            }
+          }
+        ]
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "label": "Email"
+      },
+      {
+        "name": "flagged",
+        "type": "boolean",
+        "label": "Flagged"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "position",
+        "type": "number",
+        "label": "Position"
+      },
+      {
+        "name": "reviewedAt",
+        "type": "date",
+        "label": "Reviewed at"
+      },
+      {
+        "name": "ticketId",
+        "type": "text",
+        "label": "Ticket ID"
+      },
+      {
+        "name": "ticketTypeId",
+        "type": "text",
+        "label": "Ticket type ID"
+      }
+    ]
+  },
+  {
     "name": "billing",
     "type": "collection",
     "label": "Billing",
@@ -132,6 +229,16 @@
     "name": "canceledBy",
     "type": "text",
     "label": "Canceled by"
+  },
+  {
+    "name": "canceledByApiKey",
+    "type": "text",
+    "label": "Canceled by api key"
+  },
+  {
+    "name": "canceledByApiKeyName",
+    "type": "text",
+    "label": "Canceled by api key name"
   },
   {
     "name": "canceledReason",
