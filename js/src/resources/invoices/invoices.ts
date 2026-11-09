@@ -1,6 +1,5 @@
 import type { CheckoutPageApiClient } from '../../client';
 import type {
-  Invoice,
   InvoiceList,
   InvoiceListParams,
   InvoiceResponse,
@@ -54,13 +53,5 @@ export class InvoiceResource {
       path: '/v1/invoices/',
       query,
     });
-  }
-
-  async regenerate(id: string): Promise<Invoice> {
-    const response = await this.client.request<{ data: Invoice }>({
-      method: 'POST',
-      path: `/v1/invoices/${id}/regenerate`,
-    });
-    return response.data;
   }
 }
