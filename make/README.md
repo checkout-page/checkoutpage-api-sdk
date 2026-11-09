@@ -31,11 +31,11 @@ Checkout Page support gave you another URL.
 
 | Module                            | What it does                                                                                    |
 | --------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Watch payments                    | Triggers when a payment is created, paid or abandoned.                                          |
-| Watch bookings                    | Triggers when an event booking is created, paid or abandoned.                                   |
+| Watch payments                    | Triggers when a payment is created, paid, abandoned or canceled.                                |
+| Watch bookings                    | Triggers when an event booking is created, paid, abandoned or canceled.                         |
 | Watch tickets                     | Triggers when a ticket is created for an event.                                                 |
 | Watch subscriptions               | Triggers when a subscription is created or changes status.                                      |
-| Watch submissions                 | Triggers when a form submission is created or updated.                                          |
+| Watch submissions                 | Triggers when a form submission is created, updated or canceled.                                |
 | Watch customers                   | Triggers when a customer is created or updated.                                                 |
 | Watch checkout pages and products | Triggers when a checkout page or product is created or updated.                                 |
 | Create a booking                  | Adds an attendee to an event, recorded as complimentary or to be paid by invoice or on arrival. |
@@ -102,11 +102,11 @@ selected by default:
 
 | Trigger                           | Events                                                                                     |
 | --------------------------------- | ------------------------------------------------------------------------------------------ |
-| Watch payments                    | Payment created, paid, abandoned                                                           |
-| Watch bookings                    | Booking created, paid, abandoned                                                           |
+| Watch payments                    | Payment created, paid, abandoned, canceled                                                 |
+| Watch bookings                    | Booking created, paid, abandoned, canceled                                                 |
 | Watch tickets                     | Ticket created                                                                             |
 | Watch subscriptions               | Subscription created, trialing, scheduled, active, completed, canceled, expired, abandoned |
-| Watch submissions                 | Submission created, updated                                                                |
+| Watch submissions                 | Submission created, updated, canceled                                                      |
 | Watch customers                   | Customer created, updated                                                                  |
 | Watch checkout pages and products | Checkout page created, updated, product created, updated                                   |
 

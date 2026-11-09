@@ -1,5 +1,82 @@
 [
   {
+    "name": "attendee",
+    "type": "collection",
+    "label": "Attendee",
+    "spec": [
+      {
+        "name": "answers",
+        "type": "array",
+        "label": "Answers",
+        "spec": [
+          {
+            "name": "element",
+            "type": "text",
+            "label": "Element"
+          },
+          {
+            "name": "fieldId",
+            "type": "text",
+            "label": "Field ID"
+          },
+          {
+            "name": "label",
+            "type": "text",
+            "label": "Label"
+          },
+          {
+            "name": "meta",
+            "type": "collection",
+            "label": "Meta"
+          },
+          {
+            "name": "reference",
+            "type": "text",
+            "label": "Reference"
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "label": "Type"
+          },
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Value"
+          },
+          {
+            "name": "values",
+            "type": "array",
+            "label": "Values",
+            "spec": {
+              "type": "text"
+            }
+          }
+        ]
+      },
+      {
+        "name": "email",
+        "type": "text",
+        "label": "Email"
+      },
+      {
+        "name": "flagged",
+        "type": "boolean",
+        "label": "Flagged"
+      },
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name"
+      },
+      {
+        "name": "reviewedAt",
+        "type": "date",
+        "label": "Reviewed at"
+      }
+    ]
+  },
+  {
     "name": "attendeeEmail",
     "type": "text",
     "label": "Attendee email"

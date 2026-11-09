@@ -1,5 +1,10 @@
 {
   "billing": null,
+  "canceledAt": null,
+  "canceledBy": null,
+  "canceledByApiKey": null,
+  "canceledByApiKeyName": null,
+  "canceledReason": null,
   "clientIp": null,
   "createdAt": "2026-01-01T12:00:00.000Z",
   "customerEmail": null,
@@ -10,6 +15,7 @@
   "id": "6812fe6e9f39b6760576f01c",
   "livemode": null,
   "locale": null,
+  "orderStatus": "active",
   "pageId": null,
   "pageSlug": null,
   "queryParameters": null,

@@ -13,6 +13,8 @@
   "billing": null,
   "canceledAt": "text",
   "canceledBy": "text",
+  "canceledByApiKey": null,
+  "canceledByApiKeyName": null,
   "canceledReason": "text",
   "clientIp": null,
   "complimentaryDiscountAmount": null,
