@@ -1306,28 +1306,6 @@
         "label": "Availability status"
       },
       {
-        "name": "bulkDiscounts",
-        "type": "array",
-        "label": "Bulk discounts",
-        "spec": [
-          {
-            "name": "maxQuantity",
-            "type": "number",
-            "label": "Max quantity"
-          },
-          {
-            "name": "minQuantity",
-            "type": "number",
-            "label": "Min quantity"
-          },
-          {
-            "name": "percentOff",
-            "type": "number",
-            "label": "Percent off"
-          }
-        ]
-      },
-      {
         "name": "capacity",
         "type": "number",
         "label": "Capacity"

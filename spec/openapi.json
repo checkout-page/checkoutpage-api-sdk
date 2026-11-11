@@ -1685,35 +1685,6 @@
         ],
         "type": "object"
       },
-      "BulkDiscountInput": {
-        "properties": {
-          "maxQuantity": {
-            "description": "Maximum quantity for this discount tier.",
-            "example": 10,
-            "minimum": 1,
-            "type": "number"
-          },
-          "minQuantity": {
-            "description": "Minimum quantity to qualify for this discount tier.",
-            "example": 5,
-            "minimum": 1,
-            "type": "number"
-          },
-          "percentOff": {
-            "description": "Percentage discount for this tier.",
-            "example": 10,
-            "maximum": 100,
-            "minimum": 0,
-            "type": "number"
-          }
-        },
-        "required": [
-          "minQuantity",
-          "maxQuantity",
-          "percentOff"
-        ],
-        "type": "object"
-      },
       "ChargeId": {
         "example": "6812fe6e9f39b6760576f01c",
         "type": "string"
@@ -60694,28 +60665,6 @@
         ],
         "type": "object"
       },
-      "TicketGroupBulkDiscountResponse": {
-        "properties": {
-          "maxQuantity": {
-            "description": "Maximum quantity for this discount tier.",
-            "type": "number"
-          },
-          "minQuantity": {
-            "description": "Minimum quantity for this discount tier.",
-            "type": "number"
-          },
-          "percentOff": {
-            "description": "Percentage discount for this tier.",
-            "type": "number"
-          }
-        },
-        "required": [
-          "minQuantity",
-          "maxQuantity",
-          "percentOff"
-        ],
-        "type": "object"
-      },
       "TicketGroupControllerInput": {
         "properties": {
           "availabilityBehavior": {
@@ -60732,16 +60681,6 @@
             "example": "always_available",
             "type": [
               "string",
-              "null"
-            ]
-          },
-          "bulkDiscounts": {
-            "description": "Bulk discount tiers for quantity-based discounts.",
-            "items": {
-              "$ref": "#/components/schemas/BulkDiscountInput"
-            },
-            "type": [
-              "array",
               "null"
             ]
           },
@@ -61098,16 +61037,6 @@
               "null"
             ]
           },
-          "bulkDiscounts": {
-            "description": "Bulk discount tiers.",
-            "items": {
-              "$ref": "#/components/schemas/TicketGroupBulkDiscountResponse"
-            },
-            "type": [
-              "array",
-              "null"
-            ]
-          },
           "capacity": {
             "description": "Maximum tickets sold across all types in this group. Null means unlimited.",
             "type": [
@@ -61439,16 +61368,6 @@
             "example": "always_available",
             "type": [
               "string",
-              "null"
-            ]
-          },
-          "bulkDiscounts": {
-            "description": "Bulk discount tiers for quantity-based discounts.",
-            "items": {
-              "$ref": "#/components/schemas/BulkDiscountInput"
-            },
-            "type": [
-              "array",
               "null"
             ]
           },
@@ -61827,16 +61746,6 @@
             ],
             "type": [
               "string",
-              "null"
-            ]
-          },
-          "bulkDiscounts": {
-            "description": "Bulk discount tiers.",
-            "items": {
-              "$ref": "#/components/schemas/TicketGroupBulkDiscountResponse"
-            },
-            "type": [
-              "array",
               "null"
             ]
           },
@@ -66915,16 +66824,6 @@
             "example": "always_available",
             "type": [
               "string",
-              "null"
-            ]
-          },
-          "bulkDiscounts": {
-            "description": "Bulk discount tiers for quantity-based discounts.",
-            "items": {
-              "$ref": "#/components/schemas/BulkDiscountInput"
-            },
-            "type": [
-              "array",
               "null"
             ]
           },

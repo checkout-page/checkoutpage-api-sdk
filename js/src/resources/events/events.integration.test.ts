@@ -506,13 +506,6 @@ describe('EventsResource integration tests', () => {
             hideWhenNotOnSale: true,
             hideWhenScheduled: false,
             hideWhenUnavailable: false,
-            bulkDiscounts: [
-              {
-                minQuantity: 2,
-                maxQuantity: 4,
-                percentOff: 10,
-              },
-            ],
             availabilityBehavior: 'date_time_based',
             saleStartOn: '2026-09-01T09:00:00Z',
             saleEndOn: '2026-10-01T23:59:59Z',
@@ -676,9 +669,6 @@ describe('EventsResource integration tests', () => {
       expect(vipGroup.hideWhenNotOnSale).toBe(true);
       expect(vipGroup.hideWhenScheduled).toBe(false);
       expect(vipGroup.hideWhenUnavailable).toBe(false);
-      expect(vipGroup.bulkDiscounts?.[0]?.minQuantity).toBe(2);
-      expect(vipGroup.bulkDiscounts?.[0]?.maxQuantity).toBe(4);
-      expect(vipGroup.bulkDiscounts?.[0]?.percentOff).toBe(10);
       expect(vipGroup.availabilityBehavior).toBe('date_time_based');
       expect(vipGroup.saleStartOn).toBe('2026-09-01T09:00:00.000Z');
       expect(vipGroup.saleEndOn).toBe('2026-10-01T23:59:59.000Z');
