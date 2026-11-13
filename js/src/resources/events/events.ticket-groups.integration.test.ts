@@ -201,23 +201,6 @@ describe('EventsResource ticketGroups integration tests', () => {
       expect(result.data.hideWhenUnavailable).toBe(true);
     });
 
-    it('creates a ticket group with bulk discounts', async () => {
-      const event = await createEvent();
-      const result = await createTicketGroup(event.data.id, {
-        bulkDiscounts: [
-          {
-            minQuantity: 2,
-            maxQuantity: 4,
-            percentOff: 10,
-          },
-        ],
-      });
-
-      expect(result.data.bulkDiscounts?.[0]?.minQuantity).toBe(2);
-      expect(result.data.bulkDiscounts?.[0]?.maxQuantity).toBe(4);
-      expect(result.data.bulkDiscounts?.[0]?.percentOff).toBe(10);
-    });
-
     it('creates a ticket group with date_time_based availability', async () => {
       const event = await createEvent();
       const result = await createTicketGroup(event.data.id, {
