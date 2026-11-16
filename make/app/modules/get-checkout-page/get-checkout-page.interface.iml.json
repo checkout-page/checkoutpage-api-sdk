@@ -1041,6 +1041,11 @@
             "label": "Currency"
           },
           {
+            "name": "description",
+            "type": "text",
+            "label": "Description"
+          },
+          {
             "name": "discountedFromPrice",
             "type": "number",
             "label": "Discounted from price"
