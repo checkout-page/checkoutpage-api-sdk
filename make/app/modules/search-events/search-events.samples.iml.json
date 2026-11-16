@@ -52,6 +52,8 @@
   "showConfirmationEventTickets": null,
   "showCouponCodeField": null,
   "showCouponCodeFieldType": null,
+  "showFilesList": null,
+  "showViewDownloadsButton": null,
   "slug": null,
   "status": "published",
   "tax": null,

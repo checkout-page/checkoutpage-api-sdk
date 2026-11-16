@@ -571,6 +571,21 @@
         "label": "Platform"
       },
       {
+        "name": "singleTicketPerPagePdfEnabled",
+        "type": "boolean",
+        "label": "Single ticket per page pdf enabled"
+      },
+      {
+        "name": "staffInviteMessage",
+        "type": "text",
+        "label": "Staff invite message"
+      },
+      {
+        "name": "staffInviteSubject",
+        "type": "text",
+        "label": "Staff invite subject"
+      },
+      {
         "name": "startDate",
         "type": "date",
         "label": "Start date"
@@ -1247,6 +1262,16 @@
     "name": "showCouponCodeFieldType",
     "type": "text",
     "label": "Show coupon code field type"
+  },
+  {
+    "name": "showFilesList",
+    "type": "boolean",
+    "label": "Show files list"
+  },
+  {
+    "name": "showViewDownloadsButton",
+    "type": "boolean",
+    "label": "Show view downloads button"
   },
   {
     "name": "slug",

@@ -3634,6 +3634,14 @@
                   "null"
                 ]
               },
+              "singleTicketPerPagePdfEnabled": {
+                "description": "Put each ticket on its own page of the PDF. Applies when `pdfTicketsEnabled` is `true`. Defaults to `false`.",
+                "example": false,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
               "startDate": {
                 "description": "Event start date in ISO 8601 format.",
                 "example": "2025-06-15T09:00:00Z",
@@ -6988,6 +6996,27 @@
                   "null"
                 ]
               },
+              "singleTicketPerPagePdfEnabled": {
+                "description": "Whether each ticket is on its own page of the PDF.",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "staffInviteMessage": {
+                "description": "Message shown in the email that invites staff to check in guests.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "staffInviteSubject": {
+                "description": "Subject line of the email that invites staff to check in guests. Null means the default subject, which names the event.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "startDate": {
                 "description": "Event start date in ISO 8601 format.",
                 "format": "date-time",
@@ -7638,6 +7667,20 @@
             ],
             "type": [
               "string",
+              "null"
+            ]
+          },
+          "showFilesList": {
+            "description": "Whether the confirmation page lists the purchased files.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showViewDownloadsButton": {
+            "description": "Whether the confirmation page shows a \"View downloads\" button.",
+            "type": [
+              "boolean",
               "null"
             ]
           },
@@ -15941,6 +15984,20 @@
           },
           "sendPaymentNotification": {
             "description": "Send notification emails to the store owner.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showFilesList": {
+            "description": "Whether the confirmation page lists the purchased files.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showViewDownloadsButton": {
+            "description": "Whether the confirmation page shows a \"View downloads\" button.",
             "type": [
               "boolean",
               "null"
@@ -60684,6 +60741,16 @@
               "null"
             ]
           },
+          "availabilityStatus": {
+            "description": "Set to `sold_out` or `unavailable` to stop sales of every ticket type in the group. A ticket group that reaches its `capacity` becomes `sold_out` by itself. Defaults to `available`.",
+            "enum": [
+              "available",
+              "sold_out",
+              "unavailable"
+            ],
+            "example": "sold_out",
+            "type": "string"
+          },
           "capacity": {
             "description": "Maximum tickets that can be sold across all ticket types in this group. Omit or null for unlimited. `0` marks the ticket group as sold out.",
             "minimum": 0,
@@ -61370,6 +61437,16 @@
               "string",
               "null"
             ]
+          },
+          "availabilityStatus": {
+            "description": "Set to `sold_out` or `unavailable` to stop sales of every ticket type in the group. A ticket group that reaches its `capacity` becomes `sold_out` by itself. Defaults to `available`.",
+            "enum": [
+              "available",
+              "sold_out",
+              "unavailable"
+            ],
+            "example": "sold_out",
+            "type": "string"
           },
           "capacity": {
             "description": "Maximum tickets that can be sold across all ticket types in this group. Omit or null for unlimited. `0` marks the ticket group as sold out.",
@@ -63547,6 +63624,22 @@
             "example": "link",
             "type": "string"
           },
+          "showFilesList": {
+            "description": "Show the purchased files as a list on the confirmation page. The confirmation page shows the list of files or the \"View downloads\" button, not both. Setting it to `true` turns `showViewDownloadsButton` off. Send `null` to go back to the default, `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showViewDownloadsButton": {
+            "description": "Show a \"View downloads\" button on the confirmation page instead of the list of files. The confirmation page shows the list of files or the \"View downloads\" button, not both. Setting it to `true` turns `showFilesList` off. Send `null` to go back to the default, `false`.",
+            "example": false,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
           "slug": {
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
             "example": "premium-course-checkout",
@@ -64040,6 +64133,32 @@
                   null
                 ],
                 "example": "zoom",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "singleTicketPerPagePdfEnabled": {
+                "description": "Put each ticket on its own page of the PDF. Applies when `pdfTicketsEnabled` is `true`. Defaults to `false`.",
+                "example": false,
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "staffInviteMessage": {
+                "description": "Message shown in the email that invites staff to check in guests. Accepts HTML or plain text. Send `null` to remove it.",
+                "example": "<p>Please arrive 30 minutes before doors open.</p>",
+                "maxLength": 10000,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "staffInviteSubject": {
+                "description": "Subject line of the email that invites staff to check in guests. Send `null` to use the default subject, which names the event.",
+                "example": "Help us check in guests at the summer gala",
+                "maxLength": 200,
                 "type": [
                   "string",
                   "null"
@@ -64601,6 +64720,22 @@
             ],
             "example": "link",
             "type": "string"
+          },
+          "showFilesList": {
+            "description": "Show the purchased files as a list on the confirmation page. The confirmation page shows the list of files or the \"View downloads\" button, not both. Setting it to `true` turns `showViewDownloadsButton` off. Send `null` to go back to the default, `true`.",
+            "example": true,
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "showViewDownloadsButton": {
+            "description": "Show a \"View downloads\" button on the confirmation page instead of the list of files. The confirmation page shows the list of files or the \"View downloads\" button, not both. Setting it to `true` turns `showFilesList` off. Send `null` to go back to the default, `false`.",
+            "example": false,
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "slug": {
             "description": "Page URL slug. For events and forms the slug defaults to the slugified version of your `title`. For checkouts the slug defaults to the slugified version of your `productData.title`.",
@@ -66822,6 +66957,20 @@
               null
             ],
             "example": "always_available",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "availabilityStatus": {
+            "description": "Set to `sold_out` or `unavailable` to stop sales of every ticket type in the group. A ticket group that reaches its `capacity` becomes `sold_out` by itself. Send `null` to go back to `available`.",
+            "enum": [
+              "available",
+              "sold_out",
+              "unavailable",
+              null
+            ],
+            "example": "sold_out",
             "type": [
               "string",
               "null"
@@ -77881,6 +78030,22 @@
                   "sendPaymentNotification": {
                     "description": "Send payment/submission notification emails to the store owner.",
                     "example": true,
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "showFilesList": {
+                    "description": "Show the purchased files as a list on the confirmation page. The confirmation page shows the list of files or the \"View downloads\" button, not both. Setting it to `true` turns `showViewDownloadsButton` off. Send `null` to go back to the default, `true`.",
+                    "example": true,
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "showViewDownloadsButton": {
+                    "description": "Show a \"View downloads\" button on the confirmation page instead of the list of files. The confirmation page shows the list of files or the \"View downloads\" button, not both. Setting it to `true` turns `showFilesList` off. Send `null` to go back to the default, `false`.",
+                    "example": false,
                     "type": [
                       "boolean",
                       "null"
