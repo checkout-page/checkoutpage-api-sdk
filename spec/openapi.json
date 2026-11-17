@@ -5857,6 +5857,13 @@
                   "null"
                 ]
               },
+              "description": {
+                "description": "Text shown under this price in the price picker, such as what the price includes or a payment plan's total. Plain text. A price resent by id without it keeps its stored description; `null` removes it.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "discountedFromPrice": {
                 "description": "The original price of the product in the smallest currency unit (cents).",
                 "example": 9900,
@@ -12331,6 +12338,13 @@
             "example": "usd",
             "type": "string"
           },
+          "description": {
+            "description": "Text shown under this price in the price picker.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "discountedFromPrice": {
             "description": "Original price before discount.",
             "type": [
@@ -12692,6 +12706,13 @@
             "example": "usd",
             "maxLength": 3,
             "minLength": 3,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "Text shown under this price in the price picker, such as what the price includes or a payment plan's total. Plain text. A price resent by id without it keeps its stored description; `null` removes it.",
             "type": [
               "string",
               "null"
@@ -16198,6 +16219,13 @@
             "example": "usd",
             "maxLength": 3,
             "minLength": 3,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "Text shown under this price in the price picker, such as what the price includes or a payment plan's total. Plain text. A price resent by id without it keeps its stored description; `null` removes it.",
             "type": [
               "string",
               "null"
@@ -66035,6 +66063,13 @@
                 "example": "usd",
                 "maxLength": 3,
                 "minLength": 3,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "description": "Text shown under this price in the price picker, such as what the price includes or a payment plan's total. Plain text. A price resent by id without it keeps its stored description; `null` removes it.",
                 "type": [
                   "string",
                   "null"
