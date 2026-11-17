@@ -1066,6 +1066,11 @@
                 "label": "Currency"
               },
               {
+                "name": "description",
+                "type": "text",
+                "label": "Description"
+              },
+              {
                 "name": "discountedFromPrice",
                 "type": "number",
                 "label": "Discounted from price"
@@ -1893,6 +1898,11 @@
             "name": "currency",
             "type": "text",
             "label": "Currency"
+          },
+          {
+            "name": "description",
+            "type": "text",
+            "label": "Description"
           },
           {
             "name": "discountedFromPrice",
