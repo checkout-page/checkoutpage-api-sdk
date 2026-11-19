@@ -31,6 +31,8 @@
     "sellerId": "65f4a1c2e4a9f3d2b1c0a9e8",
     "sendEmailConfirmation": null,
     "sendPaymentNotification": null,
+    "showFilesList": null,
+    "showViewDownloadsButton": null,
     "slug": null,
     "status": "published",
     "testmode": false,

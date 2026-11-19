@@ -453,6 +453,16 @@
     "label": "Send payment notification"
   },
   {
+    "name": "showFilesList",
+    "type": "boolean",
+    "label": "Show files list"
+  },
+  {
+    "name": "showViewDownloadsButton",
+    "type": "boolean",
+    "label": "Show view downloads button"
+  },
+  {
     "name": "slug",
     "type": "text",
     "label": "Slug"
