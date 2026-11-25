@@ -86763,6 +86763,123 @@
       }
     },
     "/v1/tickets/:ticketId": {
+      "get": {
+        "description": "Returns one ticket by ID: its attendee's name and email, status, check-ins, metadata, and the attendee's answers on events that collect attendee details.",
+        "operationId": "tickets/get",
+        "parameters": [
+          {
+            "description": "The ID of the ticket to retrieve.",
+            "in": "path",
+            "name": "ticketId",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UniqueIdentifier"
+                },
+                {
+                  "description": "The ID of the ticket to retrieve."
+                }
+              ]
+            }
+          },
+          {
+            "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+            "in": "query",
+            "name": "livemode",
+            "required": false,
+            "schema": {
+              "description": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data.",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketDetailResponse"
+                }
+              }
+            },
+            "description": "Ticket retrieved successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid request parameters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Missing or invalid API key"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions or validation error"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Ticket not found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Rate Limit Exceeded - Please try again later."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerApiErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "api_key_auth": []
+          }
+        ],
+        "summary": "Get a ticket",
+        "tags": [
+          "Events"
+        ]
+      },
       "patch": {
         "description": "Updates the attendee details and metadata held on a ticket. Only the fields you supply are changed; omitted fields are left as-is. Send `null` for `attendeeName` to clear it; `attendeeEmail` cannot be cleared. `metadata` takes per-entry operations matching the ticket validation endpoint: each entry adds or overwrites its key, `null` deletes it, and entries not named are left untouched (at most 20 entries per ticket). Requests with an empty body are rejected. When attendee details change and the booking has a ticket PDF, it is regenerated so the next download from the bookings ticket-pdf endpoint reflects them. On a booking that collects attendee details, the `attendee` on the ticket changes with them and the `attendeeStatus` of the booking is updated. The customer record is not affected.",
         "operationId": "tickets/update",

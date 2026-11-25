@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TicketResource } from './tickets';
 import { CheckoutPageApiClient } from '../../client';
-import type { TicketList, ValidateTicketResponse } from '../../types';
+import type { TicketList, TicketResponse, ValidateTicketResponse } from '../../types';
 
 const TICKET_ID = '6812fe6e9f39b6760576f01c';
 const PAGE_ID = '67fcbdac6a91c25ef2d3534a';
@@ -170,6 +170,38 @@ describe('TicketResource', () => {
     });
   });
 
+  describe('get', () => {
+    it('fetches a ticket by id', async () => {
+      const mockTicket: TicketResponse = { data: BASE_TICKET };
+      vi.spyOn(client, 'request').mockResolvedValue(mockTicket);
+
+      const result = await ticketResource.get(TICKET_ID);
+
+      expect(result).toEqual(mockTicket);
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/tickets/${TICKET_ID}`,
+        query: { livemode: undefined },
+      });
+    });
+
+    it('sends livemode as a string to read a test-mode ticket', async () => {
+      vi.spyOn(client, 'request').mockResolvedValue({ data: BASE_TICKET });
+
+      await ticketResource.get(TICKET_ID, { livemode: false });
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: `/v1/tickets/${TICKET_ID}`,
+        query: { livemode: 'false' },
+      });
+    });
+
+    it('throws when the ticket id is empty', async () => {
+      await expect(ticketResource.get('')).rejects.toThrow('Ticket ID is required');
+    });
+  });
+
   describe('update', () => {
     it('updates the attendee name and email', async () => {
       const updated = {
@@ -243,7 +275,7 @@ describe('TicketResource', () => {
 
     it('throws when the ticket id is missing', async () => {
       await expect(ticketResource.update('', { attendeeName: 'X' })).rejects.toThrow(
-        'Ticket ID is required',
+        'Ticket ID is required'
       );
     });
   });

@@ -267,6 +267,9 @@ export type UpdateTicketParams = NonNullable<
 export type UpdateTicketResponse =
   operations['tickets/update']['responses'][200]['content']['application/json'];
 
+export type TicketResponse =
+  operations['tickets/get']['responses'][200]['content']['application/json'];
+
 // Subscription Payments
 export type SubscriptionPaymentList =
   operations['subscription-payments/list']['responses'][200]['content']['application/json'];
