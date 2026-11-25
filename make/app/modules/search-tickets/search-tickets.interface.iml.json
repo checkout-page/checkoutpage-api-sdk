@@ -55,19 +55,9 @@
         ]
       },
       {
-        "name": "email",
-        "type": "text",
-        "label": "Email"
-      },
-      {
         "name": "flagged",
         "type": "boolean",
         "label": "Flagged"
-      },
-      {
-        "name": "name",
-        "type": "text",
-        "label": "Name"
       },
       {
         "name": "reviewedAt",
