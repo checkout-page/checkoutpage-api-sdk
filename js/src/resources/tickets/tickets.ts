@@ -1,7 +1,9 @@
 import type { CheckoutPageApiClient } from '../../client';
 import type {
+  ReadOptions,
   TicketList,
   TicketListParams,
+  TicketResponse,
   UpdateTicketParams,
   UpdateTicketResponse,
   ValidateTicketData,
@@ -34,6 +36,28 @@ export class TicketResource {
       method: 'GET',
       query,
       path: '/v1/tickets/',
+    });
+  }
+
+  /**
+   * Retrieve a single ticket by ID.
+   *
+   * @example
+   * const { data: ticket } = await client.tickets.get(ticketId);
+   *
+   * @example
+   * // A test-mode ticket
+   * const { data: testTicket } = await client.tickets.get(ticketId, { livemode: false });
+   */
+  async get(ticketId: string, options: ReadOptions = {}): Promise<TicketResponse> {
+    if (!ticketId) {
+      throw new Error('Ticket ID is required');
+    }
+
+    return this.client.request<TicketResponse>({
+      method: 'GET',
+      path: `/v1/tickets/${ticketId}`,
+      query: { livemode: options.livemode?.toString() },
     });
   }
 

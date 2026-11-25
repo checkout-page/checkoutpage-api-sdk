@@ -24268,6 +24268,449 @@
           ]
         },
         {
+          "id": "bbe5ce1a-e041-5f3d-971f-e2c926241721",
+          "name": "Get a ticket",
+          "request": {
+            "description": {
+              "content": "Returns one ticket by ID: its attendee's name and email, status, check-ins, metadata, and the attendee's answers on events that collect attendee details.",
+              "type": "text/markdown"
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "tickets",
+                ":ticketId"
+              ],
+              "query": [
+                {
+                  "description": {
+                    "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                    "type": "text/plain"
+                  },
+                  "disabled": true,
+                  "key": "livemode",
+                  "value": "true"
+                }
+              ],
+              "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+              "variable": [
+                {
+                  "description": {
+                    "content": "The ID of the ticket to retrieve.",
+                    "type": "text/markdown"
+                  },
+                  "key": "ticketId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": {\n    \"attendee\": {\n      \"answers\": [\n        {\n          \"element\": \"checkbox\",\n          \"fieldId\": \"string\",\n          \"label\": \"string\",\n          \"meta\": {},\n          \"reference\": \"string\",\n          \"type\": \"\",\n          \"value\": \"string\",\n          \"values\": [\n            \"string\"\n          ]\n        }\n      ],\n      \"email\": \"string\",\n      \"flagged\": false,\n      \"name\": \"string\",\n      \"reviewedAt\": \"2026-01-01T00:00:00.000Z\"\n    },\n    \"attendeeEmail\": \"string\",\n    \"attendeeName\": \"string\",\n    \"bookingId\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"canceledAt\": \"2026-01-01T00:00:00.000Z\",\n    \"charge\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"checkInCode\": \"string\",\n    \"checkIns\": [\n      {\n        \"checkedInAt\": \"2026-01-01T00:00:00.000Z\",\n        \"checkedInBy\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n        \"method\": \"QRSCAN\",\n        \"status\": \"UNCHECKEDIN\"\n      }\n    ],\n    \"complimentaryAmount\": 0,\n    \"couponAmount\": 0,\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\",\n    \"currency\": \"string\",\n    \"customer\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"customerEmail\": \"string\",\n    \"customerId\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"customerName\": \"string\",\n    \"discountAmount\": 0,\n    \"feeAmount\": 0,\n    \"id\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"latestCheckIn\": {\n      \"checkedInAt\": \"2026-01-01T00:00:00.000Z\",\n      \"checkedInBy\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n      \"method\": \"QRSCAN\",\n      \"status\": \"UNCHECKEDIN\"\n    },\n    \"livemode\": false,\n    \"metadata\": [\n      {\n        \"addedAt\": \"2026-01-01T00:00:00.000Z\",\n        \"key\": \"string\",\n        \"value\": \"string\"\n      }\n    ],\n    \"orderId\": \"string\",\n    \"orderedAt\": \"2026-01-01T00:00:00.000Z\",\n    \"originalPrice\": 0,\n    \"page\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"pageId\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"pricing\": \"paid\",\n    \"revenue\": 0,\n    \"seller\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"sellerId\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"status\": \"PAID\",\n    \"taxAmount\": 0,\n    \"ticketShortId\": \"string\",\n    \"ticketType\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"ticketTypeId\": \"65f4a1c2e4a9f3d2b1c0a9e8\",\n    \"updatedAt\": \"2026-01-01T00:00:00.000Z\"\n  }\n}",
+              "code": 200,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "d7188537-231f-5ecf-ab19-6438c29e6fe5",
+              "name": "Ticket retrieved successfully",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "OK"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 400,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "60ad7f95-7ed6-5e83-9f82-2668dea6300b",
+              "name": "Bad request - Invalid request parameters",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 401,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "b4e2d490-8fc2-5d45-bb3e-52752f0e9d00",
+              "name": "Unauthorized - Missing or invalid API key",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 403,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "05fde76d-9950-56b2-b223-cc7162054b4c",
+              "name": "Forbidden - Insufficient permissions or validation error",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 404,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "29c18cf3-1639-5f99-8793-fae3c1a6ee06",
+              "name": "Ticket not found",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 429,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "5fb7f86c-f7ee-565b-ad38-e3793e419df8",
+              "name": "Rate Limit Exceeded - Please try again later.",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"param\": \"string\",\n      \"value\": null\n    }\n  ],\n  \"message\": \"Not Found\",\n  \"status\": \"error\",\n  \"type\": \"error\"\n}",
+              "code": 500,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "id": "6b3004f4-9010-5598-934f-9b7df8139d3f",
+              "name": "Internal server error",
+              "originalRequest": {
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "tickets",
+                    ":ticketId"
+                  ],
+                  "query": [
+                    {
+                      "description": {
+                        "content": "Set to `false` to return test-mode records created while a page was in test mode. Defaults to the mode of the API key. Test API keys can only read test data. (This can only be one of true,false)",
+                        "type": "text/plain"
+                      },
+                      "disabled": true,
+                      "key": "livemode",
+                      "value": "true"
+                    }
+                  ],
+                  "raw": "{{baseUrl}}/v1/tickets/:ticketId",
+                  "variable": [
+                    {
+                      "description": {
+                        "content": "The ID of the ticket to retrieve.",
+                        "type": "text/markdown"
+                      },
+                      "key": "ticketId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error"
+            }
+          ]
+        },
+        {
           "id": "18af5c65-bd6c-5f1c-af4a-7c0fa0dec59a",
           "name": "Update a ticket",
           "request": {

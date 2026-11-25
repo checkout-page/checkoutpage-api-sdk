@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { CheckoutPageClient, createCheckoutPageClient } from '../../index';
+import { CheckoutPageClient, createCheckoutPageClient, NotFoundError } from '../../index';
 import { loadIntegrationConfig } from '../../test-helpers/integration-config';
 
 describe('TicketResource Integration Tests', () => {
@@ -129,6 +129,23 @@ describe('TicketResource Integration Tests', () => {
 
       expect(page2.data.length).toBe(1);
       expect(page2.data[0].id).not.toBe(page1.data[0].id);
+    });
+  });
+
+  describe('get', () => {
+    it('returns the same ticket as the list', async () => {
+      const {
+        data: [listed],
+      } = await client.tickets.list({ limit: 1 });
+      if (!listed) throw new Error('No tickets found in the integration environment for get test');
+
+      const { data: ticket } = await client.tickets.get(listed.id);
+
+      expect(ticket).toEqual(listed);
+    });
+
+    it('throws NotFoundError for a ticket that does not exist', async () => {
+      await expect(client.tickets.get('507f1f77bcf86cd799439011')).rejects.toThrow(NotFoundError);
     });
   });
 
