@@ -60245,7 +60245,7 @@
             "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
             "properties": {
               "attendee": {
-                "description": "The attendee this ticket is for, with their answers, on events that collect attendee details. Absent until the booker or seller adds them. `attendeeName` and `attendeeEmail` follow it.",
+                "description": "The attendee's answers to the event's attendee questions and whether they were flagged for review, on events that collect attendee details. Absent until there is an answer or a flag. The attendee's name and email are `attendeeName` and `attendeeEmail`.",
                 "properties": {
                   "answers": {
                     "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
@@ -60360,17 +60360,9 @@
                     },
                     "type": "array"
                   },
-                  "email": {
-                    "description": "The attendee's email address.",
-                    "type": "string"
-                  },
                   "flagged": {
                     "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
                     "type": "boolean"
-                  },
-                  "name": {
-                    "description": "The attendee's name.",
-                    "type": "string"
                   },
                   "reviewedAt": {
                     "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
@@ -60381,11 +60373,11 @@
                 "type": "object"
               },
               "attendeeEmail": {
-                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
+                "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
                 "type": "string"
               },
               "attendeeName": {
-                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
+                "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
                 "type": "string"
               },
               "bookingId": {
@@ -86179,7 +86171,7 @@
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
                           "attendee": {
-                            "description": "The attendee this ticket is for, with their answers, on events that collect attendee details. Absent until the booker or seller adds them. `attendeeName` and `attendeeEmail` follow it.",
+                            "description": "The attendee's answers to the event's attendee questions and whether they were flagged for review, on events that collect attendee details. Absent until there is an answer or a flag. The attendee's name and email are `attendeeName` and `attendeeEmail`.",
                             "properties": {
                               "answers": {
                                 "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
@@ -86294,17 +86286,9 @@
                                 },
                                 "type": "array"
                               },
-                              "email": {
-                                "description": "The attendee's email address.",
-                                "type": "string"
-                              },
                               "flagged": {
                                 "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
                                 "type": "boolean"
-                              },
-                              "name": {
-                                "description": "The attendee's name.",
-                                "type": "string"
                               },
                               "reviewedAt": {
                                 "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
@@ -86315,11 +86299,11 @@
                             "type": "object"
                           },
                           "attendeeEmail": {
-                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "attendeeName": {
-                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "bookingId": {
@@ -96732,7 +96716,7 @@
                         "description": "A single admission ticket held by one attendee, created when an event booking is paid. Read-only.",
                         "properties": {
                           "attendee": {
-                            "description": "The attendee this ticket is for, with their answers, on events that collect attendee details. Absent until the booker or seller adds them. `attendeeName` and `attendeeEmail` follow it.",
+                            "description": "The attendee's answers to the event's attendee questions and whether they were flagged for review, on events that collect attendee details. Absent until there is an answer or a flag. The attendee's name and email are `attendeeName` and `attendeeEmail`.",
                             "properties": {
                               "answers": {
                                 "description": "The attendee's answers to the event's attendee questions, in the same shape as the booking's `fields`. `reference` matches the question's reference. Name and email are not repeated here.",
@@ -96847,17 +96831,9 @@
                                 },
                                 "type": "array"
                               },
-                              "email": {
-                                "description": "The attendee's email address.",
-                                "type": "string"
-                              },
                               "flagged": {
                                 "description": "True when the event's email domain rule flagged this attendee for the seller to review. It stays true after review; see `reviewedAt`.",
                                 "type": "boolean"
-                              },
-                              "name": {
-                                "description": "The attendee's name.",
-                                "type": "string"
                               },
                               "reviewedAt": {
                                 "description": "ISO-8601 UTC timestamp the seller marked this flagged attendee as reviewed. The booking counts as `flagged` while any flagged attendee has none.",
@@ -96868,11 +96844,11 @@
                             "type": "object"
                           },
                           "attendeeEmail": {
-                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
+                            "description": "Attendee email held on the ticket. The ticket is delivered here. Set from the purchaser at booking time; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "attendeeName": {
-                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time, or from the ticket's `attendee` on events that collect attendee details; editable via the ticket update endpoint.",
+                            "description": "Attendee name held on the ticket, shown on the ticket PDF and the guest list. Set from the purchaser at booking time; editable via the ticket update endpoint.",
                             "type": "string"
                           },
                           "bookingId": {

@@ -6,9 +6,7 @@
   "ticket": {
     "attendee": {
       "answers": [],
-      "email": "text",
       "flagged": false,
-      "name": "text",
       "reviewedAt": "2026-01-01T12:00:00.000Z"
     },
     "attendeeEmail": "text",
