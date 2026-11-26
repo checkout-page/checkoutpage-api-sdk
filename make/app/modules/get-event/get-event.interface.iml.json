@@ -419,6 +419,48 @@
         "label": "Attendee details",
         "spec": [
           {
+            "name": "attendeeEmails",
+            "type": "text",
+            "label": "Attendee emails"
+          },
+          {
+            "name": "attendeeEmailsCheckbox",
+            "type": "text",
+            "label": "Attendee emails checkbox"
+          },
+          {
+            "name": "confirmationEmail",
+            "type": "collection",
+            "label": "Confirmation email",
+            "spec": [
+              {
+                "name": "customize",
+                "type": "boolean",
+                "label": "Customize"
+              },
+              {
+                "name": "message",
+                "type": "text",
+                "label": "Message"
+              },
+              {
+                "name": "showLogo",
+                "type": "boolean",
+                "label": "Show logo"
+              },
+              {
+                "name": "showStoreName",
+                "type": "boolean",
+                "label": "Show store name"
+              },
+              {
+                "name": "subject",
+                "type": "text",
+                "label": "Subject"
+              }
+            ]
+          },
+          {
             "name": "description",
             "type": "text",
             "label": "Description"

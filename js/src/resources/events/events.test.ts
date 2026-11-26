@@ -95,16 +95,48 @@ describe('EventsResource', () => {
     it('demonstrates a forward and backward pagination flow', async () => {
       const PAGE_1 = {
         data: [
-          { id: 'e5', name: 'e5', type: 'event', status: 'published', slug: '/e5', createdAt: '', updatedAt: '' },
-          { id: 'e4', name: 'e4', type: 'event', status: 'published', slug: '/e4', createdAt: '', updatedAt: '' },
+          {
+            id: 'e5',
+            name: 'e5',
+            type: 'event',
+            status: 'published',
+            slug: '/e5',
+            createdAt: '',
+            updatedAt: '',
+          },
+          {
+            id: 'e4',
+            name: 'e4',
+            type: 'event',
+            status: 'published',
+            slug: '/e4',
+            createdAt: '',
+            updatedAt: '',
+          },
         ],
         has_more: true,
         total: 5,
       };
       const PAGE_2 = {
         data: [
-          { id: 'e3', name: 'e3', type: 'event', status: 'published', slug: '/e3', createdAt: '', updatedAt: '' },
-          { id: 'e2', name: 'e2', type: 'event', status: 'published', slug: '/e2', createdAt: '', updatedAt: '' },
+          {
+            id: 'e3',
+            name: 'e3',
+            type: 'event',
+            status: 'published',
+            slug: '/e3',
+            createdAt: '',
+            updatedAt: '',
+          },
+          {
+            id: 'e2',
+            name: 'e2',
+            type: 'event',
+            status: 'published',
+            slug: '/e2',
+            createdAt: '',
+            updatedAt: '',
+          },
         ],
         has_more: true,
         total: 5,
@@ -163,7 +195,9 @@ describe('EventsResource', () => {
     it('creates an event with attendee details on and returns its settings and questions', async () => {
       const params: CreateEventParams = {
         name: 'Leadership summit',
-        eventDetails: { attendeeDetails: { enabled: true, when: 'checkout', emailDomains: 'workFlag' } },
+        eventDetails: {
+          attendeeDetails: { enabled: true, when: 'checkout', emailDomains: 'workFlag' },
+        },
       };
       vi.spyOn(client, 'request').mockResolvedValue({
         data: {
@@ -195,7 +229,11 @@ describe('EventsResource', () => {
 
       const result = await eventsResource.create(params);
 
-      expect(client.request).toHaveBeenCalledWith({ method: 'POST', path: '/v1/events/', body: params });
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v1/events/',
+        body: params,
+      });
       expect(result.data.eventDetails?.attendeeDetails?.enabledAt).toBe('2026-11-03T08:00:00.000Z');
       expect(result.data.attendeeQuestions?.map((question) => question.label)).toEqual(['Name']);
     });
@@ -358,7 +396,9 @@ describe('EventsResource', () => {
       vi.spyOn(client, 'request').mockResolvedValue({
         data: {
           id: 'event_123',
-          eventDetails: { attendeeDetails: { enabled: true, when: 'afterBooking', sendReminders: false } },
+          eventDetails: {
+            attendeeDetails: { enabled: true, when: 'afterBooking', sendReminders: false },
+          },
         },
       });
 
@@ -369,7 +409,41 @@ describe('EventsResource', () => {
         path: '/v1/events/event_123',
         body: params,
       });
-      expect(result.data.eventDetails?.attendeeDetails).toMatchObject({ enabled: true, when: 'afterBooking' });
+      expect(result.data.eventDetails?.attendeeDetails).toMatchObject({
+        enabled: true,
+        when: 'afterBooking',
+      });
+    });
+
+    it('sets the email each attendee gets with their ticket', async () => {
+      const confirmationEmail = {
+        customize: true,
+        subject: 'See you there',
+        message: '<p>Hi {{attendee_name}}, your code is {{ticket_code}}.</p>',
+        showLogo: false,
+      };
+      const params: UpdateEventParams = {
+        eventDetails: { attendeeDetails: { attendeeEmails: 'always', confirmationEmail } },
+      };
+      vi.spyOn(client, 'request').mockResolvedValue({
+        data: {
+          id: 'event_123',
+          eventDetails: {
+            attendeeDetails: { enabled: true, attendeeEmails: 'always', confirmationEmail },
+          },
+        },
+      });
+
+      const result = await eventsResource.update('event_123', params);
+
+      expect(client.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v1/events/event_123',
+        body: params,
+      });
+      const subject: string | undefined =
+        result.data.eventDetails?.attendeeDetails?.confirmationEmail?.subject;
+      expect(subject).toBe('See you there');
     });
 
     it('switches test mode on and returns when it was enabled', async () => {
