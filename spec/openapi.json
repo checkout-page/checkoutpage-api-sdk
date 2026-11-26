@@ -3391,7 +3391,7 @@
                         "type": "boolean"
                       },
                       "message": {
-                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from a ticket's `attendee.answers[].fieldId`. Prices are not available. An empty body sends the default email.",
+                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from the event's `attendeeQuestions[].id`. Prices are not available. An empty body sends the default email.",
                         "example": "<p>Hi {{attendee_name}}, here is your {{ticket_type}} ticket. Your code is {{ticket_code}}.</p>",
                         "type": "string"
                       },
@@ -3404,7 +3404,7 @@
                         "type": "boolean"
                       },
                       "subject": {
-                        "description": "Subject of the custom email. Empty uses the default, \"Your ticket for <event name>\".",
+                        "description": "Subject of the custom email, used with `customize: true` and a `message`. Empty uses the default, \"Your ticket for <event name>\".",
                         "example": "Your ticket for the summer gala",
                         "maxLength": 300,
                         "type": "string"
@@ -6842,7 +6842,7 @@
                         "type": "boolean"
                       },
                       "message": {
-                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from a ticket's `attendee.answers[].fieldId`. Prices are not available. An empty body sends the default email.",
+                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from the event's `attendeeQuestions[].id`. Prices are not available. An empty body sends the default email.",
                         "example": "<p>Hi {{attendee_name}}, here is your {{ticket_type}} ticket. Your code is {{ticket_code}}.</p>",
                         "type": "string"
                       },
@@ -6855,7 +6855,7 @@
                         "type": "boolean"
                       },
                       "subject": {
-                        "description": "Subject of the custom email. Empty uses the default, \"Your ticket for <event name>\".",
+                        "description": "Subject of the custom email, used with `customize: true` and a `message`. Empty uses the default, \"Your ticket for <event name>\".",
                         "example": "Your ticket for the summer gala",
                         "maxLength": 300,
                         "type": "string"
@@ -64009,7 +64009,7 @@
                         "type": "boolean"
                       },
                       "message": {
-                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from a ticket's `attendee.answers[].fieldId`. Prices are not available. An empty body sends the default email.",
+                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from the event's `attendeeQuestions[].id`. Prices are not available. An empty body sends the default email.",
                         "example": "<p>Hi {{attendee_name}}, here is your {{ticket_type}} ticket. Your code is {{ticket_code}}.</p>",
                         "type": "string"
                       },
@@ -64022,7 +64022,7 @@
                         "type": "boolean"
                       },
                       "subject": {
-                        "description": "Subject of the custom email. Empty uses the default, \"Your ticket for <event name>\".",
+                        "description": "Subject of the custom email, used with `customize: true` and a `message`. Empty uses the default, \"Your ticket for <event name>\".",
                         "example": "Your ticket for the summer gala",
                         "maxLength": 300,
                         "type": "string"
