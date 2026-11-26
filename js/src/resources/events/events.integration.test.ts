@@ -1594,6 +1594,100 @@ describe('EventsResource integration tests', () => {
     });
   });
 
+  describe('eventDetails.attendeeDetails.confirmationEmail', () => {
+    const customEmail = {
+      customize: true,
+      subject: 'Your ticket for the SDK gala',
+      message: '<p>Hi {{attendee_name}}, your {{ticket_type}} code is {{ticket_code}}.</p>',
+      showLogo: false,
+      showStoreName: true,
+    };
+
+    it('creates an event with a custom attendee email and returns it on get', async () => {
+      const created = await createEvent({
+        eventDetails: {
+          attendeeDetails: {
+            enabled: true,
+            attendeeEmails: 'always',
+            confirmationEmail: customEmail,
+          },
+        },
+      });
+
+      expect(created.data.eventDetails?.attendeeDetails?.confirmationEmail).toEqual(customEmail);
+
+      const fetched = await client.events.get(created.data.id);
+      expect(fetched.data.eventDetails?.attendeeDetails?.confirmationEmail).toEqual(customEmail);
+      expect(fetched.data.eventDetails?.attendeeDetails?.attendeeEmails).toBe('always');
+    });
+
+    it('sets the attendee email on update', async () => {
+      const created = await createEvent({ eventDetails: { attendeeDetails: { enabled: true } } });
+
+      const { data } = await client.events.update(created.data.id, {
+        eventDetails: { attendeeDetails: { confirmationEmail: customEmail } },
+      });
+
+      expect(data.eventDetails?.attendeeDetails?.confirmationEmail).toEqual(customEmail);
+      expect(data.eventDetails?.attendeeDetails?.enabled).toBe(true);
+    });
+
+    it('changes only the settings sent on update', async () => {
+      const created = await createEvent({
+        eventDetails: { attendeeDetails: { enabled: true, confirmationEmail: customEmail } },
+      });
+
+      const { data } = await client.events.update(created.data.id, {
+        eventDetails: {
+          attendeeDetails: { confirmationEmail: { customize: false, showLogo: true } },
+        },
+      });
+
+      expect(data.eventDetails?.attendeeDetails?.confirmationEmail).toEqual({
+        ...customEmail,
+        customize: false,
+        showLogo: true,
+      });
+    });
+
+    it('keeps the attendee email when an eventDetails update omits attendeeDetails', async () => {
+      const created = await createEvent({
+        eventDetails: { attendeeDetails: { enabled: true, confirmationEmail: customEmail } },
+      });
+
+      const { data } = await client.events.update(created.data.id, {
+        eventDetails: { location: 'SDK Event Venue Updated' },
+      });
+
+      expect(data.eventDetails?.attendeeDetails?.confirmationEmail).toEqual(customEmail);
+    });
+
+    it('keeps attendee question variables and leaves unknown variables as text', async () => {
+      const questionId = fakeObjectId('attendee-role');
+      const message = `<p>Role: {{field_${questionId}}}. Booked by {{booker_name}}. Paid {{price}}.</p>`;
+
+      const created = await createEvent({
+        eventDetails: {
+          attendeeDetails: { enabled: true, confirmationEmail: { customize: true, message } },
+        },
+      });
+
+      expect(created.data.eventDetails?.attendeeDetails?.confirmationEmail?.message).toBe(message);
+    });
+
+    it('rejects a subject longer than 300 characters', async () => {
+      const created = await createEvent({ eventDetails: { attendeeDetails: { enabled: true } } });
+
+      await expect(
+        client.events.update(created.data.id, {
+          eventDetails: {
+            attendeeDetails: { confirmationEmail: { customize: true, subject: 'a'.repeat(301) } },
+          },
+        })
+      ).rejects.toThrow(ValidationError);
+    });
+  });
+
   describe('delete', () => {
     it('archives an existing event', async () => {
       const created = await createEvent();

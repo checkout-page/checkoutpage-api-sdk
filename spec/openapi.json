@@ -3369,6 +3369,49 @@
               "attendeeDetails": {
                 "description": "Attendee details for this event: whether a name and email address are collected for each ticket, when, and which email addresses are accepted. The attendee questions start as Name and Email address; add more in the dashboard.",
                 "properties": {
+                  "attendeeEmails": {
+                    "description": "Whether each attendee added at checkout gets their own confirmation and ticket once the booking is paid. `off` (default): no attendee emails. `always`: every attendee is emailed. `customerChooses`: the booker sees a checkbox under the attendees and attendees are emailed only when they tick it. Applies with `when: checkout` and `sendEmailConfirmation` on. An attendee with the booker's email address is not emailed again.",
+                    "enum": [
+                      "off",
+                      "always",
+                      "customerChooses"
+                    ],
+                    "type": "string"
+                  },
+                  "attendeeEmailsCheckbox": {
+                    "description": "With `attendeeEmails: customerChooses`, the label of the checkbox the booker ticks to email each attendee.",
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  "confirmationEmail": {
+                    "description": "The email each attendee gets with their ticket. Only the settings you send change. Whether attendees are emailed at all is `attendeeEmails`.",
+                    "properties": {
+                      "customize": {
+                        "description": "Send the custom email in `subject` and `message` instead of the default attendee confirmation. Defaults to `false`.",
+                        "type": "boolean"
+                      },
+                      "message": {
+                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from the event's `attendeeQuestions[].id`. Prices are not available. An empty body sends the default email.",
+                        "example": "<p>Hi {{attendee_name}}, here is your {{ticket_type}} ticket. Your code is {{ticket_code}}.</p>",
+                        "type": "string"
+                      },
+                      "showLogo": {
+                        "description": "Show the store logo. Until set, follows the event's `confirmationEmailShowLogo`.",
+                        "type": "boolean"
+                      },
+                      "showStoreName": {
+                        "description": "Show the store name. Until set, follows the event's `confirmationEmailShowStoreName`.",
+                        "type": "boolean"
+                      },
+                      "subject": {
+                        "description": "Subject of the custom email, used with `customize: true` and a `message`. Empty uses the default, \"Your ticket for <event name>\".",
+                        "example": "Your ticket for the summer gala",
+                        "maxLength": 300,
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
                   "description": {
                     "description": "Text under the heading.",
                     "maxLength": 120,
@@ -6777,6 +6820,49 @@
               "attendeeDetails": {
                 "description": "Attendee details settings for this event.",
                 "properties": {
+                  "attendeeEmails": {
+                    "description": "Whether each attendee added at checkout gets their own confirmation and ticket once the booking is paid. `off` (default): no attendee emails. `always`: every attendee is emailed. `customerChooses`: the booker sees a checkbox under the attendees and attendees are emailed only when they tick it. Applies with `when: checkout` and `sendEmailConfirmation` on. An attendee with the booker's email address is not emailed again.",
+                    "enum": [
+                      "off",
+                      "always",
+                      "customerChooses"
+                    ],
+                    "type": "string"
+                  },
+                  "attendeeEmailsCheckbox": {
+                    "description": "With `attendeeEmails: customerChooses`, the label of the checkbox the booker ticks to email each attendee.",
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  "confirmationEmail": {
+                    "description": "The email each attendee gets with their ticket. Only the settings you send change. Whether attendees are emailed at all is `attendeeEmails`.",
+                    "properties": {
+                      "customize": {
+                        "description": "Send the custom email in `subject` and `message` instead of the default attendee confirmation. Defaults to `false`.",
+                        "type": "boolean"
+                      },
+                      "message": {
+                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from the event's `attendeeQuestions[].id`. Prices are not available. An empty body sends the default email.",
+                        "example": "<p>Hi {{attendee_name}}, here is your {{ticket_type}} ticket. Your code is {{ticket_code}}.</p>",
+                        "type": "string"
+                      },
+                      "showLogo": {
+                        "description": "Show the store logo. Until set, follows the event's `confirmationEmailShowLogo`.",
+                        "type": "boolean"
+                      },
+                      "showStoreName": {
+                        "description": "Show the store name. Until set, follows the event's `confirmationEmailShowStoreName`.",
+                        "type": "boolean"
+                      },
+                      "subject": {
+                        "description": "Subject of the custom email, used with `customize: true` and a `message`. Empty uses the default, \"Your ticket for <event name>\".",
+                        "example": "Your ticket for the summer gala",
+                        "maxLength": 300,
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
                   "description": {
                     "description": "Text under the heading.",
                     "maxLength": 120,
@@ -63901,6 +63987,49 @@
               "attendeeDetails": {
                 "description": "Attendee details for this event. Only the settings you send change; the rest keep their current values.",
                 "properties": {
+                  "attendeeEmails": {
+                    "description": "Whether each attendee added at checkout gets their own confirmation and ticket once the booking is paid. `off` (default): no attendee emails. `always`: every attendee is emailed. `customerChooses`: the booker sees a checkbox under the attendees and attendees are emailed only when they tick it. Applies with `when: checkout` and `sendEmailConfirmation` on. An attendee with the booker's email address is not emailed again.",
+                    "enum": [
+                      "off",
+                      "always",
+                      "customerChooses"
+                    ],
+                    "type": "string"
+                  },
+                  "attendeeEmailsCheckbox": {
+                    "description": "With `attendeeEmails: customerChooses`, the label of the checkbox the booker ticks to email each attendee.",
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  "confirmationEmail": {
+                    "description": "The email each attendee gets with their ticket. Only the settings you send change. Whether attendees are emailed at all is `attendeeEmails`.",
+                    "properties": {
+                      "customize": {
+                        "description": "Send the custom email in `subject` and `message` instead of the default attendee confirmation. Defaults to `false`.",
+                        "type": "boolean"
+                      },
+                      "message": {
+                        "description": "Body of the custom email. Accepts HTML or plain text. Insert a variable as `{{attendee_name}}`: `attendee_name`, `attendee_email`, `ticket_type`, `ticket_code`, `booker_name`, `booker_email`, `orderId`, `createdAt`, `event_name`, `event_date`, `event_location` and `event_meeting_link`, or `field_<id>` for the attendee's answer to a question, with the id from the event's `attendeeQuestions[].id`. Prices are not available. An empty body sends the default email.",
+                        "example": "<p>Hi {{attendee_name}}, here is your {{ticket_type}} ticket. Your code is {{ticket_code}}.</p>",
+                        "type": "string"
+                      },
+                      "showLogo": {
+                        "description": "Show the store logo. Until set, follows the event's `confirmationEmailShowLogo`.",
+                        "type": "boolean"
+                      },
+                      "showStoreName": {
+                        "description": "Show the store name. Until set, follows the event's `confirmationEmailShowStoreName`.",
+                        "type": "boolean"
+                      },
+                      "subject": {
+                        "description": "Subject of the custom email, used with `customize: true` and a `message`. Empty uses the default, \"Your ticket for <event name>\".",
+                        "example": "Your ticket for the summer gala",
+                        "maxLength": 300,
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
                   "description": {
                     "description": "Text under the heading.",
                     "maxLength": 120,
